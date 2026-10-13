@@ -90,4 +90,34 @@
         <item quantity="many">Grupo: %1$s, %2$d elementos</item>
         <item quantity="other">Grupo: %1$s, %2$d elementos</item>
     </plurals>
+
+    <!-- Búsqueda: recorrer la bóveda abierta. -->
+    <string name="search_field_label">Buscar</string>
+    <string name="search_back">Volver</string>
+    <string name="search_prompt">Escribe para buscar en tus entradas.</string>
+    <string name="search_no_results">Nada coincide con esa búsqueda.</string>
+    <string name="search_untitled">Sin título</string>
+
+    <!-- Entrada: una entrada, con sus secretos ocultos hasta que se pidan. -->
+    <string name="entry_detail_back">Volver</string>
+    <string name="entry_detail_untitled">Sin título</string>
+    <string name="entry_detail_user_name">Usuario</string>
+    <string name="entry_detail_password">Contraseña</string>
+    <string name="entry_detail_url">URL</string>
+    <string name="entry_detail_notes">Notas</string>
+    <string name="entry_detail_show">Mostrar</string>
+    <string name="entry_detail_hide">Ocultar</string>
+    <string name="entry_detail_copy">Copiar</string>
+    <string name="entry_detail_copy_field">Copiar %1$s</string>
+    <string name="entry_detail_open">Abrir</string>
+    <string name="entry_detail_open_field">Abrir %1$s</string>
+    <string name="entry_detail_attachments">Adjuntos</string>
+    <string name="entry_detail_last_modified">Última modificación: %1$s</string>
+    <string name="entry_detail_history">Versiones anteriores: %1$d</string>
+    <string name="entry_detail_edit">Editar</string>
+    <string name="entry_detail_delete">Eliminar</string>
+    <string name="entry_detail_delete_title">¿Eliminar esta entrada?</string>
+    <string name="entry_detail_delete_message">La entrada se mueve a la papelera; desde allí puedes restaurarla.</string>
+    <string name="entry_detail_delete_confirm">Eliminar</string>
+    <string name="entry_detail_delete_cancel">Cancelar</string>
 </resources>

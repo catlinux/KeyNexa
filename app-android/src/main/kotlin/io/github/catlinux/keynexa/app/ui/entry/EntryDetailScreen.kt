@@ -1,0 +1,367 @@
+package io.github.catlinux.keynexa.app.ui.entry
+
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.dp
+import io.github.catlinux.keynexa.app.R
+import io.github.catlinux.keynexa.vault.Entry
+import kotlinx.coroutines.delay
+import java.time.Instant
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
+import java.time.format.FormatStyle
+
+/** Spacing and touch targets of the design grid (docs/DESIGN.md). */
+private val ScreenPadding = 16.dp
+private val ItemGap = 8.dp
+private val TouchTarget = 48.dp
+
+/** What separates the names of the groups an entry lives in. */
+private const val PATH_SEPARATOR = " / "
+
+/** How long a revealed secret stays on screen before hiding itself again. */
+private const val REVEAL_MILLIS = 30_000L
+
+/** The most dots a hidden secret shows, so that the length of a long password is not on display either. */
+private const val MAX_DOTS = 12
+
+/** The mark that stands for every hidden character. */
+private const val SECRET_DOT = '•'
+
+/** The fields this screen shows in its own way; the rest are custom fields. */
+private val STANDARD_FIELDS = setOf(Entry.TITLE, Entry.USER_NAME, Entry.PASSWORD, Entry.URL, Entry.NOTES)
+
+/**
+ * One entry, with its secrets hidden until the user asks for them.
+ *
+ * A stateless screen: it shows the entry it is given and reports what the user chose. A revealed secret hides again
+ * after [REVEAL_MILLIS] and never survives the screen, no secret value is written to a description, and copying a
+ * secret goes through [onCopy] with `sensitive` set.
+ */
+@Suppress("LongParameterList")
+@Composable
+fun EntryDetailScreen(
+    entry: Entry,
+    path: List<String>,
+    onEdit: () -> Unit,
+    onDelete: () -> Unit,
+    onCopy: (label: String, value: String, sensitive: Boolean) -> Unit,
+    onOpenUrl: (String) -> Unit,
+    onBack: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    var revealed by remember { mutableStateOf<String?>(null) }
+    var askingToDelete by remember { mutableStateOf(false) }
+    LaunchedEffect(revealed) {
+        if (revealed != null) {
+            delay(REVEAL_MILLIS)
+            revealed = null
+        }
+    }
+    Surface(modifier = modifier.fillMaxSize()) {
+        Column(
+            modifier = Modifier.fillMaxSize().padding(ScreenPadding),
+            verticalArrangement = Arrangement.spacedBy(ItemGap),
+        ) {
+            EntryHeader(title = entry.title, path = path, onBack = onBack)
+            Box(modifier = Modifier.fillMaxWidth().weight(1f)) {
+                Column(modifier = Modifier.fillMaxSize().verticalScroll(rememberScrollState())) {
+                    DetailFields(
+                        entry = entry,
+                        revealed = revealed,
+                        onReveal = { revealed = it },
+                        onCopy = onCopy,
+                        onOpenUrl = onOpenUrl,
+                    )
+                    EntryMetadata(entry = entry)
+                }
+            }
+            EntryActions(onEdit = onEdit, onDelete = { askingToDelete = true })
+        }
+    }
+    if (askingToDelete) {
+        DeleteDialog(
+            onConfirm = {
+                onDelete()
+                askingToDelete = false
+            },
+            onDismiss = { askingToDelete = false },
+        )
+    }
+}
+
+/** The title of the entry, the groups it lives in, and the way back. */
+@Composable
+private fun EntryHeader(
+    title: String,
+    path: List<String>,
+    onBack: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Column(
+        modifier = modifier.fillMaxWidth(),
+        verticalArrangement = Arrangement.spacedBy(ItemGap),
+    ) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            IconButton(onClick = onBack) {
+                Icon(
+                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                    contentDescription = stringResource(R.string.entry_detail_back),
+                )
+            }
+            Text(
+                text = title.ifEmpty { stringResource(R.string.entry_detail_untitled) },
+                style = MaterialTheme.typography.headlineSmall,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                modifier = Modifier.weight(1f),
+            )
+        }
+        if (path.isNotEmpty()) {
+            Text(
+                text = path.joinToString(PATH_SEPARATOR),
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+        }
+    }
+}
+
+/** The standard fields and the custom ones, with the actions each of them allows. */
+@Composable
+private fun DetailFields(
+    entry: Entry,
+    revealed: String?,
+    onReveal: (String?) -> Unit,
+    onCopy: (label: String, value: String, sensitive: Boolean) -> Unit,
+    onOpenUrl: (String) -> Unit,
+) {
+    Column(verticalArrangement = Arrangement.spacedBy(ItemGap)) {
+        val userNameLabel = stringResource(R.string.entry_detail_user_name)
+        entry.fields[Entry.USER_NAME]?.let { field ->
+            FieldRow(label = userNameLabel, value = field.value) {
+                CopyButton(
+                    label = userNameLabel,
+                    onCopy = { onCopy(userNameLabel, field.value, false) },
+                )
+            }
+        }
+        val passwordLabel = stringResource(R.string.entry_detail_password)
+        entry.fields[Entry.PASSWORD]?.let { field ->
+            SecretRow(
+                label = passwordLabel,
+                value = field.value,
+                revealed = revealed == passwordLabel,
+                onReveal = { shown -> onReveal(if (shown) passwordLabel else null) },
+                onCopy = { onCopy(passwordLabel, field.value, true) },
+            )
+        }
+        val urlLabel = stringResource(R.string.entry_detail_url)
+        entry.fields[Entry.URL]?.let { field ->
+            val openDescription = stringResource(R.string.entry_detail_open_field, urlLabel)
+            FieldRow(label = urlLabel, value = field.value) {
+                TextButton(
+                    onClick = { onOpenUrl(field.value) },
+                    modifier = Modifier.semantics { contentDescription = openDescription },
+                ) {
+                    Text(text = stringResource(R.string.entry_detail_open))
+                }
+                CopyButton(
+                    label = urlLabel,
+                    onCopy = { onCopy(urlLabel, field.value, false) },
+                )
+            }
+        }
+        val notesLabel = stringResource(R.string.entry_detail_notes)
+        entry.fields[Entry.NOTES]?.let { field -> FieldRow(label = notesLabel, value = field.value) }
+        entry.fields.filterKeys { it !in STANDARD_FIELDS }.forEach { (name, field) ->
+            if (field.protected) {
+                SecretRow(
+                    label = name,
+                    value = field.value,
+                    revealed = revealed == name,
+                    onReveal = { shown -> onReveal(if (shown) name else null) },
+                    onCopy = { onCopy(name, field.value, true) },
+                )
+            } else {
+                FieldRow(label = name, value = field.value) {
+                    CopyButton(
+                        label = name,
+                        onCopy = { onCopy(name, field.value, false) },
+                    )
+                }
+            }
+        }
+    }
+}
+
+/** A label above its value, with the actions that belong to it. */
+@Composable
+private fun FieldRow(
+    label: String,
+    value: String,
+    modifier: Modifier = Modifier,
+    actions: @Composable () -> Unit = {},
+) {
+    Column(
+        modifier = modifier.fillMaxWidth().padding(vertical = ItemGap),
+        verticalArrangement = Arrangement.spacedBy(ItemGap),
+    ) {
+        Text(text = label, style = MaterialTheme.typography.titleMedium)
+        Text(text = value, style = MaterialTheme.typography.bodyLarge)
+        Row(horizontalArrangement = Arrangement.spacedBy(ItemGap)) { actions() }
+    }
+}
+
+/** A secret field: dots until the user reveals it, and a copy that says it is sensitive. */
+@Composable
+private fun SecretRow(
+    label: String,
+    value: String,
+    revealed: Boolean,
+    onReveal: (Boolean) -> Unit,
+    onCopy: () -> Unit,
+) {
+    FieldRow(
+        label = label,
+        value = if (revealed) value else SECRET_DOT.toString().repeat(value.length.coerceAtMost(MAX_DOTS)),
+    ) {
+        TextButton(onClick = { onReveal(!revealed) }) {
+            Text(text = stringResource(if (revealed) R.string.entry_detail_hide else R.string.entry_detail_show))
+        }
+        CopyButton(label = label, onCopy = onCopy)
+    }
+}
+
+/** The copy action of a field; its description names the field and never its value. */
+@Composable
+private fun CopyButton(
+    label: String,
+    onCopy: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    val description = stringResource(R.string.entry_detail_copy_field, label)
+    TextButton(
+        onClick = onCopy,
+        modifier = modifier.semantics { contentDescription = description },
+    ) {
+        Text(text = stringResource(R.string.entry_detail_copy))
+    }
+}
+
+/** What is known about the entry itself: attachments, when it changed and how many older versions it keeps. */
+@Composable
+private fun EntryMetadata(entry: Entry) {
+    Column(verticalArrangement = Arrangement.spacedBy(ItemGap)) {
+        if (entry.attachments.isNotEmpty()) {
+            Text(
+                text = stringResource(R.string.entry_detail_attachments),
+                style = MaterialTheme.typography.titleMedium,
+            )
+            entry.attachments.forEach { attachment ->
+                Text(text = attachment.name, style = MaterialTheme.typography.bodyLarge)
+            }
+        }
+        entry.times.lastModified?.let { modified ->
+            Text(
+                text = stringResource(R.string.entry_detail_last_modified, formatMoment(modified)),
+                style = MaterialTheme.typography.bodyMedium,
+            )
+        }
+        Text(
+            text = stringResource(R.string.entry_detail_history, entry.history.size),
+            style = MaterialTheme.typography.bodyMedium,
+        )
+    }
+}
+
+/** The two things a user does with an entry: change it, or send it to the recycle bin. */
+@Composable
+private fun EntryActions(
+    onEdit: () -> Unit,
+    onDelete: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Column(
+        modifier = modifier.fillMaxWidth(),
+        verticalArrangement = Arrangement.spacedBy(ItemGap),
+    ) {
+        Button(
+            onClick = onEdit,
+            modifier = Modifier.fillMaxWidth().heightIn(min = TouchTarget),
+        ) {
+            Text(text = stringResource(R.string.entry_detail_edit))
+        }
+        OutlinedButton(
+            onClick = onDelete,
+            colors = ButtonDefaults.outlinedButtonColors(contentColor = MaterialTheme.colorScheme.error),
+            modifier = Modifier.fillMaxWidth().heightIn(min = TouchTarget),
+        ) {
+            Text(text = stringResource(R.string.entry_detail_delete))
+        }
+    }
+}
+
+/** Asks before deleting, and says what really happens: the entry goes to the recycle bin. */
+@Composable
+private fun DeleteDialog(
+    onConfirm: () -> Unit,
+    onDismiss: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        modifier = modifier,
+        title = { Text(text = stringResource(R.string.entry_detail_delete_title)) },
+        text = { Text(text = stringResource(R.string.entry_detail_delete_message)) },
+        confirmButton = {
+            TextButton(onClick = onDismiss) {
+                Text(text = stringResource(R.string.entry_detail_delete_cancel))
+            }
+        },
+        dismissButton = {
+            TextButton(
+                onClick = onConfirm,
+                colors = ButtonDefaults.textButtonColors(contentColor = MaterialTheme.colorScheme.error),
+            ) {
+                Text(text = stringResource(R.string.entry_detail_delete_confirm))
+            }
+        },
+    )
+}
+
+/** The moment, written the way the device's locale writes dates. */
+private fun formatMoment(instant: Instant): String =
+    DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM).withZone(ZoneId.systemDefault()).format(instant)
