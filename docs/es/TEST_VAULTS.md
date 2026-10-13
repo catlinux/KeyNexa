@@ -14,7 +14,7 @@ Las bóvedas ficticias de `testdata/` alimentan las pruebas de compatibilidad (A
 
 Requisitos: KeePass 2.x (`winget install DominikReichl.KeePass`) y KeePassXC (`winget install KeePassXCTeam.KeePassXC`). El contenido aleatorio (el adjunto de 64 KiB) usa una semilla fija, así que volver a ejecutar da archivos equivalentes pero no idénticos byte a byte (KeePass aleatoriza UUID, sales y marcas de tiempo). No regeneres el corpus sin motivo: las pruebas dependen de los archivos confirmados.
 
-`keepassxc-cli` 2.7.12 no puede elegir el cifrado, el KDF ni la versión del formato, ni tampoco etiquetas, campos personalizados o TOTP. Por eso KeePassXC aporta solo las bóvedas de abajo y las manuales de la última sección.
+`keepassxc-cli` 2.7.12 no puede elegir el cifrado, el KDF ni la versión del formato, ni tampoco etiquetas, campos personalizados o TOTP. Por eso KeePassXC aporta solo las bóvedas de línea de órdenes de abajo y las tres guardadas desde su interfaz (última sección).
 
 ## Contenido de las bóvedas «ricas»
 
@@ -35,6 +35,9 @@ Contraseña maestra de todas las bóvedas: `test-password-1`, salvo que se indiq
 | `rich-kdbx31-aes-aeskdf.kdbx` | KeePass 2 | **3.1** | AES-256 | AES-KDF |
 | `rich-aes-argon2d-tags.kdbx` | KeePass 2 | **4.1** (etiquetas) | AES-256 | Argon2d |
 | `kpxc-aeskdf.kdbx` | KeePassXC | 4.1 | AES-256 | AES-KDF (unos 8,3 millones de rondas) |
+| `kpxc-twofish-argon2d.kdbx` | KeePassXC (interfaz) | 4.1 | Twofish-256 | Argon2d |
+| `kpxc-chacha20-argon2id.kdbx` | KeePassXC (interfaz) | 4.1 | ChaCha20 | Argon2id |
+| `kpxc-argon2d-tags-totp.kdbx` | KeePassXC (interfaz) | 4.1 | AES-256 | Argon2d; etiqueta `personal` y TOTP (campo `otp`, secreto inventado `JBSWY3DPEHPK3PXP`) en `Internet/Example mail` |
 | `kpxc-empty.kdbx` | KeePassXC | 3.1 | AES-256 | AES-KDF; sin entradas |
 | `kpxc-keyfile-password.kdbx` + `kpxc-keyfile.keyx` | KeePassXC | 4.1 | AES-256 | AES-KDF; contraseña **y** archivo de clave |
 | `keyfile-only.kdbx` + `keyfile-only.key` | KeePass 2 | 4.0 | AES-256 | AES-KDF; solo archivo de clave, sin contraseña |
@@ -44,12 +47,6 @@ Contraseña maestra de todas las bóvedas: `test-password-1`, salvo que se indiq
 
 Cada archivo se abrió con `keepassxc-cli` como comprobación independiente y su cabecera se leyó con `inspect_kdbx.py`.
 
-## Falta crear a mano (interfaz gráfica de KeePassXC)
+## Las tres bóvedas de KeePassXC guardadas desde su interfaz
 
-KeePassXC es el único programa de aquí que escribe Twofish y sus propias etiquetas y campos TOTP, y `keepassxc-cli` no puede fijarlos. Quedan tres archivos. Para cada uno: abre `testdata/kpxc-aeskdf.kdbx` en KeePassXC (contraseña `test-password-1`), cambia los ajustes en *Base de datos → Configuración de la base de datos* y usa *Base de datos → Guardar base de datos como* para guardarlo en `testdata/` con el nombre indicado.
-
-| Archivo | Cambio |
-| --- | --- |
-| `kpxc-twofish-argon2d.kdbx` | Pestaña *Cifrado*: algoritmo Twofish-256, derivación de clave Argon2d (64 MiB, 10 iteraciones, 2 hilos) |
-| `kpxc-chacha20-argon2id.kdbx` | Pestaña *Cifrado*: algoritmo ChaCha20, derivación de clave Argon2id (64 MiB, 10 iteraciones, 2 hilos) |
-| `kpxc-argon2d-tags-totp.kdbx` | Argon2d como arriba con AES-256; en la entrada `Internet/Example mail` añade la etiqueta `personal` y configura un TOTP con el secreto inventado `JBSWY3DPEHPK3PXP` |
+`keepassxc-cli` no puede elegir Twofish, cambiar el KDF ni fijar etiquetas y TOTP, así que `kpxc-twofish-argon2d.kdbx`, `kpxc-chacha20-argon2id.kdbx` y `kpxc-argon2d-tags-totp.kdbx` se guardaron desde la ventana de KeePassXC, a partir de una copia de `kpxc-aeskdf.kdbx` y cambiando *Configuración de la base de datos → Seguridad → Opciones de cifrado* (Argon2: 64 MiB, 10 iteraciones, 2 hilos). Para rehacer una a mano, repite eso y, en la última, añade la etiqueta en el editor de la entrada y usa *Apuntes → TOTP → Configurar TOTP*. Estas tres no las produce ningún script.

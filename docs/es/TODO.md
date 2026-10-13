@@ -8,7 +8,6 @@ Pasos detallados: consulta la [hoja de ruta](ROADMAP.md).
 
 - [ ] Esqueleto multimódulo de Gradle (`core-vault`, `core-kdbx`, `core-sync`, `platform-android`, `app-android`) que lea la versión de `VERSION`.
 - [ ] Primera publicación firmada de prueba: subir una etiqueta (con aprobación del responsable) y comprobar en GitHub el workflow, la firma y la suma de verificación.
-- [ ] Tres bóvedas de prueba que guardar a mano en la interfaz de KeePassXC (Twofish, ChaCha20 + Argon2id, etiquetas + TOTP); consulta `docs/TEST_VAULTS.md`.
 - [ ] Prueba de concepto: fidelidad de ida y vuelta de kotpass y rendimiento de Argon2 en un dispositivo de gama baja.
 - [ ] Sistema de diseño: icono original, paleta, tipografía, espaciado, componentes, temas claro y oscuro.
 - [ ] Activar la notificación privada de vulnerabilidades de GitHub en los ajustes del repositorio.
