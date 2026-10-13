@@ -33,4 +33,23 @@
     <string name="create_key_file_remove">Remove the key file</string>
     <string name="create_recovery_warning">If you forget the master password there is no way to recover the vault. Write it down and keep it somewhere safe.</string>
     <string name="create_action">Create vault</string>
+
+    <!-- Unlock: opening one vault. -->
+    <string name="unlock_password_label">Master password</string>
+    <string name="unlock_show_password">Show the password</string>
+    <string name="unlock_key_file_label">Key file (optional)</string>
+    <string name="unlock_key_file_choose">Choose a key file</string>
+    <string name="unlock_key_file_failed">That file could not be read. Try another one.</string>
+    <string name="unlock_key_file_chosen">Key file: %1$s</string>
+    <string name="unlock_key_file_remove">Remove the key file</string>
+    <string name="unlock_action">Unlock</string>
+    <string name="unlock_back">Back</string>
+    <string name="unlock_opening">Opening… this can take a few seconds.</string>
+    <string name="unlock_reconnect">Reconnect file</string>
+    <string name="unlock_error_wrong_credentials">That password or key file does not open this vault. Check them and try again.</string>
+    <string name="unlock_error_invalid_key_file">That key file is not valid. Choose another one.</string>
+    <string name="unlock_error_not_a_vault">This file is not a KDBX vault.</string>
+    <string name="unlock_error_unsupported_format">This vault uses a format KeyNexa does not support yet.</string>
+    <string name="unlock_error_damaged">This file looks damaged or is still being synchronised. Wait a moment and try again: KeyNexa has not changed it.</string>
+    <string name="unlock_error_unreachable">This file cannot be read. It may have been moved, or the permission to read it may have been revoked.</string>
 </resources>
