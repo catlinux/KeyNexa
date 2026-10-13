@@ -2,52 +2,54 @@
 
 [English](../TEST_VAULTS.md) | [Español](TEST_VAULTS.md)
 
-Instrucciones para crear las bóvedas ficticias de `testdata/` que usan las pruebas de compatibilidad (AC1, AC2). Se generan a propósito con programas KeePass reales: KeyNexa debe abrir archivos que no ha escrito él mismo.
+Las bóvedas ficticias de `testdata/` alimentan las pruebas de compatibilidad (AC1, AC2). Las producen programas KeePass reales a propósito: KeyNexa debe abrir archivos que no ha escrito él mismo. Solo contienen datos inventados; **todas las contraseñas de aquí son públicas**.
 
-**No pongas nunca datos reales.** Usa solo los valores inventados de abajo. Todas las contraseñas de este corpus son públicas y están documentadas.
+## Cómo se generan
 
-## Herramientas
+| Script | Programa | Ejecución |
+| --- | --- | --- |
+| [`tools/testdata/New-KeePass2Vaults.ps1`](../../tools/testdata/New-KeePass2Vaults.ps1) | KeePass 2.61 (su propia KeePassLib, cargada desde PowerShell) | `powershell -File tools\testdata\New-KeePass2Vaults.ps1` |
+| [`tools/testdata/new-keepassxc-vaults.sh`](../../tools/testdata/new-keepassxc-vaults.sh) | KeePassXC 2.7.12 (`keepassxc-cli`) | `bash tools/testdata/new-keepassxc-vaults.sh` |
+| [`tools/testdata/inspect_kdbx.py`](../../tools/testdata/inspect_kdbx.py) | ninguno (lee cabeceras) | `python -I tools/testdata/inspect_kdbx.py testdata/*.kdbx` |
 
-- **KeePassXC** 2.7.x (`winget install KeePassXCTeam.KeePassXC`).
-- **KeePass 2.x** 2.61 (`winget install DominikReichl.KeePass`), para lo que KeePassXC no sabe escribir (Twofish, KDBX 3.x).
+Requisitos: KeePass 2.x (`winget install DominikReichl.KeePass`) y KeePassXC (`winget install KeePassXCTeam.KeePassXC`). El contenido aleatorio (el adjunto de 64 KiB) usa una semilla fija, así que volver a ejecutar da archivos equivalentes pero no idénticos byte a byte (KeePass aleatoriza UUID, sales y marcas de tiempo). No regeneres el corpus sin motivo: las pruebas dependen de los archivos confirmados.
 
-Guarda cada archivo en `testdata/`, en la raíz del repositorio, con el nombre exacto de la tabla. No hagas commit todavía: avisa al responsable de que los archivos están listos.
+`keepassxc-cli` 2.7.12 no puede elegir el cifrado, el KDF ni la versión del formato, ni tampoco etiquetas, campos personalizados o TOTP. Por eso KeePassXC aporta solo las bóvedas de abajo y las manuales de la última sección.
 
-## Contenido de cada bóveda «rica»
+## Contenido de las bóvedas «ricas»
 
-Constrúyelo una vez en la primera bóveda, copia después ese archivo y cambia solo los ajustes de cifrado (*Base de datos → Configuración de la base de datos → Seguridad*), de modo que todas contengan los mismos datos. Si un programa no puede guardar algo, sáltalo y anótalo en `testdata/NOTES.txt`.
-
-1. Grupos: `Root` con `Internet` (y dentro `Shopping`), `Work`, y la papelera con una entrada eliminada.
-2. Entradas (al menos cinco) con título, usuario, contraseña, URL y notas. Una con texto no ASCII (`Ñandú café 日本語 😀`) en el título, las notas y la contraseña.
-3. Un campo de texto personalizado y un segundo marcado como protegido.
-4. Dos adjuntos en una entrada: un archivo de texto pequeño y uno binario de aproximadamente 1 MiB (vale cualquier archivo aleatorio).
-5. Una entrada editada tres veces, para que tenga historial.
-6. Iconos: varios iconos estándar elegidos en entradas y grupos, y un icono personalizado.
-7. Una entrada con fecha de caducidad en el pasado y otra con etiquetas (las etiquetas requieren KeePassXC y dan KDBX 4.1).
-8. Una entrada con un secreto TOTP configurado en KeePassXC (campo `otp`). Usa un secreto inventado como `JBSWY3DPEHPK3PXP`.
-9. Datos personalizados: si el programa lo permite, deja los ajustes por defecto; KeePassXC guarda algunos automáticamente.
+Grupos `Internet` (con `Shopping`), `Work` y una papelera con una entrada eliminada; entradas con usuario, contraseña, URL y notas; una entrada con texto no ASCII (`Ñandú café 日本語 😀`); campos personalizados (uno protegido) y dos adjuntos (un archivo de texto y 64 KiB de bytes aleatorios) en la entrada `Server`; una entrada con cuatro versiones en el historial (`Changing password`, contraseña actual `v4-password`); iconos estándar, un icono personalizado y una entrada caducada (bóvedas de KeePass 2); datos personalizados públicos (bóvedas de KeePass 2 salvo la KDBX 3.1). El archivo `*-tags` añade etiquetas en entradas y grupos, lo que lo convierte en KDBX 4.1.
 
 ## Archivos
 
-Contraseña maestra de todas las bóvedas: `test-password-1`, salvo que la tabla diga otra cosa. La memoria es la de Argon2 (MiB); usa 10 iteraciones y 2 hilos.
+Contraseña maestra de todas las bóvedas: `test-password-1`, salvo que se indique. Argon2: 64 MiB, 10 iteraciones, 2 hilos. AES-KDF: 600000 rondas (KeePassXC elige las suyas).
 
-| Archivo | Programa | Cifrado | KDF | Notas |
+| Archivo | Escrito por | Formato | Cifrado | KDF |
 | --- | --- | --- | --- | --- |
-| `rich-aes-argon2d.kdbx` | KeePassXC | AES-256 | Argon2d, 64 MiB | La bóveda maestra con todo el contenido anterior |
-| `rich-aes-argon2id.kdbx` | KeePassXC | AES-256 | Argon2id, 64 MiB | |
-| `rich-chacha20-argon2id.kdbx` | KeePassXC | ChaCha20 | Argon2id, 64 MiB | |
-| `rich-chacha20-argon2d.kdbx` | KeePassXC | ChaCha20 | Argon2d, 64 MiB | |
-| `rich-aes-aeskdf.kdbx` | KeePassXC | AES-256 | AES-KDF, 600000 rondas | |
-| `rich-twofish-argon2d.kdbx` | KeePass 2.x | Twofish | Argon2d, 64 MiB | Abre la bóveda maestra en KeePass 2.x con *Archivo → Abrir*, cambia los ajustes y usa *Guardar como* |
-| `rich-twofish-aeskdf.kdbx` | KeePass 2.x | Twofish | AES-KDF, 600000 rondas | |
-| `rich-kdbx3-aes-aeskdf.kdbx` | KeePass 2.x | AES-256 | AES-KDF, 600000 rondas | Formato de archivo **KDBX 3.x** (en *Configuración de la base de datos*, pestaña General o Compatibilidad, según la versión) |
-| `rich-kdbx41-tags.kdbx` | KeePassXC | AES-256 | Argon2d, 64 MiB | Debe incluir etiquetas en entradas y grupos |
-| `keyfile-password.kdbx` + `keyfile.keyx` | KeePassXC | AES-256 | Argon2id, 64 MiB | Contraseña `test-password-1` **más** un archivo de clave generado por KeePassXC (formato XML) |
-| `keyfile-only.kdbx` + `keyfile-only.key` | KeePass 2.x | AES-256 | AES-KDF, 600000 rondas | Sin contraseña: solo archivo de clave (vale cualquier archivo aleatorio de 32 bytes) |
-| `empty.kdbx` | KeePassXC | AES-256 | Argon2id, 64 MiB | Una bóveda nueva sin entradas |
-| `argon2-1gib.kdbx` | KeePassXC | AES-256 | Argon2id, **1024 MiB**, 2 iteraciones | Basta una entrada pequeña; sirve para medir memoria y tiempo en Android |
-| `unicode-password.kdbx` | KeePassXC | AES-256 | Argon2id, 64 MiB | Contraseña maestra `pässwörd-日本語-😀`, una entrada pequeña |
+| `rich-aes-argon2d.kdbx` | KeePass 2 | 4.0 | AES-256 | Argon2d |
+| `rich-aes-argon2id.kdbx` | KeePass 2 | 4.0 | AES-256 | Argon2id |
+| `rich-chacha20-argon2d.kdbx` | KeePass 2 | 4.0 | ChaCha20 | Argon2d |
+| `rich-chacha20-argon2id.kdbx` | KeePass 2 | 4.0 | ChaCha20 | Argon2id |
+| `rich-aes-aeskdf.kdbx` | KeePass 2 | 4.0 | AES-256 | AES-KDF |
+| `rich-chacha20-aeskdf.kdbx` | KeePass 2 | 4.0 | ChaCha20 | AES-KDF |
+| `rich-kdbx31-aes-aeskdf.kdbx` | KeePass 2 | **3.1** | AES-256 | AES-KDF |
+| `rich-aes-argon2d-tags.kdbx` | KeePass 2 | **4.1** (etiquetas) | AES-256 | Argon2d |
+| `kpxc-aeskdf.kdbx` | KeePassXC | 4.1 | AES-256 | AES-KDF (unos 8,3 millones de rondas) |
+| `kpxc-empty.kdbx` | KeePassXC | 3.1 | AES-256 | AES-KDF; sin entradas |
+| `kpxc-keyfile-password.kdbx` + `kpxc-keyfile.keyx` | KeePassXC | 4.1 | AES-256 | AES-KDF; contraseña **y** archivo de clave |
+| `keyfile-only.kdbx` + `keyfile-only.key` | KeePass 2 | 4.0 | AES-256 | AES-KDF; solo archivo de clave, sin contraseña |
+| `keyfile-password-kp2.kdbx` (usa `keyfile-only.key`) | KeePass 2 | 4.0 | AES-256 | Argon2id; contraseña y archivo de clave |
+| `unicode-password.kdbx` | KeePass 2 | 4.0 | AES-256 | Argon2id; contraseña `pässwörd-日本語-😀` |
+| `argon2-1gib.kdbx` | KeePass 2 | 4.0 | AES-256 | Argon2id, **1024 MiB**, 2 iteraciones; para medir memoria y tiempo |
 
-## Después
+Cada archivo se abrió con `keepassxc-cli` como comprobación independiente y su cabecera se leyó con `inspect_kdbx.py`.
 
-El asistente comprueba la cabecera de cada archivo con un pequeño script que imprime la versión de KDBX, el cifrado y el KDF, escribe las contraseñas y el contenido esperado junto a los archivos en `testdata/NOTES.txt`, y los confirma. Si una combinación resulta no poder crearse con los programas, se quita de la tabla y se anota allí.
+## Falta crear a mano (interfaz gráfica de KeePassXC)
+
+KeePassXC es el único programa de aquí que escribe Twofish y sus propias etiquetas y campos TOTP, y `keepassxc-cli` no puede fijarlos. Quedan tres archivos. Para cada uno: abre `testdata/kpxc-aeskdf.kdbx` en KeePassXC (contraseña `test-password-1`), cambia los ajustes en *Base de datos → Configuración de la base de datos* y usa *Base de datos → Guardar base de datos como* para guardarlo en `testdata/` con el nombre indicado.
+
+| Archivo | Cambio |
+| --- | --- |
+| `kpxc-twofish-argon2d.kdbx` | Pestaña *Cifrado*: algoritmo Twofish-256, derivación de clave Argon2d (64 MiB, 10 iteraciones, 2 hilos) |
+| `kpxc-chacha20-argon2id.kdbx` | Pestaña *Cifrado*: algoritmo ChaCha20, derivación de clave Argon2id (64 MiB, 10 iteraciones, 2 hilos) |
+| `kpxc-argon2d-tags-totp.kdbx` | Argon2d como arriba con AES-256; en la entrada `Internet/Example mail` añade la etiqueta `personal` y configura un TOTP con el secreto inventado `JBSWY3DPEHPK3PXP` |

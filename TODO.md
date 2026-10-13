@@ -8,7 +8,7 @@ Detailed steps: see the [roadmap](docs/ROADMAP.md).
 
 - [ ] Gradle multi-module skeleton (`core-vault`, `core-kdbx`, `core-sync`, `platform-android`, `app-android`) reading the version from `VERSION`.
 - [ ] First signed test release: push a tag (with maintainer approval) and check the workflow, the signature and the checksum on GitHub.
-- [ ] Test-vault corpus created with KeePassXC and KeePass 2.x (fictitious data only).
+- [ ] Three test vaults to save by hand in the KeePassXC interface (Twofish, ChaCha20 + Argon2id, tags + TOTP); see `docs/TEST_VAULTS.md`.
 - [ ] Spike: kotpass round-trip fidelity and Argon2 performance on a low-end device.
 - [ ] Design system: original icon, palette, typography, spacing, components, light and dark themes.
 - [ ] Enable GitHub private vulnerability reporting in the repository settings.

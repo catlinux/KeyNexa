@@ -2,52 +2,54 @@
 
 [English](TEST_VAULTS.md) | [Español](es/TEST_VAULTS.md)
 
-Instructions for creating the fictitious vaults in `testdata/` that the compatibility tests (AC1, AC2) use. They are generated with real KeePass programs on purpose: KeyNexa must open files it did not write itself.
+The fictitious vaults in `testdata/` feed the compatibility tests (AC1, AC2). They are produced by real KeePass programs on purpose: KeyNexa must open files it did not write itself. They hold only made-up data; **every password here is public**.
 
-**Never put real data in them.** Use only the made-up values below. Every password in this corpus is public and documented.
+## How they are generated
 
-## Tools
+| Script | Program | Run with |
+| --- | --- | --- |
+| [`tools/testdata/New-KeePass2Vaults.ps1`](../tools/testdata/New-KeePass2Vaults.ps1) | KeePass 2.61 (its own KeePassLib, loaded from PowerShell) | `powershell -File tools\testdata\New-KeePass2Vaults.ps1` |
+| [`tools/testdata/new-keepassxc-vaults.sh`](../tools/testdata/new-keepassxc-vaults.sh) | KeePassXC 2.7.12 (`keepassxc-cli`) | `bash tools/testdata/new-keepassxc-vaults.sh` |
+| [`tools/testdata/inspect_kdbx.py`](../tools/testdata/inspect_kdbx.py) | none (reads headers) | `python -I tools/testdata/inspect_kdbx.py testdata/*.kdbx` |
 
-- **KeePassXC** 2.7.x (`winget install KeePassXCTeam.KeePassXC`).
-- **KeePass 2.x** 2.61 (`winget install DominikReichl.KeePass`), for what KeePassXC cannot write (Twofish, KDBX 3.x).
+Requirements: KeePass 2.x (`winget install DominikReichl.KeePass`) and KeePassXC (`winget install KeePassXCTeam.KeePassXC`). Random content (the 64 KiB attachment) is seeded, so reruns give equivalent but not byte-identical files (KeePass randomises UUIDs, salts and timestamps). Do not regenerate the corpus without a reason; tests rely on the committed files.
 
-Save every file in `testdata/` at the repository root under the exact name in the table. Do not commit anything yet: tell the maintainer the files are ready.
+`keepassxc-cli` 2.7.12 cannot choose the cipher, the KDF or the format version, and it cannot set tags, custom fields or TOTP. That is why KeePassXC contributes only the vaults below plus the manual ones in the last section.
 
-## Content to put in every "rich" vault
+## Content of the "rich" vaults
 
-Build this once in the first vault, then copy that file and only change the encryption settings (*Database → Database settings → Security*), so all vaults hold the same data. Where a program cannot store an item, skip it and note it in `testdata/NOTES.txt`.
-
-1. Groups: `Root` with `Internet` (and inside it `Shopping`), `Work`, and the recycle bin holding one deleted entry.
-2. Entries (at least five) with title, user name, password, URL and notes. One with non-ASCII text (`Ñandú café 日本語 😀`) in the title, notes and password.
-3. A custom string field, and a second one marked as protected.
-4. Two attachments on one entry: a small text file and a binary file of about 1 MiB (any random file is fine).
-5. One entry edited three times, so it has history.
-6. Icons: several standard icons chosen on entries and groups, and one custom icon.
-7. One entry with an expiry date in the past, and one with tags (tags need KeePassXC and give KDBX 4.1).
-8. One entry with a TOTP secret set up in KeePassXC (`otp` field). Use a made-up secret such as `JBSWY3DPEHPK3PXP`.
-9. Custom data: if the program allows it, leave the default settings; KeePassXC stores some automatically.
+Groups `Internet` (with `Shopping`), `Work` and a recycle bin with one deleted entry; entries with user, password, URL and notes; one entry with non-ASCII text (`Ñandú café 日本語 😀`); custom fields (one protected) and two attachments (a text file and 64 KiB of random bytes) on the entry `Server`; an entry with four versions in its history (`Changing password`, current password `v4-password`); standard icons, one custom icon and an expired entry (KeePass 2 vaults); public custom data (KeePass 2 vaults except the KDBX 3.1 one). The `*-tags` file adds entry and group tags, which makes it KDBX 4.1.
 
 ## Files
 
-Master password for every vault: `test-password-1`, unless the table says otherwise. Memory is for Argon2 (MiB); use 10 iterations and 2 threads.
+Master password of every vault: `test-password-1`, unless noted. Argon2: 64 MiB, 10 iterations, 2 threads. AES-KDF: 600000 rounds (KeePassXC chooses its own).
 
-| File | Program | Cipher | KDF | Notes |
+| File | Written by | Format | Cipher | KDF |
 | --- | --- | --- | --- | --- |
-| `rich-aes-argon2d.kdbx` | KeePassXC | AES-256 | Argon2d, 64 MiB | The master vault with the full content above |
-| `rich-aes-argon2id.kdbx` | KeePassXC | AES-256 | Argon2id, 64 MiB | |
-| `rich-chacha20-argon2id.kdbx` | KeePassXC | ChaCha20 | Argon2id, 64 MiB | |
-| `rich-chacha20-argon2d.kdbx` | KeePassXC | ChaCha20 | Argon2d, 64 MiB | |
-| `rich-aes-aeskdf.kdbx` | KeePassXC | AES-256 | AES-KDF, 600000 rounds | |
-| `rich-twofish-argon2d.kdbx` | KeePass 2.x | Twofish | Argon2d, 64 MiB | Open the master vault in KeePass 2.x with *File → Open*, change the settings and use *Save as* |
-| `rich-twofish-aeskdf.kdbx` | KeePass 2.x | Twofish | AES-KDF, 600000 rounds | |
-| `rich-kdbx3-aes-aeskdf.kdbx` | KeePass 2.x | AES-256 | AES-KDF, 600000 rounds | File format **KDBX 3.x** (in *Database settings*, General or Compatibility tab, depending on the version) |
-| `rich-kdbx41-tags.kdbx` | KeePassXC | AES-256 | Argon2d, 64 MiB | Must include entry/group tags |
-| `keyfile-password.kdbx` + `keyfile.keyx` | KeePassXC | AES-256 | Argon2id, 64 MiB | Password `test-password-1` **plus** a key file generated by KeePassXC (XML format) |
-| `keyfile-only.kdbx` + `keyfile-only.key` | KeePass 2.x | AES-256 | AES-KDF, 600000 rounds | No password: key file only (any random 32-byte file) |
-| `empty.kdbx` | KeePassXC | AES-256 | Argon2id, 64 MiB | A new vault with no entries |
-| `argon2-1gib.kdbx` | KeePassXC | AES-256 | Argon2id, **1024 MiB**, 2 iterations | One small entry is enough; used to measure memory and time on Android |
-| `unicode-password.kdbx` | KeePassXC | AES-256 | Argon2id, 64 MiB | Master password `pässwörd-日本語-😀`, one small entry |
+| `rich-aes-argon2d.kdbx` | KeePass 2 | 4.0 | AES-256 | Argon2d |
+| `rich-aes-argon2id.kdbx` | KeePass 2 | 4.0 | AES-256 | Argon2id |
+| `rich-chacha20-argon2d.kdbx` | KeePass 2 | 4.0 | ChaCha20 | Argon2d |
+| `rich-chacha20-argon2id.kdbx` | KeePass 2 | 4.0 | ChaCha20 | Argon2id |
+| `rich-aes-aeskdf.kdbx` | KeePass 2 | 4.0 | AES-256 | AES-KDF |
+| `rich-chacha20-aeskdf.kdbx` | KeePass 2 | 4.0 | ChaCha20 | AES-KDF |
+| `rich-kdbx31-aes-aeskdf.kdbx` | KeePass 2 | **3.1** | AES-256 | AES-KDF |
+| `rich-aes-argon2d-tags.kdbx` | KeePass 2 | **4.1** (tags) | AES-256 | Argon2d |
+| `kpxc-aeskdf.kdbx` | KeePassXC | 4.1 | AES-256 | AES-KDF (about 8.3 million rounds) |
+| `kpxc-empty.kdbx` | KeePassXC | 3.1 | AES-256 | AES-KDF; no entries |
+| `kpxc-keyfile-password.kdbx` + `kpxc-keyfile.keyx` | KeePassXC | 4.1 | AES-256 | AES-KDF; password **and** key file |
+| `keyfile-only.kdbx` + `keyfile-only.key` | KeePass 2 | 4.0 | AES-256 | AES-KDF; key file only, no password |
+| `keyfile-password-kp2.kdbx` (uses `keyfile-only.key`) | KeePass 2 | 4.0 | AES-256 | Argon2id; password and key file |
+| `unicode-password.kdbx` | KeePass 2 | 4.0 | AES-256 | Argon2id; password `pässwörd-日本語-😀` |
+| `argon2-1gib.kdbx` | KeePass 2 | 4.0 | AES-256 | Argon2id, **1024 MiB**, 2 iterations; for memory and time measurements |
 
-## Afterwards
+Every file was opened with `keepassxc-cli` as an independent check, and its header was read with `inspect_kdbx.py`.
 
-The assistant checks each file's header with a small script that prints the KDBX version, cipher and KDF, writes the passwords and expected contents next to the files in `testdata/NOTES.txt`, and commits them. If a combination turns out not to be creatable with the programs, it is removed from the table and noted there.
+## Still to create by hand (KeePassXC graphical interface)
+
+KeePassXC is the only program here that writes Twofish and its own tags and TOTP fields, and `keepassxc-cli` cannot set them. Three files remain. For each: open `testdata/kpxc-aeskdf.kdbx` in KeePassXC (password `test-password-1`), change the settings under *Database → Database settings*, and use *Database → Save database as* to save it in `testdata/` under the given name.
+
+| File | Change |
+| --- | --- |
+| `kpxc-twofish-argon2d.kdbx` | *Encryption* tab: algorithm Twofish-256, key derivation Argon2d (64 MiB, 10 iterations, 2 threads) |
+| `kpxc-chacha20-argon2id.kdbx` | *Encryption* tab: algorithm ChaCha20, key derivation Argon2id (64 MiB, 10 iterations, 2 threads) |
+| `kpxc-argon2d-tags-totp.kdbx` | Argon2d as above with AES-256; on the entry `Internet/Example mail` add the tag `personal` and set up a TOTP with the made-up secret `JBSWY3DPEHPK3PXP` |

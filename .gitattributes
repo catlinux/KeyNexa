@@ -2,3 +2,6 @@ gradlew text eol=lf
 *.sh text eol=lf
 *.bat text eol=crlf
 *.jar binary
+
+# Las bóvedas y claves de prueba son binarias: ninguna conversión de saltos de línea.
+testdata/** -text
