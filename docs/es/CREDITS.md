@@ -7,6 +7,7 @@
 - **Autor y titular del copyright:** CatLinux
 - **Proyecto:** KeyNexa
 - **Repositorio:** https://github.com/catlinux/KeyNexa
+- **Logotipo e icono:** CatLinux, hecho con ayuda de ChatGPT (OpenAI); original en `design/icon/`. Según la sección 3 de NOTICE, el nombre, el logotipo y el icono no se licencian a las versiones modificadas.
 - **Licencia:** GPL-3.0-only con los términos adicionales de [NOTICE](../../NOTICE)
 
 ## Material de terceros

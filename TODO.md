@@ -9,7 +9,7 @@ Detailed steps: see the [roadmap](docs/ROADMAP.md).
 - [ ] First signed test release: push a tag (with maintainer approval) and check the workflow, the signature and the checksum on GitHub.
 - [ ] Differential test of KeyNexa-written vaults against keepass-rs, and Jazzer fuzzing (ADR-0005; the mutation fuzzing and the keepassxc-cli comparison already run).
 - [ ] Measure kotpass Argon2 on a real phone once the app opens a vault; decide on argon2kt (see `docs/BENCHMARKS.md`).
-- [ ] Approve or change the visual identity proposed in `docs/DESIGN.md` (mark, palette, font, manual light/dark switch).
+- [ ] Approve the rest of the identity proposed in `docs/DESIGN.md` (palette, font, manual light/dark switch); the mark is decided.
 
 ## Medium priority (phase D — secure MVP)
 

@@ -2,7 +2,7 @@
 
 [English](DESIGN.md) | [Español](es/DESIGN.md)
 
-> **Status: proposal, pending the maintainer's approval of the visual identity** (name treatment, palette, icon). The tokens below are implemented in `app-android` so screens can be built on them; changing a value later is a one-line edit, and the contrast test keeps the palette accessible.
+> **Status:** the mark is the maintainer's own (2026-10-13). The rest is a proposal pending approval (palette details, font, manual theme switch). The tokens below are implemented in `app-android`; changing a value is a one-line edit, and the contrast test keeps the palette accessible.
 
 ## Principles
 
@@ -14,9 +14,9 @@
 
 ## Identity
 
-- **Mark:** a key whose head connects to a small triangle of three linked nodes ("nexus"). Drawn from simple circles and lines, original, no resemblance to the icons of other KeePass clients. Files: `app-android/src/main/res/drawable/ic_launcher_foreground.xml` and `ic_launcher_monochrome.xml` (themed icons, Android 13+), background colour `ic_launcher_background`.
+- **Mark:** a hexagon split navy and sky blue, with a separate small hexagon "node" at its upper right, an inner hexagonal ring, and a shield with a keyhole at the centre. Source: `design/icon/KeyNexa.jpg`, supplied by the maintainer (made with ChatGPT). It is traced to vector paths in `app-android/src/main/res/drawable/ic_launcher_foreground.xml` (two colours, `#03265D` and `#06A6F3`, on white) and `ic_launcher_monochrome.xml` (themed icons, Android 13+), and scaled so the hexagon's corners touch the 66 dp safe zone of adaptive icons.
 - **Name:** "KeyNexa", set in the interface font in a medium weight, never stylised.
-- **Colour idea:** a deep, slightly electric blue as the brand colour, a teal as a calm secondary, neutral blue-greys for surfaces. Red is reserved for errors and destructive actions.
+- **Colour idea:** the icon's navy as the brand colour and its sky blue as the secondary, darkened where needed so text stays readable; neutral blue-greys for surfaces. Red is reserved for errors and destructive actions.
 - **Fixed palette, no dynamic colour:** the app does not take its colours from the wallpaper, so it looks the same, and keeps its checked contrast, on every device.
 
 ## Colour
@@ -25,10 +25,10 @@ Tokens live in `app-android/.../ui/theme/Palette.kt` and map one to one onto Mat
 
 | Role | Light | Dark | Notes |
 | --- | --- | --- | --- |
-| `primary` / `onPrimary` | `#2F4BC0` / `#FFFFFF` (7.3:1) | `#A9B8FF` / `#0A1A63` (8.2:1) | Main actions, links, focus ring |
-| `primaryContainer` / `onPrimaryContainer` | `#DCE2FF` / `#0A1A63` (12.2:1) | `#25379A` / `#DCE2FF` (7.8:1) | Selected items, tonal buttons |
-| `secondary` / `onSecondary` | `#0F6E6E` / `#FFFFFF` (6.0:1) | `#7FD6D6` / `#003838` (7.7:1) | Secondary actions, positive states |
-| `secondaryContainer` / `onSecondaryContainer` | `#C5EFEF` / `#002E2E` (11.9:1) | `#0B5555` / `#C5EFEF` (6.9:1) | Confirmations, chips |
+| `primary` / `onPrimary` | `#0A3D91` / `#FFFFFF` (10.1:1) | `#AAC7FF` / `#002F68` (7.7:1) | Main actions, links, focus ring |
+| `primaryContainer` / `onPrimaryContainer` | `#D6E3FF` / `#001A43` (13.3:1) | `#0A3D91` / `#D6E3FF` (7.8:1) | Selected items, tonal buttons |
+| `secondary` / `onSecondary` | `#00658F` / `#FFFFFF` (6.5:1) | `#84CFFF` / `#00344C` (7.7:1) | Secondary actions, links in text |
+| `secondaryContainer` / `onSecondaryContainer` | `#C7E7FF` / `#001E2E` (13.3:1) | `#004C6C` / `#C7E7FF` (7.2:1) | Confirmations, chips |
 | `error` / `onError` | `#B3261E` / `#FFFFFF` (6.5:1) | `#F2B8B5` / `#601410` (7.7:1) | Errors, destructive actions |
 | `errorContainer` / `onErrorContainer` | `#FBDAD7` / `#410002` (13.2:1) | `#8C1D18` / `#FBDAD7` (7.0:1) | Error banners |
 | `background` / `onBackground` | `#F7F8FC` / `#171B26` (16.2:1) | `#0F121A` / `#E6E9F2` (15.4:1) | Screen background |
@@ -112,6 +112,6 @@ Light and dark follow the system setting; there is no separate in-app switch in 
 
 ## Open decisions for the maintainer
 
-1. Approve or change the mark (key and nexus) and the blue and teal palette.
+1. Approve the palette derived from the icon.
 2. Bundle Inter or Manrope, or keep the system font.
 3. Whether to offer a manual light/dark switch.

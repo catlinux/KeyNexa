@@ -1,29 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- A key whose head and teeth sit in a small network: KeyNexa's mark. Drawn inside the 66dp adaptive-icon safe zone. -->
+<!-- KeyNexa mark: hexagon, inner ring, shield and keyhole. Traced from design/icon/KeyNexa.jpg and scaled to the 66dp adaptive-icon safe zone. -->
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
     android:width="108dp"
     android:height="108dp"
     android:viewportWidth="108"
     android:viewportHeight="108">
     <path
-        android:fillColor="#00000000"
-        android:pathData="M30,60 a11,11 0 1,0 22,0 a11,11 0 1,0 -22,0"
-        android:strokeColor="#FFFFFF"
-        android:strokeWidth="6" />
+        android:fillColor="#03265D"
+        android:fillType="evenOdd"
+        android:pathData="M53.75,22.00 L54.00,22.00 L54.00,29.42 L53.69,29.73 L33.25,41.61 L33.25,65.88 L53.94,78.27 L58.21,76.00 L58.28,83.49 L54.06,86.06 L26.72,69.91 L26.72,37.72 Z M53.87,34.20 L55.19,34.76 L70.60,44.13 L70.60,63.49 L60.10,69.84 L59.91,69.78 L60.66,68.90 L67.08,61.86 L67.08,46.14 L53.94,38.16 L40.80,46.14 L40.80,61.86 L47.96,69.78 L37.40,63.62 L37.40,44.13 Z M53.87,43.12 L62.93,48.40 L62.93,58.46 L62.55,59.72 L61.29,61.73 L58.72,64.44 L54.06,68.08 L50.17,65.32 L46.96,61.98 L45.45,59.60 L44.95,57.83 L44.95,48.40 Z M53.62,50.17 L54.69,50.23 L55.45,50.61 L56.39,51.55 L56.77,52.68 L56.39,54.31 L55.38,55.32 L55.95,59.53 L51.86,59.47 L52.49,55.32 L51.36,53.94 L51.23,52.30 L51.93,50.98 L52.81,50.35 Z" />
     <path
-        android:fillColor="#00000000"
-        android:pathData="M52,60 L80,60 M70,60 L70,70 M79,60 L79,68"
-        android:strokeColor="#FFFFFF"
-        android:strokeLineCap="round"
-        android:strokeWidth="5.5" />
-    <path
-        android:fillColor="#00000000"
-        android:pathData="M44,49 L50,37 L66,32 L72,45 L50,37 M72,45 L44,49"
-        android:strokeColor="#FFFFFF"
-        android:strokeLineCap="round"
-        android:strokeLineJoin="round"
-        android:strokeWidth="2.5" />
-    <path
-        android:fillColor="#FFFFFF"
-        android:pathData="M50,33.5 a3.5,3.5 0 1,0 0.01,0 M66,28.5 a3.5,3.5 0 1,0 0.01,0 M72,41.5 a3.5,3.5 0 1,0 0.01,0" />
+        android:fillColor="#06A6F3"
+        android:fillType="evenOdd"
+        android:pathData="M54.00,22.00 L64.37,27.85 L74.87,34.20 L71.23,36.59 L71.16,39.79 L53.87,29.54 Z M77.39,35.83 L77.70,35.77 L79.84,37.03 L81.22,37.91 L81.41,38.35 L81.28,42.75 L77.58,44.95 L73.74,42.62 L73.74,38.09 Z M26.59,39.73 L26.65,67.96 Z M81.03,46.02 L81.41,46.14 L81.28,69.91 L58.34,83.42 L58.15,82.61 L58.15,75.94 L74.87,65.88 L75.00,49.79 Z M37.28,51.42 L37.34,63.43 Z" />
 </vector>

@@ -8,6 +8,7 @@
 - **Project:** KeyNexa
 - **Repository:** https://github.com/catlinux/KeyNexa
 - **License:** GPL-3.0-only with the additional terms in [NOTICE](NOTICE)
+- **Logo and icon:** CatLinux, made with the help of ChatGPT (OpenAI); source in `design/icon/`. Under NOTICE section 3 the name, logo and icon are not licensed to modified versions.
 
 ## Third-party material
 

@@ -6,6 +6,12 @@ Todos los cambios notables de este proyecto se documentan en este archivo. El fo
 
 ## [Sin publicar]
 
+## [0.4.1] - 2026-10-13
+
+### Cambiado
+
+- El icono de la app es ahora la marca del responsable (hexágono, escudo y cerradura; original en `design/icon/`), trazada a vectores y con variante monocroma para iconos temáticos. Los colores primario y secundario siguen el azul marino y el celeste del icono, manteniendo WCAG AA o mejor.
+
 ## [0.4.0] - 2026-10-13
 
 ### Añadido

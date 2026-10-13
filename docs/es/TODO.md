@@ -9,7 +9,7 @@ Pasos detallados: consulta la [hoja de ruta](ROADMAP.md).
 - [ ] Primera publicación firmada de prueba: subir una etiqueta (con aprobación del responsable) y comprobar en GitHub el workflow, la firma y la suma de verificación.
 - [ ] Prueba diferencial de las bóvedas escritas por KeyNexa contra keepass-rs, y fuzzing con Jazzer (ADR-0005; el fuzzing por mutación y la comparación con keepassxc-cli ya se ejecutan).
 - [ ] Medir Argon2 de kotpass en un móvil real cuando la app abra una bóveda; decidir sobre argon2kt (consulta `docs/es/BENCHMARKS.md`).
-- [ ] Aprobar o cambiar la identidad visual propuesta en `docs/DESIGN.md` (marca, paleta, fuente, interruptor manual claro/oscuro).
+- [ ] Aprobar el resto de la identidad propuesta en `docs/DESIGN.md` (paleta, fuente, interruptor manual claro/oscuro); la marca ya está decidida.
 
 ## Prioridad media (fase D — MVP seguro)
 

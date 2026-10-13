@@ -2,7 +2,7 @@
 
 [English](../DESIGN.md) | [Español](DESIGN.md)
 
-> **Estado: propuesta, pendiente de que el responsable apruebe la identidad visual** (tratamiento del nombre, paleta, icono). Los tokens de abajo están implementados en `app-android` para poder construir pantallas sobre ellos; cambiar un valor después es editar una línea, y la prueba de contraste mantiene la paleta accesible.
+> **Estado:** la marca es la del responsable (2026-10-13). El resto es una propuesta pendiente de aprobación (detalles de la paleta, fuente, interruptor manual de tema). Los tokens de abajo están implementados en `app-android`; cambiar un valor es editar una línea, y la prueba de contraste mantiene la paleta accesible.
 
 ## Principios
 
@@ -14,9 +14,9 @@
 
 ## Identidad
 
-- **Marca:** una llave cuya cabeza se conecta con un pequeño triángulo de tres nodos enlazados («nexo»). Dibujada con círculos y líneas sencillos, original, sin parecido con los iconos de otros clientes KeePass. Archivos: `app-android/src/main/res/drawable/ic_launcher_foreground.xml` e `ic_launcher_monochrome.xml` (iconos temáticos, Android 13+), color de fondo `ic_launcher_background`.
+- **Marca:** un hexágono partido en azul marino y azul celeste, con un pequeño hexágono «nodo» separado arriba a la derecha, un anillo hexagonal interior y un escudo con cerradura en el centro. Origen: `design/icon/KeyNexa.jpg`, aportado por el responsable (hecho con ChatGPT). Está trazado a vectores en `app-android/src/main/res/drawable/ic_launcher_foreground.xml` (dos colores, `#03265D` y `#06A6F3`, sobre blanco) e `ic_launcher_monochrome.xml` (iconos temáticos, Android 13+), y escalado para que las esquinas del hexágono toquen la zona segura de 66 dp de los iconos adaptativos.
 - **Nombre:** «KeyNexa», en la fuente de la interfaz con peso medio, nunca estilizado.
-- **Idea de color:** un azul profundo y ligeramente eléctrico como color de marca, un verde azulado como secundario tranquilo, grises azulados neutros para las superficies. El rojo se reserva para errores y acciones destructivas.
+- **Idea de color:** el azul marino del icono como color de marca y su azul celeste como secundario, oscurecido donde hace falta para que el texto siga siendo legible; grises azulados neutros para las superficies. El rojo se reserva para errores y acciones destructivas.
 - **Paleta fija, sin color dinámico:** la app no toma sus colores del fondo de pantalla, así que se ve igual, y mantiene su contraste comprobado, en todos los dispositivos.
 
 ## Color
@@ -25,10 +25,10 @@ Los tokens están en `app-android/.../ui/theme/Palette.kt` y se corresponden uno
 
 | Rol | Claro | Oscuro | Notas |
 | --- | --- | --- | --- |
-| `primary` / `onPrimary` | `#2F4BC0` / `#FFFFFF` (7,3:1) | `#A9B8FF` / `#0A1A63` (8,2:1) | Acciones principales, enlaces, anillo de foco |
-| `primaryContainer` / `onPrimaryContainer` | `#DCE2FF` / `#0A1A63` (12,2:1) | `#25379A` / `#DCE2FF` (7,8:1) | Elementos seleccionados, botones tonales |
-| `secondary` / `onSecondary` | `#0F6E6E` / `#FFFFFF` (6,0:1) | `#7FD6D6` / `#003838` (7,7:1) | Acciones secundarias, estados positivos |
-| `secondaryContainer` / `onSecondaryContainer` | `#C5EFEF` / `#002E2E` (11,9:1) | `#0B5555` / `#C5EFEF` (6,9:1) | Confirmaciones, chips |
+| `primary` / `onPrimary` | `#0A3D91` / `#FFFFFF` (10,1:1) | `#AAC7FF` / `#002F68` (7,7:1) | Acciones principales, enlaces, anillo de foco |
+| `primaryContainer` / `onPrimaryContainer` | `#D6E3FF` / `#001A43` (13,3:1) | `#0A3D91` / `#D6E3FF` (7,8:1) | Elementos seleccionados, botones tonales |
+| `secondary` / `onSecondary` | `#00658F` / `#FFFFFF` (6,5:1) | `#84CFFF` / `#00344C` (7,7:1) | Acciones secundarias, enlaces en el texto |
+| `secondaryContainer` / `onSecondaryContainer` | `#C7E7FF` / `#001E2E` (13,3:1) | `#004C6C` / `#C7E7FF` (7,2:1) | Confirmaciones, chips |
 | `error` / `onError` | `#B3261E` / `#FFFFFF` (6,5:1) | `#F2B8B5` / `#601410` (7,7:1) | Errores, acciones destructivas |
 | `errorContainer` / `onErrorContainer` | `#FBDAD7` / `#410002` (13,2:1) | `#8C1D18` / `#FBDAD7` (7,0:1) | Avisos de error |
 | `background` / `onBackground` | `#F7F8FC` / `#171B26` (16,2:1) | `#0F121A` / `#E6E9F2` (15,4:1) | Fondo de pantalla |
@@ -112,6 +112,6 @@ Claro y oscuro siguen el ajuste del sistema; en las primeras versiones no hay un
 
 ## Decisiones abiertas para el responsable
 
-1. Aprobar o cambiar la marca (llave y nexo) y la paleta azul y verde azulado.
+1. Aprobar la paleta derivada del icono.
 2. Incluir Inter o Manrope, o mantener la fuente del sistema.
 3. Si se ofrece un interruptor manual claro/oscuro.

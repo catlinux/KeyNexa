@@ -1,29 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- A key whose head and teeth sit in a small network: KeyNexa mark in one colour for themed icons. Drawn inside the 66dp adaptive-icon safe zone. -->
+<!-- KeyNexa mark in one colour for themed icons (Android 13+). Traced from design/icon/KeyNexa.jpg and scaled to the 66dp adaptive-icon safe zone. -->
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
     android:width="108dp"
     android:height="108dp"
     android:viewportWidth="108"
     android:viewportHeight="108">
     <path
-        android:fillColor="#00000000"
-        android:pathData="M30,60 a11,11 0 1,0 22,0 a11,11 0 1,0 -22,0"
-        android:strokeColor="#000000"
-        android:strokeWidth="6" />
-    <path
-        android:fillColor="#00000000"
-        android:pathData="M52,60 L80,60 M70,60 L70,70 M79,60 L79,68"
-        android:strokeColor="#000000"
-        android:strokeLineCap="round"
-        android:strokeWidth="5.5" />
-    <path
-        android:fillColor="#00000000"
-        android:pathData="M44,49 L50,37 L66,32 L72,45 L50,37 M72,45 L44,49"
-        android:strokeColor="#000000"
-        android:strokeLineCap="round"
-        android:strokeLineJoin="round"
-        android:strokeWidth="2.5" />
-    <path
         android:fillColor="#000000"
-        android:pathData="M50,33.5 a3.5,3.5 0 1,0 0.01,0 M66,28.5 a3.5,3.5 0 1,0 0.01,0 M72,41.5 a3.5,3.5 0 1,0 0.01,0" />
+        android:fillType="evenOdd"
+        android:pathData="M53.75,22.00 L54.57,22.19 L59.85,25.21 L74.87,34.20 L71.23,36.59 L71.23,39.73 L71.04,39.79 L54.82,29.98 L53.81,29.61 L33.57,41.43 L33.25,41.74 L33.25,65.88 L33.44,66.07 L54.06,78.27 L58.59,75.75 L74.87,65.88 L75.00,49.79 L80.84,46.08 L81.22,45.95 L81.41,46.14 L81.28,69.91 L54.06,86.06 L26.59,69.91 L26.72,37.59 Z M53.75,34.20 L54.19,34.13 L70.60,44.13 L70.60,63.49 L59.97,69.97 L59.78,69.91 L61.17,68.27 L67.08,61.86 L67.08,46.14 L54.19,38.28 L53.31,38.53 L40.92,46.02 L40.80,61.73 L47.96,69.78 L46.90,69.34 L37.47,63.68 L37.28,63.37 L37.40,44.13 Z M77.39,35.83 L77.70,35.77 L79.84,37.03 L81.22,37.91 L81.41,38.35 L81.28,42.75 L77.58,44.95 L73.74,42.62 L73.74,38.09 Z M53.87,43.12 L62.93,48.28 L62.93,58.59 L62.30,60.35 L60.54,62.61 L58.09,65.06 L54.06,68.08 L51.05,66.07 L47.46,62.61 L45.70,60.22 L44.95,58.21 L44.95,48.40 Z M53.25,50.29 L54.69,50.23 L55.45,50.61 L56.26,51.42 L56.64,52.30 L56.64,53.69 L56.26,54.44 L55.38,55.32 L55.95,59.53 L51.99,59.47 L52.49,55.32 L51.36,53.94 L51.23,52.43 L51.74,51.30 L52.30,50.73 Z" />
 </vector>
