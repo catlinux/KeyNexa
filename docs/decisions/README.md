@@ -1,0 +1,14 @@
+# Architecture decision records
+
+[English](README.md) | [Español](README.es.md)
+
+Each record explains one important decision: context, options, decision and consequences. A record is never rewritten once accepted; a new record supersedes it.
+
+| ADR | Title | Status |
+| --- | --- | --- |
+| [0001](0001-license.md) | License: GPL-3.0-only with section 7 attribution terms | Accepted |
+| [0002](0002-kdbx-engine.md) | KDBX engine: kotpass behind an adapter | Accepted |
+| [0003](0003-platform-and-modules.md) | Platform: Kotlin/JVM core, Compose UI, modular layout | Accepted |
+| [0004](0004-storage-sync-and-safe-save.md) | Storage, Syncthing and safe save | Accepted |
+
+Template for new records: `NNNN-short-title.md` and `NNNN-short-title.es.md`, with the sections *Context*, *Options*, *Decision*, *Consequences*.

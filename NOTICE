@@ -1,0 +1,40 @@
+KeyNexa
+Copyright (C) 2026 CatLinux <marc.catlinux@gmail.com>
+https://github.com/catlinux/KeyNexa
+
+This program is free software: you can redistribute it and/or modify it
+under the terms of the GNU General Public License as published by the Free
+Software Foundation, version 3 (GPL-3.0-only). See the LICENSE file.
+
+This program is distributed in the hope that it will be useful, but WITHOUT
+ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE.
+
+ADDITIONAL TERMS (section 7 of the GNU GPL v3)
+
+The following additional terms apply to all material in this project that is
+copyrighted by CatLinux. They do not apply to third-party material, which
+keeps its own license and notices (see CREDITS.md).
+
+1. Attribution (section 7(b)). Every copy, modified version or fork must
+   preserve the copyright notices, this NOTICE file, the "Credits and
+   license" section of the README files, and, in versions with a user
+   interface, an attribution in the "About" screen (or equivalent Appropriate
+   Legal Notices) stating that the work is based on KeyNexa by CatLinux and
+   linking to https://github.com/catlinux/KeyNexa.
+
+2. Marking of modified versions (section 7(c)). Modified versions must be
+   clearly marked as different from the original and must not be presented
+   as the official KeyNexa or misrepresent their origin.
+
+3. Trademarks (section 7(e)). This license grants no rights to use the name
+   "KeyNexa", its logo or its icon. Distributed modified versions must use a
+   different name and icon, while keeping the attribution required above.
+
+--------------------------------------------------------------------------
+
+Aviso informativo en español (el texto vinculante es el inglés de arriba):
+KeyNexa se distribuye bajo la GPL-3.0-only con términos adicionales de la
+sección 7: conservar la atribución a CatLinux y el enlace al proyecto,
+marcar las versiones modificadas y no usar el nombre ni el logotipo de
+KeyNexa en versiones distribuidas modificadas.
