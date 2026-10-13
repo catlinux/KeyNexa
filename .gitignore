@@ -17,3 +17,12 @@ agentrelay.config.json
 *.log
 .DS_Store
 Thumbs.db
+
+# Gradle / Android
+.gradle/
+build/
+local.properties
+*.jks
+*.keystore
+.idea/
+*.iml
