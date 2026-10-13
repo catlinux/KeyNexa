@@ -13,6 +13,7 @@ import app.keemobile.kotpass.database.header.DatabaseInnerHeader
 import app.keemobile.kotpass.database.header.Signature
 import app.keemobile.kotpass.errors.CryptoError
 import app.keemobile.kotpass.errors.FormatError
+import app.keemobile.kotpass.extensions.bufferStream
 import app.keemobile.kotpass.extensions.teeBufferStream
 import app.keemobile.kotpass.io.BufferedStream
 import app.keemobile.kotpass.models.XmlContext
@@ -204,4 +205,18 @@ private fun decryptRawContent(
                 Compression.GZip -> it.gzip()
             }
         }
+}
+
+/**
+ * Reads the unencrypted header only, without deriving the key, so a caller can inspect a file cheaply.
+ *
+ * @throws FormatError.UnknownFormat when the data does not start with the KDBX signature.
+ */
+fun KeePassDatabase.Companion.readHeader(inputStream: InputStream): DatabaseHeader {
+    val header = inputStream.source().bufferStream().use { DatabaseHeader.readFrom(it) }
+    val signature = header.signature
+    if (signature.base != Signature.Base || signature.secondary != Signature.Secondary) {
+        throw FormatError.UnknownFormat("File does not start with the KDBX signature.")
+    }
+    return header
 }

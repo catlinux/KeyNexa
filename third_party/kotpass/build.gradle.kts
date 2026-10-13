@@ -8,5 +8,5 @@ kotlin {
 }
 
 dependencies {
-    implementation(libs.okio)
+    api(libs.okio)
 }
