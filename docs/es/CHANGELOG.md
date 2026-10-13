@@ -6,6 +6,16 @@ Todos los cambios notables de este proyecto se documentan en este archivo. El fo
 
 ## [Sin publicar]
 
+## [0.2.4] - 2026-10-13
+
+### Añadido
+
+- `docs/TEST_VAULTS.md`: lista de bóvedas ficticias que hay que crear con KeePassXC y KeePass 2.x para el corpus de compatibilidad.
+
+### Corregido
+
+- El paso de licencias del SDK de Android en los workflows de CI y de publicación ya no falla con SIGPIPE bajo `pipefail`.
+
 ## [0.2.3] - 2026-10-13
 
 ### Añadido

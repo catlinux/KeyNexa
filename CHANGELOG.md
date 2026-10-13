@@ -6,6 +6,16 @@ All notable changes to this project are documented in this file. The format is b
 
 ## [Unreleased]
 
+## [0.2.4] - 2026-10-13
+
+### Added
+
+- `docs/TEST_VAULTS.md`: list of fictitious vaults to create with KeePassXC and KeePass 2.x for the compatibility corpus.
+
+### Fixed
+
+- The Android SDK licence step in the CI and release workflows no longer fails with SIGPIPE under `pipefail`.
+
 ## [0.2.3] - 2026-10-13
 
 ### Added
