@@ -92,6 +92,30 @@ bash scripts/check-docs-i18n.sh
 - Las bóvedas de prueba viven en `testdata/` y contienen solo entradas ficticias; sus contraseñas se documentan junto a ellas.
 - No subas nunca bóvedas reales, contraseñas reales, archivos de clave que uses ni claves de firma.
 
-## Publicaciones (previstas)
+## Publicaciones
 
-- Flujo de publicación: se activa con una etiqueta `vX.Y.Z`; compila y firma el APK con secretos almacenados en los ajustes del repositorio, y lo publica con sumas de verificación como una release de GitHub (preliminar antes de la 1.0).
+[`release.yml`](../../.github/workflows/release.yml) se ejecuta al subir una etiqueta `vX.Y.Z`. Se detiene si la etiqueta no es `v` + el contenido de `VERSION` o si `CHANGELOG.md` no tiene entrada para esa versión. Después ejecuta `./gradlew build check :app-android:assembleRelease`, alinea el APK con `zipalign`, lo firma con `apksigner` usando los secretos del repositorio, verifica la firma y publica una release de GitHub con el APK, su archivo SHA-256 y la entrada del registro de cambios como notas. Las versiones `0.y.z` se publican como preliminares. El keystore se decodifica en el directorio temporal del ejecutor y se elimina al final del trabajo; las contraseñas llegan a `apksigner` por variables de entorno, nunca en la línea de órdenes.
+
+Para publicar: sube `VERSION` y `CHANGELOG.md`, haz commit y crea y sube la etiqueta (`git tag vX.Y.Z && git push origin vX.Y.Z`). Tanto el push como la etiqueta necesitan la aprobación del responsable.
+
+### Clave de firma y secretos
+
+Crea el keystore una sola vez, fuera del repositorio, y guarda una copia de seguridad: si se pierde, las instalaciones existentes ya no podrán actualizarse.
+
+```sh
+keytool -genkeypair -v -keystore keynexa-release.jks -alias keynexa   -keyalg RSA -keysize 4096 -validity 10000
+base64 -w0 keynexa-release.jks > keynexa-release.jks.base64
+```
+
+Después añade cuatro secretos en *Settings → Secrets and variables → Actions* del repositorio de GitHub:
+
+| Secreto | Contenido |
+| --- | --- |
+| `KEYSTORE_BASE64` | El contenido de `keynexa-release.jks.base64` |
+| `KEYSTORE_PASSWORD` | La contraseña del keystore |
+| `KEY_ALIAS` | El alias de la clave (`keynexa`) |
+| `KEY_PASSWORD` | La contraseña de la clave |
+
+Borra después el archivo `.base64`. No subas nunca al repositorio el keystore, las contraseñas ni el texto en base64.
+
+Verifica un APK descargado con `apksigner verify --print-certs keynexa-X.Y.Z.apk` y `sha256sum -c keynexa-X.Y.Z.apk.sha256`.

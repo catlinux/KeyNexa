@@ -1,0 +1,100 @@
+name: Release
+
+on:
+  push:
+    tags: ['v[0-9]+.[0-9]+.[0-9]+']
+
+permissions:
+  contents: write
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    env:
+      TAG: ${{ github.ref_name }}
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Check that the tag matches VERSION
+        run: |
+          version="$(tr -d '[:space:]' < VERSION)"
+          if [ "$TAG" != "v$version" ]; then
+            echo "Tag $TAG does not match VERSION $version" >&2
+            exit 1
+          fi
+          echo "VERSION=$version" >> "$GITHUB_ENV"
+
+      - uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: gradle/actions/setup-gradle@v6
+      - name: Android SDK packages
+        run: |
+          yes | sdkmanager --licenses > /dev/null
+          sdkmanager 'platforms;android-36' 'build-tools;36.0.0'
+
+      - name: Build and check
+        run: ./gradlew build check :app-android:assembleRelease
+
+      - name: Sign the APK
+        env:
+          KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+        run: |
+          set -euo pipefail
+          tools="$ANDROID_HOME/build-tools/36.0.0"
+          keystore="$RUNNER_TEMP/release.jks"
+          out="$RUNNER_TEMP/dist"
+          mkdir -p "$out"
+          printf '%s' "$KEYSTORE_BASE64" | base64 --decode > "$keystore"
+          "$tools/zipalign" -p -f 4 \
+            app-android/build/outputs/apk/release/app-android-release-unsigned.apk \
+            "$RUNNER_TEMP/aligned.apk"
+          "$tools/apksigner" sign \
+            --ks "$keystore" \
+            --ks-key-alias "$KEY_ALIAS" \
+            --ks-pass env:KEYSTORE_PASSWORD \
+            --key-pass env:KEY_PASSWORD \
+            --out "$out/keynexa-$VERSION.apk" \
+            "$RUNNER_TEMP/aligned.apk"
+          "$tools/apksigner" verify --verbose "$out/keynexa-$VERSION.apk"
+          (cd "$out" && sha256sum "keynexa-$VERSION.apk" > "keynexa-$VERSION.apk.sha256")
+          rm -f "$keystore"
+
+      - name: Extract release notes from CHANGELOG.md
+        run: |
+          awk -v v="$VERSION" '
+            index($0, "## [" v "]") == 1 { found = 1; next }
+            found && index($0, "## [") == 1 { exit }
+            found { print }
+          ' CHANGELOG.md > "$RUNNER_TEMP/notes.md"
+          if [ ! -s "$RUNNER_TEMP/notes.md" ]; then
+            echo "CHANGELOG.md has no entry for $VERSION" >&2
+            exit 1
+          fi
+
+      - name: Publish the release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          flags=()
+          # Before 1.0 every release is a pre-release.
+          case "$VERSION" in 0.*) flags+=(--prerelease) ;; esac
+          gh release create "$TAG" \
+            "$RUNNER_TEMP/dist/keynexa-$VERSION.apk" \
+            "$RUNNER_TEMP/dist/keynexa-$VERSION.apk.sha256" \
+            --title "KeyNexa $VERSION" \
+            --notes-file "$RUNNER_TEMP/notes.md" \
+            --verify-tag \
+            "${flags[@]}"
+
+      - name: Remove the keystore
+        if: always()
+        run: rm -f "$RUNNER_TEMP/release.jks"

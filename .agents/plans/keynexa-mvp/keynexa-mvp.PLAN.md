@@ -24,7 +24,7 @@ Fases A y B terminadas en 0.1.0 (documentación en `docs/`). Este plan lo ejecut
   - `.github/workflows/ci.yml`: build, test, check, informe de licencias (p. ej. plugin de licencias de Gradle) y escaneo de vulnerabilidades (p. ej. OSV-Scanner) en push y PR.
   - `scripts/check-docs-i18n.sh`: falla si un `.md` de documentación en inglés no tiene su traducción en `docs/es/` con la misma ruta (o viceversa; `README.md` ↔ `README.es.md`), o si a alguno le falta la línea de idiomas. Se ejecuta en CI. Excluye `AGENTS.md`, `CLAUDE.md`, `.agents/`.
   - Terminado: workflow válido (`actionlint` si está disponible) y script probado en local.
-- [ ] **C4. Workflow de publicación** · 0.2.3 (parche) · Sonnet (medio), sin delegar (maneja secretos).
+- [x] **C4. Workflow de publicación** · 0.2.3 (hecho, falta compilación firmada de prueba en GitHub) (parche) · Sonnet (medio), sin delegar (maneja secretos).
   - `.github/workflows/release.yml`: en tag `vX.Y.Z`, comprueba que coincide con `VERSION`, compila el APK release, lo firma con secretos del repo (`KEYSTORE_BASE64`, `KEYSTORE_PASSWORD`, `KEY_ALIAS`, `KEY_PASSWORD`), publica release (pre-release antes de 1.0) con SHA-256.
   - Documenta en `docs/DEVELOPMENT.md` (y `docs/es/DEVELOPMENT.md`) cómo crear el keystore y los secretos. Keystore y los cuatro secretos ya creados por el usuario el 2026-10-13 (keystore fuera del repo, alias `keynexa`); falta solo el workflow y una compilación firmada de prueba.
 - [ ] **C5. Motor KDBX y corpus de pruebas** · 0.3.0 (menor) · Sonnet (alto), sin delegar la interfaz; AgentRelay para tests repetitivos.

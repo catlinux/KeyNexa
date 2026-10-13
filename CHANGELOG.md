@@ -6,6 +6,13 @@ All notable changes to this project are documented in this file. The format is b
 
 ## [Unreleased]
 
+## [0.2.3] - 2026-10-13
+
+### Added
+
+- Release workflow (`.github/workflows/release.yml`): on a `vX.Y.Z` tag it checks the tag against `VERSION` and `CHANGELOG.md`, builds the release APK, signs it with the repository secrets, and publishes a GitHub release (pre-release before 1.0) with the APK and its SHA-256 file.
+- Documentation of how to create the signing keystore and the four repository secrets.
+
 ## [0.2.2] - 2026-10-13
 
 ### Added

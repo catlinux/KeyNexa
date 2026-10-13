@@ -6,6 +6,13 @@ Todos los cambios notables de este proyecto se documentan en este archivo. El fo
 
 ## [Sin publicar]
 
+## [0.2.3] - 2026-10-13
+
+### Añadido
+
+- Flujo de publicación (`.github/workflows/release.yml`): con una etiqueta `vX.Y.Z` comprueba la etiqueta contra `VERSION` y `CHANGELOG.md`, compila el APK release, lo firma con los secretos del repositorio y publica una release de GitHub (preliminar antes de la 1.0) con el APK y su archivo SHA-256.
+- Documentación de cómo crear el keystore de firma y los cuatro secretos del repositorio.
+
 ## [0.2.2] - 2026-10-13
 
 ### Añadido

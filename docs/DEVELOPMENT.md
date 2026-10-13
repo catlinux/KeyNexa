@@ -92,6 +92,30 @@ bash scripts/check-docs-i18n.sh
 - Test vaults live in `testdata/` and contain only fictitious entries; their passwords are documented next to them.
 - Never commit real vaults, real passwords, key files you use, or signing keys.
 
-## Releases (planned)
+## Releases
 
-- Release workflow: triggered by a `vX.Y.Z` tag; builds and signs the APK with secrets stored in the repository settings, publishes it with checksums as a GitHub release (pre-release before 1.0).
+[`release.yml`](../.github/workflows/release.yml) runs when a tag `vX.Y.Z` is pushed. It stops unless the tag equals `v` + the contents of `VERSION` and `CHANGELOG.md` has an entry for that version. Then it runs `./gradlew build check :app-android:assembleRelease`, aligns the APK with `zipalign`, signs it with `apksigner` using the repository secrets, verifies the signature, and publishes a GitHub release with the APK, its SHA-256 file and the changelog entry as notes. Versions `0.y.z` are published as pre-releases. The keystore is decoded to the runner's temporary directory and removed at the end of the job; the passwords reach `apksigner` through environment variables, never on the command line.
+
+To publish: bump `VERSION` and `CHANGELOG.md`, commit, then create and push the tag (`git tag vX.Y.Z && git push origin vX.Y.Z`). Both the push and the tag need the maintainer's approval.
+
+### Signing key and secrets
+
+Create the keystore once, outside the repository, and keep a backup: if it is lost, installed copies can no longer be updated.
+
+```sh
+keytool -genkeypair -v -keystore keynexa-release.jks -alias keynexa   -keyalg RSA -keysize 4096 -validity 10000
+base64 -w0 keynexa-release.jks > keynexa-release.jks.base64
+```
+
+Then add four secrets under *Settings → Secrets and variables → Actions* of the GitHub repository:
+
+| Secret | Content |
+| --- | --- |
+| `KEYSTORE_BASE64` | The contents of `keynexa-release.jks.base64` |
+| `KEYSTORE_PASSWORD` | The keystore password |
+| `KEY_ALIAS` | The key alias (`keynexa`) |
+| `KEY_PASSWORD` | The key password |
+
+Delete the `.base64` file afterwards. Never commit the keystore, the passwords or the base64 text.
+
+Verify a downloaded APK with `apksigner verify --print-certs keynexa-X.Y.Z.apk` and `sha256sum -c keynexa-X.Y.Z.apk.sha256`.
