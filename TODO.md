@@ -6,11 +6,9 @@ Detailed steps: see the [roadmap](docs/ROADMAP.md).
 
 ## High priority (phase C — project foundation)
 
-- [ ] Gradle multi-module skeleton (`core-vault`, `core-kdbx`, `core-sync`, `platform-android`, `app-android`) reading the version from `VERSION`.
 - [ ] First signed test release: push a tag (with maintainer approval) and check the workflow, the signature and the checksum on GitHub.
-- [ ] Spike: kotpass round-trip fidelity and Argon2 performance on a low-end device.
+- [ ] Measure kotpass Argon2 on a real phone once the app opens a vault; decide on argon2kt (see `docs/BENCHMARKS.md`).
 - [ ] Design system: original icon, palette, typography, spacing, components, light and dark themes.
-- [ ] Enable GitHub private vulnerability reporting in the repository settings.
 
 ## Medium priority (phase D — secure MVP)
 

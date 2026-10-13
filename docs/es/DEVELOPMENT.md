@@ -30,9 +30,20 @@ Ejecuta estos comandos desde la raíz del repositorio. En Windows usa `gradlew.b
 | `./gradlew build` | Compila todos los módulos, ejecuta las pruebas unitarias y el lint |
 | `./gradlew check` | Ejecuta las comprobaciones de calidad (pruebas unitarias, Android Lint, detekt, ktlint) |
 | `./gradlew test` | Ejecuta las pruebas unitarias de todos los módulos |
+| `./gradlew :core-kdbx:test` | Ejecuta las pruebas del motor KDBX contra el corpus de bóvedas de `testdata/` |
 | `./gradlew :app-android:assembleDebug` | Genera el APK de depuración en `app-android/build/outputs/apk/debug/app-android-debug.apk` |
 
 Estos comandos se verificaron en local, en Windows, con JDK 17 (Temurin) y el SDK de Android 36.
+
+### Pruebas del motor KDBX
+
+`core-kdbx` prueba el motor contra las bóvedas ficticias de `testdata/` ([Bóvedas de prueba](TEST_VAULTS.md)):
+
+- Corpus (AC1): cada bóveda se abre con sus credenciales, informa del formato esperado y contiene lo esperado.
+- Errores: contraseña incorrecta, problemas con el archivo de clave, datos ajenos y archivos truncados o alterados. Un archivo KDBX 4 dañado se informa como dañado, nunca como contraseña incorrecta.
+- Ida y vuelta (AC2): decodificar, codificar y decodificar de nuevo da la misma bóveda para todas las bóvedas y para cada combinación de cifrado y derivación de clave.
+- Diferencial (AC2): la salida del motor se exporta a XML con `keepassxc-cli` y se compara con la exportación del original. Se omite sin error si KeePassXC no está instalado.
+- Tiempos de Argon2, desactivados por defecto: `KEYNEXA_PERF=1 ./gradlew :core-kdbx:test --tests '*Argon2Performance*' -i` (consulta [Benchmarks](BENCHMARKS.md)). `KEYNEXA_TEST_HEAP` fija el heap de las pruebas (por defecto 2g).
 
 ## Estructura de módulos
 

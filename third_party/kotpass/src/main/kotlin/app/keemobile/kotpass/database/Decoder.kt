@@ -174,7 +174,7 @@ private fun decryptRawContent(
             )
             val streamStartBytes = header.streamStartBytes
             if (!streamStartBytes.rangeEquals(0, contentBlocks, 0, streamStartBytes.size)) {
-                FormatError.InvalidContent("Database content could be corrupted or cannot be decrypted.")
+                throw CryptoError.InvalidKey("Wrong key used for decryption.")
             }
 
             ContentBlocks.readContentBlocksVer3x(
@@ -188,11 +188,18 @@ private fun decryptRawContent(
             val encryptedContent = ContentBlocks
                 .readContentBlocksVer4x(source, masterSeed, transformedKey)
 
-            cipher.decrypt(
-                key = KeyTransform.masterKey(masterSeed, transformedKey),
-                iv = header.encryptionIV.toByteArray(),
-                data = encryptedContent
-            )
+            try {
+                cipher.decrypt(
+                    key = KeyTransform.masterKey(masterSeed, transformedKey),
+                    iv = header.encryptionIV.toByteArray(),
+                    data = encryptedContent
+                )
+            } catch (error: CryptoError.InvalidKey) {
+                // The header HMAC already proved the key, so a failure here means damaged content.
+                throw FormatError.InvalidContent("Database content is damaged or incomplete.").apply {
+                    initCause(error)
+                }
+            }
         }
     }
 

@@ -30,9 +30,20 @@ Run these from the repository root. On Windows use `gradlew.bat` instead of `./g
 | `./gradlew build` | Compiles every module, runs the unit tests and lint |
 | `./gradlew check` | Runs the quality checks (unit tests, Android Lint, detekt, ktlint) |
 | `./gradlew test` | Runs the unit tests of every module |
+| `./gradlew :core-kdbx:test` | Runs the KDBX engine tests against the vault corpus in `testdata/` |
 | `./gradlew :app-android:assembleDebug` | Builds the debug APK at `app-android/build/outputs/apk/debug/app-android-debug.apk` |
 
 These commands were verified locally on Windows with JDK 17 (Temurin) and Android SDK 36.
+
+### KDBX engine tests
+
+`core-kdbx` tests the engine against the fictitious vaults of `testdata/` ([Test vaults](TEST_VAULTS.md)):
+
+- Corpus (AC1): every vault opens with its credentials, reports the expected format and holds the expected content.
+- Errors: wrong password, key file problems, foreign data, and truncated or altered files. A damaged KDBX 4 file is reported as damaged, never as a wrong password.
+- Round trip (AC2): decode, encode and decode again give the same vault for every vault and for every cipher and key derivation combination.
+- Differential (AC2): the engine's output is exported to XML with `keepassxc-cli` and compared with the export of the original. It is skipped without error when KeePassXC is not installed.
+- Argon2 timing, off by default: `KEYNEXA_PERF=1 ./gradlew :core-kdbx:test --tests '*Argon2Performance*' -i` (see [Benchmarks](BENCHMARKS.md)). `KEYNEXA_TEST_HEAP` sets the test heap (default 2g).
 
 ## Module layout
 

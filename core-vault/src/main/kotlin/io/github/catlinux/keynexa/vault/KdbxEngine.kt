@@ -25,9 +25,11 @@ interface KdbxEngine {
      *
      * @throws VaultException.NotAVault if the data does not start like a KDBX file.
      * @throws VaultException.UnsupportedFormat if the version, cipher or key derivation is not supported.
-     * @throws VaultException.WrongCredentials if the credentials do not open the file.
+     * @throws VaultException.WrongCredentials if the credentials do not open the file. In KDBX 3.x a damaged or cut
+     *   file is indistinguishable from a wrong key, so a caller whose credentials already opened this vault must
+     *   treat the failure as possible damage.
      * @throws VaultException.Corrupted if the file is damaged or cut short (for example a partial synchronisation
-     *   transfer). The caller must not overwrite such a file.
+     *   transfer). The caller must not overwrite such a file. In KDBX 4 this is reliable: the key is proven first.
      */
     fun decode(
         data: ByteArray,

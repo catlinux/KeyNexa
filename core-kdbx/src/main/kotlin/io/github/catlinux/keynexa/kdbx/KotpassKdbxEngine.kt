@@ -23,10 +23,19 @@ import io.github.catlinux.keynexa.vault.VaultFormat
 import okio.ByteString
 import okio.ByteString.Companion.toByteString
 import java.io.ByteArrayOutputStream
+import java.nio.ByteBuffer
+import java.nio.ByteOrder
 import java.security.SecureRandom
 
 private const val SEED_SIZE = 32
+private const val SIGNATURE_SIZE = 8
+private const val MESSAGE_NOT_A_VAULT = "The data is not a KDBX file."
 private const val MESSAGE_UNSUPPORTED_FORMAT = "This vault format cannot be written."
+
+// First two little-endian words of every KDBX file.
+private const val SIGNATURE_BASE = 0x9AA2D903L
+private const val SIGNATURE_SECONDARY = 0xB54BFB67L
+private const val SECONDARY_OFFSET = 4
 
 /**
  * KDBX engine backed by the vendored kotpass. It is stateless, so one instance can be shared: every call works on
@@ -37,6 +46,7 @@ private const val MESSAGE_UNSUPPORTED_FORMAT = "This vault format cannot be writ
 class KotpassKdbxEngine : KdbxEngine {
     override fun inspect(data: ByteArray): VaultFormat =
         translateFailures {
+            requireKdbxSignature(data)
             data.inputStream().use { stream -> KeePassDatabase.readHeader(stream).toVaultFormat() }
         }
 
@@ -45,6 +55,7 @@ class KotpassKdbxEngine : KdbxEngine {
         credentials: Credentials,
     ): Vault =
         translateFailures {
+            requireKdbxSignature(data)
             val kotpassCredentials = credentials.toKotpass()
 
             data.inputStream().use { stream ->
@@ -69,6 +80,16 @@ class KotpassKdbxEngine : KdbxEngine {
     private companion object {
         val CIPHERS: List<CipherProvider> = BaseCiphers.entries + TwofishCipher
     }
+}
+
+// Checked before the library parses anything, so empty or foreign data is "not a vault" and not "damaged".
+private fun requireKdbxSignature(data: ByteArray) {
+    val buffer = ByteBuffer.wrap(data).order(ByteOrder.LITTLE_ENDIAN)
+    val matches =
+        data.size >= SIGNATURE_SIZE &&
+            Integer.toUnsignedLong(buffer.getInt(0)) == SIGNATURE_BASE &&
+            Integer.toUnsignedLong(buffer.getInt(SECONDARY_OFFSET)) == SIGNATURE_SECONDARY
+    if (!matches) throw VaultException.NotAVault(MESSAGE_NOT_A_VAULT)
 }
 
 // Every failure that escapes the library means the vault could not be read or written, so it is mapped here.

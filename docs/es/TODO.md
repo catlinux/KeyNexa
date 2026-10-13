@@ -6,11 +6,9 @@ Pasos detallados: consulta la [hoja de ruta](ROADMAP.md).
 
 ## Prioridad alta (fase C — base del proyecto)
 
-- [ ] Esqueleto multimódulo de Gradle (`core-vault`, `core-kdbx`, `core-sync`, `platform-android`, `app-android`) que lea la versión de `VERSION`.
 - [ ] Primera publicación firmada de prueba: subir una etiqueta (con aprobación del responsable) y comprobar en GitHub el workflow, la firma y la suma de verificación.
-- [ ] Prueba de concepto: fidelidad de ida y vuelta de kotpass y rendimiento de Argon2 en un dispositivo de gama baja.
+- [ ] Medir Argon2 de kotpass en un móvil real cuando la app abra una bóveda; decidir sobre argon2kt (consulta `docs/es/BENCHMARKS.md`).
 - [ ] Sistema de diseño: icono original, paleta, tipografía, espaciado, componentes, temas claro y oscuro.
-- [ ] Activar la notificación privada de vulnerabilidades de GitHub en los ajustes del repositorio.
 
 ## Prioridad media (fase D — MVP seguro)
 
