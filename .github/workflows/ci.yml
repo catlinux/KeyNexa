@@ -1,0 +1,77 @@
+name: CI
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: gradle/actions/setup-gradle@v6
+      - name: Android SDK packages
+        run: |
+          yes | sdkmanager --licenses > /dev/null
+          sdkmanager 'platforms;android-36' 'build-tools;36.0.0'
+      - name: Build and check
+        run: ./gradlew build check
+      - name: Upload reports
+        if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: build-reports
+          path: |
+            **/build/reports
+            **/build/test-results
+          if-no-files-found: ignore
+
+  docs-i18n:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - name: Check bilingual documentation
+        run: bash scripts/check-docs-i18n.sh
+
+  licenses:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: '17'
+      - name: Android SDK packages
+        run: |
+          yes | sdkmanager --licenses > /dev/null
+          sdkmanager 'platforms;android-36' 'build-tools;36.0.0'
+      - name: License report
+        run: ./gradlew generateLicenseReport
+      - uses: actions/upload-artifact@v7
+        with:
+          name: dependency-license
+          path: build/reports/dependency-license
+
+  vulnerabilities:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      # Pinned to the exact release: the scanner action warns that its behaviour can change between minor versions.
+      - name: Scan dependencies for known vulnerabilities
+        uses: google/osv-scanner-action/osv-scanner-action@v2.7.0
+        with:
+          scan-args: |-
+            --recursive
+            ./
