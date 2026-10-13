@@ -11,6 +11,13 @@ android {
         minSdk = 26
     }
 
+    lint {
+        lintConfig = rootProject.file("config/lint/lint.xml")
+        warningsAsErrors = true
+        abortOnError = true
+        checkAllWarnings = false
+    }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17

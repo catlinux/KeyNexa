@@ -1,0 +1,5 @@
+# Compose composables are PascalCase by convention.
+naming:
+  FunctionNaming:
+    ignoreAnnotated:
+      - Composable

@@ -5,10 +5,11 @@ plugins {
 }
 
 val appVersionName: String = rootProject.file("VERSION").readText().trim()
-val appVersionCode: Int = appVersionName
-    .split(".")
-    .map(String::toInt)
-    .let { (major, minor, patch) -> major * 10000 + minor * 100 + patch }
+val appVersionCode: Int =
+    appVersionName
+        .split(".")
+        .map(String::toInt)
+        .let { (major, minor, patch) -> major * 10000 + minor * 100 + patch }
 
 android {
     namespace = "io.github.catlinux.keynexa.app"
@@ -24,6 +25,13 @@ android {
 
     buildFeatures {
         compose = true
+    }
+
+    lint {
+        lintConfig = rootProject.file("config/lint/lint.xml")
+        warningsAsErrors = true
+        abortOnError = true
+        checkAllWarnings = false
     }
 
     compileOptions {
