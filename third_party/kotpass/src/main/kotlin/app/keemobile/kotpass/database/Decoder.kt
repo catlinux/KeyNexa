@@ -25,6 +25,7 @@ import okio.Source
 import okio.buffer
 import okio.gzip
 import okio.source
+import java.io.EOFException
 import java.io.InputStream
 
 fun KeePassDatabase.Companion.decode(
@@ -220,10 +221,18 @@ private fun decryptRawContent(
  * @throws FormatError.UnknownFormat when the data does not start with the KDBX signature.
  */
 fun KeePassDatabase.Companion.readHeader(inputStream: InputStream): DatabaseHeader {
-    val header = inputStream.source().bufferStream().use { DatabaseHeader.readFrom(it) }
-    val signature = header.signature
+    val source = inputStream.source().buffer()
+    // The signature is checked before anything else is parsed, so data that is not KDBX is rejected as such.
+    val signature = try {
+        source.require(SIGNATURE_SIZE)
+        source.peek().let { Signature(it.readByteString(4), it.readByteString(4)) }
+    } catch (error: EOFException) {
+        throw FormatError.UnknownFormat("File does not start with the KDBX signature.")
+    }
     if (signature.base != Signature.Base || signature.secondary != Signature.Secondary) {
         throw FormatError.UnknownFormat("File does not start with the KDBX signature.")
     }
-    return header
+    return source.bufferStream().use { DatabaseHeader.readFrom(it) }
 }
+
+private const val SIGNATURE_SIZE = 8L

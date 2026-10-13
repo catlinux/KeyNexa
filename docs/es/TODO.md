@@ -19,7 +19,7 @@ Pasos detallados: consulta la [hoja de ruta](ROADMAP.md).
 - [ ] Apertura de bóvedas, bloqueo y bloqueo automático.
 - [ ] Ofrecer en la interfaz las copias `*.sync-conflict-*` para fusionar.
 - [ ] Cuando un guardado falle por haber perdido el permiso, ofrecer reconectar la carpeta sin cerrar la bóveda; ofrecer restaurar la copia privada sin guardar tras un reinicio.
-- [ ] Detectar cambios externos al volver la app al primer plano (sin esperar al siguiente guardado).
+- [ ] Detectar cambios externos en pocos segundos mientras la app está a la vista y al volver al primer plano (comparar la huella del archivo; recargar sola cuando no haya ediciones sin guardar), sin esperar al siguiente guardado.
 - [ ] Edición de entradas y grupos; búsqueda.
 - [ ] Desbloqueo biométrico.
 
@@ -33,7 +33,11 @@ Pasos detallados: consulta la [hoja de ruta](ROADMAP.md).
 ## En evaluación (decisión pendiente)
 
 - Sincronización propia que no dependa de Syncthing (por ejemplo, un cliente de escritorio que haga de enlace), dejando Syncthing como opción.
-- Integrar del todo en el proyecto las primitivas criptográficas (ya están vendorizadas con kotpass) en lugar de depender de binarios externos.
+- Integrar del todo en el proyecto las primitivas criptográficas (ya están vendorizadas con kotpass) en lugar de depender de binarios externos. No se prevé escribir algoritmos de cifrado nuevos: solo implementaciones auditadas, con versión fija y probadas contra los vectores oficiales.
+- Syncthing integrado en KeyNexa: llevar Syncthing (MPL-2.0, compatible con GPL-3.0) dentro de la app y manejarlo por su API REST, de modo que un solo programa lo haga todo con una única configuración, y usar sus eventos de cambio para refrescar la bóveda en segundos. Necesita un ADR (tamaño del APK, servicio en segundo plano, política de actualizaciones).
+- Configurar un dispositivo nuevo con una frase semilla: un paquete cifrado con los ajustes y el emparejamiento de la sincronización (nunca la contraseña maestra), protegido con una clave derivada de la frase, guardado en la carpeta sincronizada o mostrado como código QR. Necesita un ADR.
+- Copias de seguridad en la nube: primero a cualquier carpeta que el sistema exponga (Drive, Dropbox, Mega y otros a través de sus propias apps, sin SDK extra), después WebDAV y almacenamiento compatible con S3; sin SDK propietarios con telemetría. Necesita un ADR.
+- Mantener kotpass fuerte: ofrecerse a ayudar a mantenerlo en el proyecto original, añadir fuzzing con Jazzer y la comparación con keepass-rs (ya listados arriba) y reevaluar las alternativas cada año (ADR-0005).
 
 ## Descartado
 

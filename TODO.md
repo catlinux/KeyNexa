@@ -19,7 +19,7 @@ Detailed steps: see the [roadmap](docs/ROADMAP.md).
 - [ ] Vault opening, locking and auto-lock.
 - [ ] Offer `*.sync-conflict-*` copies for merge in the UI.
 - [ ] When a save fails because the grant was lost, offer to reconnect the folder without closing the vault; offer to restore the private unsaved copy after a restart.
-- [ ] Detect external changes when the app returns to the foreground (without waiting for the next save).
+- [ ] Detect external changes within a few seconds while the app is visible and when it returns to the foreground (compare the file fingerprint; reload by itself when there are no unsaved edits), without waiting for the next save.
 - [ ] Entry and group editing; search.
 - [ ] Biometric unlock.
 
@@ -33,7 +33,11 @@ Detailed steps: see the [roadmap](docs/ROADMAP.md).
 ## Under evaluation (decision pending)
 
 - Built-in synchronisation that does not depend on Syncthing (for example a desktop client acting as the relay), keeping Syncthing as an option.
-- Bringing the cryptographic primitives fully inside the project (they are already vendored with kotpass) instead of depending on external binaries.
+- Bringing the cryptographic primitives fully inside the project (they are already vendored with kotpass) instead of depending on external binaries. Writing new cipher algorithms is not planned: only audited implementations, pinned and tested against official vectors.
+- Syncthing built into KeyNexa: ship Syncthing (MPL-2.0, compatible with GPL-3.0) inside the app and manage it through its REST API, so one program does everything with a single setup, and use its change events to refresh the vault within seconds. Needs an ADR (APK size, background service, update policy).
+- Setting up a new device from a seed phrase: an encrypted bundle with the settings and the synchronisation pairing (never the master password), protected with a key derived from the phrase, kept in the synchronised folder or shown as a QR code. Needs an ADR.
+- Backup copies to the cloud: first to any folder the system exposes (Drive, Dropbox, Mega and others through their own apps, with no extra SDK), later WebDAV and S3-compatible storage; no proprietary SDKs with telemetry. Needs an ADR.
+- Keep kotpass strong: offer to help maintain it upstream, add Jazzer fuzzing and the keepass-rs comparison (already listed above), and re-evaluate alternatives yearly (ADR-0005).
 
 ## Discarded
 

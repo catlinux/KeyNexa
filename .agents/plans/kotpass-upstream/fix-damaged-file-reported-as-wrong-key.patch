@@ -1,16 +1,18 @@
-From f7325c38891231e333703205b4a86f4a3bd7b351 Mon Sep 17 00:00:00 2001
+From 34e33aa1e8b0e1b12a8e68d67714235d5e2064a6 Mon Sep 17 00:00:00 2001
 From: catlinux <marc.catlinux@gmail.com>
-Date: Wed, 14 Oct 2026 01:09:52 +0200
-Subject: [PATCH] Report damaged content as a format error, not a wrong key
+Date: Wed, 14 Oct 2026 01:50:50 +0200
+Subject: [PATCH] Fix two error cases when decoding
 
-In KDBX 4 the header HMAC already proves the key, so a failure while decrypting the content means the file is
-damaged or incomplete. It is now reported as FormatError.InvalidContent instead of CryptoError.InvalidKey, and an
-invalid AES-KDF seed as FormatError.InvalidHeader. In KDBX 3.x the stream-start-bytes check built an exception
-but never threw it; it now throws CryptoError.InvalidKey.
+An AES-KDF seed of an invalid length was reported as CryptoError.InvalidKey (wrong key); it is a malformed
+header and is now FormatError.InvalidHeader. In KDBX 3.x the stream-start-bytes check built an exception
+(FormatError.InvalidContent) but never threw it, so a file whose first block did not decrypt as expected was
+decoded anyway; it now throws CryptoError.InvalidKey as that check intends.
 ---
- .../kotpass/cryptography/format/AesKdf.kt     |  3 ++-
- .../app/keemobile/kotpass/database/Decoder.kt | 19 +++++++++++++------
- 2 files changed, 15 insertions(+), 7 deletions(-)
+ .../kotpass/cryptography/format/AesKdf.kt     |  3 +-
+ .../app/keemobile/kotpass/database/Decoder.kt |  2 +-
+ .../kotpass/database/DecodeErrorsSpec.kt      | 32 +++++++++++++++++++
+ 3 files changed, 35 insertions(+), 2 deletions(-)
+ create mode 100644 kotpass/src/test/kotlin/app/keemobile/kotpass/database/DecodeErrorsSpec.kt
 
 diff --git a/kotpass/src/main/kotlin/app/keemobile/kotpass/cryptography/format/AesKdf.kt b/kotpass/src/main/kotlin/app/keemobile/kotpass/cryptography/format/AesKdf.kt
 index a26bfcb..584545f 100644
@@ -34,7 +36,7 @@ index a26bfcb..584545f 100644
          } finally {
              bytes.clear()
 diff --git a/kotpass/src/main/kotlin/app/keemobile/kotpass/database/Decoder.kt b/kotpass/src/main/kotlin/app/keemobile/kotpass/database/Decoder.kt
-index 719d57c..5008c2e 100644
+index 719d57c..50c3e3a 100644
 --- a/kotpass/src/main/kotlin/app/keemobile/kotpass/database/Decoder.kt
 +++ b/kotpass/src/main/kotlin/app/keemobile/kotpass/database/Decoder.kt
 @@ -173,7 +173,7 @@ private fun decryptRawContent(
@@ -46,30 +48,44 @@ index 719d57c..5008c2e 100644
              }
  
              ContentBlocks.readContentBlocksVer3x(
-@@ -187,11 +187,18 @@ private fun decryptRawContent(
-             val encryptedContent = ContentBlocks
-                 .readContentBlocksVer4x(source, masterSeed, transformedKey)
- 
--            cipher.decrypt(
--                key = KeyTransform.masterKey(masterSeed, transformedKey),
--                iv = header.encryptionIV.toByteArray(),
--                data = encryptedContent
--            )
-+            try {
-+                cipher.decrypt(
-+                    key = KeyTransform.masterKey(masterSeed, transformedKey),
-+                    iv = header.encryptionIV.toByteArray(),
-+                    data = encryptedContent
+diff --git a/kotpass/src/test/kotlin/app/keemobile/kotpass/database/DecodeErrorsSpec.kt b/kotpass/src/test/kotlin/app/keemobile/kotpass/database/DecodeErrorsSpec.kt
+new file mode 100644
+index 0000000..a05b404
+--- /dev/null
++++ b/kotpass/src/test/kotlin/app/keemobile/kotpass/database/DecodeErrorsSpec.kt
+@@ -0,0 +1,32 @@
++package app.keemobile.kotpass.database
++
++import app.keemobile.kotpass.cryptography.EncryptedValue
++import app.keemobile.kotpass.cryptography.format.AesKdf
++import app.keemobile.kotpass.errors.CryptoError
++import app.keemobile.kotpass.errors.FormatError
++import io.kotest.assertions.throwables.shouldThrow
++import io.kotest.core.spec.style.DescribeSpec
++
++class DecodeErrorsSpec : DescribeSpec({
++
++    describe("Decoding errors") {
++        it("Rejects a KDBX 3.x file opened with a wrong key") {
++            shouldThrow<CryptoError.InvalidKey> {
++                KeePassDatabase.decode(
++                    inputStream = ClassLoader.getSystemResourceAsStream("ver3_aes.kdbx")!!,
++                    credentials = Credentials.from(EncryptedValue.fromString("not the key"))
 +                )
-+            } catch (error: CryptoError.InvalidKey) {
-+                // The header HMAC already proved the key, so a failure here means damaged content.
-+                throw FormatError.InvalidContent("Database content is damaged or incomplete.").apply {
-+                    initCause(error)
-+                }
 +            }
-         }
-     }
- 
++        }
++
++        it("Reports a KDF seed of the wrong length as a header error, not as a wrong key") {
++            shouldThrow<FormatError.InvalidHeader> {
++                AesKdf.transformKey(
++                    key = ByteArray(32),
++                    seed = ByteArray(5),
++                    rounds = 1UL
++                )
++            }
++        }
++    }
++})
 -- 
 2.54.0.windows.1
 

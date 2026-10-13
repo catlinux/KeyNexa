@@ -1,14 +1,16 @@
-From 8e9e23e14dd01fb7b4a6bf30a864e6967fd10cdf Mon Sep 17 00:00:00 2001
+From fab21e543e5515c5741d68b68638619c7d822723 Mon Sep 17 00:00:00 2001
 From: catlinux <marc.catlinux@gmail.com>
-Date: Wed, 14 Oct 2026 01:09:53 +0200
+Date: Wed, 14 Oct 2026 01:50:51 +0200
 Subject: [PATCH] Do not write a LastModificationTime that was absent
 
 Custom icons and custom data items of a KDBX 4.1 file got a LastModificationTime of year 1 when the original had
 none. The element is now omitted when the value is null.
 ---
- .../src/main/kotlin/app/keemobile/kotpass/xml/CustomData.kt | 6 ++++--
- .../main/kotlin/app/keemobile/kotpass/xml/CustomIcons.kt    | 6 ++++--
- 2 files changed, 8 insertions(+), 4 deletions(-)
+ .../app/keemobile/kotpass/xml/CustomData.kt   |  6 ++-
+ .../app/keemobile/kotpass/xml/CustomIcons.kt  |  6 ++-
+ .../kotpass/xml/AbsentModificationTimeSpec.kt | 38 +++++++++++++++++++
+ 3 files changed, 46 insertions(+), 4 deletions(-)
+ create mode 100644 kotpass/src/test/kotlin/app/keemobile/kotpass/xml/AbsentModificationTimeSpec.kt
 
 diff --git a/kotpass/src/main/kotlin/app/keemobile/kotpass/xml/CustomData.kt b/kotpass/src/main/kotlin/app/keemobile/kotpass/xml/CustomData.kt
 index 1c534ba..410f28a 100644
@@ -44,6 +46,50 @@ index b2244d6..4f2f483 100644
                      }
                  }
              }
+diff --git a/kotpass/src/test/kotlin/app/keemobile/kotpass/xml/AbsentModificationTimeSpec.kt b/kotpass/src/test/kotlin/app/keemobile/kotpass/xml/AbsentModificationTimeSpec.kt
+new file mode 100644
+index 0000000..2a59e7d
+--- /dev/null
++++ b/kotpass/src/test/kotlin/app/keemobile/kotpass/xml/AbsentModificationTimeSpec.kt
+@@ -0,0 +1,38 @@
++package app.keemobile.kotpass.xml
++
++import app.keemobile.kotpass.common.renderTestXmlString
++import app.keemobile.kotpass.models.CustomDataValue
++import app.keemobile.kotpass.models.CustomIcon
++import app.keemobile.kotpass.models.FormatVersion
++import app.keemobile.kotpass.models.XmlContext
++import io.kotest.core.spec.style.DescribeSpec
++import io.kotest.matchers.string.shouldContain
++import io.kotest.matchers.string.shouldNotContain
++import java.util.UUID
++
++class AbsentModificationTimeSpec : DescribeSpec({
++
++    val context = XmlContext.Encode.Plain(
++        version = FormatVersion(4, 1),
++        binaries = linkedMapOf(),
++        memoryProtectionFlags = emptySet()
++    )
++
++    describe("A modification time that was absent") {
++        it("Is not written for a custom icon") {
++            val icons = mapOf(UUID.randomUUID() to CustomIcon("icon".toByteArray(), null, null))
++
++            val xml = renderTestXmlString(CustomIcons.marshal(context, icons))
++
++            xml shouldContain "<Data>"
++            xml shouldNotContain "LastModificationTime"
++        }
++
++        it("Is not written for a custom data item") {
++            val xml = renderTestXmlString(CustomData.marshal(context, mapOf("k" to CustomDataValue("v"))))
++
++            xml shouldContain "<Key>k</Key>"
++            xml shouldNotContain "LastModificationTime"
++        }
++    }
++})
 -- 
 2.54.0.windows.1
 

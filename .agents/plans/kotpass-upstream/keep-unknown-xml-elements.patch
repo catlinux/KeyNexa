@@ -1,6 +1,6 @@
-From ab9bbfc2cabcf6e99bbbf4b9f2cfc706ead9709b Mon Sep 17 00:00:00 2001
+From 6b5ceab5d2dadf520839767aa0935dff8c45e894 Mon Sep 17 00:00:00 2001
 From: catlinux <marc.catlinux@gmail.com>
-Date: Wed, 14 Oct 2026 01:09:52 +0200
+Date: Wed, 14 Oct 2026 01:50:51 +0200
 Subject: [PATCH] Keep XML elements that are not recognised so a rewrite does
  not drop them
 
@@ -18,7 +18,9 @@ unknownElements field (unknownRootElements for the children of Root) and written
  .../kotlin/app/keemobile/kotpass/xml/Entry.kt |  3 ++
  .../kotlin/app/keemobile/kotpass/xml/Group.kt |  3 ++
  .../kotlin/app/keemobile/kotpass/xml/Meta.kt  | 37 ++++++++++++++++++-
- 10 files changed, 80 insertions(+), 10 deletions(-)
+ .../kotpass/database/UnknownElementsSpec.kt   | 35 ++++++++++++++++++
+ 11 files changed, 115 insertions(+), 10 deletions(-)
+ create mode 100644 kotpass/src/test/kotlin/app/keemobile/kotpass/database/UnknownElementsSpec.kt
 
 diff --git a/kotpass/src/main/kotlin/app/keemobile/kotpass/builders/Entry.kt b/kotpass/src/main/kotlin/app/keemobile/kotpass/builders/Entry.kt
 index 88d6166..f44fe6b 100644
@@ -320,6 +322,47 @@ index b0e9b33..dcb4b4f 100644
      }
  }
  
+diff --git a/kotpass/src/test/kotlin/app/keemobile/kotpass/database/UnknownElementsSpec.kt b/kotpass/src/test/kotlin/app/keemobile/kotpass/database/UnknownElementsSpec.kt
+new file mode 100644
+index 0000000..2eb76ce
+--- /dev/null
++++ b/kotpass/src/test/kotlin/app/keemobile/kotpass/database/UnknownElementsSpec.kt
+@@ -0,0 +1,35 @@
++package app.keemobile.kotpass.database
++
++import app.keemobile.kotpass.cryptography.EncryptedValue
++import io.kotest.core.spec.style.DescribeSpec
++import io.kotest.matchers.string.shouldContain
++
++class UnknownElementsSpec : DescribeSpec({
++
++    describe("Unknown XML elements") {
++        it("Survive a decode and encode round trip") {
++            val credentials = Credentials.from(EncryptedValue.fromString("1"))
++            val original = KeePassDatabase.decode(
++                inputStream = ClassLoader.getSystemResourceAsStream("ver4_with_binaries.kdbx")!!,
++                credentials = credentials
++            )
++            val withUnknown = original
++                .encodeAsXml()
++                .replaceFirst("<Meta>", "<Meta><FutureMeta>m</FutureMeta>")
++                .replaceFirst("<Root>", "<Root><FutureRoot>r</FutureRoot>")
++                .replaceFirst("<Group>", "<Group><FutureGroup>g</FutureGroup>")
++                .replaceFirst("<Entry>", "<Entry><FutureEntry>e</FutureEntry>")
++            val reread = KeePassDatabase.decodeFromXml(
++                inputStream = withUnknown.byteInputStream(),
++                credentials = credentials
++            )
++
++            val written = reread.encodeAsXml()
++
++            written shouldContain "<FutureMeta>m</FutureMeta>"
++            written shouldContain "<FutureRoot>r</FutureRoot>"
++            written shouldContain "<FutureGroup>g</FutureGroup>"
++            written shouldContain "<FutureEntry>e</FutureEntry>"
++        }
++    }
++})
 -- 
 2.54.0.windows.1
 

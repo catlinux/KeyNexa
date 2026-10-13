@@ -6,6 +6,13 @@ All notable changes to this project are documented in this file. The format is b
 
 ## [Unreleased]
 
+## [0.7.5] - 2026-10-14
+
+### Changed
+
+- Vendored kotpass: `readHeader` now checks the KDBX signature before parsing the header, so data that is not KDBX is rejected as such.
+- TODO: ideas under evaluation recorded (Syncthing built in, device setup from a seed phrase, cloud backup copies, keeping kotpass strong). Four kotpass fixes, with tests, are ready as branches of the project's fork for the upstream maintainer.
+
 ## [0.7.4] - 2026-10-14
 
 ### Changed

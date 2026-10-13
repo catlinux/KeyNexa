@@ -6,6 +6,13 @@ Todos los cambios notables de este proyecto se documentan en este archivo. El fo
 
 ## [Sin publicar]
 
+## [0.7.5] - 2026-10-14
+
+### Cambiado
+
+- kotpass vendorizado: `readHeader` comprueba ahora la firma KDBX antes de analizar la cabecera, de modo que lo que no es KDBX se rechaza como tal.
+- TODO: se registran las ideas en evaluación (Syncthing integrado, configurar un dispositivo nuevo con una frase semilla, copias de seguridad en la nube, mantener kotpass fuerte). Hay cuatro correcciones de kotpass, con pruebas, preparadas como ramas del fork del proyecto para el mantenedor original.
+
 ## [0.7.4] - 2026-10-14
 
 ### Cambiado

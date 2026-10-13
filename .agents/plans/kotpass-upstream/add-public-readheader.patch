@@ -1,17 +1,19 @@
-From 097bfa85479c4aa44ec60e2bdd0c3e02db8c5433 Mon Sep 17 00:00:00 2001
+From f27674133577be12c03e3b57a2f1ff7668e779bb Mon Sep 17 00:00:00 2001
 From: catlinux <marc.catlinux@gmail.com>
-Date: Wed, 14 Oct 2026 01:09:52 +0200
+Date: Wed, 14 Oct 2026 01:50:50 +0200
 Subject: [PATCH] Add KeePassDatabase.readHeader to inspect a file without
  deriving the key
 
 Reuses the internal DatabaseHeader.readFrom and checks the KDBX signature, so a caller can show a file's
 format or tell a complete file from a partial transfer cheaply.
 ---
- .../app/keemobile/kotpass/database/Decoder.kt     | 15 +++++++++++++++
- 1 file changed, 15 insertions(+)
+ .../app/keemobile/kotpass/database/Decoder.kt | 24 ++++++++++++++
+ .../kotpass/database/ReadHeaderSpec.kt        | 31 +++++++++++++++++++
+ 2 files changed, 55 insertions(+)
+ create mode 100644 kotpass/src/test/kotlin/app/keemobile/kotpass/database/ReadHeaderSpec.kt
 
 diff --git a/kotpass/src/main/kotlin/app/keemobile/kotpass/database/Decoder.kt b/kotpass/src/main/kotlin/app/keemobile/kotpass/database/Decoder.kt
-index 719d57c..8d29614 100644
+index 719d57c..0bb22aa 100644
 --- a/kotpass/src/main/kotlin/app/keemobile/kotpass/database/Decoder.kt
 +++ b/kotpass/src/main/kotlin/app/keemobile/kotpass/database/Decoder.kt
 @@ -13,6 +13,7 @@ import app.keemobile.kotpass.database.header.DatabaseInnerHeader
@@ -22,7 +24,15 @@ index 719d57c..8d29614 100644
  import app.keemobile.kotpass.extensions.teeBufferStream
  import app.keemobile.kotpass.io.BufferedStream
  import app.keemobile.kotpass.models.XmlContext
-@@ -205,3 +206,17 @@ private fun decryptRawContent(
+@@ -24,6 +25,7 @@ import okio.Source
+ import okio.buffer
+ import okio.gzip
+ import okio.source
++import java.io.EOFException
+ import java.io.InputStream
+ 
+ fun KeePassDatabase.Companion.decode(
+@@ -205,3 +207,25 @@ private fun decryptRawContent(
              }
          }
  }
@@ -33,13 +43,58 @@ index 719d57c..8d29614 100644
 + * @throws FormatError.UnknownFormat when the data does not start with the KDBX signature.
 + */
 +fun KeePassDatabase.Companion.readHeader(inputStream: InputStream): DatabaseHeader {
-+    val header = inputStream.source().bufferStream().use { DatabaseHeader.readFrom(it) }
-+    val signature = header.signature
++    val source = inputStream.source().buffer()
++    // The signature is checked before anything else is parsed, so data that is not KDBX is rejected as such.
++    val signature = try {
++        source.require(SIGNATURE_SIZE)
++        source.peek().let { Signature(it.readByteString(4), it.readByteString(4)) }
++    } catch (error: EOFException) {
++        throw FormatError.UnknownFormat("File does not start with the KDBX signature.")
++    }
 +    if (signature.base != Signature.Base || signature.secondary != Signature.Secondary) {
 +        throw FormatError.UnknownFormat("File does not start with the KDBX signature.")
 +    }
-+    return header
++    return source.bufferStream().use { DatabaseHeader.readFrom(it) }
 +}
++
++private const val SIGNATURE_SIZE = 8L
+diff --git a/kotpass/src/test/kotlin/app/keemobile/kotpass/database/ReadHeaderSpec.kt b/kotpass/src/test/kotlin/app/keemobile/kotpass/database/ReadHeaderSpec.kt
+new file mode 100644
+index 0000000..0ed2032
+--- /dev/null
++++ b/kotpass/src/test/kotlin/app/keemobile/kotpass/database/ReadHeaderSpec.kt
+@@ -0,0 +1,31 @@
++package app.keemobile.kotpass.database
++
++import app.keemobile.kotpass.database.header.DatabaseHeader
++import app.keemobile.kotpass.errors.FormatError
++import io.kotest.assertions.throwables.shouldThrow
++import io.kotest.core.spec.style.DescribeSpec
++import io.kotest.matchers.types.shouldBeInstanceOf
++import java.io.ByteArrayInputStream
++
++class ReadHeaderSpec : DescribeSpec({
++
++    describe("KeePassDatabase.readHeader") {
++        it("Reads the header of a KDBX 3.x file without the key") {
++            ClassLoader.getSystemResourceAsStream("ver3_aes.kdbx")!!.use {
++                KeePassDatabase.readHeader(it).shouldBeInstanceOf<DatabaseHeader.Ver3x>()
++            }
++        }
++
++        it("Reads the header of a KDBX 4.x file without the key") {
++            ClassLoader.getSystemResourceAsStream("ver4_argon2.kdbx")!!.use {
++                KeePassDatabase.readHeader(it).shouldBeInstanceOf<DatabaseHeader.Ver4x>()
++            }
++        }
++
++        it("Rejects data that does not start with the KDBX signature") {
++            shouldThrow<FormatError.UnknownFormat> {
++                KeePassDatabase.readHeader(ByteArrayInputStream(ByteArray(64) { it.toByte() }))
++            }
++        }
++    }
++})
 -- 
 2.54.0.windows.1
 
