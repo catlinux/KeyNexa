@@ -35,6 +35,7 @@ KeyNexa's own code is licensed under **GPL-3.0-only** with the additional terms 
 - Tests: about 62 test files, crypto test vectors and 7 sample `.kdbx` files; no fuzzing found.
 - **Gaps to verify in phase C/D:** unknown XML elements are probably not preserved on save (no field in the model; not tested); performance of pure-Kotlin Argon2 on low-end phones with KeePassXC-sized memory parameters.
 - Verified commit: `4e0bd6b6b13e59d48ebe0bd9c06de3f918de6945`.
+- Imported into the repository in phase C5 as the Gradle module `:kotpass` (`third_party/kotpass/`): main sources only, upstream license files intact. See its [README](../third_party/kotpass/README.md) for local changes.
 
 ## Android and desktop dependencies
 

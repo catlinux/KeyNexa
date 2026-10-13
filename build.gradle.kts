@@ -46,19 +46,22 @@ subprojects {
         dependsOn(resolveLockedConfigurations)
     }
 
-    pluginManager.apply("io.gitlab.arturbosch.detekt")
-    pluginManager.apply("org.jlleitschuh.gradle.ktlint")
+    // third_party/ keeps upstream code untouched apart from the changes listed in its README.
+    if (path != ":kotpass") {
+        pluginManager.apply("io.gitlab.arturbosch.detekt")
+        pluginManager.apply("org.jlleitschuh.gradle.ktlint")
 
-    configure<KtlintExtension> {
-        android.set(true)
-    }
+        configure<KtlintExtension> {
+            android.set(true)
+        }
 
-    configure<DetektExtension> {
-        buildUponDefaultConfig = true
-        config.setFrom(rootProject.file("config/detekt/detekt.yml"))
-    }
+        configure<DetektExtension> {
+            buildUponDefaultConfig = true
+            config.setFrom(rootProject.file("config/detekt/detekt.yml"))
+        }
 
-    tasks.withType<Detekt>().configureEach {
-        setSource(files("src/main/kotlin", "src/test/kotlin", "src/main/java", "src/test/java"))
+        tasks.withType<Detekt>().configureEach {
+            setSource(files("src/main/kotlin", "src/test/kotlin", "src/main/java", "src/test/java"))
+        }
     }
 }

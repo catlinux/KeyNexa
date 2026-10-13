@@ -35,6 +35,7 @@ El código propio de KeyNexa se distribuye bajo **GPL-3.0-only** con los términ
 - Pruebas: unos 62 archivos de prueba, vectores de prueba criptográficos y 7 archivos `.kdbx` de ejemplo; no se encontró fuzzing.
 - **Puntos por verificar en la fase C/D:** los elementos XML desconocidos probablemente no se conservan al guardar (no hay campo en el modelo; sin probar); rendimiento de Argon2 en Kotlin puro en teléfonos de gama baja con parámetros de memoria del tamaño de los de KeePassXC.
 - Commit verificado: `4e0bd6b6b13e59d48ebe0bd9c06de3f918de6945`.
+- Importado al repositorio en la fase C5 como módulo Gradle `:kotpass` (`third_party/kotpass/`): solo las fuentes principales, con los archivos de licencia originales intactos. Consulta su [README](../../third_party/kotpass/README.es.md) para los cambios locales.
 
 ## Dependencias de Android y escritorio
 

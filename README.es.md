@@ -63,5 +63,10 @@ El esqueleto del proyecto usa los componentes siguientes. Cada uno conserva su p
 | Biblioteca estándar de Kotlin y plugins de Gradle | JetBrains | Apache-2.0 | https://kotlinlang.org/ |
 | AndroidX Core, AndroidX Activity, Jetpack Compose (IU y Material 3) | The Android Open Source Project | Apache-2.0 | https://developer.android.com/jetpack |
 | JUnit 4 (solo pruebas unitarias; no se distribuye) | Equipo de JUnit | EPL-1.0 | https://junit.org/junit4/ |
+| kotpass 0.13.0, incluido en `third_party/kotpass` (motor KDBX) | Denis T. | MIT | https://github.com/keemobile/kotpass |
+| Okio 3.15.0 | Square, Inc. | Apache-2.0 | https://github.com/square/okio |
+| Kotlin XML Builder, incluido en kotpass | Jason Blackwell y colaboradores | Apache-2.0 | https://github.com/redundent/kotlin-xml-builder |
+| Apache Commons Lang (partes), incluido en kotpass | The Apache Software Foundation | Apache-2.0 | https://github.com/apache/commons-lang |
+| Motores criptográficos portados de Bouncy Castle (Argon2, Blake2b, ChaCha, Salsa20, Twofish, PKCS7), incluidos en kotpass | The Legion of the Bouncy Castle Inc. | Bouncy Castle License (texto MIT) | https://github.com/bcgit/bc-java |
 
 Créditos completos: [CREDITS](docs/es/CREDITS.md).
