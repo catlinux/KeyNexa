@@ -15,7 +15,7 @@ Pasos detallados: consulta la [hoja de ruta](ROADMAP.md).
 
 - [ ] Apertura de bóvedas, bloqueo y bloqueo automático.
 - [ ] Implementaciones Android de los puertos de almacenamiento: `StoragePort` con SAF (`"rwt"` con truncado explícito como alternativa), `BackupStore` y `SaveJournal` en `noBackupFilesDir`.
-- [ ] Fusión (D2) y gestión de archivos de conflicto.
+- [ ] Gestión de archivos de conflicto (`*.sync-conflict-*` ofrecidos para fusionar) y una prueba de AC4 en un dispositivo real con Syncthing.
 - [ ] Edición de entradas y grupos; búsqueda.
 - [ ] Desbloqueo biométrico.
 

@@ -44,7 +44,7 @@ Fases A y B terminadas en 0.1.0 (documentación en `docs/`). Este plan lo ejecut
 
 - [x] **D1. Guardado seguro y detección de cambios** (`core-sync`) · 0.5.0 (hecho; faltan las implementaciones Android de los puertos, ver TODO) · **Opus (alto)**: diseño delicado.
   - Huella SHA-256, canal de guardado seguro de `docs/ARCHITECTURE.md`, copias privadas rotativas, lectura tolerante con reintentos. `StoragePort` falso con inyección de fallos (corte a mitad, `w` sin truncar, archivo cambiado durante la escritura). Terminado: AC3 y AC5 con tests.
-- [ ] **D2. Fusión** (`core-sync`) · 0.6.0 · **Opus (alto)**.
+- [x] **D2. Fusión** (`core-sync`) · 0.6.0 (hecho; falta la prueba de AC4 en dispositivo real) · **Opus (alto)**.
   - Semántica de ARCHITECTURE «Merge» (UUID, tiempos, historial, DeletedObjects, ubicación), implementada desde la documentación, sin copiar código GPL. Tests exhaustivos. Terminado: AC4 (parte unitaria).
 - [ ] **D3. Almacenamiento Android** (`platform-android`) · 0.6.1 · Sonnet (alto).
   - `StoragePort` con SAF: concesión de carpeta (preferida) y de archivo, `"rwt"` con alternativa `"rw"`+truncado, flujo «reconectar archivo», detección de `*.sync-conflict-*`.

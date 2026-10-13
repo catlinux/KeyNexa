@@ -81,6 +81,8 @@ La fusión de KeyNexa sigue la semántica de la sincronización de KeePass 2.x, 
 - Los movimientos siguen la hora de cambio de ubicación más reciente.
 - Las eliminaciones solo se aplican a través de la lista de objetos eliminados de la bóveda, y solo si el objeto no se modificó después de la eliminación.
 
+Implementado en `core-sync` como `KeePassMerger`, con estas reglas adicionales: los empates favorecen la versión del usuario en memoria; un objeto cuyo nuevo grupo padre no sobrevivió va al antepasado superviviente más cercano; los movimientos cruzados que formarían un bucle cuelgan el grupo de la raíz, de modo que no se pierde nada; la metadata se fusiona campo a campo por sus propios tiempos `*Changed`; los adjuntos que nadie referencia se descartan; un registro de borrado del grupo raíz se ignora. El código de edición debe actualizar la fecha de última modificación de un objeto (y la de cambio de ubicación al moverlo), porque la fusión decide por esas fechas. Probado con escenarios y con pares de bóvedas generados al azar comprobados contra invariantes (no se pierde nada, sin bucles, sin adjuntos colgantes, mismo resultado sea cual sea el lado «nuestro»).
+
 Si los archivos no se pueden fusionar (por ejemplo, por tener contraseñas maestras distintas), KeyNexa no escribe: conserva ambas versiones y consulta al usuario.
 
 ## Estrategia multiplataforma

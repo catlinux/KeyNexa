@@ -6,6 +6,13 @@ Todos los cambios notables de este proyecto se documentan en este archivo. El fo
 
 ## [Sin publicar]
 
+## [0.6.0] - 2026-10-13
+
+### Añadido
+
+- Fusión (fase D2): `KeePassMerger` en `core-sync`, una fusión a dos bandas con la semántica de sincronización de KeePass escrita a partir de su comportamiento documentado: emparejamiento por UUID, gana la modificación más reciente y la otra versión queda en el historial, historiales unidos y recortados a los límites de la bóveda, ubicación según el cambio de ubicación más reciente, borrados solo mediante registros de objetos eliminados y nunca sobre cambios posteriores, metadata campo a campo. Los bucles por movimientos cruzados y los registros de borrado del grupo raíz se resuelven sin perder datos. `SafeSaver` la usa para incorporar los cambios externos antes de escribir.
+- 44 pruebas de fusión: escenarios, invariantes comprobadas sobre pares de bóvedas generados al azar (no se pierde ningún objeto, sin bucles, sin adjuntos colgantes, resultados simétricos) y guardados completos a través de `SafeSaver` (AC4, parte unitaria).
+
 ## [0.5.0] - 2026-10-13
 
 ### Añadido

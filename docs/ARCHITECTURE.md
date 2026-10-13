@@ -81,6 +81,8 @@ KeyNexa's merge follows the semantics of KeePass 2.x synchronization as also imp
 - Moves follow the newer location-changed time.
 - Deletions apply only through the vault's deleted-objects list, and only if the object was not modified after the deletion.
 
+Implemented in `core-sync` as `KeePassMerger`, with these further rules: ties favour the user's in-memory version; an object whose new parent group did not survive goes to the nearest surviving ancestor; crossed moves that would form a loop attach the group to the root, so nothing is dropped; metadata merges field by field by its own `*Changed` times; attachments nobody references are dropped; a deletion record for the root group is ignored. The editing code must update an object's last-modification time (and location-changed time when moving it), because the merge decides by those times. Tested with scenarios and with randomly generated pairs of vaults checked against invariants (nothing lost, no loops, no dangling attachments, same result whichever side is "ours").
+
 If the files cannot be merged (for example, different master keys), KeyNexa does not write: it keeps both versions and asks the user.
 
 ## Multiplatform strategy

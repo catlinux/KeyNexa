@@ -18,6 +18,7 @@ import java.time.Instant
  * - Deletions apply only through the deleted-objects lists, and only to objects not modified after the deletion;
  *   a deleted object modified later comes back and its deletion record is dropped.
  * - Metadata merges field by field using the vault's `*Changed` times.
+ * - Attachments nobody references (not even a history version) are dropped, as KeePass does.
  *
  * Ties favour `ours` (the user's in-memory version). The result keeps `ours`' file format. Editing code must set an
  * object's last-modification time (and location-changed time on moves), or its changes may lose a tie.
@@ -30,7 +31,8 @@ class KeePassMerger : VaultMerger {
         if (ours.root.id != theirs.root.id) return MergeResult.Unmergeable("The two files are different vaults.")
 
         val sides = Sides(TreeIndex(ours.root), TreeIndex(theirs.root))
-        val deletions = mergeDeletions(ours.deletedObjects, theirs.deletedObjects)
+        // The root group can never be deleted; a record saying otherwise comes from a damaged file and is dropped.
+        val deletions = mergeDeletions(ours.deletedObjects, theirs.deletedObjects).filter { it.id != ours.root.id }
         val alive = AliveSet(sides, deletions)
         val meta = mergeMeta(ours.meta, theirs.meta)
         val history = HistoryLimits(meta.historyMaxItems, meta.historyMaxSizeBytes)
