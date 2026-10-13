@@ -3,3 +3,23 @@ naming:
   FunctionNaming:
     ignoreAnnotated:
       - Composable
+
+style:
+  # Guard clauses ("return early when the file cannot be read") are the clearest way to write the failure paths of
+  # the save pipeline; the default limit of 2 would force nesting instead.
+  ReturnCount:
+    max: 4
+    excludeGuardClauses: true
+
+exceptions:
+  # Storage and engine failures are deliberately translated into result values (SaveOutcome, RecoveryOutcome) that
+  # the interface reports; the exception itself carries no further information the caller needs.
+  SwallowedException:
+    ignoredExceptionTypes:
+      - InterruptedException
+      - MalformedURLException
+      - NumberFormatException
+      - ParseException
+      - IOException
+      - VaultException
+      - WrongCredentials

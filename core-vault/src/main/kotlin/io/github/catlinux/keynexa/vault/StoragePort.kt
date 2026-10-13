@@ -28,8 +28,8 @@ data class SiblingFile(
  * Access to the bytes of a vault file. `platform-android` implements it with the Storage Access Framework; tests
  * use fakes that inject failures.
  *
- * This is the minimal surface needed to open and list vaults. The safe-save pipeline (write modes, truncation,
- * verification, private backups) is specified in `docs/ARCHITECTURE.md` and extends this port in phase D1.
+ * Every method may throw [java.io.IOException] (file missing, permission revoked, provider failure). The safe-save
+ * pipeline in `core-sync` builds its guarantees on top of this port, so implementations stay simple.
  */
 interface StoragePort {
     /** Reads the whole file. */
@@ -40,4 +40,14 @@ interface StoragePort {
 
     /** Files in the same folder as [location], excluding the file itself. Empty if the folder cannot be listed. */
     fun listSiblings(location: VaultLocation): List<SiblingFile>
+
+    /**
+     * Replaces the whole content of the file with [data]. Implementations must truncate: on Android open with mode
+     * `"rwt"` and, where a provider ignores the truncation, truncate explicitly. The caller does not trust this
+     * call: it reads the file back and compares fingerprints before reporting success.
+     */
+    fun write(
+        location: VaultLocation,
+        data: ByteArray,
+    )
 }
