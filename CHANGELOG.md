@@ -6,6 +6,13 @@ All notable changes to this project are documented in this file. The format is b
 
 ## [Unreleased]
 
+## [0.7.3] - 2026-10-14
+
+### Fixed
+
+- Saving failed after Syncthing replaced the vault file: Android revokes the grant on a single file in that case (`SecurityException`, found on a Pixel 10 Pro). Vaults are now added and created through a folder grant (`ACTION_OPEN_DOCUMENT_TREE`), which survives the replacement as ADR-0004 foresaw. The home screen asks for the folder that holds the vault, lists the `.kdbx` files in it and creates new vaults inside it.
+- Merging a vault edited elsewhere while it is open was checked on a real device: a phone edit and a KeePassXC edit made in between both end up in the file (acceptance criterion AC4).
+
 ## [0.7.2] - 2026-10-14
 
 ### Fixed

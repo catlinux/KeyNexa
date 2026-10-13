@@ -6,6 +6,13 @@ Todos los cambios notables de este proyecto se documentan en este archivo. El fo
 
 ## [Sin publicar]
 
+## [0.7.3] - 2026-10-14
+
+### Corregido
+
+- El guardado fallaba después de que Syncthing sustituyera el archivo de la bóveda: Android revoca el permiso sobre un archivo suelto en ese caso (`SecurityException`, comprobado en un Pixel 10 Pro). Las bóvedas se añaden y crean ahora con un permiso de carpeta (`ACTION_OPEN_DOCUMENT_TREE`), que sobrevive a la sustitución, como preveía el ADR-0004. La pantalla de inicio pide la carpeta que contiene la bóveda, lista los archivos `.kdbx` que hay en ella y crea las bóvedas nuevas dentro.
+- La fusión de una bóveda editada en otro sitio mientras está abierta se ha comprobado en un dispositivo real: una edición del móvil y otra hecha con KeePassXC entre medias acaban las dos en el archivo (criterio de aceptación AC4).
+
 ## [0.7.2] - 2026-10-14
 
 ### Corregido

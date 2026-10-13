@@ -4,7 +4,7 @@
 
     <!-- Home: the list of vaults the app knows about. -->
     <string name="home_title">Your vaults</string>
-    <string name="home_empty_message">No vault on the list yet. Open a KDBX file you already have, or create a new vault.</string>
+    <string name="home_empty_message">No vault on the list yet. Choose the folder that holds a KDBX vault you already have, or create a new vault.</string>
     <string name="home_open_existing">Open existing vault</string>
     <string name="home_create_new">Create new vault</string>
     <string name="home_remove">Remove from list</string>
@@ -173,4 +173,8 @@
     <string name="bin_empty_dialog_message">Everything in it will be deleted for good, and this cannot be undone.</string>
     <string name="bin_empty_confirm">Empty</string>
     <string name="bin_empty_state">The recycle bin is empty. Deleted entries wait here until you empty it.</string>
+    <string name="home_pick_vault_title">Which vault?</string>
+    <string name="home_no_vaults_in_folder">There is no .kdbx vault in that folder. Choose the folder that holds your vault file.</string>
+    <string name="home_cannot_create_in_folder">The vault could not be created in that folder. Choose another one.</string>
+    <string name="home_notice_ok">OK</string>
 </resources>

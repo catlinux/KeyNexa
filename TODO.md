@@ -14,7 +14,9 @@ Detailed steps: see the [roadmap](docs/ROADMAP.md).
 ## Medium priority (phase D — secure MVP)
 
 - [ ] Vault opening, locking and auto-lock.
-- [ ] Offer `*.sync-conflict-*` copies for merge in the UI (D4) and an AC4 test on a real device with Syncthing.
+- [ ] Offer `*.sync-conflict-*` copies for merge in the UI.
+- [ ] When a save fails because the grant was lost, offer to reconnect the folder without closing the vault; offer to restore the private unsaved copy after a restart.
+- [ ] Detect external changes when the app returns to the foreground (without waiting for the next save).
 - [ ] Entry and group editing; search.
 - [ ] Biometric unlock.
 

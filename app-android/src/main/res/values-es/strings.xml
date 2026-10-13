@@ -174,4 +174,8 @@
     <string name="bin_empty_dialog_message">Todo lo que hay en ella se borrará definitivamente y esto no se puede deshacer.</string>
     <string name="bin_empty_confirm">Vaciar</string>
     <string name="bin_empty_state">La papelera está vacía. Las entradas borradas esperan aquí hasta que la vacíes.</string>
+    <string name="home_pick_vault_title">¿Qué bóveda?</string>
+    <string name="home_no_vaults_in_folder">No hay ninguna bóveda .kdbx en esa carpeta. Elige la carpeta que contiene el archivo de tu bóveda.</string>
+    <string name="home_cannot_create_in_folder">No se ha podido crear la bóveda en esa carpeta. Elige otra.</string>
+    <string name="home_notice_ok">Aceptar</string>
 </resources>

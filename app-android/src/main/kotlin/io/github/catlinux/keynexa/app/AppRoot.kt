@@ -1,8 +1,6 @@
 package io.github.catlinux.keynexa.app
 
-import android.content.ContentResolver
 import android.net.Uri
-import android.provider.OpenableColumns
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.compose.runtime.Composable
@@ -13,29 +11,38 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
-import androidx.core.net.toUri
 import io.github.catlinux.keynexa.app.nav.Screen
 import io.github.catlinux.keynexa.app.ui.home.CreateVaultScreen
+import io.github.catlinux.keynexa.app.ui.home.HomeNoticeDialog
 import io.github.catlinux.keynexa.app.ui.home.HomeScreen
+import io.github.catlinux.keynexa.app.ui.home.PickVaultDialog
 import io.github.catlinux.keynexa.app.ui.unlock.UnlockScreen
 import io.github.catlinux.keynexa.app.vault.KnownVault
 import io.github.catlinux.keynexa.app.vault.SessionState
+import io.github.catlinux.keynexa.platform.SafVaultAccess
 import io.github.catlinux.keynexa.vault.Credentials
 import io.github.catlinux.keynexa.vault.NewVault
-import io.github.catlinux.keynexa.vault.VaultLocation
 
-private const val ANY_FILE = "*/*"
 private const val VAULT_EXTENSION = ".kdbx"
 
 /**
- * What the user does with vault files: adding, creating, reconnecting and removing. Holds the list of known vaults
- * and, while the system file picker is open, the vault being created (name and credentials) or reconnected.
+ * What the user does with vault files: adding, creating, reconnecting and removing. Vaults are always reached
+ * through a granted folder, because Android revokes the grant on a single file when a sync tool replaces it.
+ * Holds the list of known vaults and, while the system folder picker is open, the vault being created (name and
+ * credentials) or reconnected.
  */
 private class VaultFileActions(
     private val container: AppContainer,
-    private val resolver: ContentResolver,
 ) {
     var vaults by mutableStateOf(container.knownVaults.all())
+        private set
+
+    /** Vault files found in the chosen folder, when the user has to pick one. */
+    var choices by mutableStateOf<List<SafVaultAccess.VaultFile>?>(null)
+        private set
+
+    /** A message for the user, as a string resource. */
+    var notice by mutableStateOf<Int?>(null)
         private set
 
     private var creating: Pair<String, Credentials>? = null
@@ -52,30 +59,59 @@ private class VaultFileActions(
         reconnecting = vault
     }
 
-    /** The user picked a file to open, or to reconnect when [beginReconnect] was called. */
-    fun opened(uri: Uri?) {
+    fun dismissNotice() {
+        notice = null
+    }
+
+    fun dismissChoices() {
+        choices = null
+        reconnecting = null
+    }
+
+    /** The user chose a folder to open a vault from (or to reconnect one when [beginReconnect] was called). */
+    fun folderChosenToOpen(tree: Uri?) {
+        if (tree == null) {
+            reconnecting = null
+            return
+        }
+        grant(tree)
+        val files = container.access.listVaultFiles(tree)
+        when {
+            files.isEmpty() -> {
+                reconnecting = null
+                notice = R.string.home_no_vaults_in_folder
+            }
+            files.size == 1 -> open(files.first())
+            else -> choices = files
+        }
+    }
+
+    /** The user picked one of several vault files in the folder. */
+    fun open(file: SafVaultAccess.VaultFile) {
+        choices = null
         val previous = reconnecting
         reconnecting = null
-        if (uri == null) return
-        val location = grant(uri)
         if (previous != null) {
             container.knownVaults.remove(previous.location)
             container.navigator.back()
         }
-        val vault = KnownVault(previous?.name ?: displayName(uri), location)
+        val vault = KnownVault(previous?.name ?: file.name.removeSuffix(VAULT_EXTENSION), file.location)
         add(vault)
         container.navigator.push(Screen.Unlock(vault))
     }
 
-    /** The user chose where the new vault file goes; null when they cancelled. */
-    fun created(uri: Uri?) {
+    /** The user chose the folder where the new vault file goes; null when they cancelled. */
+    fun folderChosenToCreate(tree: Uri?) {
         val (name, credentials) = creating ?: return
         creating = null
-        if (uri == null) {
+        if (tree != null) grant(tree)
+        val location = tree?.let { container.access.createInFolder(it, name + VAULT_EXTENSION) }
+        if (location == null) {
             credentials.wipe()
+            if (tree != null) notice = R.string.home_cannot_create_in_folder
             return
         }
-        val vault = KnownVault(name, grant(uri))
+        val vault = KnownVault(name, location)
         add(vault)
         container.navigator.back()
         container.navigator.push(Screen.Unlock(vault))
@@ -84,7 +120,6 @@ private class VaultFileActions(
 
     fun remove(vault: KnownVault) {
         container.knownVaults.remove(vault.location)
-        container.access.release(vault.location.value.toUri())
         vaults = container.knownVaults.all()
     }
 
@@ -93,34 +128,26 @@ private class VaultFileActions(
         vaults = container.knownVaults.all()
     }
 
-    // A provider that offers no lasting grant still opens the vault now; reconnecting is offered later.
-    private fun grant(uri: Uri): VaultLocation =
+    // A provider that offers no lasting grant still works for this session; the grant is asked for again later.
+    private fun grant(tree: Uri) {
         try {
-            container.access.persistFile(uri)
+            container.access.persistFolder(tree)
         } catch (ignored: SecurityException) {
-            VaultLocation(uri.toString())
+            // Not persistable: keep going with the temporary grant.
         }
-
-    private fun displayName(uri: Uri): String {
-        val name =
-            resolver.query(uri, arrayOf(OpenableColumns.DISPLAY_NAME), null, null, null)?.use {
-                if (it.moveToFirst()) it.getString(0) else null
-            }
-        return (name ?: uri.lastPathSegment ?: uri.toString()).removeSuffix(VAULT_EXTENSION)
     }
 }
 
-/** Connects the screens to the session: navigation, the system file pickers and the list of known vaults. */
+/** Connects the screens to the session: navigation, the system folder pickers and the list of known vaults. */
 @Composable
 fun AppRoot(container: AppContainer) {
     val navigator = container.navigator
     val session = container.session
     val state by session.state.collectAsState()
     val context = LocalContext.current
-    val resolver = context.contentResolver
-    val actions = remember { VaultFileActions(container, resolver) }
-    val openPicker = rememberLauncherForActivityResult(OpenVaultDocument(), actions::opened)
-    val createPicker = rememberLauncherForActivityResult(CreateVaultDocument(), actions::created)
+    val actions = remember { VaultFileActions(container) }
+    val openPicker = rememberLauncherForActivityResult(OpenVaultFolder(), actions::folderChosenToOpen)
+    val createPicker = rememberLauncherForActivityResult(OpenVaultFolder(), actions::folderChosenToCreate)
 
     LaunchedEffect(state) {
         if (state is SessionState.Open && navigator.current is Screen.Unlock) navigator.push(Screen.Group(null))
@@ -135,7 +162,7 @@ fun AppRoot(container: AppContainer) {
         Screen.Home ->
             HomeScreen(
                 vaults = actions.vaults,
-                onOpenExisting = { openPicker.launch(arrayOf(ANY_FILE)) },
+                onOpenExisting = { openPicker.launch(null) },
                 onCreateNew = { navigator.push(Screen.CreateVault) },
                 onSelect = { navigator.push(Screen.Unlock(it)) },
                 onRemove = actions::remove,
@@ -144,7 +171,7 @@ fun AppRoot(container: AppContainer) {
             CreateVaultScreen(
                 onCreate = { name, credentials ->
                     actions.beginCreate(name, credentials)
-                    createPicker.launch(name + VAULT_EXTENSION)
+                    createPicker.launch(null)
                 },
                 onBack = { navigator.back() },
             )
@@ -155,7 +182,7 @@ fun AppRoot(container: AppContainer) {
                 onUnlock = { session.unlock(screen.vault, it) },
                 onReconnect = {
                     actions.beginReconnect(screen.vault)
-                    openPicker.launch(arrayOf(ANY_FILE))
+                    openPicker.launch(null)
                 },
                 onBack = {
                     session.dismissFailure()
@@ -164,4 +191,6 @@ fun AppRoot(container: AppContainer) {
             )
         else -> (state as? SessionState.Open)?.let { OpenVaultScreens(container, it) }
     }
+    actions.choices?.let { PickVaultDialog(it, onPick = actions::open, onDismiss = actions::dismissChoices) }
+    actions.notice?.let { HomeNoticeDialog(it, onDismiss = actions::dismissNotice) }
 }

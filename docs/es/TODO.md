@@ -14,7 +14,9 @@ Pasos detallados: consulta la [hoja de ruta](ROADMAP.md).
 ## Prioridad media (fase D — MVP seguro)
 
 - [ ] Apertura de bóvedas, bloqueo y bloqueo automático.
-- [ ] Ofrecer en la interfaz (D4) las copias `*.sync-conflict-*` para fusionar y una prueba de AC4 en un dispositivo real con Syncthing.
+- [ ] Ofrecer en la interfaz las copias `*.sync-conflict-*` para fusionar.
+- [ ] Cuando un guardado falle por haber perdido el permiso, ofrecer reconectar la carpeta sin cerrar la bóveda; ofrecer restaurar la copia privada sin guardar tras un reinicio.
+- [ ] Detectar cambios externos al volver la app al primer plano (sin esperar al siguiente guardado).
 - [ ] Edición de entradas y grupos; búsqueda.
 - [ ] Desbloqueo biométrico.
 
