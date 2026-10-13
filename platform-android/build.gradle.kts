@@ -29,7 +29,8 @@ kotlin {
 }
 
 dependencies {
-    implementation(project(":core-sync"))
+    api(project(":core-sync"))
+    api(project(":core-vault"))
 
     testImplementation(libs.junit)
 }

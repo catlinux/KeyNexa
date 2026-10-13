@@ -14,8 +14,7 @@ Pasos detallados: consulta la [hoja de ruta](ROADMAP.md).
 ## Prioridad media (fase D — MVP seguro)
 
 - [ ] Apertura de bóvedas, bloqueo y bloqueo automático.
-- [ ] Implementaciones Android de los puertos de almacenamiento: `StoragePort` con SAF (`"rwt"` con truncado explícito como alternativa), `BackupStore` y `SaveJournal` en `noBackupFilesDir`.
-- [ ] Gestión de archivos de conflicto (`*.sync-conflict-*` ofrecidos para fusionar) y una prueba de AC4 en un dispositivo real con Syncthing.
+- [ ] Ofrecer en la interfaz (D4) las copias `*.sync-conflict-*` para fusionar y una prueba de AC4 en un dispositivo real con Syncthing.
 - [ ] Edición de entradas y grupos; búsqueda.
 - [ ] Desbloqueo biométrico.
 

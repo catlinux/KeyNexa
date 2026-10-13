@@ -14,8 +14,7 @@ Detailed steps: see the [roadmap](docs/ROADMAP.md).
 ## Medium priority (phase D — secure MVP)
 
 - [ ] Vault opening, locking and auto-lock.
-- [ ] Android implementations of the storage ports: SAF `StoragePort` (`"rwt"` with explicit truncation fallback), `BackupStore` and `SaveJournal` under `noBackupFilesDir`.
-- [ ] Conflict-file handling (`*.sync-conflict-*` offered for merge) and an AC4 test on a real device with Syncthing.
+- [ ] Offer `*.sync-conflict-*` copies for merge in the UI (D4) and an AC4 test on a real device with Syncthing.
 - [ ] Entry and group editing; search.
 - [ ] Biometric unlock.
 

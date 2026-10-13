@@ -10,6 +10,17 @@ Todos los cambios notables de este proyecto se documentan en este archivo. El fo
 
 - ADR-0006: diseño del desbloqueo biométrico (fase D6): componentes de la clave compuesta envueltos por una clave del Android Keystore por bóveda, ligada a biometría fuerte en cada uso, invalidada al cambiar la biometría y con petición periódica de la contraseña maestra.
 
+## [0.6.1] - 2026-10-13
+
+### Añadido
+
+- Almacenamiento Android (fase D3) en `platform-android`: `SafStoragePort` (Storage Access Framework; escribe con `"rwt"`, recurre a `"rw"` y siempre trunca de forma explícita, convierte cualquier fallo del proveedor o permiso revocado en `IOException`), `SafVaultAccess` (concesiones persistentes de carpeta y archivo, localizar la bóveda por nombre dentro de una carpeta concedida, `isReachable` para el flujo «reconectar archivo»), y `FileBackupStore` y `FileSaveJournal` (escritura atómica en `noBackupFilesDir`; un diario ilegible es un error, nunca «nada pendiente»).
+- `conflictCopiesOf` en `core-sync`: reconoce las copias `*.sync-conflict-*` de Syncthing junto a la bóveda, las más nuevas primero, para que la interfaz las ofrezca para fusionar.
+
+### Eliminado
+
+- El `PlatformModule` de relleno.
+
 ## [0.6.0] - 2026-10-13
 
 ### Añadido
