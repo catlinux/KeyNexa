@@ -35,3 +35,26 @@ EOF
 - **En Windows (PowerShell o cmd)** usa `agentrelay.cmd` en lugar de `agentrelay` (el segundo es un script de Unix y falla con errores de `sed`, `dirname` o `uname`). Nunca modifiques ese script. El `<<EOF` no existe en PowerShell: guarda el JSON de la tarea en un archivo temporal FUERA del repositorio (por ejemplo `$env:TEMP\tarea.json`) y lanza `agentrelay.cmd run $env:TEMP\tarea.json`; un archivo dentro del repositorio ensuciaría el árbol.
 - Si una ejecución falla por una causa externa (sesión caducada, PowerShell bloqueado), díselo al usuario en lugar de hacer el trabajo tú en silencio.
 <!-- agentrelay:end -->
+
+# KeyNexa — instrucciones del proyecto
+
+Gestor de contraseñas KDBX, Android primero (Windows y Linux después). Autor y titular: CatLinux. Repo: `git@github-catlinux:catlinux/KeyNexa.git`. Licencia GPL-3.0-only con términos de la sección 7 en `NOTICE` (ADR-0001).
+
+**Antes de trabajar, lee:** `docs/ARCHITECTURE.md`, `docs/THREAT_MODEL.md`, `docs/decisions/` y la hoja de ruta `.agents/plans/keynexa-mvp/keynexa-mvp.PLAN.md` (pasos, ejecutor y criterios de terminado).
+
+## Reglas propias
+
+- **Documentación bilingüe, siempre al 100 %.** Todo documento existe en inglés (`NOMBRE.md`, principal) y español (`NOMBRE.es.md`), con `[English](NOMBRE.md) | [Español](NOMBRE.es.md)` bajo el título. Cualquier cambio en un idioma se aplica al otro en el mismo commit; esto incluye CHANGELOG, TODO, CREDITS y `docs/`. Los enlaces internos de la versión española apuntan a los `.es.md`.
+- **Seguridad:** nada de criptografía propia; nunca registrar ni escribir en archivos temporales contraseñas, claves ni contenido descifrado; ningún secreto, bóveda real ni clave de firma en el repo; bóvedas de prueba solo con datos ficticios en `testdata/`.
+- **Arquitectura:** los módulos `core-*` son Kotlin/JVM puro (sin imports de Android); solo `core-kdbx` ve kotpass. No añadas dependencias sin justificarlas y sin registrar su licencia (compatible con GPL-3.0) en `docs/DEPENDENCIES_AND_LICENSES*.md` y `CREDITS*.md` en el mismo commit.
+- **No copies** código, textos, iconos ni identidad visual de KeePassDX, Keepass2Android, KeePassXC ni otros gestores, aunque su licencia lo permita.
+- **Versión:** archivo `VERSION` (SemVer; antes de 1.0, lo incompatible es menor) y entrada en `CHANGELOG.md` + `CHANGELOG.es.md` en el mismo commit.
+- **Ante un imprevisto de diseño** (algo que el plan no cubre o contradice la arquitectura), para y anótalo en el plan; no improvises.
+
+## IA en el desarrollo
+
+Se usan Claude (orquestación, arquitectura, seguridad, revisión), DeepSeek (ejecutor por defecto en AgentRelay) y OpenAI (revisión independiente o ejecutor alternativo). Sus respuestas son hipótesis a verificar con documentación, código y pruebas. Nunca se les envían bóvedas, contraseñas ni claves de firma. La app no depende de ningún servicio de IA.
+
+## Publicaciones (releases)
+
+Cuando haya una versión suficientemente madura con un cambio importante, el orquestador propone la publicación: comprueba los criterios de `docs/ROADMAP.md` (tests, análisis, licencias, docs bilingües), y pide al usuario permiso para el push del commit y del tag `vX.Y.Z`; el workflow de GitHub Actions compila, firma y publica el APK. Antes de 1.0, como pre-release. Nunca push ni tag sin aprobación explícita.
