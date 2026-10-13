@@ -52,4 +52,42 @@
     <string name="unlock_error_unreachable">No se puede leer este archivo. Puede que se haya movido o que se haya revocado el permiso para leerlo.</string>
     <string name="placeholder_open">Bóveda abierta. Entradas en el grupo raíz: %1$d. Las pantallas de exploración llegan en la próxima versión.</string>
     <string name="placeholder_lock">Bloquear</string>
+
+    <!-- Guardado: la línea de estado de una bóveda abierta. -->
+    <string name="save_saving">Guardando…</string>
+    <string name="save_retry">Reintentar</string>
+    <string name="save_problem_title">No se ha podido guardar.</string>
+    <string name="save_changes_kept">Tus cambios siguen aquí y en una copia privada cifrada. No se ha perdido nada.</string>
+    <string name="save_problem_external_change">El archivo ha cambiado en otro dispositivo y esta versión todavía no se puede fusionar con él.</string>
+    <string name="save_problem_unmergeable">El archivo ha cambiado en otro dispositivo y las dos versiones no se pueden combinar con seguridad.</string>
+    <string name="save_problem_changed_during_save">El archivo ha vuelto a cambiar mientras se guardaba. Si guardas otra vez, se fusionará la versión más reciente.</string>
+    <string name="save_problem_file_unreadable">El archivo del almacenamiento parece dañado o se sigue copiando, así que KeyNexa no ha escrito en él.</string>
+    <string name="save_problem_credentials_changed">Esta bóveda ya no se abre con las credenciales en uso; puede que otro dispositivo las haya cambiado.</string>
+    <string name="save_problem_encode_failed">KeyNexa no ha podido construir el archivo cifrado de esta bóveda.</string>
+    <string name="save_problem_storage_error">El almacenamiento no ha querido escribir el archivo: permiso, espacio o un fallo del proveedor.</string>
+    <string name="save_problem_write_not_verified">El archivo no contiene exactamente lo que KeyNexa escribió, así que el guardado no es de fiar.</string>
+
+    <!-- Grupo: recorrer las entradas y los subgrupos de un grupo. -->
+    <string name="group_back">Volver</string>
+    <string name="group_search">Buscar</string>
+    <string name="group_more">Más opciones</string>
+    <string name="group_recycle_bin">Papelera</string>
+    <string name="group_lock">Bloquear</string>
+    <string name="group_new_entry">Nueva entrada</string>
+    <string name="group_new_group">Nuevo grupo</string>
+    <string name="group_new_group_title">Grupo nuevo</string>
+    <string name="group_new_group_name">Nombre del grupo</string>
+    <string name="group_new_group_create">Crear</string>
+    <string name="group_new_group_cancel">Cancelar</string>
+    <string name="group_empty">Este grupo está vacío. Añade una entrada o un subgrupo.</string>
+    <string name="group_empty_root">Esta bóveda todavía no tiene entradas. Añade la primera.</string>
+    <string name="group_expired">Caducada</string>
+    <string name="group_entry_untitled">Sin título</string>
+    <string name="group_row_entry">Entrada: %1$s</string>
+    <string name="group_row_entry_with_user">Entrada: %1$s, usuario: %2$s</string>
+    <plurals name="group_row_group">
+        <item quantity="one">Grupo: %1$s, %2$d elemento</item>
+        <item quantity="many">Grupo: %1$s, %2$d elementos</item>
+        <item quantity="other">Grupo: %1$s, %2$d elementos</item>
+    </plurals>
 </resources>
