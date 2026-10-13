@@ -6,6 +6,12 @@ All notable changes to this project are documented in this file. The format is b
 
 ## [Unreleased]
 
+## [0.7.2] - 2026-10-14
+
+### Fixed
+
+- The new-entry form no longer opens with the "an entry needs a title" error already showing; it appears only after the title has been typed and emptied.
+
 ## [0.7.1] - 2026-10-13
 
 ### Fixed

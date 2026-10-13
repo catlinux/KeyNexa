@@ -264,6 +264,8 @@ private fun BasicSection(
     onGenerate: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    // The reminder waits until the user has typed in the field, so a new entry does not open with an error.
+    var titleTouched by remember { mutableStateOf(false) }
     Column(
         modifier = modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(ItemGap),
@@ -271,9 +273,12 @@ private fun BasicSection(
         EditTextField(
             label = stringResource(R.string.edit_title_label),
             value = form.title,
-            onValueChange = { form.title = it },
+            onValueChange = {
+                titleTouched = true
+                form.title = it
+            },
         )
-        if (form.title.isBlank()) {
+        if (titleTouched && form.title.isBlank()) {
             Text(
                 text = stringResource(R.string.edit_title_required),
                 style = MaterialTheme.typography.bodyMedium,

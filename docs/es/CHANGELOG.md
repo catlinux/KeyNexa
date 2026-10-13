@@ -6,6 +6,12 @@ Todos los cambios notables de este proyecto se documentan en este archivo. El fo
 
 ## [Sin publicar]
 
+## [0.7.2] - 2026-10-14
+
+### Corregido
+
+- El formulario de entrada nueva ya no se abre con el error «una entrada necesita un título» a la vista; solo aparece después de escribir el título y vaciarlo.
+
 ## [0.7.1] - 2026-10-13
 
 ### Corregido
