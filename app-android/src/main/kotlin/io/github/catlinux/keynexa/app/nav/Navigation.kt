@@ -31,6 +31,8 @@ sealed interface Screen {
         val groupId: UUID?,
     ) : Screen
 
+    data object CreateVault : Screen
+
     data object RecycleBin : Screen
 }
 

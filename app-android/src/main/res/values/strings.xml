@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">KeyNexa</string>
-    <string name="welcome_title">Welcome to KeyNexa</string>
-    <string name="welcome_message">Your keys, your vault, your control.</string>
 
     <!-- Home: the list of vaults the app knows about. -->
     <string name="home_title">Your vaults</string>
@@ -52,4 +50,6 @@
     <string name="unlock_error_unsupported_format">This vault uses a format KeyNexa does not support yet.</string>
     <string name="unlock_error_damaged">This file looks damaged or is still being synchronised. Wait a moment and try again: KeyNexa has not changed it.</string>
     <string name="unlock_error_unreachable">This file cannot be read. It may have been moved, or the permission to read it may have been revoked.</string>
+    <string name="placeholder_open">Vault open. Entries in the root group: %1$d. The browsing screens arrive in the next version.</string>
+    <string name="placeholder_lock">Lock</string>
 </resources>

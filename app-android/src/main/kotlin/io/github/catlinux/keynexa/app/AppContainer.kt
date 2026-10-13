@@ -1,6 +1,7 @@
 package io.github.catlinux.keynexa.app
 
 import android.content.Context
+import io.github.catlinux.keynexa.app.nav.Navigator
 import io.github.catlinux.keynexa.app.vault.KnownVaultsStore
 import io.github.catlinux.keynexa.app.vault.VaultSession
 import io.github.catlinux.keynexa.kdbx.KotpassKdbxEngine
@@ -26,6 +27,7 @@ class AppContainer(
     val knownVaults = KnownVaultsStore(appContext)
     val engine = KotpassKdbxEngine()
 
+    val navigator = Navigator()
     val session: VaultSession
 
     init {

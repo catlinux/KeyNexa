@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">KeyNexa</string>
-    <string name="welcome_title">Te damos la bienvenida a KeyNexa</string>
-    <string name="welcome_message">Tus claves, tu bóveda, tu control.</string>
 
     <!-- Inicio: la lista de bóvedas que conoce la aplicación. -->
     <string name="home_title">Tus bóvedas</string>
@@ -52,4 +50,6 @@
     <string name="unlock_error_unsupported_format">Esta bóveda usa un formato que KeyNexa todavía no admite.</string>
     <string name="unlock_error_damaged">Este archivo parece dañado o se está sincronizando todavía. Espera un momento y vuelve a intentarlo: KeyNexa no lo ha modificado.</string>
     <string name="unlock_error_unreachable">No se puede leer este archivo. Puede que se haya movido o que se haya revocado el permiso para leerlo.</string>
+    <string name="placeholder_open">Bóveda abierta. Entradas en el grupo raíz: %1$d. Las pantallas de exploración llegan en la próxima versión.</string>
+    <string name="placeholder_lock">Bloquear</string>
 </resources>
