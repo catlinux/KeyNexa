@@ -160,13 +160,6 @@ fun AppRoot(container: AppContainer) {
                     navigator.back()
                 },
             )
-        else ->
-            OpenVaultPlaceholder(
-                state = state,
-                onLock = {
-                    session.lock()
-                    navigator.reset()
-                },
-            )
+        else -> (state as? SessionState.Open)?.let { OpenVaultScreens(container, it) }
     }
 }

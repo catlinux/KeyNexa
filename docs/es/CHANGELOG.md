@@ -6,8 +6,11 @@ Todos los cambios notables de este proyecto se documentan en este archivo. El fo
 
 ## [Sin publicar]
 
+## [0.7.0] - 2026-10-13
+
 ### Añadido
 
+- Pantallas de contenido (fase D4.4): explorar grupos y entradas, búsqueda (sin distinguir mayúsculas ni acentos, nunca en contraseñas), detalle de entrada (contraseña oculta y visible 30 segundos como máximo, copia con marca de portapapeles sensible que se borra a los 30 segundos, abrir direcciones web), crear y editar entradas y campos personalizados, generador de contraseñas integrado (`PasswordGenerator`, aleatorio seguro), papelera con restaurar, borrado definitivo y vaciado, y una barra de estado de guardado que explica cada fallo y ofrece reintentar. Cada cambio se guarda al instante con el guardado seguro.
 - Pantallas de acceso (fase D4.3): inicio con las bóvedas conocidas (añadir, crear, quitar de la lista sin tocar el archivo), formulario de bóveda nueva (nombre, contraseña maestra dos veces, archivo de clave opcional, aviso de contraseña irrecuperable) y pantalla de desbloqueo (mensajes claros para cada fallo, progreso mientras se deriva la clave, opción de reconectar el archivo), conectadas en `MainActivity` con los selectores de archivo del sistema y permisos de lectura y escritura duraderos.
 - Base de la app (fase D4.2): `AppContainer` que conecta almacenamiento, motor, guardado seguro y almacenes privados; `VaultSession` (desbloquear, crear, editar con guardado seguro automático, reintentar, bloquear borrando las credenciales y recuperación tras un corte al abrir); la lista de bóvedas conocidas; y la navegación por estado.
 - Casos de uso de edición en `core-vault` (fase D4.1): `VaultEditor` (alta, edición con historial, mover, borrar a la papelera, restaurar, vaciarla y borrado definitivo con registro de objetos eliminados), `VaultSearch` (sin distinguir mayúsculas ni acentos, nunca lee contraseñas ni valores protegidos, deja fuera la papelera) y `NewVault` (bóveda KDBX 4.1 vacía con ChaCha20 y Argon2id).

@@ -6,8 +6,11 @@ All notable changes to this project are documented in this file. The format is b
 
 ## [Unreleased]
 
+## [0.7.0] - 2026-10-13
+
 ### Added
 
+- Content screens (phase D4.4): browse groups and entries, search (case- and accent-insensitive, never in passwords), entry detail (hidden password shown for 30 seconds at most, copy with a sensitive-clipboard mark cleared after 30 seconds, open web addresses), add and edit entries and custom fields, built-in password generator (`PasswordGenerator`, secure random), recycle bin with restore, permanent delete and empty, and a save-status bar that explains each failure and offers to retry. Every edit is saved at once through the safe-save pipeline.
 - Access screens (phase D4.3): home with the known vaults (add, create, remove from the list without touching the file), create-vault form (name, master password twice, optional key file, unrecoverable-password warning) and unlock screen (clear messages for each failure, progress while the key is derived, reconnect-file option), wired in `MainActivity` with the system file pickers and lasting read/write grants.
 - App foundation (phase D4.2): `AppContainer` wiring storage, engine, safe saver and private stores; `VaultSession` (unlock, create, edit with automatic safe save, retry, lock that wipes the credentials, crash recovery on opening); the list of known vaults; and screen navigation by state.
 - Editing use cases in `core-vault` (phase D4.1): `VaultEditor` (add, edit with history, move, delete to the recycle bin, restore, empty it, permanent deletion recording deleted objects), `VaultSearch` (case- and accent-insensitive, never reads passwords or protected values, leaves out the recycle bin) and `NewVault` (empty KDBX 4.1 vault with ChaCha20 and Argon2id).
