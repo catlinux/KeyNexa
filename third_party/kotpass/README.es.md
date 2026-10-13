@@ -22,9 +22,9 @@ Se conserva intacto con sus avisos:
 
 ## Cambios locales
 
-El código es idéntico al del commit upstream. Los cambios hechos en KeyNexa se anotan aquí, el más reciente primero, cada uno con su motivo; siguen bajo licencia MIT para poder ofrecerlos a upstream.
+El código es idéntico al del commit upstream salvo por los cambios de abajo. Los cambios hechos en KeyNexa se anotan aquí, el más reciente primero, cada uno con su motivo; siguen bajo licencia MIT para poder ofrecerlos a upstream.
 
-_(ninguno todavía)_
+- **No escribir una fecha de modificación que no existía.** `xml/CustomIcons.kt` y `xml/CustomData.kt` escribían `LastModificationTime` (año 1, cero ticks) en cada icono personalizado y elemento de datos personalizados de un archivo KDBX 4.1 aunque el original no la tuviera. Ahora omiten el elemento cuando el valor es nulo. Se detectó comparando las exportaciones XML de KeePassXC del corpus antes y después de una ida y vuelta.
 
 ## Estilo de código
 

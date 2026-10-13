@@ -8,6 +8,7 @@ kotlin {
 
 dependencies {
     implementation(project(":core-vault"))
+    implementation(project(":kotpass"))
 
     testImplementation(libs.junit)
 }
