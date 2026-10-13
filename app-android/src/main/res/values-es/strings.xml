@@ -156,4 +156,23 @@
     <string name="edit_discard_message">Lo que has escrito no se guardará.</string>
     <string name="edit_discard_confirm">Descartar</string>
     <string name="edit_discard_cancel">Seguir editando</string>
+
+    <!-- Papelera: lo que se ha borrado y qué hacer con ello. -->
+    <string name="bin_title">Papelera</string>
+    <string name="bin_back">Volver</string>
+    <string name="bin_kind_group">Grupo</string>
+    <string name="bin_kind_entry">Entrada</string>
+    <string name="bin_restore">Restaurar</string>
+    <string name="bin_restore_item">Restaurar %1$s</string>
+    <string name="bin_delete_forever">Eliminar definitivamente</string>
+    <string name="bin_delete_item">Eliminar %1$s definitivamente</string>
+    <string name="bin_delete_dialog_title">¿Eliminar %1$s definitivamente?</string>
+    <string name="bin_delete_dialog_message">Esto no se puede deshacer. El elemento ya no estará en la papelera.</string>
+    <string name="bin_delete_confirm">Eliminar definitivamente</string>
+    <string name="bin_cancel">Cancelar</string>
+    <string name="bin_empty">Vaciar la papelera</string>
+    <string name="bin_empty_dialog_title">¿Vaciar la papelera?</string>
+    <string name="bin_empty_dialog_message">Todo lo que hay en ella se borrará definitivamente y esto no se puede deshacer.</string>
+    <string name="bin_empty_confirm">Vaciar</string>
+    <string name="bin_empty_state">La papelera está vacía. Las entradas borradas esperan aquí hasta que la vacíes.</string>
 </resources>
