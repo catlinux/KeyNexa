@@ -12,3 +12,7 @@ dependencies {
 
     testImplementation(libs.junit)
 }
+
+tasks.withType<Test>().configureEach {
+    maxHeapSize = providers.environmentVariable("KEYNEXA_TEST_HEAP").getOrElse("2g")
+}
