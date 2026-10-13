@@ -36,7 +36,7 @@ Fases A y B terminadas en 0.1.0 (documentación en `docs/`). Este plan lo ejecut
 - [~] **C5b. Refuerzo de kotpass** · 0.3.1 (parcial: fuzzing por mutación y diferencial con keepassxc-cli hechos; faltan keepass-rs y Jazzer, ver TODO) (parche) · Sonnet (alto).
   - Pruebas diferenciales en CI: cada bóveda escrita por los tests se relee con `keepassxc-cli` y con keepass-rs (herramienta pequeña en `tools/`, solo CI) y se comparan contenidos.
   - Fuzzing del decodificador con Jazzer (solo tests). Terminado: CI verde y ningún fallo sin entender.
-- [ ] **C6. Sistema de diseño** · 0.4.0 (menor) · Sonnet (alto) propone; el usuario aprueba identidad.
+- [x] **C6. Sistema de diseño** · 0.4.0 (propuesta hecha; falta la aprobación de la identidad por el usuario) (menor) · Sonnet (alto) propone; el usuario aprueba identidad.
   - `docs/DESIGN.md` + `docs/es/DESIGN.md`: principios, paleta (contraste AA), tipografía (Inter o Manrope, OFL), espaciado, componentes, estados (carga, error, bloqueo, vacío), mensajes de seguridad, tema claro/oscuro.
   - Icono original (vector, adaptive icon) sin parecido con KeePassDX/KP2A. Tema Compose en `app-android`.
 

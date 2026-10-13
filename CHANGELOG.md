@@ -6,6 +6,18 @@ All notable changes to this project are documented in this file. The format is b
 
 ## [Unreleased]
 
+## [0.4.0] - 2026-10-13
+
+### Added
+
+- Design system proposal (phase C6): `docs/DESIGN.md` with principles, identity, an accessible colour palette for light and dark themes, typography, spacing, components, states and the security messages. The visual identity awaits the maintainer's approval.
+- The palette and Material 3 theme in `app-android`, with a unit test that fails the build if any text pair drops below WCAG AA (4.5:1) or any interface edge below 3:1.
+- An original adaptive launcher icon (a key with a three-node network) with a themed monochrome variant.
+
+### Changed
+
+- The "missing launcher icon" lint exception is gone now that the app has an icon.
+
 ## [0.3.1] - 2026-10-13
 
 ### Added

@@ -27,7 +27,4 @@
     <issue id="ExpiredTargetSdkVersion" severity="error" />
     <issue id="UnsafeIntentLaunch" severity="error" />
     <issue id="UnsafeImplicitIntentLaunch" severity="error" />
-
-    <!-- The launcher icon arrives with the design system (phase C6). -->
-    <issue id="MissingApplicationIcon" severity="ignore" />
 </lint>
