@@ -9,9 +9,9 @@ import app.keemobile.kotpass.database.decode
 import app.keemobile.kotpass.database.encode
 import app.keemobile.kotpass.database.traverse
 import app.keemobile.kotpass.models.Entry
-import java.io.File
 import org.junit.Assert.assertEquals
 import org.junit.Test
+import java.io.File
 
 /**
  * Spike: opens every vault with kotpass, rewrites it to `build/roundtrip/` and checks that the model survives.
@@ -32,6 +32,11 @@ class KotpassRoundTripSpikeTest {
         }
     }
 
+    private fun decode(
+        file: File,
+        credentials: Credentials,
+    ): KeePassDatabase = file.inputStream().use { KeePassDatabase.decode(it, credentials, cipherProviders = ciphers) }
+
     private fun countEntries(database: KeePassDatabase): Int {
         var count = 0
         database.traverse { if (it is Entry) count++ }
@@ -42,10 +47,10 @@ class KotpassRoundTripSpikeTest {
     fun everyVaultOpensAndSurvivesARoundTrip() {
         for (vault in TestVaults.standard) {
             val credentials = credentialsOf(vault)
-            val original = vault.file.inputStream().use { KeePassDatabase.decode(it, credentials, cipherProviders = ciphers) }
+            val original = decode(vault.file, credentials)
             val target = File(outDir, vault.fileName)
             target.outputStream().use { original.encode(it, cipherProviders = ciphers) }
-            val reread = target.inputStream().use { KeePassDatabase.decode(it, credentials, cipherProviders = ciphers) }
+            val reread = decode(target, credentials)
             assertEquals("entry count changed in ${vault.fileName}", countEntries(original), countEntries(reread))
             println("OK ${vault.fileName}: ${original::class.simpleName} ${original.header.version}")
         }
