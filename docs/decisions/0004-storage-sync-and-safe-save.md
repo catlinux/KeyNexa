@@ -1,6 +1,6 @@
 # ADR-0004: Storage, Syncthing and safe save
 
-[English](0004-storage-sync-and-safe-save.md) | [Español](0004-storage-sync-and-safe-save.es.md)
+[English](0004-storage-sync-and-safe-save.md) | [Español](../es/decisions/0004-storage-sync-and-safe-save.md)
 
 - **Status:** Accepted
 - **Date:** 2026-10-13

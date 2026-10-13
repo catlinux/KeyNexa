@@ -1,6 +1,6 @@
 # Credits
 
-[English](CREDITS.md) | [Español](CREDITS.es.md)
+[English](CREDITS.md) | [Español](docs/es/CREDITS.md)
 
 ## Original project
 

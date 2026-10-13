@@ -1,6 +1,6 @@
 # Architecture
 
-[English](ARCHITECTURE.md) | [Español](ARCHITECTURE.es.md)
+[English](ARCHITECTURE.md) | [Español](es/ARCHITECTURE.md)
 
 > Status: **proposed** (v0.1.0). No code exists yet. Decisions are recorded in [decisions/](decisions/README.md).
 

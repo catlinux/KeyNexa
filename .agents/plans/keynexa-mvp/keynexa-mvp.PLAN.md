@@ -4,7 +4,7 @@ Fases A y B terminadas en 0.1.0 (documentación en `docs/`). Este plan lo ejecut
 
 **Normas para cada paso**
 
-- Un commit (o varios coherentes) por paso, con la versión subida en `VERSION` y su entrada en `CHANGELOG.md` + `CHANGELOG.es.md`. Toda documentación tocada, en los dos idiomas.
+- Un commit (o varios coherentes) por paso, con la versión subida en `VERSION` y su entrada en `CHANGELOG.md` + `docs/es/CHANGELOG.md`. Toda documentación tocada, en los dos idiomas.
 - Marca el paso como `[x]` aquí al terminarlo, con la versión.
 - Si algo contradice la arquitectura o el plan no lo cubre: PARA, anótalo en «Incidencias» al final y deja que lo resuelva una sesión con Opus.
 - «AgentRelay» significa delegar con `agentrelay.cmd run` (ejecutor configurado, hoy DeepSeek) y revisar el diff tú. Divide en tareas de ≤4 archivos.
@@ -16,25 +16,25 @@ Fases A y B terminadas en 0.1.0 (documentación en `docs/`). Este plan lo ejecut
   - Archivos: `settings.gradle.kts`, `build.gradle.kts`, `gradle/libs.versions.toml`, wrapper de Gradle, módulos `core-vault`, `core-kdbx`, `core-sync` (Kotlin JVM, toolchain 17), `platform-android` (librería Android), `app-android` (Compose, Material 3; minSdk 26, compile/target 36; `applicationId` `io.github.catlinux.keynexa`).
   - `versionName` se lee de `VERSION` y `versionCode` se deriva de él (MAJOR*10000+MINOR*100+PATCH).
   - Recursos `values/strings.xml` (en-US) y `values-es/strings.xml`, sin textos incrustados. Manifest con `allowBackup="false"`, `dataExtractionRules` y `fullBackupContent` que excluyen todo, sin permiso INTERNET.
-  - Terminado: `./gradlew build` y `./gradlew test` pasan en local (anota las órdenes reales en `docs/DEVELOPMENT*.md` y README «Instalación/Uso» si ya aplica).
+  - Terminado: `./gradlew build` y `./gradlew test` pasan en local (anota las órdenes reales en `docs/DEVELOPMENT.md` (y `docs/es/DEVELOPMENT.md`) y README «Instalación/Uso» si ya aplica).
 - [ ] **C2. Calidad** · 0.2.1 (parche: interno) · AgentRelay (medio).
   - ktlint (o Spotless+ktlint), detekt, Android Lint con `HardcodedText`, `MissingTranslation` y los de seguridad como error; verificación de dependencias de Gradle (`gradle/verification-metadata.xml`).
-  - Terminado: `./gradlew check` pasa; documentado en `docs/DEVELOPMENT*.md`.
+  - Terminado: `./gradlew check` pasa; documentado en `docs/DEVELOPMENT.md` (y `docs/es/DEVELOPMENT.md`).
 - [ ] **C3. CI** · 0.2.2 (parche) · AgentRelay (medio).
   - `.github/workflows/ci.yml`: build, test, check, informe de licencias (p. ej. plugin de licencias de Gradle) y escaneo de vulnerabilidades (p. ej. OSV-Scanner) en push y PR.
-  - `scripts/check-docs-i18n.sh`: falla si un `.md` de documentación no tiene su par `.es.md` (o viceversa) o le falta la línea de idiomas. Se ejecuta en CI. Excluye `AGENTS.md`, `CLAUDE.md`, `.agents/`.
+  - `scripts/check-docs-i18n.sh`: falla si un `.md` de documentación en inglés no tiene su traducción en `docs/es/` con la misma ruta (o viceversa; `README.md` ↔ `README.es.md`), o si a alguno le falta la línea de idiomas. Se ejecuta en CI. Excluye `AGENTS.md`, `CLAUDE.md`, `.agents/`.
   - Terminado: workflow válido (`actionlint` si está disponible) y script probado en local.
 - [ ] **C4. Workflow de publicación** · 0.2.3 (parche) · Sonnet (medio), sin delegar (maneja secretos).
   - `.github/workflows/release.yml`: en tag `vX.Y.Z`, comprueba que coincide con `VERSION`, compila el APK release, lo firma con secretos del repo (`KEYSTORE_BASE64`, `KEYSTORE_PASSWORD`, `KEY_ALIAS`, `KEY_PASSWORD`), publica release (pre-release antes de 1.0) con SHA-256.
-  - Documenta en `docs/DEVELOPMENT*.md` cómo crear el keystore y los secretos. **Acción del usuario:** crear keystore y secretos (nunca en el repo).
+  - Documenta en `docs/DEVELOPMENT.md` (y `docs/es/DEVELOPMENT.md`) cómo crear el keystore y los secretos. **Acción del usuario:** crear keystore y secretos (nunca en el repo).
 - [ ] **C5. Motor KDBX y corpus de pruebas** · 0.3.0 (menor) · Sonnet (alto), sin delegar la interfaz; AgentRelay para tests repetitivos.
   - `core-vault`: modelo de dominio y puertos `KdbxEngine`, `StoragePort`. `core-kdbx`: adaptador sobre kotpass 0.13.0.
   - `testdata/`: bóvedas ficticias (contraseñas documentadas) de KeePassXC y KeePass 2.x con AES/ChaCha20/Twofish × AES-KDF/Argon2d/Argon2id, KDBX 3.1/4.0/4.1, key file, adjuntos, historial, iconos, CustomData. **Acción del usuario** si no hay KeePassXC instalado: generarlas siguiendo una lista que prepares.
   - Tests de ida y vuelta (AC1, AC2): comprobar qué se pierde (XML desconocido) y documentarlo en ADR-0002 (ambos idiomas).
   - Mide Argon2 (memoria 64 MiB y 1 GiB) en emulador y, si el usuario puede, en móvil real; si es inaceptable, propón argon2kt (nuevo ADR).
-  - Añade kotpass, okio y los avisos de Bouncy Castle/Apache incluidos en kotpass a `CREDITS*.md` y a la tabla de terceros de los README.
+  - Añade kotpass, okio y los avisos de Bouncy Castle/Apache incluidos en kotpass a `CREDITS.md` (y `docs/es/CREDITS.md`) y a la tabla de terceros de los README.
 - [ ] **C6. Sistema de diseño** · 0.4.0 (menor) · Sonnet (alto) propone; el usuario aprueba identidad.
-  - `docs/DESIGN.md` + `.es.md`: principios, paleta (contraste AA), tipografía (Inter o Manrope, OFL), espaciado, componentes, estados (carga, error, bloqueo, vacío), mensajes de seguridad, tema claro/oscuro.
+  - `docs/DESIGN.md` + `docs/es/DESIGN.md`: principios, paleta (contraste AA), tipografía (Inter o Manrope, OFL), espaciado, componentes, estados (carga, error, bloqueo, vacío), mensajes de seguridad, tema claro/oscuro.
   - Icono original (vector, adaptive icon) sin parecido con KeePassDX/KP2A. Tema Compose en `app-android`.
 
 ## Fase D: MVP seguro

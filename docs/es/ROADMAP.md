@@ -1,6 +1,6 @@
 # Hoja de ruta
 
-[English](ROADMAP.md) | [Español](ROADMAP.es.md)
+[English](../ROADMAP.md) | [Español](ROADMAP.md)
 
 Leyenda: ✅ hecho · 🔄 en curso · ⏳ planificado. Nada está «hecho» hasta que se cumplen sus criterios de aceptación y pasan sus pruebas.
 
@@ -49,7 +49,7 @@ Leyenda: ✅ hecho · 🔄 en curso · ⏳ planificado. Nada está «hecho» has
 - [Versionado Semántico](https://semver.org/lang/es/): `MAJOR.MINOR.PATCH`, almacenado en el archivo `VERSION` (la compilación de Android lo leerá).
 - Durante `0.y.z` el formato, los ajustes y las API pueden cambiar entre versiones menores; una versión `0.y` **no** está lista para producción, aunque compile y pase las pruebas.
 - La `1.0.0` requiere: criterios de aceptación del MVP cumplidos, una revisión de seguridad externa o al menos una revisión independiente documentada, y ningún error conocido de pérdida de datos.
-- Todo cambio terminado sube la versión y añade una entrada en el [CHANGELOG](../CHANGELOG.es.md) en el mismo commit.
+- Todo cambio terminado sube la versión y añade una entrada en el [CHANGELOG](CHANGELOG.md) en el mismo commit.
 
 ## Criterios de publicación (toda compilación publicada)
 

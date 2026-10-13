@@ -1,6 +1,6 @@
 # Dependencies and licenses
 
-[English](DEPENDENCIES_AND_LICENSES.md) | [Español](DEPENDENCIES_AND_LICENSES.es.md)
+[English](DEPENDENCIES_AND_LICENSES.md) | [Español](es/DEPENDENCIES_AND_LICENSES.md)
 
 > Research date: **2026-10-13**. Licenses were checked in each project's own `LICENSE` file, build file or Maven Central POM, as cited. Items marked *not verified* could not be confirmed. This is technical research, not legal advice.
 

@@ -44,11 +44,11 @@ Gestor de contraseñas KDBX, Android primero (Windows y Linux después). Autor y
 
 ## Reglas propias
 
-- **Documentación bilingüe, siempre al 100 %.** Todo documento existe en inglés (`NOMBRE.md`, principal) y español (`NOMBRE.es.md`), con `[English](NOMBRE.md) | [Español](NOMBRE.es.md)` bajo el título. Cualquier cambio en un idioma se aplica al otro en el mismo commit; esto incluye CHANGELOG, TODO, CREDITS y `docs/`. Los enlaces internos de la versión española apuntan a los `.es.md`.
+- **Documentación bilingüe, siempre al 100 %.** Todo documento existe en inglés (principal, en su sitio habitual) y en español, con la misma estructura bajo `docs/es/` (p. ej. `CHANGELOG.md` → `docs/es/CHANGELOG.md`, `docs/decisions/0001-license.md` → `docs/es/decisions/0001-license.md`); solo `README.es.md` va en la raíz. Bajo el título, `[English](…) | [Español](…)` con rutas relativas. Cualquier cambio en un idioma se aplica al otro en el mismo commit; incluye CHANGELOG, TODO, CREDITS y `docs/`. Los enlaces internos de la versión española apuntan a las traducciones.
 - **Seguridad:** nada de criptografía propia; nunca registrar ni escribir en archivos temporales contraseñas, claves ni contenido descifrado; ningún secreto, bóveda real ni clave de firma en el repo; bóvedas de prueba solo con datos ficticios en `testdata/`.
-- **Arquitectura:** los módulos `core-*` son Kotlin/JVM puro (sin imports de Android); solo `core-kdbx` ve kotpass. No añadas dependencias sin justificarlas y sin registrar su licencia (compatible con GPL-3.0) en `docs/DEPENDENCIES_AND_LICENSES*.md` y `CREDITS*.md` en el mismo commit.
+- **Arquitectura:** los módulos `core-*` son Kotlin/JVM puro (sin imports de Android); solo `core-kdbx` ve kotpass. No añadas dependencias sin justificarlas y sin registrar su licencia (compatible con GPL-3.0) en `docs/DEPENDENCIES_AND_LICENSES.md`, `CREDITS.md` y sus traducciones en `docs/es/` en el mismo commit.
 - **No copies** código, textos, iconos ni identidad visual de KeePassDX, Keepass2Android, KeePassXC ni otros gestores, aunque su licencia lo permita.
-- **Versión:** archivo `VERSION` (SemVer; antes de 1.0, lo incompatible es menor) y entrada en `CHANGELOG.md` + `CHANGELOG.es.md` en el mismo commit.
+- **Versión:** archivo `VERSION` (SemVer; antes de 1.0, lo incompatible es menor) y entrada en `CHANGELOG.md` + `docs/es/CHANGELOG.md` en el mismo commit.
 - **Ante un imprevisto de diseño** (algo que el plan no cubre o contradice la arquitectura), para y anótalo en el plan; no improvises.
 
 ## IA en el desarrollo

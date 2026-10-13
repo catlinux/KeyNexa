@@ -1,6 +1,6 @@
 # Modelo de amenazas
 
-[English](THREAT_MODEL.md) | [Español](THREAT_MODEL.es.md)
+[English](../THREAT_MODEL.md) | [Español](THREAT_MODEL.md)
 
 > Estado: **borrador inicial** (v0.1.0), escrito antes de cualquier código sensible. Se revisará en cada fase. KeyNexa no ha sido auditado; nada de lo aquí expuesto es una garantía.
 
@@ -41,7 +41,7 @@
 | T9 | Abuso del desbloqueo biométrico | Clave maestra envuelta con una clave AES del Android Keystore con `setUserAuthenticationRequired(true)`, autenticación en cada uso mediante `BiometricPrompt` + `CryptoObject`, solo `BIOMETRIC_STRONG`, invalidada cuando cambian los datos biométricos; StrongBox cuando esté disponible. Opcional (opt-in), con una solicitud periódica de la contraseña maestra. |
 | T10 | Exfiltración mediante la copia de seguridad de Android | `allowBackup="false"` más `dataExtractionRules` y `fullBackupContent` explícitos que excluyen todos los datos de la aplicación; secretos en `noBackupFilesDir`. |
 | T11 | `.kdbx` malformado o malicioso | HMAC de la cabecera y de los bloques de KDBX 4 verificados antes de analizar (KDBX 3.1 se apoya en sus bytes de inicio de flujo y bloques con hash); límites a los tamaños y a los parámetros de la KDF para evitar el agotamiento de memoria; entidades externas XML desactivadas; pruebas de fuzzing sobre el adaptador del motor. |
-| T12 | Pérdida de datos al guardar (interrupción, truncamiento, escrituras parciales) | Flujo de guardado seguro: copia de seguridad privada, escritura con `"rwt"`, verificación por relectura, restauración si falla ([ADR-0004](decisions/0004-storage-sync-and-safe-save.es.md)). |
+| T12 | Pérdida de datos al guardar (interrupción, truncamiento, escrituras parciales) | Flujo de guardado seguro: copia de seguridad privada, escritura con `"rwt"`, verificación por relectura, restauración si falla ([ADR-0004](decisions/0004-storage-sync-and-safe-save.md)). |
 | T13 | Cambios externos y conflictos de sincronización sobrescritos | Comprobación de la huella antes de cada guardado y al reanudar; fusión automática por UUID y marcas de tiempo; los archivos `.sync-conflict-` de Syncthing se ofrecen para fusionar y nunca se eliminan automáticamente. |
 | T14 | Phishing mediante autorrelleno (nombres de paquete falsos) | Credenciales asociadas a aplicaciones por certificado de firma verificado y Digital Asset Links, no solo por nombre de paquete; confirmación explícita cuando no está verificado. (Fase 2.) |
 | T15 | Permisos excesivos | Sin permiso de internet en el MVP; sin `MANAGE_EXTERNAL_STORAGE`; solo SAF. |

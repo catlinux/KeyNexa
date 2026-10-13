@@ -1,6 +1,6 @@
 # ADR-0002: KDBX engine
 
-[English](0002-kdbx-engine.md) | [Español](0002-kdbx-engine.es.md)
+[English](0002-kdbx-engine.md) | [Español](../es/decisions/0002-kdbx-engine.md)
 
 - **Status:** Accepted
 - **Date:** 2026-10-13

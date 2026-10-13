@@ -1,6 +1,6 @@
 # Política de seguridad
 
-[English](SECURITY.md) | [Español](SECURITY.es.md)
+[English](../../SECURITY.md) | [Español](SECURITY.md)
 
 ## Estado del proyecto
 
@@ -20,4 +20,4 @@ Hasta la 1.0.0, solo la última versión publicada recibe correcciones de seguri
 
 ## Diseño de seguridad
 
-Consulta el [modelo de amenazas](docs/THREAT_MODEL.es.md) para ver los activos, las amenazas, las mitigaciones y los riesgos residuales, y la [arquitectura](docs/ARCHITECTURE.es.md) para el diseño del guardado seguro y de la fusión.
+Consulta el [modelo de amenazas](THREAT_MODEL.md) para ver los activos, las amenazas, las mitigaciones y los riesgos residuales, y la [arquitectura](ARCHITECTURE.md) para el diseño del guardado seguro y de la fusión.

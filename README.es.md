@@ -16,26 +16,26 @@ Un gestor de contraseñas multiplataforma que prioriza la seguridad, construido 
 - Diseñado para vivir en una carpeta sincronizada con [Syncthing](https://syncthing.net/), detectando los cambios externos y fusionando los conflictos en lugar de perder datos en silencio.
 - Interfaz bilingüe: inglés (`en-US`) y español (`es-ES`).
 
-Consulta la [hoja de ruta](docs/ROADMAP.es.md) para ver qué está planificado en cada fase.
+Consulta la [hoja de ruta](docs/es/ROADMAP.md) para ver qué está planificado en cada fase.
 
 ## Documentación
 
 | Documento | Contenido |
 | --- | --- |
-| [Arquitectura](docs/ARCHITECTURE.es.md) | Módulos, elecciones tecnológicas, estrategia multiplataforma |
-| [Modelo de amenazas](docs/THREAT_MODEL.es.md) | Activos, atacantes, amenazas, mitigaciones, riesgos residuales |
-| [Dependencias y licencias](docs/DEPENDENCIES_AND_LICENSES.es.md) | Bibliotecas investigadas, licencias verificadas, fuentes |
-| [Desarrollo](docs/DEVELOPMENT.es.md) | Requisitos y cómo compilar (cuando exista código) |
-| [Hoja de ruta](docs/ROADMAP.es.md) | MVP, criterios de aceptación y fases posteriores |
-| [Decisiones](docs/decisions/README.es.md) | Registros de decisiones de arquitectura (ADR) |
-| [Cómo contribuir](CONTRIBUTING.es.md) | Flujo de trabajo, reglas de documentación bilingüe, versionado |
-| [Política de seguridad](SECURITY.es.md) | Cómo notificar vulnerabilidades |
-| [Registro de cambios](CHANGELOG.es.md) | Cambios por versión |
-| [Pendientes](TODO.es.md) | Trabajo pendiente |
+| [Arquitectura](docs/es/ARCHITECTURE.md) | Módulos, elecciones tecnológicas, estrategia multiplataforma |
+| [Modelo de amenazas](docs/es/THREAT_MODEL.md) | Activos, atacantes, amenazas, mitigaciones, riesgos residuales |
+| [Dependencias y licencias](docs/es/DEPENDENCIES_AND_LICENSES.md) | Bibliotecas investigadas, licencias verificadas, fuentes |
+| [Desarrollo](docs/es/DEVELOPMENT.md) | Requisitos y cómo compilar (cuando exista código) |
+| [Hoja de ruta](docs/es/ROADMAP.md) | MVP, criterios de aceptación y fases posteriores |
+| [Decisiones](docs/es/decisions/README.md) | Registros de decisiones de arquitectura (ADR) |
+| [Cómo contribuir](docs/es/CONTRIBUTING.md) | Flujo de trabajo, reglas de documentación bilingüe, versionado |
+| [Política de seguridad](docs/es/SECURITY.md) | Cómo notificar vulnerabilidades |
+| [Registro de cambios](docs/es/CHANGELOG.md) | Cambios por versión |
+| [Pendientes](docs/es/TODO.md) | Trabajo pendiente |
 
 ## Requisitos, instalación y uso
 
-Todavía no disponible: no hay ninguna aplicación que se pueda compilar. [Desarrollo](docs/DEVELOPMENT.es.md) enumera la cadena de herramientas prevista y contendrá instrucciones de compilación verificadas cuando exista el esqueleto del proyecto.
+Todavía no disponible: no hay ninguna aplicación que se pueda compilar. [Desarrollo](docs/es/DEVELOPMENT.md) enumera la cadena de herramientas prevista y contendrá instrucciones de compilación verificadas cuando exista el esqueleto del proyecto.
 
 ## Créditos y licencia
 
@@ -48,9 +48,9 @@ Conforme a la sección 7 de la GPL, también se aplican los [términos adicional
 
 ### Material de terceros
 
-Este repositorio todavía no contiene material de terceros. Las bibliotecas previstas para la aplicación, y sus licencias verificadas, figuran en [Dependencias y licencias](docs/DEPENDENCIES_AND_LICENSES.es.md); se añadirán a la tabla siguiente cuando se incluyan realmente.
+Este repositorio todavía no contiene material de terceros. Las bibliotecas previstas para la aplicación, y sus licencias verificadas, figuran en [Dependencias y licencias](docs/es/DEPENDENCIES_AND_LICENSES.md); se añadirán a la tabla siguiente cuando se incluyan realmente.
 
 | Componente | Autor | Licencia | Enlace |
 | --- | --- | --- | --- |
 
-Créditos completos: [CREDITS.es.md](CREDITS.es.md).
+Créditos completos: [CREDITS](docs/es/CREDITS.md).

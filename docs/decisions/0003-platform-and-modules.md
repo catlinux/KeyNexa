@@ -1,6 +1,6 @@
 # ADR-0003: Platform and modules
 
-[English](0003-platform-and-modules.md) | [Español](0003-platform-and-modules.es.md)
+[English](0003-platform-and-modules.md) | [Español](../es/decisions/0003-platform-and-modules.md)
 
 - **Status:** Accepted
 - **Date:** 2026-10-13

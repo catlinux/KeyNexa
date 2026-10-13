@@ -1,6 +1,6 @@
 # Desarrollo
 
-[English](DEVELOPMENT.md) | [Español](DEVELOPMENT.es.md)
+[English](../DEVELOPMENT.md) | [Español](DEVELOPMENT.md)
 
 > Estado: todavía no hay código. Los comandos de compilación y de pruebas se añadirán aquí, verificados, cuando exista el esqueleto del proyecto (fase C).
 
@@ -19,7 +19,7 @@
 - Análisis estático: Android Lint (con las advertencias tratadas como errores para las comprobaciones de seguridad e i18n) y detekt.
 - Pruebas: JUnit para los módulos `core-*` en la JVM; pruebas de IU con Compose y pruebas instrumentadas para `app-android`.
 - Seguridad de las dependencias: verificación de dependencias de Gradle, más un analizador de vulnerabilidades en la CI.
-- Informe de licencias generado en la CI y comparado con [Dependencias y licencias](DEPENDENCIES_AND_LICENSES.es.md).
+- Informe de licencias generado en la CI y comparado con [Dependencias y licencias](DEPENDENCIES_AND_LICENSES.md).
 
 ## Datos de prueba
 

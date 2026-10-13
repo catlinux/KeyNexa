@@ -1,6 +1,6 @@
 # Threat model
 
-[English](THREAT_MODEL.md) | [Español](THREAT_MODEL.es.md)
+[English](THREAT_MODEL.md) | [Español](es/THREAT_MODEL.md)
 
 > Status: **initial draft** (v0.1.0), written before any sensitive code. It will be revised at every phase. KeyNexa has not been audited; nothing here is a guarantee.
 

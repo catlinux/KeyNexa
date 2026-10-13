@@ -1,6 +1,6 @@
 # Contributing
 
-[English](CONTRIBUTING.md) | [Español](CONTRIBUTING.es.md)
+[English](CONTRIBUTING.md) | [Español](docs/es/CONTRIBUTING.md)
 
 Thank you for your interest in KeyNexa. The project is in an early phase; please open an issue before starting large changes.
 
@@ -19,9 +19,9 @@ KeyNexa is licensed under GPL-3.0-only with the additional terms in [NOTICE](NOT
 
 ## Bilingual documentation
 
-All documentation exists in **English** (primary, `NAME.md`) and **Spanish** (`NAME.es.md`), side by side in the same folder.
+All documentation exists in **English** (primary) and **Spanish**. English files keep their usual place (`README.md`, `CHANGELOG.md`, `docs/ARCHITECTURE.md`…). Spanish translations mirror that structure under `docs/es/` (`docs/es/CHANGELOG.md`, `docs/es/ARCHITECTURE.md`, `docs/es/decisions/…`), except `README.es.md`, which stays in the root next to `README.md`.
 
-1. Every document starts with the title and the language links: `[English](NAME.md) | [Español](NAME.es.md)`.
+1. Every document starts with the title and the language links, as relative paths to both versions, for example in `docs/ARCHITECTURE.md`: `[English](ARCHITECTURE.md) | [Español](es/ARCHITECTURE.md)`.
 2. Any change to one language is applied to the other **in the same commit**. A pull request that changes only one language is incomplete.
 3. Translations say the same thing; technical names, commands and identifiers stay in English.
 4. Documentation describes the real state of the project and separates *implemented*, *planned* and *pending*.
@@ -29,7 +29,7 @@ All documentation exists in **English** (primary, `NAME.md`) and **Spanish** (`N
 ## Versioning and changelog
 
 - [Semantic Versioning](https://semver.org/); the current version is in [VERSION](VERSION). Before 1.0.0, incompatible changes bump the minor version.
-- Every finished change bumps the version and adds an entry to [CHANGELOG](CHANGELOG.md) and [CHANGELOG.es](CHANGELOG.es.md) ([Keep a Changelog](https://keepachangelog.com/) format) in the same commit.
+- Every finished change bumps the version and adds an entry to [CHANGELOG](CHANGELOG.md) and [CHANGELOG.es](docs/es/CHANGELOG.md) ([Keep a Changelog](https://keepachangelog.com/) format) in the same commit.
 - Pending work goes in [TODO](TODO.md); finished tasks are removed from it.
 
 ## Commits

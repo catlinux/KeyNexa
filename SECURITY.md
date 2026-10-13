@@ -1,6 +1,6 @@
 # Security policy
 
-[English](SECURITY.md) | [Español](SECURITY.es.md)
+[English](SECURITY.md) | [Español](docs/es/SECURITY.md)
 
 ## Project status
 

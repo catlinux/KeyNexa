@@ -1,6 +1,6 @@
 # ADR-0001: License
 
-[English](0001-license.md) | [Español](0001-license.es.md)
+[English](0001-license.md) | [Español](../es/decisions/0001-license.md)
 
 - **Status:** Accepted
 - **Date:** 2026-10-13

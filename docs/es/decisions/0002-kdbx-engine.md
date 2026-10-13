@@ -1,13 +1,13 @@
 # ADR-0002: Motor KDBX
 
-[English](0002-kdbx-engine.md) | [Español](0002-kdbx-engine.es.md)
+[English](../../decisions/0002-kdbx-engine.md) | [Español](0002-kdbx-engine.md)
 
 - **Estado:** Aceptada
 - **Fecha:** 2026-10-13
 
 ## Contexto
 
-KeyNexa debe leer y escribir KDBX 3.1, 4.0 y 4.1 sin implementar criptografía propia, con interoperabilidad con KeePassXC y otros clientes. La comparación de candidatas está en [Dependencias y licencias](../DEPENDENCIES_AND_LICENSES.es.md).
+KeyNexa debe leer y escribir KDBX 3.1, 4.0 y 4.1 sin implementar criptografía propia, con interoperabilidad con KeePassXC y otros clientes. La comparación de candidatas está en [Dependencias y licencias](../DEPENDENCIES_AND_LICENSES.md).
 
 ## Opciones
 

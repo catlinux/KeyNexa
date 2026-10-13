@@ -1,6 +1,6 @@
 # To do
 
-[English](TODO.md) | [Español](TODO.es.md)
+[English](TODO.md) | [Español](docs/es/TODO.md)
 
 Detailed steps: see the [roadmap](docs/ROADMAP.md).
 

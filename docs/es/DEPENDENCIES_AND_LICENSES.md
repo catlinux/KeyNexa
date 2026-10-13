@@ -1,16 +1,16 @@
 # Dependencias y licencias
 
-[English](DEPENDENCIES_AND_LICENSES.md) | [Español](DEPENDENCIES_AND_LICENSES.es.md)
+[English](../DEPENDENCIES_AND_LICENSES.md) | [Español](DEPENDENCIES_AND_LICENSES.md)
 
 > Fecha de la investigación: **2026-10-13**. Las licencias se comprobaron en el archivo `LICENSE`, el archivo de compilación o el POM de Maven Central de cada proyecto, según se cita. Los elementos marcados como *no verificado* no se pudieron confirmar. Esto es una investigación técnica, no asesoramiento legal.
 
 ## Licencia de KeyNexa y regla de compatibilidad
 
-El código propio de KeyNexa se distribuye bajo **GPL-3.0-only** con los términos adicionales de la sección 7 de [NOTICE](../NOTICE) ([ADR-0001](decisions/0001-license.es.md)). Todo componente distribuido con la aplicación debe ser compatible con GPL-3.0:
+El código propio de KeyNexa se distribuye bajo **GPL-3.0-only** con los términos adicionales de la sección 7 de [NOTICE](../../NOTICE) ([ADR-0001](decisions/0001-license.md)). Todo componente distribuido con la aplicación debe ser compatible con GPL-3.0:
 
 - Compatibles: MIT, BSD, ISC, Apache-2.0, Bouncy Castle License (texto MIT), SIL OFL 1.1 (fuentes tipográficas), GPL-3.0, LGPL-3.0.
 - No compatibles: GPL-2.0-only, código propietario o de «todos los derechos reservados», licencias con restricciones de ámbito de uso.
-- Cada componente de terceros conserva su propia licencia y sus avisos, que se enumeran en [CREDITS.es.md](../CREDITS.es.md) cuando se incluye.
+- Cada componente de terceros conserva su propia licencia y sus avisos, que se enumeran en [CREDITS](CREDITS.md) cuando se incluye.
 
 ## Bibliotecas KDBX evaluadas
 
@@ -20,7 +20,7 @@ El código propio de KeyNexa se distribuye bajo **GPL-3.0-only** con los términ
 | [KeePassJava2](https://github.com/jorabin/KeePassJava2) | Apache-2.0 | JVM (Java 17 para la 3.1.0) | 3.1, 4, 4.1 (incidencia abierta: la 4.1 se reescribe como 4.0, #114) | AES, ChaCha20; AES-KDF, solo Argon2d (según el código fuente) | 3.1.0 (2026-10-05), API con cambios incompatibles muy reciente; correcciones recientes de integridad de adjuntos | Candidata de reserva |
 | [hudeany/kdbx](https://github.com/hudeany/kdbx) | MIT | JVM | 3.x/4.x | AES, ChaCha20; AES-KDF, Argon2d/id | Primera versión en Maven 26.1.5 (2026-10-06), 2 estrellas | Demasiado joven |
 | [openkeepass](https://github.com/cternes/openkeepass) | Apache-2.0 | JVM | Solo KDBX 3 | Sin Argon2/ChaCha20 | Obsoleta según su autor | Rechazada |
-| [keepass-rs](https://github.com/sseemayer/keepass-rs) | MIT | Rust | Lee todo; la escritura está tras la característica `save_kdbx4` y se describe como experimental | Completo | Muy activa (0.15.2, 2026-10-11); incidencias abiertas de pérdida de datos en adjuntos/historial (#360, #375) | Rechazada por ahora ([ARCHITECTURE](ARCHITECTURE.es.md)) |
+| [keepass-rs](https://github.com/sseemayer/keepass-rs) | MIT | Rust | Lee todo; la escritura está tras la característica `save_kdbx4` y se describe como experimental | Completo | Muy activa (0.15.2, 2026-10-11); incidencias abiertas de pérdida de datos en adjuntos/historial (#360, #375) | Rechazada por ahora ([ARCHITECTURE](ARCHITECTURE.md)) |
 | [gokeepasslib](https://github.com/tobischo/gokeepasslib) | MIT | Go | 3.1/4.0/4.1 | — | Activa | Rechazada: cadena de herramientas de Go en Android |
 | [kdbxweb](https://github.com/keeweb/kdbxweb) | MIT | JavaScript | — | Argon2 proporcionado externamente | Último push 2024-12 | Rechazada: ecosistema equivocado |
 | [KeePassDX](https://github.com/Kunzisoft/KeePassDX) | GPL-3.0-or-later | Aplicación Android | — | — | Activa | No es una biblioteca publicada; JNI nativo. Se usa solo como referencia de comportamiento |
@@ -62,7 +62,7 @@ El código propio de KeyNexa se distribuye bajo **GPL-3.0-only** con los términ
 
 1. Justificar la necesidad en el pull request o en el mensaje del commit.
 2. Leer su archivo `LICENSE` en la versión exacta y comprobar sus dependencias transitivas.
-3. Añadirla a este documento (en ambos idiomas) y a [CREDITS.es.md](../CREDITS.es.md) en el mismo commit.
+3. Añadirla a este documento (en ambos idiomas) y a [CREDITS](CREDITS.md) en el mismo commit.
 4. La CI (planificada) ejecuta un informe de licencias y un análisis de vulnerabilidades en cada compilación.
 
 ## Cuestiones legales pendientes

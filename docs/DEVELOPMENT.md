@@ -1,6 +1,6 @@
 # Development
 
-[English](DEVELOPMENT.md) | [Español](DEVELOPMENT.es.md)
+[English](DEVELOPMENT.md) | [Español](es/DEVELOPMENT.md)
 
 > Status: there is no code yet. Build and test commands will be added here, verified, when the project skeleton exists (phase C).
 

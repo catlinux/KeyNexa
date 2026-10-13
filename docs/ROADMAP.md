@@ -1,6 +1,6 @@
 # Roadmap
 
-[English](ROADMAP.md) | [Español](ROADMAP.es.md)
+[English](ROADMAP.md) | [Español](es/ROADMAP.md)
 
 Legend: ✅ done · 🔄 in progress · ⏳ planned. Nothing is "done" until its acceptance criteria and tests pass.
 

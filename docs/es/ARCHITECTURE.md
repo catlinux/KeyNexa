@@ -1,8 +1,8 @@
 # Arquitectura
 
-[English](ARCHITECTURE.md) | [Español](ARCHITECTURE.es.md)
+[English](../ARCHITECTURE.md) | [Español](ARCHITECTURE.md)
 
-> Estado: **propuesta** (v0.1.0). Todavía no existe código. Las decisiones se registran en [decisions/](decisions/README.es.md).
+> Estado: **propuesta** (v0.1.0). Todavía no existe código. Las decisiones se registran en [decisions/](decisions/README.md).
 
 ## Objetivos y restricciones
 
@@ -11,19 +11,19 @@
 3. Sin criptografía propia: solo implementaciones consolidadas y probadas.
 4. Android primero; Windows y Linux más adelante sin reescribir el núcleo.
 5. Código sensible para la seguridad pequeño, explícito y comprobable con pruebas.
-6. Toda dependencia compatible con GPL-3.0 y justificada (consulta [Dependencias y licencias](DEPENDENCIES_AND_LICENSES.es.md)).
+6. Toda dependencia compatible con GPL-3.0 y justificada (consulta [Dependencias y licencias](DEPENDENCIES_AND_LICENSES.md)).
 
 ## Elecciones tecnológicas
 
 | Área | Elección | Por qué | Decisión |
 | --- | --- | --- | --- |
-| Lenguaje | Kotlin (destino JVM) | Lenguaje nativo de Android; el mismo código se ejecuta en la JVM de escritorio | [ADR-0003](decisions/0003-platform-and-modules.es.md) |
-| Motor KDBX | [kotpass](https://github.com/keemobile/kotpass) (MIT), envuelto tras nuestra propia interfaz | Única biblioteca JVM investigada que cubre KDBX 3.1/4.x con AES, ChaCha20, Twofish, AES-KDF, Argon2d y Argon2id; una sola dependencia en tiempo de ejecución (okio) | [ADR-0002](decisions/0002-kdbx-engine.es.md) |
-| IU de Android | Jetpack Compose + Material 3 (tema propio) | Estándar actual de Android; declarativo y comprobable con pruebas | [ADR-0003](decisions/0003-platform-and-modules.es.md) |
-| IU de escritorio (futura) | Compose Multiplatform for Desktop (JVM) | Reutiliza sin cambios los módulos de núcleo en JVM | [ADR-0003](decisions/0003-platform-and-modules.es.md) |
-| Acceso a archivos (Android) | Storage Access Framework (SAF), sin el permiso «Acceso a todos los archivos» | Mínimo privilegio; política de Google Play | [ADR-0004](decisions/0004-storage-sync-and-safe-save.es.md) |
-| Desbloqueo biométrico | `androidx.biometric` + Android Keystore | Protección de claves respaldada por la plataforma | [THREAT_MODEL](THREAT_MODEL.es.md) |
-| Compilación | Gradle (Kotlin DSL) con catálogo de versiones | Estándar; declaraciones de dependencias reproducibles | [DEVELOPMENT](DEVELOPMENT.es.md) |
+| Lenguaje | Kotlin (destino JVM) | Lenguaje nativo de Android; el mismo código se ejecuta en la JVM de escritorio | [ADR-0003](decisions/0003-platform-and-modules.md) |
+| Motor KDBX | [kotpass](https://github.com/keemobile/kotpass) (MIT), envuelto tras nuestra propia interfaz | Única biblioteca JVM investigada que cubre KDBX 3.1/4.x con AES, ChaCha20, Twofish, AES-KDF, Argon2d y Argon2id; una sola dependencia en tiempo de ejecución (okio) | [ADR-0002](decisions/0002-kdbx-engine.md) |
+| IU de Android | Jetpack Compose + Material 3 (tema propio) | Estándar actual de Android; declarativo y comprobable con pruebas | [ADR-0003](decisions/0003-platform-and-modules.md) |
+| IU de escritorio (futura) | Compose Multiplatform for Desktop (JVM) | Reutiliza sin cambios los módulos de núcleo en JVM | [ADR-0003](decisions/0003-platform-and-modules.md) |
+| Acceso a archivos (Android) | Storage Access Framework (SAF), sin el permiso «Acceso a todos los archivos» | Mínimo privilegio; política de Google Play | [ADR-0004](decisions/0004-storage-sync-and-safe-save.md) |
+| Desbloqueo biométrico | `androidx.biometric` + Android Keystore | Protección de claves respaldada por la plataforma | [THREAT_MODEL](THREAT_MODEL.md) |
+| Compilación | Gradle (Kotlin DSL) con catálogo de versiones | Estándar; declaraciones de dependencias reproducibles | [DEVELOPMENT](DEVELOPMENT.md) |
 
 ## Estructura de módulos (planificada)
 
@@ -51,7 +51,7 @@ Un futuro `app-desktop` reutilizaría `core-*` y añadiría un `platform-desktop
 
 ## Flujo de datos: apertura y guardado
 
-1. El usuario elige una bóveda con SAF. KeyNexa conserva un permiso de URI persistente, prefiriendo la concesión de una **carpeta** (`ACTION_OPEN_DOCUMENT_TREE`) para que la bóveda sobreviva a que Syncthing la sustituya. Consulta [ADR-0004](decisions/0004-storage-sync-and-safe-save.es.md).
+1. El usuario elige una bóveda con SAF. KeyNexa conserva un permiso de URI persistente, prefiriendo la concesión de una **carpeta** (`ACTION_OPEN_DOCUMENT_TREE`) para que la bóveda sobreviva a que Syncthing la sustituya. Consulta [ADR-0004](decisions/0004-storage-sync-and-safe-save.md).
 2. Los bytes se leen en memoria y se les calcula la huella (SHA-256 del archivo cifrado). Los bytes cifrados no se escriben nunca en los logs.
 3. `KdbxEngine` descifra con la clave compuesta. Se rechaza un archivo cuya cabecera o bloques HMAC no se verifican (puede ser una transferencia parcial de Syncthing): KeyNexa reintenta tras una breve espera y nunca escribe encima.
 4. Al guardar, se ejecuta el flujo de guardado seguro (más abajo).

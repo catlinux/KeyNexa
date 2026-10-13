@@ -1,10 +1,16 @@
 # Changelog
 
-[English](CHANGELOG.md) | [Español](CHANGELOG.es.md)
+[English](CHANGELOG.md) | [Español](docs/es/CHANGELOG.md)
 
 All notable changes to this project are documented in this file. The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and the project follows [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
+
+## [0.1.1] - 2026-10-13
+
+### Changed
+
+- Spanish translations moved to `docs/es/`, mirroring the English structure; only `README.es.md` stays in the root. Language links and the bilingual rules in CONTRIBUTING updated.
 
 ## [0.1.0] - 2026-10-13
 
