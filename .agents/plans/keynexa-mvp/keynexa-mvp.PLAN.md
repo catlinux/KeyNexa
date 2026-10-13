@@ -17,7 +17,7 @@ Fases A y B terminadas en 0.1.0 (documentación en `docs/`). Este plan lo ejecut
   - `versionName` se lee de `VERSION` y `versionCode` se deriva de él (MAJOR*10000+MINOR*100+PATCH).
   - Recursos `values/strings.xml` (en-US) y `values-es/strings.xml`, sin textos incrustados. Manifest con `allowBackup="false"`, `dataExtractionRules` y `fullBackupContent` que excluyen todo, sin permiso INTERNET.
   - Terminado: `./gradlew build` y `./gradlew test` pasan en local (anota las órdenes reales en `docs/DEVELOPMENT.md` (y `docs/es/DEVELOPMENT.md`) y README «Instalación/Uso» si ya aplica).
-- [ ] **C2. Calidad** · 0.2.1 (parche: interno) · AgentRelay (medio).
+- [x] **C2. Calidad** · 0.2.1 (hecho) (parche: interno) · AgentRelay (medio).
   - ktlint (o Spotless+ktlint), detekt, Android Lint con `HardcodedText`, `MissingTranslation` y los de seguridad como error; verificación de dependencias de Gradle (`gradle/verification-metadata.xml`).
   - Terminado: `./gradlew check` pasa; documentado en `docs/DEVELOPMENT.md` (y `docs/es/DEVELOPMENT.md`).
 - [ ] **C3. CI** · 0.2.2 (parche) · AgentRelay (medio).

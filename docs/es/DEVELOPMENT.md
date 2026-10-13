@@ -28,6 +28,7 @@ Ejecuta estos comandos desde la raíz del repositorio. En Windows usa `gradlew.b
 | Comando | Qué hace |
 | --- | --- |
 | `./gradlew build` | Compila todos los módulos, ejecuta las pruebas unitarias y el lint |
+| `./gradlew check` | Ejecuta las comprobaciones de calidad (pruebas unitarias, Android Lint, detekt, ktlint) |
 | `./gradlew test` | Ejecuta las pruebas unitarias de todos los módulos |
 | `./gradlew :app-android:assembleDebug` | Genera el APK de depuración en `app-android/build/outputs/apk/debug/app-android-debug.apk` |
 
@@ -37,13 +38,34 @@ Estos comandos se verificaron en local, en Windows, con JDK 17 (Temurin) y el SD
 
 Las dependencias solo apuntan hacia abajo; los módulos `core-*` son Kotlin/JVM puro y no importan Android. Consulta [Arquitectura](ARCHITECTURE.md).
 
-## Herramientas de calidad (previstas en la fase C)
+## Comprobaciones de calidad
 
-- Formato y estilo: ktlint (o Spotless con ktlint).
-- Análisis estático: Android Lint (con las advertencias tratadas como errores para las comprobaciones de seguridad e i18n) y detekt.
-- Pruebas: JUnit para los módulos `core-*` en la JVM; pruebas de IU con Compose y pruebas instrumentadas para `app-android`.
-- Seguridad de las dependencias: verificación de dependencias de Gradle, más un analizador de vulnerabilidades en la CI.
-- Informe de licencias generado en la CI y comparado con [Dependencias y licencias](DEPENDENCIES_AND_LICENSES.md).
+`./gradlew check` ejecuta todas estas comprobaciones y falla en el primer problema:
+
+| Comando | Qué comprueba |
+| --- | --- |
+| `./gradlew check` | Todas las comprobaciones siguientes (pruebas unitarias, Android Lint, detekt, ktlint) |
+| `./gradlew test` | Las pruebas unitarias de todos los módulos |
+| `./gradlew lint` | Android Lint en `platform-android` y `app-android` |
+| `./gradlew detekt` | Análisis estático de Kotlin |
+| `./gradlew ktlintCheck` | Estilo del código Kotlin |
+| `./gradlew ktlintFormat` | Aplica las correcciones automáticas de ktlint a las fuentes |
+
+Configuración:
+
+- **Android Lint**: `config/lint/lint.xml`, compartido por los dos módulos Android. Los módulos fijan `warningsAsErrors = true` y `abortOnError = true`; `HardcodedText`, `MissingTranslation`, `ExtraTranslation` y las comprobaciones de seguridad (`SetJavaScriptEnabled`, `TrustAllX509TrustManager`, `WorldReadableFiles`, etc.) son errores.
+- **detekt**: `config/detekt/detekt.yml`, sobre los valores por defecto de detekt.
+- **ktlint**: `.editorconfig` en la raíz del repositorio.
+
+### Verificación de dependencias
+
+`gradle/verification-metadata.xml` fija la suma SHA-256 de cada dependencia, plugin y herramienta (incluidos ktlint y detekt) con `verify-metadata=true`. Tras cambiar una dependencia, la cadena de herramientas o las versiones de los plugins, regenéralo con las tareas que resuelvan los nuevos artefactos, revisa el diff y confírmalo:
+
+```sh
+./gradlew --write-verification-metadata sha256 check build
+```
+
+No inventes sumas a mano. La CI (compilación, pruebas, lint, informe de licencias, análisis de vulnerabilidades) está prevista para la fase C3; consulta la [hoja de ruta](ROADMAP.md).
 
 ## Datos de prueba
 

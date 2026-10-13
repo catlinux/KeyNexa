@@ -28,6 +28,7 @@ Run these from the repository root. On Windows use `gradlew.bat` instead of `./g
 | Command | What it does |
 | --- | --- |
 | `./gradlew build` | Compiles every module, runs the unit tests and lint |
+| `./gradlew check` | Runs the quality checks (unit tests, Android Lint, detekt, ktlint) |
 | `./gradlew test` | Runs the unit tests of every module |
 | `./gradlew :app-android:assembleDebug` | Builds the debug APK at `app-android/build/outputs/apk/debug/app-android-debug.apk` |
 
@@ -37,13 +38,34 @@ These commands were verified locally on Windows with JDK 17 (Temurin) and Androi
 
 Dependencies point downwards only; the `core-*` modules are pure Kotlin/JVM and do not import Android. See [Architecture](ARCHITECTURE.md).
 
-## Quality tooling (planned in phase C)
+## Quality checks
 
-- Formatting and style: ktlint (or Spotless with ktlint).
-- Static analysis: Android Lint (with warnings as errors for security and i18n checks) and detekt.
-- Tests: JUnit for `core-*` modules on the JVM; Compose UI and instrumented tests for `app-android`.
-- Dependency security: Gradle dependency verification, plus a vulnerability scanner in CI.
-- License report generated in CI and compared with [Dependencies and licenses](DEPENDENCIES_AND_LICENSES.md).
+`./gradlew check` runs all of these and fails on the first problem:
+
+| Command | What it checks |
+| --- | --- |
+| `./gradlew check` | Every check below (unit tests, Android Lint, detekt, ktlint) |
+| `./gradlew test` | Unit tests of every module |
+| `./gradlew lint` | Android Lint in `platform-android` and `app-android` |
+| `./gradlew detekt` | Kotlin static analysis |
+| `./gradlew ktlintCheck` | Kotlin code style |
+| `./gradlew ktlintFormat` | Applies ktlint's automatic fixes to the sources |
+
+Configuration:
+
+- **Android Lint**: `config/lint/lint.xml`, shared by both Android modules. The modules set `warningsAsErrors = true` and `abortOnError = true`; `HardcodedText`, `MissingTranslation`, `ExtraTranslation` and the security checks (`SetJavaScriptEnabled`, `TrustAllX509TrustManager`, `WorldReadableFiles`, and the rest) are errors.
+- **detekt**: `config/detekt/detekt.yml`, on top of detekt's defaults.
+- **ktlint**: `.editorconfig` at the repository root.
+
+### Dependency verification
+
+`gradle/verification-metadata.xml` pins the SHA-256 checksum of every dependency, plugin and tool (including ktlint and detekt) with `verify-metadata=true`. After changing a dependency, the toolchain or the plugin versions, regenerate it with the tasks that resolve the new artifacts, review the diff and commit it:
+
+```sh
+./gradlew --write-verification-metadata sha256 check build
+```
+
+Do not invent checksums by hand. CI (build, tests, lint, license report, vulnerability scan) is planned for phase C3; see [Roadmap](ROADMAP.md).
 
 ## Test data
 
