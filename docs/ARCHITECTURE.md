@@ -58,12 +58,18 @@ A future `app-desktop` would reuse `core-*` and add a `platform-desktop` with a 
 
 ### Safe-save pipeline
 
-1. Serialize the vault to a new encrypted byte array in memory.
-2. Re-read the current file and compare its fingerprint with the one loaded. If it changed, decrypt it and **merge** it into the in-memory vault, then serialize again.
-3. Keep a copy of the previous encrypted file in app-private storage (rotating backups, excluded from Android backup).
-4. Write with mode `"rwt"`; if the provider does not support it, fall back to `"rw"` and truncate explicitly.
-5. Read the file back and verify that its fingerprint matches the bytes written and that it decrypts.
-6. If any step fails, restore from the private backup when possible and tell the user clearly. Never report success without step 5.
+Implemented in `core-sync` (`SafeSaver`, `VerifiedWriter`, `SaveRecovery`, `VaultReader`).
+
+1. Serialize the vault to a new encrypted byte array in memory and decrypt it once, to prove the new bytes are good.
+2. Re-read the current file and compare its fingerprint with the one loaded. If it changed, decrypt it and **merge** it into the in-memory vault, then serialize again (a few rounds at most). Without a merge, nothing is written.
+3. Keep two encrypted copies in app-private storage, excluded from Android backup: the previous file (`BeforeSave`, rotated: the newest 10 per vault) and the new bytes (`UnsavedChanges`, kept until they are saved). Record the save in a journal.
+4. Check the fingerprint once more, then write with mode `"rwt"`; if the provider does not support it, fall back to `"rw"` and truncate explicitly.
+5. Read the file back. Success only if its fingerprint equals that of the new bytes: identical bytes need no second decryption, so a save costs a single key derivation.
+6. Otherwise decide what the file holds: unchanged (nothing was written), replaced by another program after our write (left as it is), or torn by our own write. A torn file is restored byte for byte from the `BeforeSave` copy. In every failure the user's changes remain in memory and in the `UnsavedChanges` copy.
+
+**What "never corrupts" means here.** A storage provider cannot replace a file atomically, so a crash in the middle of a write can leave it torn; nothing can prevent that. The guarantee is that a decryptable copy always exists and is put back automatically: on the next start, `SaveRecovery` finds the journal entry, compares the file with the two copies and restores the previous version if the file was torn by our write. Telling a torn file from one written by another program needs no password: every save writes a fresh random master seed into the header, so only a file KeyNexa started writing shares a long prefix with its new bytes.
+
+**Tolerant reading.** A file that fails its integrity checks may be a sync transfer in progress, so `VaultReader` reads it again after 1, 2, 4 and 8 seconds before reporting it as damaged. In KDBX 4 a wrong-key error is reliable and is reported at once (the password may have changed on another device); in KDBX 3.x, where a damaged file and a wrong key look the same, it is retried when the same credentials already opened the vault.
 
 ### Merge
 

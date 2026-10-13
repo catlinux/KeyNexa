@@ -2,7 +2,8 @@ package io.github.catlinux.keynexa.sync
 
 /**
  * Tells whether [file], which is neither the old version nor the new one, was left torn by KeyNexa's own write
- * or is a complete file written by another program.
+ * or is a complete file written by another program. A file whose header cannot even be read ([hasCompleteHeader]
+ * false: empty, or cut before the header ends) cannot be another program's vault, so it always counts as torn.
  *
  * Every save produces a header with a fresh random master seed, so only a file that KeyNexa started writing can
  * share a long prefix with [outgoing] beyond what it shares with [previous]: two unrelated KDBX files agree on the
@@ -13,7 +14,8 @@ internal fun isTornByOwnWrite(
     file: ByteArray,
     outgoing: ByteArray,
     previous: ByteArray,
-): Boolean = commonPrefix(file, outgoing) >= commonPrefix(file, previous) + MIN_LEAD
+    hasCompleteHeader: Boolean,
+): Boolean = !hasCompleteHeader || commonPrefix(file, outgoing) >= commonPrefix(file, previous) + MIN_LEAD
 
 private const val MIN_LEAD = 16
 

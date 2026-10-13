@@ -1,5 +1,6 @@
 package io.github.catlinux.keynexa.sync
 
+import io.github.catlinux.keynexa.vault.KdbxEngine
 import io.github.catlinux.keynexa.vault.StoragePort
 import io.github.catlinux.keynexa.vault.VaultLocation
 import java.io.IOException
@@ -27,6 +28,7 @@ internal sealed interface WriteResult {
  */
 internal class VerifiedWriter(
     private val storage: StoragePort,
+    private val engine: KdbxEngine,
     private val backups: BackupStore,
     private val journal: SaveJournal,
     private val clock: Clock,
@@ -45,6 +47,8 @@ internal class VerifiedWriter(
         if (previousCopy == null || outgoingCopy == null || !begin(location, previousCopy, outgoingCopy, now)) {
             return WriteResult.Failed(SaveFailure.StorageError, FileState.Untouched, outgoingCopy)
         }
+        // Pruned here, not only after a successful write, so rounds aborted by external changes do not pile up.
+        runCatching { backups.prune(location, keepBackups) }
 
         // A last check right before writing narrows the window in which a sync tool's write could be overwritten.
         val again = storage.readOrNull(location)
@@ -122,13 +126,12 @@ internal class VerifiedWriter(
             when {
                 afterFingerprint == outgoingCopy.fingerprint -> {
                     backups.deleteQuietly(outgoingCopy)
-                    runCatching { backups.prune(location, keepBackups) }
                     WriteResult.Done(afterFingerprint)
                 }
                 afterFingerprint == Fingerprint.of(attempt.current) ->
                     WriteResult.Failed(failure, FileState.Untouched, outgoingCopy)
                 // A complete file from another program replaced ours after the write; it is left as it is.
-                !isTornByOwnWrite(after, attempt.encoded, attempt.current) ->
+                !isTornByOwnWrite(after, attempt.encoded, attempt.current, engine.hasCompleteHeader(after)) ->
                     WriteResult.Failed(SaveFailure.ChangedDuringSave, FileState.ReplacedElsewhere, outgoingCopy)
                 storage.writeVerified(location, attempt.current) ->
                     WriteResult.Failed(failure, FileState.Restored, outgoingCopy)

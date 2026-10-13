@@ -42,7 +42,7 @@ Fases A y B terminadas en 0.1.0 (documentación en `docs/`). Este plan lo ejecut
 
 ## Fase D: MVP seguro
 
-- [ ] **D1. Guardado seguro y detección de cambios** (`core-sync`) · 0.5.0 · **Opus (alto)**: diseño delicado.
+- [x] **D1. Guardado seguro y detección de cambios** (`core-sync`) · 0.5.0 (hecho; faltan las implementaciones Android de los puertos, ver TODO) · **Opus (alto)**: diseño delicado.
   - Huella SHA-256, canal de guardado seguro de `docs/ARCHITECTURE.md`, copias privadas rotativas, lectura tolerante con reintentos. `StoragePort` falso con inyección de fallos (corte a mitad, `w` sin truncar, archivo cambiado durante la escritura). Terminado: AC3 y AC5 con tests.
 - [ ] **D2. Fusión** (`core-sync`) · 0.6.0 · **Opus (alto)**.
   - Semántica de ARCHITECTURE «Merge» (UUID, tiempos, historial, DeletedObjects, ubicación), implementada desde la documentación, sin copiar código GPL. Tests exhaustivos. Terminado: AC4 (parte unitaria).

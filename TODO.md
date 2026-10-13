@@ -14,8 +14,8 @@ Detailed steps: see the [roadmap](docs/ROADMAP.md).
 ## Medium priority (phase D — secure MVP)
 
 - [ ] Vault opening, locking and auto-lock.
-- [ ] Safe-save pipeline and private backups.
-- [ ] External-change detection, merge and conflict-file handling.
+- [ ] Android implementations of the storage ports: SAF `StoragePort` (`"rwt"` with explicit truncation fallback), `BackupStore` and `SaveJournal` under `noBackupFilesDir`.
+- [ ] Merge (D2) and conflict-file handling.
 - [ ] Entry and group editing; search.
 - [ ] Biometric unlock.
 

@@ -41,7 +41,7 @@ class SafeSaver(
     private val merger: VaultMerger? = null,
     private val options: SaveOptions = SaveOptions(),
 ) {
-    private val writer = VerifiedWriter(storage, backups, journal, options.clock, options.keepBackups)
+    private val writer = VerifiedWriter(storage, engine, backups, journal, options.clock, options.keepBackups)
 
     /** Saves [edited], which the user derived from [loaded]. */
     fun save(

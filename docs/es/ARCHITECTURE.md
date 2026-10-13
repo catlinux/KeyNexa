@@ -58,12 +58,18 @@ Un futuro `app-desktop` reutilizaría `core-*` y añadiría un `platform-desktop
 
 ### Flujo de guardado seguro
 
-1. Serializar la bóveda a un nuevo array de bytes cifrado en memoria.
-2. Volver a leer el archivo actual y comparar su huella con la que se cargó. Si ha cambiado, descifrarlo y **fusionarlo** en la bóveda en memoria, y serializar de nuevo.
-3. Conservar una copia del archivo cifrado anterior en el almacenamiento privado de la aplicación (copias rotativas, excluidas de la copia de seguridad de Android).
-4. Escribir con el modo `"rwt"`; si el proveedor no lo admite, recurrir a `"rw"` y truncar explícitamente.
-5. Volver a leer el archivo y verificar que su huella coincide con los bytes escritos y que se descifra.
-6. Si falla algún paso, restaurar desde la copia privada cuando sea posible e informar claramente al usuario. No indicar nunca que ha tenido éxito sin el paso 5.
+Implementado en `core-sync` (`SafeSaver`, `VerifiedWriter`, `SaveRecovery`, `VaultReader`).
+
+1. Serializar la bóveda en memoria como un nuevo array de bytes cifrado y descifrarlo una vez, para demostrar que los bytes nuevos son correctos.
+2. Volver a leer el archivo actual y comparar su huella con la cargada. Si cambió, descifrarlo y **fusionarlo** con la bóveda en memoria y serializar de nuevo (como mucho unas pocas rondas). Sin fusión no se escribe nada.
+3. Guardar dos copias cifradas en el almacenamiento privado de la app, excluido de la copia de seguridad de Android: el archivo anterior (`BeforeSave`, rotativas: las 10 más recientes por bóveda) y los bytes nuevos (`UnsavedChanges`, conservados hasta que se guardan). Anotar el guardado en un diario.
+4. Comprobar la huella una vez más y escribir con el modo `"rwt"`; si el proveedor no lo admite, usar `"rw"` y truncar explícitamente.
+5. Volver a leer el archivo. Solo hay éxito si su huella coincide con la de los bytes nuevos: bytes idénticos no necesitan un segundo descifrado, así que un guardado cuesta una sola derivación de clave.
+6. Si no, averiguar qué contiene el archivo: sin cambios (no se escribió nada), sustituido por otro programa después de nuestra escritura (se deja como está) o roto por nuestra propia escritura. Un archivo roto se restaura byte a byte desde la copia `BeforeSave`. En cualquier fallo los cambios del usuario siguen en memoria y en la copia `UnsavedChanges`.
+
+**Qué significa «nunca corrompe» aquí.** Un proveedor de almacenamiento no puede sustituir un archivo de forma atómica, así que un cierre inesperado a mitad de una escritura puede dejarlo roto; nada puede evitarlo. La garantía es que siempre existe una copia descifrable y se repone automáticamente: en el siguiente arranque, `SaveRecovery` encuentra la entrada del diario, compara el archivo con las dos copias y restaura la versión anterior si el archivo lo rompió nuestra escritura. Distinguir un archivo roto de uno escrito por otro programa no necesita la contraseña: cada guardado escribe en la cabecera una semilla maestra aleatoria nueva, así que solo un archivo que KeyNexa empezó a escribir comparte un prefijo largo con sus bytes nuevos.
+
+**Lectura tolerante.** Un archivo que no supera sus comprobaciones de integridad puede ser una transferencia de sincronización en curso, así que `VaultReader` lo vuelve a leer tras 1, 2, 4 y 8 segundos antes de declararlo dañado. En KDBX 4 un error de clave incorrecta es fiable y se informa enseguida (la contraseña puede haber cambiado en otro dispositivo); en KDBX 3.x, donde un archivo dañado y una clave incorrecta parecen iguales, se reintenta si esas mismas credenciales ya abrieron la bóveda.
 
 ### Fusión
 

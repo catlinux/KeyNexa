@@ -1,5 +1,6 @@
 package io.github.catlinux.keynexa.sync
 
+import io.github.catlinux.keynexa.vault.KdbxEngine
 import io.github.catlinux.keynexa.vault.StoragePort
 import io.github.catlinux.keynexa.vault.VaultLocation
 import java.io.IOException
@@ -52,3 +53,6 @@ internal fun BackupStore.deleteQuietly(ref: BackupRef) {
 internal fun SaveJournal.clearQuietly(location: VaultLocation) {
     runCatching { clear(location) }
 }
+
+/** Whether [bytes] start with a whole, readable KDBX header. Reads the unencrypted header only, no key derivation. */
+internal fun KdbxEngine.hasCompleteHeader(bytes: ByteArray): Boolean = runCatching { inspect(bytes) }.isSuccess

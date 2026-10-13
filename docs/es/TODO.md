@@ -14,8 +14,8 @@ Pasos detallados: consulta la [hoja de ruta](ROADMAP.md).
 ## Prioridad media (fase D — MVP seguro)
 
 - [ ] Apertura de bóvedas, bloqueo y bloqueo automático.
-- [ ] Flujo de guardado seguro y copias de seguridad privadas.
-- [ ] Detección de cambios externos, fusión y gestión de archivos de conflicto.
+- [ ] Implementaciones Android de los puertos de almacenamiento: `StoragePort` con SAF (`"rwt"` con truncado explícito como alternativa), `BackupStore` y `SaveJournal` en `noBackupFilesDir`.
+- [ ] Fusión (D2) y gestión de archivos de conflicto.
 - [ ] Edición de entradas y grupos; búsqueda.
 - [ ] Desbloqueo biométrico.
 
