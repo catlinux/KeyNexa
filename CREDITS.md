@@ -11,7 +11,13 @@
 
 ## Third-party material
 
-None is included yet. Each component will be listed here, with author, license, origin and affected files, in the same commit that adds it. Planned components and their verified licenses: [Dependencies and licenses](docs/DEPENDENCIES_AND_LICENSES.md).
+The project skeleton includes the following components, each under its own license:
+
+- **Kotlin standard library and Gradle plugins** — JetBrains, Apache-2.0.
+- **AndroidX Core, AndroidX Activity, Jetpack Compose (UI and Material 3)** — The Android Open Source Project, Apache-2.0.
+- **JUnit 4** — JUnit team, EPL-1.0 (unit tests only; not distributed with the app).
+
+Planned components and their verified licenses: [Dependencies and licenses](docs/DEPENDENCIES_AND_LICENSES.md).
 
 ## Inspiration
 

@@ -12,7 +12,7 @@ Fases A y B terminadas en 0.1.0 (documentación en `docs/`). Este plan lo ejecut
 
 ## Fase C: base del proyecto
 
-- [ ] **C1. Esqueleto Gradle multimódulo** · 0.2.0 (menor: primera base compilable) · Orquesta Sonnet (esfuerzo medio), implementa AgentRelay (alto).
+- [x] **C1. Esqueleto Gradle multimódulo** · 0.2.0 (hecho) (menor: primera base compilable) · Orquesta Sonnet (esfuerzo medio), implementa AgentRelay (alto).
   - Archivos: `settings.gradle.kts`, `build.gradle.kts`, `gradle/libs.versions.toml`, wrapper de Gradle, módulos `core-vault`, `core-kdbx`, `core-sync` (Kotlin JVM, toolchain 17), `platform-android` (librería Android), `app-android` (Compose, Material 3; minSdk 26, compile/target 36; `applicationId` `io.github.catlinux.keynexa`).
   - `versionName` se lee de `VERSION` y `versionCode` se deriva de él (MAJOR*10000+MINOR*100+PATCH).
   - Recursos `values/strings.xml` (en-US) y `values-es/strings.xml`, sin textos incrustados. Manifest con `allowBackup="false"`, `dataExtractionRules` y `fullBackupContent` que excluyen todo, sin permiso INTERNET.

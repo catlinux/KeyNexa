@@ -2,16 +2,40 @@
 
 [English](../DEVELOPMENT.md) | [Español](DEVELOPMENT.md)
 
-> Estado: todavía no hay código. Los comandos de compilación y de pruebas se añadirán aquí, verificados, cuando exista el esqueleto del proyecto (fase C).
+## Requisitos
 
-## Cadena de herramientas prevista
+- JDK 17 (en local usamos Temurin). Los módulos core y las compilaciones Android usan una cadena de herramientas Java 17.
+- SDK de Android con la plataforma 36 y build-tools 36.0.0. Indica a Gradle dónde está con `local.properties` (`sdk.dir=...`, ignorado por git) o con la variable de entorno `ANDROID_HOME`.
+- No hace falta instalar Gradle: el wrapper incluido descarga Gradle 8.14.
 
-| Herramienta | Versión | Notas |
-| --- | --- | --- |
-| JDK | 17 (Temurin) | Requerido por el Android Gradle Plugin |
-| Android SDK | compileSdk/targetSdk 36, minSdk 26 | minSdk 26: framework de autorrelleno y `java.time` sin desugaring |
-| Gradle | Wrapper incluido en el repositorio | Kotlin DSL y catálogo de versiones (`gradle/libs.versions.toml`) |
-| Kotlin | La estable vigente en el momento de la fase C | |
+## Cadena de herramientas
+
+| Herramienta | Versión |
+| --- | --- |
+| JDK | 17 (Temurin) |
+| Gradle | 8.14 (wrapper) |
+| Android Gradle Plugin | 8.13.1 |
+| Kotlin | 2.2.21 |
+| Compose BOM | 2025.09.00 (Material 3) |
+| SDK de Android | compileSdk/targetSdk 36, minSdk 26 |
+
+minSdk 26 da acceso al framework de autorrelleno y a `java.time` sin desugaring.
+
+## Compilación y pruebas
+
+Ejecuta estos comandos desde la raíz del repositorio. En Windows usa `gradlew.bat` en lugar de `./gradlew`.
+
+| Comando | Qué hace |
+| --- | --- |
+| `./gradlew build` | Compila todos los módulos, ejecuta las pruebas unitarias y el lint |
+| `./gradlew test` | Ejecuta las pruebas unitarias de todos los módulos |
+| `./gradlew :app-android:assembleDebug` | Genera el APK de depuración en `app-android/build/outputs/apk/debug/app-android-debug.apk` |
+
+Estos comandos se verificaron en local, en Windows, con JDK 17 (Temurin) y el SDK de Android 36.
+
+## Estructura de módulos
+
+Las dependencias solo apuntan hacia abajo; los módulos `core-*` son Kotlin/JVM puro y no importan Android. Consulta [Arquitectura](ARCHITECTURE.md).
 
 ## Herramientas de calidad (previstas en la fase C)
 

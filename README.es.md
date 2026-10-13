@@ -6,7 +6,7 @@
 
 Un gestor de contraseñas multiplataforma que prioriza la seguridad, construido sobre bibliotecas criptográficas consolidadas, bóvedas locales y sincronización fluida con Syncthing.
 
-> **Estado del proyecto: fase de diseño (v0.1.0).** Todavía no hay ninguna aplicación. Este repositorio contiene por ahora la investigación, la arquitectura, el modelo de amenazas y la hoja de ruta. Nada de lo descrito como *planificado* está implementado. No uses KeyNexa para guardar contraseñas reales hasta que una versión publicada diga lo contrario.
+> **Estado del proyecto: desarrollo temprano (v0.2.0).** El repositorio contiene la investigación, la arquitectura, el modelo de amenazas y un esqueleto de proyecto compilable, pero todavía no hay ninguna aplicación usable. Nada de lo descrito como *planificado* está implementado. No uses KeyNexa para guardar contraseñas reales hasta que una versión publicada diga lo contrario.
 
 ## Qué será KeyNexa
 
@@ -25,7 +25,7 @@ Consulta la [hoja de ruta](docs/es/ROADMAP.md) para ver qué está planificado e
 | [Arquitectura](docs/es/ARCHITECTURE.md) | Módulos, elecciones tecnológicas, estrategia multiplataforma |
 | [Modelo de amenazas](docs/es/THREAT_MODEL.md) | Activos, atacantes, amenazas, mitigaciones, riesgos residuales |
 | [Dependencias y licencias](docs/es/DEPENDENCIES_AND_LICENSES.md) | Bibliotecas investigadas, licencias verificadas, fuentes |
-| [Desarrollo](docs/es/DEVELOPMENT.md) | Requisitos y cómo compilar (cuando exista código) |
+| [Desarrollo](docs/es/DEVELOPMENT.md) | Requisitos, cadena de herramientas y cómo compilar y probar |
 | [Hoja de ruta](docs/es/ROADMAP.md) | MVP, criterios de aceptación y fases posteriores |
 | [Decisiones](docs/es/decisions/README.md) | Registros de decisiones de arquitectura (ADR) |
 | [Cómo contribuir](docs/es/CONTRIBUTING.md) | Flujo de trabajo, reglas de documentación bilingüe, versionado |
@@ -35,7 +35,15 @@ Consulta la [hoja de ruta](docs/es/ROADMAP.md) para ver qué está planificado e
 
 ## Requisitos, instalación y uso
 
-Todavía no disponible: no hay ninguna aplicación que se pueda compilar. [Desarrollo](docs/es/DEVELOPMENT.md) enumera la cadena de herramientas prevista y contendrá instrucciones de compilación verificadas cuando exista el esqueleto del proyecto.
+La aplicación todavía no es usable, pero el proyecto ya se puede compilar. Necesita JDK 17 y el SDK de Android 36 (consulta [Desarrollo](docs/es/DEVELOPMENT.md) para indicar a Gradle dónde está el SDK). Desde la raíz del repositorio:
+
+```sh
+./gradlew build
+./gradlew test
+./gradlew :app-android:assembleDebug
+```
+
+En Windows usa `gradlew.bat` en lugar de `./gradlew`. El APK de depuración se genera en `app-android/build/outputs/apk/debug/app-android-debug.apk`.
 
 ## Créditos y licencia
 
@@ -48,9 +56,12 @@ Conforme a la sección 7 de la GPL, también se aplican los [términos adicional
 
 ### Material de terceros
 
-Este repositorio todavía no contiene material de terceros. Las bibliotecas previstas para la aplicación, y sus licencias verificadas, figuran en [Dependencias y licencias](docs/es/DEPENDENCIES_AND_LICENSES.md); se añadirán a la tabla siguiente cuando se incluyan realmente.
+El esqueleto del proyecto usa los componentes siguientes. Cada uno conserva su propia licencia y sus avisos; la investigación completa está en [Dependencias y licencias](docs/es/DEPENDENCIES_AND_LICENSES.md).
 
 | Componente | Autor | Licencia | Enlace |
 | --- | --- | --- | --- |
+| Biblioteca estándar de Kotlin y plugins de Gradle | JetBrains | Apache-2.0 | https://kotlinlang.org/ |
+| AndroidX Core, AndroidX Activity, Jetpack Compose (IU y Material 3) | The Android Open Source Project | Apache-2.0 | https://developer.android.com/jetpack |
+| JUnit 4 (solo pruebas unitarias; no se distribuye) | Equipo de JUnit | EPL-1.0 | https://junit.org/junit4/ |
 
 Créditos completos: [CREDITS](docs/es/CREDITS.md).

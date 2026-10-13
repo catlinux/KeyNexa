@@ -6,7 +6,7 @@
 
 A security-first, cross-platform password manager built around established cryptographic libraries, local vaults, and seamless Syncthing synchronization.
 
-> **Project status: design phase (v0.1.0).** There is no application yet. This repository currently contains the research, architecture, threat model and roadmap. Nothing described as *planned* is implemented. Do not use KeyNexa to store real passwords until a release says otherwise.
+> **Project status: early development (v0.2.0).** The repository contains the research, architecture, threat model and a compilable project skeleton, but no usable application yet. Nothing described as *planned* is implemented. Do not use KeyNexa to store real passwords until a release says otherwise.
 
 ## What KeyNexa will be
 
@@ -25,7 +25,7 @@ See the [roadmap](docs/ROADMAP.md) for what is planned in each phase.
 | [Architecture](docs/ARCHITECTURE.md) | Modules, technology choices, multiplatform strategy |
 | [Threat model](docs/THREAT_MODEL.md) | Assets, attackers, threats, mitigations, residual risks |
 | [Dependencies and licenses](docs/DEPENDENCIES_AND_LICENSES.md) | Researched libraries, verified licenses, sources |
-| [Development](docs/DEVELOPMENT.md) | Requirements and how to build (once code exists) |
+| [Development](docs/DEVELOPMENT.md) | Requirements, toolchain and how to build and test |
 | [Roadmap](docs/ROADMAP.md) | MVP, acceptance criteria and later phases |
 | [Decisions](docs/decisions/README.md) | Architecture decision records (ADR) |
 | [Contributing](CONTRIBUTING.md) | Workflow, bilingual documentation rules, versioning |
@@ -35,7 +35,15 @@ See the [roadmap](docs/ROADMAP.md) for what is planned in each phase.
 
 ## Requirements, installation and usage
 
-Not available yet: there is no buildable application. [Development](docs/DEVELOPMENT.md) lists the planned toolchain and will contain verified build instructions once the project skeleton exists.
+The application is not usable yet, but the project can be compiled. It needs JDK 17 and the Android SDK 36 (see [Development](docs/DEVELOPMENT.md) for how to point Gradle at the SDK). From the repository root:
+
+```sh
+./gradlew build
+./gradlew test
+./gradlew :app-android:assembleDebug
+```
+
+On Windows use `gradlew.bat` instead of `./gradlew`. The debug APK is written to `app-android/build/outputs/apk/debug/app-android-debug.apk`.
 
 ## Credits and license
 
@@ -48,9 +56,12 @@ Under section 7 of the GPL, the [additional terms in NOTICE](NOTICE) also apply:
 
 ### Third-party material
 
-This repository does not yet contain third-party material. The libraries planned for the application, and their verified licenses, are listed in [Dependencies and licenses](docs/DEPENDENCIES_AND_LICENSES.md); they will be added to the table below when they are actually included.
+The project skeleton uses the components below. Each keeps its own license and notices; the full research is in [Dependencies and licenses](docs/DEPENDENCIES_AND_LICENSES.md).
 
 | Component | Author | License | Link |
 | --- | --- | --- | --- |
+| Kotlin standard library and Gradle plugins | JetBrains | Apache-2.0 | https://kotlinlang.org/ |
+| AndroidX Core, AndroidX Activity, Jetpack Compose (UI and Material 3) | The Android Open Source Project | Apache-2.0 | https://developer.android.com/jetpack |
+| JUnit 4 (unit tests only; not shipped) | JUnit team | EPL-1.0 | https://junit.org/junit4/ |
 
 Full credits: [CREDITS.md](CREDITS.md).

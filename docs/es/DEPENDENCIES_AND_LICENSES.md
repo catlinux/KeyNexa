@@ -36,12 +36,15 @@ El código propio de KeyNexa se distribuye bajo **GPL-3.0-only** con los términ
 - **Puntos por verificar en la fase C/D:** los elementos XML desconocidos probablemente no se conservan al guardar (no hay campo en el modelo; sin probar); rendimiento de Argon2 en Kotlin puro en teléfonos de gama baja con parámetros de memoria del tamaño de los de KeePassXC.
 - Commit verificado: `4e0bd6b6b13e59d48ebe0bd9c06de3f918de6945`.
 
-## Dependencias previstas de Android y escritorio
+## Dependencias de Android y escritorio
+
+El esqueleto del proyecto (fase C1) ya usa Kotlin, AndroidX Core, AndroidX Activity, Compose (IU y Material 3) y JUnit; las demás filas siguen previstas.
 
 | Componente | Licencia | Fuente | Notas |
 | --- | --- | --- | --- |
 | Kotlin stdlib, kotlinx.coroutines | Apache-2.0 | JetBrains | *Licencia de coroutines no reverificada para este documento* |
 | Jetpack Compose, AndroidX (activity, lifecycle, navigation) | Apache-2.0 | POM de Google Maven | |
+| JUnit 4 | EPL-1.0 | [junit-team/junit4](https://github.com/junit-team/junit4) | Solo pruebas unitarias; no se distribuye con la aplicación |
 | `androidx.biometric` | Apache-2.0 | POM de `biometric-1.1.0` | |
 | Compose Multiplatform (escritorio, futuro) | Apache-2.0 | [JetBrains/compose-multiplatform](https://github.com/JetBrains/compose-multiplatform) | Estable 1.12.1 (2026-09-22) |
 | Bouncy Castle (solo si hace falta además de kotpass) | Bouncy Castle License (texto MIT) | [bc-java LICENSE.md](https://github.com/bcgit/bc-java) | 1.86 (2026-09-11) |

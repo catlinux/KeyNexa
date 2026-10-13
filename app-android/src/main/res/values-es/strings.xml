@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">KeyNexa</string>
+    <string name="welcome_title">Te damos la bienvenida a KeyNexa</string>
+    <string name="welcome_message">Tus claves, tu bóveda, tu control.</string>
+</resources>
