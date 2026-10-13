@@ -6,6 +6,14 @@ All notable changes to this project are documented in this file. The format is b
 
 ## [Unreleased]
 
+## [0.2.2] - 2026-10-13
+
+### Added
+
+- Continuous integration with GitHub Actions (`.github/workflows/ci.yml`): build and quality checks, bilingual-documentation check, dependency-license report and an OSV vulnerability scan.
+- `scripts/check-docs-i18n.sh`, which fails when an English document has no Spanish translation or vice versa, or when a language line is missing.
+- The Gradle License Report plugin, wired into `generateLicenseReport` for all subprojects.
+
 ## [0.2.1] - 2026-10-13
 
 ### Added

@@ -61,12 +61,22 @@ El esqueleto del proyecto (fase C1) ya usa Kotlin, AndroidX Core, AndroidX Activ
 | UniFFI | Solo necesario para un núcleo en Rust, que no se ha elegido ([ADR-0005](decisions/0005-reinforced-kotpass.md)); su licencia MPL-2.0 es compatible con la GPL-3.0 |
 | Cualquier SDK de analítica, informe de fallos o publicidad | Privacidad: KeyNexa no tiene telemetría |
 
+## Herramientas de compilación
+
+Solo se ejecutan durante la compilación y no se distribuyen con la aplicación.
+
+| Herramienta | Licencia (verificada) | Origen | Notas |
+| --- | --- | --- | --- |
+| ktlint | MIT | [pinterest/ktlint](https://github.com/pinterest/ktlint) | Formato y estilo de Kotlin, mediante el plugin ktlint-gradle |
+| detekt | Apache-2.0 | [detekt/detekt](https://github.com/detekt/detekt) | Análisis estático de Kotlin |
+| Gradle License Report | Apache-2.0 (`LICENSE.txt`) | [jk1/Gradle-License-Report](https://github.com/jk1/Gradle-License-Report) | 3.1.4; la tarea `generateLicenseReport` |
+
 ## Proceso para añadir una dependencia
 
 1. Justificar la necesidad en el pull request o en el mensaje del commit.
 2. Leer su archivo `LICENSE` en la versión exacta y comprobar sus dependencias transitivas.
 3. Añadirla a este documento (en ambos idiomas) y a [CREDITS](CREDITS.md) en el mismo commit.
-4. La CI (planificada) ejecuta un informe de licencias y un análisis de vulnerabilidades en cada compilación.
+4. La CI ejecuta un informe de licencias y un análisis de vulnerabilidades en cada push y pull request.
 
 ## Cuestiones legales pendientes
 

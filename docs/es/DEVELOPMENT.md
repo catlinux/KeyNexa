@@ -65,14 +65,33 @@ Configuración:
 ./gradlew --write-verification-metadata sha256 check build
 ```
 
-No inventes sumas a mano. La CI (compilación, pruebas, lint, informe de licencias, análisis de vulnerabilidades) está prevista para la fase C3; consulta la [hoja de ruta](ROADMAP.md).
+No inventes sumas a mano.
+
+## Integración continua
+
+[GitHub Actions](../.github/workflows/ci.yml) se ejecuta en cada push a `master` y en cada pull request, con `contents: read` y un grupo de concurrencia que cancela las ejecuciones reemplazadas de la misma referencia. Tiene cuatro jobs:
+
+| Job | Qué hace |
+| --- | --- |
+| `build` | Prepara JDK 17 y el SDK de Android 36 y ejecuta `./gradlew build check`; si falla, sube los informes de lint, detekt y pruebas como artefacto |
+| `docs-i18n` | Ejecuta `bash scripts/check-docs-i18n.sh` |
+| `licenses` | Ejecuta `./gradlew generateLicenseReport` y sube `build/reports/dependency-license` |
+| `vulnerabilities` | Analiza el repositorio con OSV-Scanner, que lee `gradle/verification-metadata.xml`, y falla ante vulnerabilidades conocidas |
+
+Ejecuta las mismas comprobaciones en local:
+
+```sh
+bash scripts/check-docs-i18n.sh
+./gradlew generateLicenseReport
+```
+
+`scripts/check-docs-i18n.sh` falla si un documento en inglés no tiene su traducción al castellano o al revés, o si a un documento le falta la línea de idiomas `[English](…) | [Español](…)` en sus seis primeras líneas. Las traducciones viven en `docs/es/` con las mismas rutas que el inglés; la única excepción es `README.es.md`, junto a `README.md`.
 
 ## Datos de prueba
 
 - Las bóvedas de prueba viven en `testdata/` y contienen solo entradas ficticias; sus contraseñas se documentan junto a ellas.
 - No subas nunca bóvedas reales, contraseñas reales, archivos de clave que uses ni claves de firma.
 
-## Integración continua y publicaciones (previstas)
+## Publicaciones (previstas)
 
-- GitHub Actions: compilación, pruebas, lint y comprobaciones de licencias y vulnerabilidades en cada push y pull request.
 - Flujo de publicación: se activa con una etiqueta `vX.Y.Z`; compila y firma el APK con secretos almacenados en los ajustes del repositorio, y lo publica con sumas de verificación como una release de GitHub (preliminar antes de la 1.0).

@@ -65,14 +65,33 @@ Configuration:
 ./gradlew --write-verification-metadata sha256 check build
 ```
 
-Do not invent checksums by hand. CI (build, tests, lint, license report, vulnerability scan) is planned for phase C3; see [Roadmap](ROADMAP.md).
+Do not invent checksums by hand.
+
+## Continuous integration
+
+[GitHub Actions](../.github/workflows/ci.yml) runs on every push to `master` and on every pull request, with `contents: read` and a concurrency group that cancels superseded runs of the same ref. It has four jobs:
+
+| Job | What it does |
+| --- | --- |
+| `build` | Sets up JDK 17 and Android SDK 36, then runs `./gradlew build check`; on failure it uploads the lint, detekt and test reports as an artifact |
+| `docs-i18n` | Runs `bash scripts/check-docs-i18n.sh` |
+| `licenses` | Runs `./gradlew generateLicenseReport` and uploads `build/reports/dependency-license` |
+| `vulnerabilities` | Scans the repository with OSV-Scanner, which reads `gradle/verification-metadata.xml`, and fails on known vulnerabilities |
+
+Run the same checks locally:
+
+```sh
+bash scripts/check-docs-i18n.sh
+./gradlew generateLicenseReport
+```
+
+`scripts/check-docs-i18n.sh` fails if an English document has no Spanish translation or the other way round, or if a document has no `[English](…) | [Español](…)` language line in its first six lines. Translations live under `docs/es/` mirroring the English paths; the only exception is `README.es.md`, next to `README.md`.
 
 ## Test data
 
 - Test vaults live in `testdata/` and contain only fictitious entries; their passwords are documented next to them.
 - Never commit real vaults, real passwords, key files you use, or signing keys.
 
-## Continuous integration and releases (planned)
+## Releases (planned)
 
-- GitHub Actions: build, tests, lint and license/vulnerability checks on every push and pull request.
 - Release workflow: triggered by a `vX.Y.Z` tag; builds and signs the APK with secrets stored in the repository settings, publishes it with checksums as a GitHub release (pre-release before 1.0).

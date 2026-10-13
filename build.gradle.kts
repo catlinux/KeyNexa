@@ -1,3 +1,6 @@
+import com.github.jk1.license.render.JsonReportRenderer
+import com.github.jk1.license.render.ReportRenderer
+import com.github.jk1.license.render.TextReportRenderer
 import io.gitlab.arturbosch.detekt.Detekt
 import io.gitlab.arturbosch.detekt.extensions.DetektExtension
 import org.jlleitschuh.gradle.ktlint.KtlintExtension
@@ -10,6 +13,13 @@ plugins {
     alias(libs.plugins.compose.compiler) apply false
     alias(libs.plugins.detekt) apply false
     alias(libs.plugins.ktlint) apply false
+    alias(libs.plugins.license.report)
+}
+
+licenseReport {
+    projects = (listOf(project) + project.subprojects).toTypedArray()
+    configurations = arrayOf("runtimeClasspath", "releaseRuntimeClasspath")
+    renderers = arrayOf<ReportRenderer>(JsonReportRenderer(), TextReportRenderer())
 }
 
 subprojects {

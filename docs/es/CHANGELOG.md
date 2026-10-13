@@ -6,6 +6,14 @@ Todos los cambios notables de este proyecto se documentan en este archivo. El fo
 
 ## [Sin publicar]
 
+## [0.2.2] - 2026-10-13
+
+### Añadido
+
+- Integración continua con GitHub Actions (`.github/workflows/ci.yml`): compilación y comprobaciones de calidad, comprobación de la documentación bilingüe, informe de licencias de dependencias y análisis de vulnerabilidades con OSV.
+- `scripts/check-docs-i18n.sh`, que falla si un documento en inglés no tiene su traducción al castellano o al revés, o si falta la línea de idiomas.
+- El plugin Gradle License Report, conectado a `generateLicenseReport` para todos los subproyectos.
+
 ## [0.2.1] - 2026-10-13
 
 ### Añadido

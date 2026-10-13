@@ -7,7 +7,6 @@ Detailed steps: see the [roadmap](docs/ROADMAP.md).
 ## High priority (phase C — project foundation)
 
 - [ ] Gradle multi-module skeleton (`core-vault`, `core-kdbx`, `core-sync`, `platform-android`, `app-android`) reading the version from `VERSION`.
-- [ ] CI on GitHub Actions: build, tests, Android Lint, detekt, ktlint, license report, vulnerability scan, bilingual-docs check.
 - [ ] Release workflow: signed APK from a `vX.Y.Z` tag, published as a pre-release with checksums.
 - [ ] Test-vault corpus created with KeePassXC and KeePass 2.x (fictitious data only).
 - [ ] Spike: kotpass round-trip fidelity and Argon2 performance on a low-end device.

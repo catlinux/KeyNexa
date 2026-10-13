@@ -7,7 +7,6 @@ Pasos detallados: consulta la [hoja de ruta](ROADMAP.md).
 ## Prioridad alta (fase C — base del proyecto)
 
 - [ ] Esqueleto multimódulo de Gradle (`core-vault`, `core-kdbx`, `core-sync`, `platform-android`, `app-android`) que lea la versión de `VERSION`.
-- [ ] CI en GitHub Actions: compilación, pruebas, Android Lint, detekt, ktlint, informe de licencias, análisis de vulnerabilidades, comprobación de documentación bilingüe.
 - [ ] Flujo de publicación: APK firmado a partir de una etiqueta `vX.Y.Z`, publicado como versión preliminar con sumas de verificación.
 - [ ] Corpus de bóvedas de prueba creado con KeePassXC y KeePass 2.x (solo datos ficticios).
 - [ ] Prueba de concepto: fidelidad de ida y vuelta de kotpass y rendimiento de Argon2 en un dispositivo de gama baja.

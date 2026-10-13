@@ -20,7 +20,7 @@ Fases A y B terminadas en 0.1.0 (documentación en `docs/`). Este plan lo ejecut
 - [x] **C2. Calidad** · 0.2.1 (hecho) (parche: interno) · AgentRelay (medio).
   - ktlint (o Spotless+ktlint), detekt, Android Lint con `HardcodedText`, `MissingTranslation` y los de seguridad como error; verificación de dependencias de Gradle (`gradle/verification-metadata.xml`).
   - Terminado: `./gradlew check` pasa; documentado en `docs/DEVELOPMENT.md` (y `docs/es/DEVELOPMENT.md`).
-- [ ] **C3. CI** · 0.2.2 (parche) · AgentRelay (medio).
+- [x] **C3. CI** · 0.2.2 (hecho) (parche) · AgentRelay (medio).
   - `.github/workflows/ci.yml`: build, test, check, informe de licencias (p. ej. plugin de licencias de Gradle) y escaneo de vulnerabilidades (p. ej. OSV-Scanner) en push y PR.
   - `scripts/check-docs-i18n.sh`: falla si un `.md` de documentación en inglés no tiene su traducción en `docs/es/` con la misma ruta (o viceversa; `README.md` ↔ `README.es.md`), o si a alguno le falta la línea de idiomas. Se ejecuta en CI. Excluye `AGENTS.md`, `CLAUDE.md`, `.agents/`.
   - Terminado: workflow válido (`actionlint` si está disponible) y script probado en local.

@@ -61,12 +61,22 @@ The project skeleton (phase C1) already uses Kotlin, AndroidX Core, AndroidX Act
 | UniFFI | Only needed for a Rust core, which is not chosen ([ADR-0005](decisions/0005-reinforced-kotpass.md)); its MPL-2.0 license is GPL-3.0-compatible |
 | Any analytics, crash-reporting or ad SDK | Privacy: KeyNexa has no telemetry |
 
+## Build tools
+
+These run only during the build and are not distributed with the app.
+
+| Tool | License (verified) | Source | Notes |
+| --- | --- | --- | --- |
+| ktlint | MIT | [pinterest/ktlint](https://github.com/pinterest/ktlint) | Kotlin formatting and style, through the ktlint-gradle plugin |
+| detekt | Apache-2.0 | [detekt/detekt](https://github.com/detekt/detekt) | Kotlin static analysis |
+| Gradle License Report | Apache-2.0 (`LICENSE.txt`) | [jk1/Gradle-License-Report](https://github.com/jk1/Gradle-License-Report) | 3.1.4; the `generateLicenseReport` task |
+
 ## Process for adding a dependency
 
 1. Justify the need in the pull request or commit message.
 2. Read its `LICENSE` file at the exact version and check its transitive dependencies.
 3. Add it to this document (both languages) and to [CREDITS.md](../CREDITS.md) in the same commit.
-4. CI (planned) runs a license report and a vulnerability scan on every build.
+4. CI runs a license report and a vulnerability scan on every push and pull request.
 
 ## Pending legal questions
 
