@@ -16,7 +16,7 @@ KeyNexa's own code is licensed under **GPL-3.0-only** with the additional terms 
 
 | Library | License (verified) | Platform | KDBX read/write | Ciphers / KDF | Maintenance (Oct 2026) | Verdict |
 | --- | --- | --- | --- | --- | --- | --- |
-| [kotpass](https://github.com/keemobile/kotpass) (Maven `app.keemobile:kotpass`) | MIT (`LICENSE.txt`, "Copyright (c) 2021 Denis T.") | JVM (not KMP) | 3.x and 4.x, writes 3.1/4.1 | AES, ChaCha20, Twofish; AES-KDF, Argon2d, Argon2id | 0.13.0 (2025-09-28); single maintainer, who calls it "feature complete" (issue #42, 2026-09-03) | **Selected**, behind an adapter |
+| [kotpass](https://github.com/keemobile/kotpass) (Maven `app.keemobile:kotpass`) | MIT (`LICENSE.txt`, "Copyright (c) 2021 Denis T.") | JVM (not KMP) | 3.x and 4.x, writes 3.1/4.1 | AES, ChaCha20, Twofish; AES-KDF, Argon2d, Argon2id | 0.13.0 (2025-09-28); single maintainer, who calls it "feature complete" (issue #42, 2026-09-03) | **Selected**, vendored and reinforced ([ADR-0005](decisions/0005-reinforced-kotpass.md)) |
 | [KeePassJava2](https://github.com/jorabin/KeePassJava2) | Apache-2.0 | JVM (Java 17 for 3.1.0) | 3.1, 4, 4.1 (open issue: 4.1 written back as 4.0, #114) | AES, ChaCha20; AES-KDF, Argon2d only (from source) | 3.1.0 (2026-10-05), very recent breaking API; recent attachment-integrity fixes | Backup candidate |
 | [hudeany/kdbx](https://github.com/hudeany/kdbx) | MIT | JVM | 3.x/4.x | AES, ChaCha20; AES-KDF, Argon2d/id | First Maven release 26.1.5 (2026-10-06), 2 stars | Too young |
 | [openkeepass](https://github.com/cternes/openkeepass) | Apache-2.0 | JVM | KDBX 3 only | No Argon2/ChaCha20 | Deprecated by its author | Rejected |
@@ -55,7 +55,7 @@ KeyNexa's own code is licensed under **GPL-3.0-only** with the additional terms 
 | --- | --- |
 | `androidx.security:security-crypto` | Deprecated by Google in favour of the Android Keystore directly |
 | `signalapp/argon2` | GPL-3.0 and archived since 2022 |
-| UniFFI | MPL-2.0 and only needed for a Rust core, which is not chosen |
+| UniFFI | Only needed for a Rust core, which is not chosen ([ADR-0005](decisions/0005-reinforced-kotpass.md)); its MPL-2.0 license is GPL-3.0-compatible |
 | Any analytics, crash-reporting or ad SDK | Privacy: KeyNexa has no telemetry |
 
 ## Process for adding a dependency

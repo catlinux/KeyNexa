@@ -18,7 +18,7 @@
 | Area | Choice | Why | Decision |
 | --- | --- | --- | --- |
 | Language | Kotlin (JVM target) | Native Android language; the same code runs on desktop JVM | [ADR-0003](decisions/0003-platform-and-modules.md) |
-| KDBX engine | [kotpass](https://github.com/keemobile/kotpass) (MIT), wrapped behind our own interface | Only researched JVM library covering KDBX 3.1/4.x with AES, ChaCha20, Twofish, AES-KDF, Argon2d and Argon2id; one runtime dependency (okio) | [ADR-0002](decisions/0002-kdbx-engine.md) |
+| KDBX engine | [kotpass](https://github.com/keemobile/kotpass) (MIT), vendored and reinforced, wrapped behind our own interface | Only researched JVM library covering KDBX 3.1/4.x with AES, ChaCha20, Twofish, AES-KDF, Argon2d and Argon2id; one runtime dependency (okio) | [ADR-0002](decisions/0002-kdbx-engine.md), [ADR-0005](decisions/0005-reinforced-kotpass.md) |
 | Android UI | Jetpack Compose + Material 3 (own theme) | Current Android standard; declarative and testable | [ADR-0003](decisions/0003-platform-and-modules.md) |
 | Desktop UI (future) | Compose Multiplatform for Desktop (JVM) | Reuses the JVM core modules unchanged | [ADR-0003](decisions/0003-platform-and-modules.md) |
 | File access (Android) | Storage Access Framework (SAF), no "All files access" permission | Least privilege; Google Play policy | [ADR-0004](decisions/0004-storage-sync-and-safe-save.md) |
@@ -82,7 +82,7 @@ If the files cannot be merged (for example, different master keys), KeyNexa does
 | Option | Verdict |
 | --- | --- |
 | **Kotlin/JVM core + Compose (Android) + Compose Multiplatform Desktop** | **Chosen.** One language, one KDBX engine, all-permissive dependency chain verified. |
-| Rust core (keepass-rs) + UniFFI bindings | Rejected for now. keepass-rs (MIT) marks KDBX writing as experimental, with open data-loss issues on attachments and history (October 2026); UniFFI is MPL-2.0 and adds an NDK toolchain per platform. |
+| Rust core (keepass-rs) + UniFFI bindings | Rejected for now. keepass-rs (MIT) marks KDBX writing as experimental, with open data-loss issues on attachments and history (October 2026); UniFFI adds an NDK toolchain per platform. To be re-evaluated before 1.0 ([ADR-0005](decisions/0005-reinforced-kotpass.md)). |
 | Kotlin Multiplatform (KMP) shared core | Not possible today without rewriting the engine: no KMP KDBX library was found; kotpass is JVM-only. Desktop JVM makes it unnecessary. |
 | Flutter / React Native | Rejected: weaker access to Android security APIs (Keystore, autofill, credential provider) and no mature KDBX library in those ecosystems with verified licensing. |
 

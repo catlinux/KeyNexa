@@ -10,5 +10,6 @@ Each record explains one important decision: context, options, decision and cons
 | [0002](0002-kdbx-engine.md) | KDBX engine: kotpass behind an adapter | Accepted |
 | [0003](0003-platform-and-modules.md) | Platform: Kotlin/JVM core, Compose UI, modular layout | Accepted |
 | [0004](0004-storage-sync-and-safe-save.md) | Storage, Syncthing and safe save | Accepted |
+| [0005](0005-reinforced-kotpass.md) | Reinforced kotpass: vendored module, differential tests, fuzzing | Accepted |
 
 Template for new records: `docs/decisions/NNNN-short-title.md` and its translation `docs/es/decisions/NNNN-short-title.md`, with the sections *Context*, *Options*, *Decision*, *Consequences*.

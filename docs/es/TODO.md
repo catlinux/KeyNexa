@@ -30,6 +30,6 @@ Pasos detallados: consulta la [hoja de ruta](ROADMAP.md).
 
 ## Descartado
 
-- Núcleo en Rust con UniFFI: la escritura de KDBX en keepass-rs es experimental y UniFFI añade una dependencia MPL-2.0 y una cadena de herramientas NDK ([ARCHITECTURE](ARCHITECTURE.md#estrategia-multiplataforma)).
+- Núcleo en Rust con UniFFI: la escritura de KDBX en keepass-rs es experimental y UniFFI añade una cadena de herramientas NDK; se reevaluará antes de 1.0 ([ARCHITECTURE](ARCHITECTURE.md#estrategia-multiplataforma)).
 - Permiso `MANAGE_EXTERNAL_STORAGE`: no es necesario con SAF y no está permitido en Google Play para este uso.
 - Depender de la API REST de Syncthing: requiere una clave de API y es posible que Syncthing no esté instalado.

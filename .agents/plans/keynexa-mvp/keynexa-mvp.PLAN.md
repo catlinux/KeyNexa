@@ -28,11 +28,14 @@ Fases A y B terminadas en 0.1.0 (documentación en `docs/`). Este plan lo ejecut
   - `.github/workflows/release.yml`: en tag `vX.Y.Z`, comprueba que coincide con `VERSION`, compila el APK release, lo firma con secretos del repo (`KEYSTORE_BASE64`, `KEYSTORE_PASSWORD`, `KEY_ALIAS`, `KEY_PASSWORD`), publica release (pre-release antes de 1.0) con SHA-256.
   - Documenta en `docs/DEVELOPMENT.md` (y `docs/es/DEVELOPMENT.md`) cómo crear el keystore y los secretos. **Acción del usuario:** crear keystore y secretos (nunca en el repo).
 - [ ] **C5. Motor KDBX y corpus de pruebas** · 0.3.0 (menor) · Sonnet (alto), sin delegar la interfaz; AgentRelay para tests repetitivos.
-  - `core-vault`: modelo de dominio y puertos `KdbxEngine`, `StoragePort`. `core-kdbx`: adaptador sobre kotpass 0.13.0.
+  - `core-vault`: modelo de dominio y puertos `KdbxEngine`, `StoragePort`. `core-kdbx`: adaptador sobre kotpass. Según ADR-0005: importar kotpass en `third_party/kotpass/` (commit `4e0bd6b6b13e59d48ebe0bd9c06de3f918de6945`, con su LICENSE.txt, avisos y un README con commit upstream y cambios locales) como módulo Gradle.
   - `testdata/`: bóvedas ficticias (contraseñas documentadas) de KeePassXC y KeePass 2.x con AES/ChaCha20/Twofish × AES-KDF/Argon2d/Argon2id, KDBX 3.1/4.0/4.1, key file, adjuntos, historial, iconos, CustomData. **Acción del usuario** si no hay KeePassXC instalado: generarlas siguiendo una lista que prepares.
-  - Tests de ida y vuelta (AC1, AC2): comprobar qué se pierde (XML desconocido) y documentarlo en ADR-0002 (ambos idiomas).
+  - Tests de ida y vuelta (AC1, AC2): comprobar qué se pierde (XML desconocido) y corregirlo en `third_party/kotpass` (conservar XML desconocido y versión KDBX), documentándolo en su README.
   - Mide Argon2 (memoria 64 MiB y 1 GiB) en emulador y, si el usuario puede, en móvil real; si es inaceptable, propón argon2kt (nuevo ADR).
   - Añade kotpass, okio y los avisos de Bouncy Castle/Apache incluidos en kotpass a `CREDITS.md` (y `docs/es/CREDITS.md`) y a la tabla de terceros de los README.
+- [ ] **C5b. Refuerzo de kotpass** · 0.3.1 (parche) · Sonnet (alto).
+  - Pruebas diferenciales en CI: cada bóveda escrita por los tests se relee con `keepassxc-cli` y con keepass-rs (herramienta pequeña en `tools/`, solo CI) y se comparan contenidos.
+  - Fuzzing del decodificador con Jazzer (solo tests). Terminado: CI verde y ningún fallo sin entender.
 - [ ] **C6. Sistema de diseño** · 0.4.0 (menor) · Sonnet (alto) propone; el usuario aprueba identidad.
   - `docs/DESIGN.md` + `docs/es/DESIGN.md`: principios, paleta (contraste AA), tipografía (Inter o Manrope, OFL), espaciado, componentes, estados (carga, error, bloqueo, vacío), mensajes de seguridad, tema claro/oscuro.
   - Icono original (vector, adaptive icon) sin parecido con KeePassDX/KP2A. Tema Compose en `app-android`.

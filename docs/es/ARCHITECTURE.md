@@ -18,7 +18,7 @@
 | Área | Elección | Por qué | Decisión |
 | --- | --- | --- | --- |
 | Lenguaje | Kotlin (destino JVM) | Lenguaje nativo de Android; el mismo código se ejecuta en la JVM de escritorio | [ADR-0003](decisions/0003-platform-and-modules.md) |
-| Motor KDBX | [kotpass](https://github.com/keemobile/kotpass) (MIT), envuelto tras nuestra propia interfaz | Única biblioteca JVM investigada que cubre KDBX 3.1/4.x con AES, ChaCha20, Twofish, AES-KDF, Argon2d y Argon2id; una sola dependencia en tiempo de ejecución (okio) | [ADR-0002](decisions/0002-kdbx-engine.md) |
+| Motor KDBX | [kotpass](https://github.com/keemobile/kotpass) (MIT), envuelto tras nuestra propia interfaz | Única biblioteca JVM investigada que cubre KDBX 3.1/4.x con AES, ChaCha20, Twofish, AES-KDF, Argon2d y Argon2id; una sola dependencia en tiempo de ejecución (okio) | [ADR-0002](decisions/0002-kdbx-engine.md), [ADR-0005](decisions/0005-reinforced-kotpass.md) |
 | IU de Android | Jetpack Compose + Material 3 (tema propio) | Estándar actual de Android; declarativo y comprobable con pruebas | [ADR-0003](decisions/0003-platform-and-modules.md) |
 | IU de escritorio (futura) | Compose Multiplatform for Desktop (JVM) | Reutiliza sin cambios los módulos de núcleo en JVM | [ADR-0003](decisions/0003-platform-and-modules.md) |
 | Acceso a archivos (Android) | Storage Access Framework (SAF), sin el permiso «Acceso a todos los archivos» | Mínimo privilegio; política de Google Play | [ADR-0004](decisions/0004-storage-sync-and-safe-save.md) |
@@ -82,7 +82,7 @@ Si los archivos no se pueden fusionar (por ejemplo, por tener contraseñas maest
 | Opción | Veredicto |
 | --- | --- |
 | **Núcleo Kotlin/JVM + Compose (Android) + Compose Multiplatform Desktop** | **Elegida.** Un lenguaje, un motor KDBX, cadena de dependencias totalmente permisiva y verificada. |
-| Núcleo en Rust (keepass-rs) + bindings UniFFI | Rechazada por ahora. keepass-rs (MIT) marca la escritura de KDBX como experimental, con problemas abiertos de pérdida de datos en adjuntos e historial (octubre de 2026); UniFFI es MPL-2.0 y añade una cadena de herramientas NDK por plataforma. |
+| Núcleo en Rust (keepass-rs) + bindings UniFFI | Rechazada por ahora. keepass-rs (MIT) marca la escritura de KDBX como experimental, con problemas abiertos de pérdida de datos en adjuntos e historial (octubre de 2026); UniFFI añade una cadena de herramientas NDK por plataforma. Se volverá a evaluar antes de 1.0 ([ADR-0005](decisions/0005-reinforced-kotpass.md)). |
 | Núcleo compartido con Kotlin Multiplatform (KMP) | No es posible hoy sin reescribir el motor: no se encontró ninguna biblioteca KDBX para KMP; kotpass es solo JVM. La JVM de escritorio lo hace innecesario. |
 | Flutter / React Native | Rechazadas: peor acceso a las API de seguridad de Android (Keystore, autorrelleno, proveedor de credenciales) y ninguna biblioteca KDBX madura en esos ecosistemas con licencia verificada. |
 

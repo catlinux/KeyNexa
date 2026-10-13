@@ -55,7 +55,7 @@ El código propio de KeyNexa se distribuye bajo **GPL-3.0-only** con los términ
 | --- | --- |
 | `androidx.security:security-crypto` | Obsoleto según Google, a favor de usar directamente el Android Keystore |
 | `signalapp/argon2` | GPL-3.0 y archivado desde 2022 |
-| UniFFI | MPL-2.0 y solo necesario para un núcleo en Rust, que no se ha elegido |
+| UniFFI | Solo necesario para un núcleo en Rust, que no se ha elegido ([ADR-0005](decisions/0005-reinforced-kotpass.md)); su licencia MPL-2.0 es compatible con la GPL-3.0 |
 | Cualquier SDK de analítica, informe de fallos o publicidad | Privacidad: KeyNexa no tiene telemetría |
 
 ## Proceso para añadir una dependencia
