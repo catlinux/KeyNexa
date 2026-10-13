@@ -6,6 +6,13 @@ All notable changes to this project are documented in this file. The format is b
 
 ## [Unreleased]
 
+## [0.7.1] - 2026-10-13
+
+### Fixed
+
+- Content no longer hides under the system status bar, navigation bar or keyboard (the menu with the recycle bin was out of reach).
+- The clipboard is cleared when KeyNexa is back in front after 30 seconds, and when the vault is locked: Android does not let an app in the background change the clipboard, so a timer alone was not enough.
+
 ## [0.7.0] - 2026-10-13
 
 ### Added

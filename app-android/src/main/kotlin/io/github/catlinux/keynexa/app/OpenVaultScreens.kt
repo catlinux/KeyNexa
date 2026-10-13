@@ -41,7 +41,9 @@ fun OpenVaultScreens(
     val editor = remember { VaultEditor() }
     val vault = open.current
     val back: () -> Unit = { navigator.back() }
+    val context = LocalContext.current
     val lock: () -> Unit = {
+        ClipboardGuard.clearNow(context)
         session.lock()
         navigator.reset()
     }
@@ -99,7 +101,7 @@ private fun EntryDetail(
         onDelete = {
             if (container.session.apply { editor.delete(it, entryId) }) navigator.back()
         },
-        onCopy = { label, value, sensitive -> copyToClipboard(context, label, value, sensitive) },
+        onCopy = { label, value, sensitive -> ClipboardGuard.copy(context, label, value, sensitive) },
         onOpenUrl = { openWebAddress(context, it) },
         onBack = { navigator.back() },
     )

@@ -116,7 +116,8 @@ fun AppRoot(container: AppContainer) {
     val navigator = container.navigator
     val session = container.session
     val state by session.state.collectAsState()
-    val resolver = LocalContext.current.contentResolver
+    val context = LocalContext.current
+    val resolver = context.contentResolver
     val actions = remember { VaultFileActions(container, resolver) }
     val openPicker = rememberLauncherForActivityResult(OpenVaultDocument(), actions::opened)
     val createPicker = rememberLauncherForActivityResult(CreateVaultDocument(), actions::created)
@@ -125,6 +126,7 @@ fun AppRoot(container: AppContainer) {
         if (state is SessionState.Open && navigator.current is Screen.Unlock) navigator.push(Screen.Group(null))
     }
     BackHandler(enabled = navigator.current != Screen.Home) {
+        ClipboardGuard.clearNow(context)
         if (state is SessionState.Open) session.lock() else session.dismissFailure()
         navigator.reset()
     }

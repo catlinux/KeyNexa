@@ -6,6 +6,13 @@ Todos los cambios notables de este proyecto se documentan en este archivo. El fo
 
 ## [Sin publicar]
 
+## [0.7.1] - 2026-10-13
+
+### Corregido
+
+- El contenido ya no queda oculto bajo la barra de estado, la de navegación ni el teclado (el menú con la papelera quedaba fuera de alcance).
+- El portapapeles se borra al volver KeyNexa al primer plano pasados 30 segundos y al bloquear la bóveda: Android no deja que una app en segundo plano modifique el portapapeles, así que un temporizador no bastaba.
+
 ## [0.7.0] - 2026-10-13
 
 ### Añadido
