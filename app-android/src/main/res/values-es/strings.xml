@@ -3,4 +3,34 @@
     <string name="app_name">KeyNexa</string>
     <string name="welcome_title">Te damos la bienvenida a KeyNexa</string>
     <string name="welcome_message">Tus claves, tu bóveda, tu control.</string>
+
+    <!-- Inicio: la lista de bóvedas que conoce la aplicación. -->
+    <string name="home_title">Tus bóvedas</string>
+    <string name="home_empty_message">Todavía no hay ninguna bóveda en la lista. Abre un archivo KDBX que ya tengas, o crea una bóveda nueva.</string>
+    <string name="home_open_existing">Abrir una bóveda existente</string>
+    <string name="home_create_new">Crear una bóveda nueva</string>
+    <string name="home_remove">Quitar de la lista</string>
+    <string name="home_remove_dialog_title">¿Quitar de la lista?</string>
+    <string name="home_remove_dialog_message">KeyNexa dejará de mostrar «%1$s» en esta lista. El archivo de la bóveda no se borra: se queda donde está.</string>
+    <string name="home_remove_confirm">Quitar</string>
+    <string name="home_cancel">Cancelar</string>
+
+    <!-- Bóveda nueva: el formulario de creación. -->
+    <string name="create_title">Bóveda nueva</string>
+    <string name="create_back">Volver</string>
+    <string name="create_name_label">Nombre de la bóveda</string>
+    <string name="create_password_label">Contraseña maestra</string>
+    <string name="create_repeat_label">Repite la contraseña maestra</string>
+    <string name="create_show_password">Mostrar las contraseñas</string>
+    <string name="create_password_min">Demasiado corta: la contraseña maestra necesita un mínimo de %1$d.</string>
+    <string name="create_password_mismatch">Las dos contraseñas no son iguales.</string>
+    <string name="create_password_weak">Débil. Para una contraseña más fuerte, procura llegar a %1$d.</string>
+    <string name="create_password_ok">La longitud es aceptable.</string>
+    <string name="create_key_file_label">Archivo de clave (opcional)</string>
+    <string name="create_key_file_choose">Elegir un archivo de clave</string>
+    <string name="create_key_file_failed">No se ha podido leer ese archivo. Prueba con otro.</string>
+    <string name="create_key_file_chosen">Archivo de clave: %1$s</string>
+    <string name="create_key_file_remove">Quitar el archivo de clave</string>
+    <string name="create_recovery_warning">Si olvidas la contraseña maestra no hay forma de recuperar la bóveda. Anótala y guárdala en un lugar seguro.</string>
+    <string name="create_action">Crear bóveda</string>
 </resources>

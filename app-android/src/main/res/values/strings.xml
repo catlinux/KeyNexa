@@ -3,4 +3,34 @@
     <string name="app_name">KeyNexa</string>
     <string name="welcome_title">Welcome to KeyNexa</string>
     <string name="welcome_message">Your keys, your vault, your control.</string>
+
+    <!-- Home: the list of vaults the app knows about. -->
+    <string name="home_title">Your vaults</string>
+    <string name="home_empty_message">No vault on the list yet. Open a KDBX file you already have, or create a new vault.</string>
+    <string name="home_open_existing">Open existing vault</string>
+    <string name="home_create_new">Create new vault</string>
+    <string name="home_remove">Remove from list</string>
+    <string name="home_remove_dialog_title">Remove from the list?</string>
+    <string name="home_remove_dialog_message">KeyNexa will stop showing “%1$s” in this list. The vault file is not deleted: it stays where it is.</string>
+    <string name="home_remove_confirm">Remove</string>
+    <string name="home_cancel">Cancel</string>
+
+    <!-- New vault: the creation form. -->
+    <string name="create_title">New vault</string>
+    <string name="create_back">Back</string>
+    <string name="create_name_label">Vault name</string>
+    <string name="create_password_label">Master password</string>
+    <string name="create_repeat_label">Repeat the master password</string>
+    <string name="create_show_password">Show the passwords</string>
+    <string name="create_password_min">Too short: the master password needs a minimum of %1$d.</string>
+    <string name="create_password_mismatch">The two passwords are not the same.</string>
+    <string name="create_password_weak">Weak. For a stronger password, aim for %1$d.</string>
+    <string name="create_password_ok">Acceptable length.</string>
+    <string name="create_key_file_label">Key file (optional)</string>
+    <string name="create_key_file_choose">Choose a key file</string>
+    <string name="create_key_file_failed">That file could not be read. Try another one.</string>
+    <string name="create_key_file_chosen">Key file: %1$s</string>
+    <string name="create_key_file_remove">Remove the key file</string>
+    <string name="create_recovery_warning">If you forget the master password there is no way to recover the vault. Write it down and keep it somewhere safe.</string>
+    <string name="create_action">Create vault</string>
 </resources>
