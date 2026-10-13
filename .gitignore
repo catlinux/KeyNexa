@@ -27,3 +27,6 @@ local.properties
 *.keystore
 .idea/
 *.iml
+
+# Kotlin compiler session data
+.kotlin/

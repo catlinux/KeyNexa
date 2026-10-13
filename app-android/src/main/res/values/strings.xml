@@ -119,4 +119,40 @@
     <string name="entry_detail_delete_message">The entry moves to the recycle bin; you can restore it from there.</string>
     <string name="entry_detail_delete_confirm">Delete</string>
     <string name="entry_detail_delete_cancel">Cancel</string>
+
+    <!-- Edit: creating or changing one entry. -->
+    <string name="edit_title_new">New entry</string>
+    <string name="edit_title_edit">Edit entry</string>
+    <string name="edit_back">Back</string>
+    <string name="edit_title_label">Title</string>
+    <string name="edit_title_required">An entry needs a title.</string>
+    <string name="edit_user_name_label">User name</string>
+    <string name="edit_password_label">Password</string>
+    <string name="edit_show_password">Show the password</string>
+    <string name="edit_generate">Generate</string>
+    <string name="edit_generate_title">Generate a password</string>
+    <string name="edit_generate_length">Length: %1$d</string>
+    <string name="edit_generate_lower">Lower-case letters</string>
+    <string name="edit_generate_upper">Upper-case letters</string>
+    <string name="edit_generate_digits">Digits</string>
+    <string name="edit_generate_symbols">Symbols</string>
+    <string name="edit_generate_exclude_ambiguous">Leave out look-alike characters</string>
+    <string name="edit_generate_use">Use</string>
+    <string name="edit_generate_cancel">Cancel</string>
+    <string name="edit_url_label">URL</string>
+    <string name="edit_notes_label">Notes</string>
+    <string name="edit_custom_title">Custom fields</string>
+    <string name="edit_custom_add">Add a field</string>
+    <string name="edit_custom_name">Field name</string>
+    <string name="edit_custom_value">Value</string>
+    <string name="edit_custom_protected">Protect this field</string>
+    <string name="edit_custom_remove">Remove this field</string>
+    <string name="edit_name_repeated">Another field already uses this name.</string>
+    <string name="edit_name_standard">This name belongs to a standard field.</string>
+    <string name="edit_save">Save</string>
+    <string name="edit_cancel">Cancel</string>
+    <string name="edit_discard_title">Discard the changes?</string>
+    <string name="edit_discard_message">What you typed will not be saved.</string>
+    <string name="edit_discard_confirm">Discard</string>
+    <string name="edit_discard_cancel">Keep editing</string>
 </resources>
