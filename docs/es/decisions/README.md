@@ -11,5 +11,6 @@ Cada registro explica una decisión importante: contexto, opciones, decisión y 
 | [0003](0003-platform-and-modules.md) | Plataforma: núcleo Kotlin/JVM, IU con Compose, estructura modular | Aceptada |
 | [0004](0004-storage-sync-and-safe-save.md) | Almacenamiento, Syncthing y guardado seguro | Aceptada |
 | [0005](0005-reinforced-kotpass.md) | kotpass reforzado: módulo integrado, pruebas diferenciales, fuzzing | Aceptada |
+| [0006](0006-biometric-unlock.md) | Desbloqueo biométrico: clave compuesta envuelta por el Keystore, biometría en cada uso | Aceptada |
 
 Plantilla para nuevos registros: `docs/decisions/NNNN-short-title.md` y su traducción `docs/es/decisions/NNNN-short-title.md`, con las secciones *Contexto*, *Opciones*, *Decisión*, *Consecuencias*.
