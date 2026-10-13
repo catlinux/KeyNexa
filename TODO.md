@@ -16,11 +16,10 @@ Detailed steps: see the [roadmap](docs/ROADMAP.md).
 
 ## Medium priority (phase D — secure MVP)
 
-- [ ] Vault opening, locking and auto-lock.
 - [ ] Offer `*.sync-conflict-*` copies for merge in the UI.
 - [ ] When a save fails because the grant was lost, offer to reconnect the folder without closing the vault; offer to restore the private unsaved copy after a restart.
-- [ ] Detect external changes within a few seconds while the app is visible and when it returns to the foreground (compare the file fingerprint; reload by itself when there are no unsaved edits), without waiting for the next save.
-- [ ] Entry and group editing; search.
+- [ ] Settings screen (auto-lock delay, lock on screen off, screenshots, clipboard delay).
+- [ ] Fully reliable clipboard clearing (Android only lets the app in front change the clipboard).
 - [ ] Biometric unlock.
 
 ## Low priority (later)

@@ -6,6 +6,17 @@ All notable changes to this project are documented in this file. The format is b
 
 ## [Unreleased]
 
+## [0.8.0] - 2026-10-14
+
+### Added
+
+- Protections (phase D5): the open vault locks by itself after a time in the background (60 seconds by default; options from "immediately" to "never"), when the screen turns off, and manually; locking wipes the credentials, drops the vault from memory, clears the clipboard and returns to the home screen. The window is marked secure (no screenshots, blanked in the recent-apps list) unless the setting allows screenshots. The copied-secret delay is a setting (30 seconds by default). Settings are stored privately and are still changed from code only: the settings screen comes next.
+- Changes made to the vault file by another program (Syncthing, KeePassXC) are noticed within about 5 seconds while the app is in front, and loaded by themselves when the open vault has no unsaved edits; otherwise they are merged at the next save.
+
+### Changed
+
+- An edit form that is open keeps its fields when the vault is refreshed from disk, and closes if its entry was removed elsewhere.
+
 ## [0.7.5] - 2026-10-14
 
 ### Changed

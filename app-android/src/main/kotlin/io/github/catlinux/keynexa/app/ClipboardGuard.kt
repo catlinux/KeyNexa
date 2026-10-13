@@ -10,16 +10,17 @@ import android.os.PersistableBundle
 import android.os.SystemClock
 import android.widget.Toast
 
-private const val CLEAR_AFTER_MILLIS = 30_000L
+private const val DEFAULT_CLEAR_SECONDS = 30
+private const val MILLIS_PER_SECOND = 1_000L
 
 // ClipDescription.EXTRA_IS_SENSITIVE exists from Android 13; older versions ignore the extra.
 private const val EXTRA_IS_SENSITIVE = "android.content.extra.IS_SENSITIVE"
 
 /**
  * Copies secrets to the clipboard marked as sensitive (so keyboards and the system preview do not show them) and
- * clears them 30 seconds later. Android only lets the app in the foreground change the clipboard, so a timer that
- * fires while another app is open cannot clear it: the clearing then happens as soon as KeyNexa is back in front
- * ([clearIfDue]) or the vault is locked ([clearNow]).
+ * clears them after the chosen time (30 seconds by default). Android only lets the app in the foreground change the
+ * clipboard, so a timer that fires while another app is open cannot clear it: the clearing then happens as soon as
+ * KeyNexa is back in front ([clearIfDue]) or the vault is locked ([clearNow]).
  */
 object ClipboardGuard {
     private var dueAt: Long? = null
@@ -30,6 +31,7 @@ object ClipboardGuard {
         label: String,
         value: String,
         sensitive: Boolean,
+        clearAfterSeconds: Int = DEFAULT_CLEAR_SECONDS,
     ) {
         val clipboard = context.getSystemService(ClipboardManager::class.java)
         val clip = ClipData.newPlainText(label, value)
@@ -42,8 +44,9 @@ object ClipboardGuard {
         }
         handler.removeCallbacksAndMessages(null)
         if (sensitive) {
-            dueAt = SystemClock.elapsedRealtime() + CLEAR_AFTER_MILLIS
-            handler.postDelayed({ clearIfDue(context) }, CLEAR_AFTER_MILLIS)
+            val delay = clearAfterSeconds * MILLIS_PER_SECOND
+            dueAt = SystemClock.elapsedRealtime() + delay
+            handler.postDelayed({ clearIfDue(context) }, delay)
         } else {
             dueAt = null
         }

@@ -6,6 +6,17 @@ Todos los cambios notables de este proyecto se documentan en este archivo. El fo
 
 ## [Sin publicar]
 
+## [0.8.0] - 2026-10-14
+
+### Añadido
+
+- Protecciones (fase D5): la bóveda abierta se bloquea sola tras un tiempo en segundo plano (60 segundos por defecto; opciones desde «inmediatamente» hasta «nunca»), al apagarse la pantalla y a mano; al bloquear se borran las credenciales, se descarta la bóveda de la memoria, se limpia el portapapeles y se vuelve a la pantalla de inicio. La ventana se marca como segura (sin capturas de pantalla y en blanco en la lista de apps recientes) salvo que el ajuste permita las capturas. El tiempo que un secreto copiado queda en el portapapeles es un ajuste (30 segundos por defecto). Los ajustes se guardan en privado y por ahora solo se cambian desde el código: la pantalla de ajustes llega a continuación.
+- Los cambios que otro programa (Syncthing, KeePassXC) haga en el archivo de la bóveda se detectan en unos 5 segundos mientras la app está a la vista, y se cargan solos cuando la bóveda abierta no tiene ediciones sin guardar; si las tiene, se fusionan en el siguiente guardado.
+
+### Cambiado
+
+- Un formulario de edición abierto conserva sus campos cuando la bóveda se recarga desde el disco, y se cierra si su entrada se eliminó en otro sitio.
+
 ## [0.7.5] - 2026-10-14
 
 ### Cambiado

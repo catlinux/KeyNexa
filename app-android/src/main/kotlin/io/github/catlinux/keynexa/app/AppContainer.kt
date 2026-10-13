@@ -1,8 +1,16 @@
 package io.github.catlinux.keynexa.app
 
 import android.content.Context
+import android.os.SystemClock
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import io.github.catlinux.keynexa.app.nav.Navigator
+import io.github.catlinux.keynexa.app.security.AutoLock
+import io.github.catlinux.keynexa.app.settings.AppSettings
 import io.github.catlinux.keynexa.app.vault.KnownVaultsStore
+import io.github.catlinux.keynexa.app.vault.SessionState
+import io.github.catlinux.keynexa.app.vault.VaultReaders
 import io.github.catlinux.keynexa.app.vault.VaultSession
 import io.github.catlinux.keynexa.kdbx.KotpassKdbxEngine
 import io.github.catlinux.keynexa.platform.FileBackupStore
@@ -28,7 +36,13 @@ class AppContainer(
     val engine = KotpassKdbxEngine()
 
     val navigator = Navigator()
+    val settings = AppSettings(appContext)
     val session: VaultSession
+
+    /** True while the app is in front; the vault is only looked at for outside changes then. */
+    var visible by mutableStateOf(false)
+
+    val autoLock = AutoLock(settings = { settings.values }, now = SystemClock::elapsedRealtime, lock = ::lockNow)
 
     init {
         val privateDir = appContext.noBackupFilesDir
@@ -42,10 +56,22 @@ class AppContainer(
             VaultSession(
                 storage = storage,
                 engine = engine,
-                reader = VaultReader(storage, engine),
+                readers =
+                    VaultReaders(
+                        patient = VaultReader(storage, engine),
+                        quick = VaultReader(storage, engine, retryDelaysMillis = emptyList()),
+                    ),
                 recovery = SaveRecovery(storage, engine, backups, journal),
                 saver = SafeSaver(storage, engine, backups, journal, merger = KeePassMerger()),
                 executor = worker,
             )
+    }
+
+    /** Locks an open vault: clears the clipboard, wipes the credentials and returns to the home screen. */
+    fun lockNow() {
+        if (session.state.value !is SessionState.Open) return
+        ClipboardGuard.clearNow(appContext)
+        session.lock()
+        navigator.reset()
     }
 }

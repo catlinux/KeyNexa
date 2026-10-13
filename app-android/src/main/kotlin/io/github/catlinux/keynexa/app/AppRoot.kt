@@ -22,8 +22,10 @@ import io.github.catlinux.keynexa.app.vault.SessionState
 import io.github.catlinux.keynexa.platform.SafVaultAccess
 import io.github.catlinux.keynexa.vault.Credentials
 import io.github.catlinux.keynexa.vault.NewVault
+import kotlinx.coroutines.delay
 
 private const val VAULT_EXTENSION = ".kdbx"
+private const val REFRESH_MILLIS = 5_000L
 
 /**
  * What the user does with vault files: adding, creating, reconnecting and removing. Vaults are always reached
@@ -151,6 +153,14 @@ fun AppRoot(container: AppContainer) {
 
     LaunchedEffect(state) {
         if (state is SessionState.Open && navigator.current is Screen.Unlock) navigator.push(Screen.Group(null))
+    }
+    val isOpen = state is SessionState.Open
+    LaunchedEffect(isOpen, container.visible) {
+        // Another device or program may have changed the file: look every few seconds while the app is in front.
+        while (isOpen && container.visible) {
+            delay(REFRESH_MILLIS)
+            session.refreshIfChanged()
+        }
     }
     BackHandler(enabled = navigator.current != Screen.Home) {
         ClipboardGuard.clearNow(context)

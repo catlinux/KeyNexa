@@ -64,8 +64,20 @@ sealed interface SessionState {
         val recovered: RecoveryOutcome? = null,
     ) : SessionState {
         val hasUnsavedChanges: Boolean get() = current != loaded.vault
+
+        /** Nothing is being saved and nothing is waiting to be saved. */
+        val isIdle: Boolean get() = !saving && !hasUnsavedChanges
     }
 }
+
+/**
+ * The two ways to read a vault file: [patient] waits for files still in transit (used to open a vault); [quick]
+ * does not (used to look for outside changes, so it never holds up a save). They may be the same reader.
+ */
+class VaultReaders(
+    val patient: VaultReader,
+    val quick: VaultReader = patient,
+)
 
 /**
  * The open vault and everything that happens to it: unlocking, editing, saving and locking. One per app.
@@ -77,7 +89,7 @@ sealed interface SessionState {
 class VaultSession(
     private val storage: StoragePort,
     private val engine: KdbxEngine,
-    private val reader: VaultReader,
+    private val readers: VaultReaders,
     private val recovery: SaveRecovery,
     private val saver: SafeSaver,
     private val executor: Executor,
@@ -124,11 +136,41 @@ class VaultSession(
      * Applies an edit to the open vault and saves it. Returns false, and changes nothing, when no vault is open or
      * a save is running: the screen keeps the user's input and offers it again.
      */
-    fun apply(change: (Vault) -> Vault): Boolean = startSave(change)
+    fun apply(change: (Vault) -> Vault): Boolean {
+        var accepted = false
+        mutableState.update { state ->
+            if (state is SessionState.Open && !state.saving) {
+                accepted = true
+                state.copy(current = change(state.current), saving = true, saveProblem = null)
+            } else {
+                state
+            }
+        }
+        if (accepted) executor.execute(::saveNow)
+        return accepted
+    }
 
     /** Tries again to save what is not on disk yet, after a failed save. */
     fun retrySave() {
-        startSave { it }
+        apply { it }
+    }
+
+    /**
+     * Looks at the vault file and, if another program changed it, loads that version. Does nothing while there are
+     * edits not on disk or a save is running: those are merged by the next save. Meant to be called every few
+     * seconds while the app is in front.
+     */
+    fun refreshIfChanged() {
+        executor.execute {
+            val open = mutableState.value as? SessionState.Open
+            val secrets = credentials
+            if (open != null &&
+                secrets != null &&
+                open.isIdle
+            ) {
+                reloadIfChanged(mutableState, readers.quick, open, secrets)
+            }
+        }
     }
 
     /** Closes the vault, wipes the credentials and forgets everything in memory. */
@@ -153,7 +195,7 @@ class VaultSession(
     ) {
         try {
             prepare()
-            val loaded = reader.open(vault.location, secrets)
+            val loaded = readers.patient.open(vault.location, secrets)
             credentials = secrets
             mutableState.value = SessionState.Open(vault, loaded, loaded.vault, recovered = recovered)
         } catch (failure: VaultException) {
@@ -163,20 +205,6 @@ class VaultSession(
             secrets.wipe()
             mutableState.value = SessionState.Failed(vault, UnlockError.Unreachable)
         }
-    }
-
-    private fun startSave(change: (Vault) -> Vault): Boolean {
-        var accepted = false
-        mutableState.update { state ->
-            if (state is SessionState.Open && !state.saving) {
-                accepted = true
-                state.copy(current = change(state.current), saving = true, saveProblem = null)
-            } else {
-                state
-            }
-        }
-        if (accepted) executor.execute(::saveNow)
-        return accepted
     }
 
     private fun saveNow() {
@@ -211,3 +239,28 @@ private fun VaultException.toUnlockError(): UnlockError =
         is VaultException.UnsupportedFormat -> UnlockError.UnsupportedFormat
         is VaultException.Corrupted -> UnlockError.Damaged
     }
+
+// Loads the file again if another program changed it. A transfer in progress or a storage hiccup is not an error:
+// the next look will see the file again.
+private fun reloadIfChanged(
+    state: MutableStateFlow<SessionState>,
+    reader: VaultReader,
+    open: SessionState.Open,
+    secrets: Credentials,
+) {
+    try {
+        if (!reader.hasChanged(open.vault.location, open.loaded.fingerprint)) return
+        val loaded = reader.open(open.vault.location, secrets, credentialsKnownGood = true)
+        state.update { now ->
+            if (now is SessionState.Open && now.isIdle && now.loaded == open.loaded) {
+                now.copy(loaded = loaded, current = loaded.vault)
+            } else {
+                now
+            }
+        }
+    } catch (ignored: IOException) {
+        // Try again at the next look.
+    } catch (ignored: VaultException) {
+        // The file may be incomplete: try again at the next look.
+    }
+}

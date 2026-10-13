@@ -16,11 +16,10 @@ Pasos detallados: consulta la [hoja de ruta](ROADMAP.md).
 
 ## Prioridad media (fase D — MVP seguro)
 
-- [ ] Apertura de bóvedas, bloqueo y bloqueo automático.
 - [ ] Ofrecer en la interfaz las copias `*.sync-conflict-*` para fusionar.
 - [ ] Cuando un guardado falle por haber perdido el permiso, ofrecer reconectar la carpeta sin cerrar la bóveda; ofrecer restaurar la copia privada sin guardar tras un reinicio.
-- [ ] Detectar cambios externos en pocos segundos mientras la app está a la vista y al volver al primer plano (comparar la huella del archivo; recargar sola cuando no haya ediciones sin guardar), sin esperar al siguiente guardado.
-- [ ] Edición de entradas y grupos; búsqueda.
+- [ ] Pantalla de ajustes (tiempo de bloqueo automático, bloqueo al apagar la pantalla, capturas, tiempo del portapapeles).
+- [ ] Borrado del portapapeles totalmente fiable (Android solo deja cambiar el portapapeles a la app que está delante).
 - [ ] Desbloqueo biométrico.
 
 ## Prioridad baja (más adelante)

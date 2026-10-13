@@ -101,7 +101,13 @@ private fun EntryDetail(
         onDelete = {
             if (container.session.apply { editor.delete(it, entryId) }) navigator.back()
         },
-        onCopy = { label, value, sensitive -> ClipboardGuard.copy(context, label, value, sensitive) },
+        onCopy = {
+            label,
+            value,
+            sensitive,
+            ->
+            ClipboardGuard.copy(context, label, value, sensitive, container.settings.values.clipboardSeconds)
+        },
         onOpenUrl = { openWebAddress(context, it) },
         onBack = { navigator.back() },
     )
@@ -115,7 +121,12 @@ private fun EntryEdit(
     editor: VaultEditor,
 ) {
     val navigator = container.navigator
-    val existing = screen.entryId?.let(vault.root::findEntry)
+    // Taken once: a refresh from disk while the user types must not reset the form.
+    val existing = remember(screen) { screen.entryId?.let(vault.root::findEntry) }
+    LaunchedEffect(existing == null && screen.entryId != null) {
+        if (existing == null && screen.entryId != null) navigator.back()
+    }
+    if (existing == null && screen.entryId != null) return
     EntryEditScreen(
         initial = existing?.fields,
         isNew = screen.entryId == null,

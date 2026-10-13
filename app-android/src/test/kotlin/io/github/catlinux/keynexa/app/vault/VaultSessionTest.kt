@@ -63,7 +63,7 @@ class VaultSessionTest {
         return VaultSession(
             storage = storage,
             engine = engine,
-            reader = VaultReader(storage, engine, retryDelaysMillis = emptyList()),
+            readers = VaultReaders(VaultReader(storage, engine, retryDelaysMillis = emptyList())),
             recovery = SaveRecovery(storage, engine, backups, journal),
             saver = SafeSaver(storage, engine, backups, journal, merger = KeePassMerger()),
             executor = direct,
@@ -166,5 +166,58 @@ class VaultSessionTest {
     @Test
     fun applyIsRefusedWhenNoVaultIsOpen() {
         assertFalse(session().apply { it })
+    }
+
+    @Test
+    fun lockingWipesTheCredentialsAndForgetsTheVault() {
+        val session = session()
+        val credentials = credentials()
+        session.create(known, NewVault().create("Test", cheapKdf), credentials)
+        assertTrue(session.state.value is SessionState.Open)
+
+        session.lock()
+
+        assertEquals(SessionState.Closed, session.state.value)
+        assertTrue(runCatching { credentials.passwordCopy() }.exceptionOrNull() is IllegalStateException)
+    }
+
+    @Test
+    fun refreshLoadsAVersionWrittenByAnotherProgram() {
+        val session = session()
+        createVault(session)
+        val root = (session.state.value as SessionState.Open).current.root.id
+        val other = session()
+        other.unlock(known, credentials())
+        other.apply { VaultEditor().addEntry(it, root, "FromElsewhere") }
+
+        session.refreshIfChanged()
+
+        val state = session.state.value as SessionState.Open
+        assertEquals(
+            listOf("FromElsewhere"),
+            state.current.root.entries
+                .map { it.title },
+        )
+        assertFalse(state.hasUnsavedChanges)
+    }
+
+    @Test
+    fun refreshKeepsTheDeviceVersionWhenItHasUnsavedChanges() {
+        val session = session()
+        createVault(session)
+        val root = (session.state.value as SessionState.Open).current.root.id
+        unreadable = true
+        session.apply { VaultEditor().addEntry(it, root, "NotSavedYet") }
+        unreadable = false
+
+        session.refreshIfChanged()
+
+        val state = session.state.value as SessionState.Open
+        assertEquals(
+            listOf("NotSavedYet"),
+            state.current.root.entries
+                .map { it.title },
+        )
+        assertTrue(state.hasUnsavedChanges)
     }
 }
