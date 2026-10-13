@@ -1,0 +1,325 @@
+From ab9bbfc2cabcf6e99bbbf4b9f2cfc706ead9709b Mon Sep 17 00:00:00 2001
+From: catlinux <marc.catlinux@gmail.com>
+Date: Wed, 14 Oct 2026 01:09:52 +0200
+Subject: [PATCH] Keep XML elements that are not recognised so a rewrite does
+ not drop them
+
+Meta, Group, Entry (history included) and the Root element silently ignored unknown children, so rewriting a
+database dropped whatever newer KeePass or KeePassXC versions had added. They are now kept in a new
+unknownElements field (unknownRootElements for the children of Root) and written back.
+---
+ .../app/keemobile/kotpass/builders/Entry.kt   |  7 +++-
+ .../app/keemobile/kotpass/builders/Group.kt   |  7 +++-
+ .../kotpass/models/DatabaseContent.kt         |  6 ++-
+ .../app/keemobile/kotpass/models/Entry.kt     |  4 +-
+ .../app/keemobile/kotpass/models/Group.kt     |  4 +-
+ .../app/keemobile/kotpass/models/Meta.kt      |  4 +-
+ .../kotpass/xml/DefaultXmlContentParser.kt    | 15 +++++++-
+ .../kotlin/app/keemobile/kotpass/xml/Entry.kt |  3 ++
+ .../kotlin/app/keemobile/kotpass/xml/Group.kt |  3 ++
+ .../kotlin/app/keemobile/kotpass/xml/Meta.kt  | 37 ++++++++++++++++++-
+ 10 files changed, 80 insertions(+), 10 deletions(-)
+
+diff --git a/kotpass/src/main/kotlin/app/keemobile/kotpass/builders/Entry.kt b/kotpass/src/main/kotlin/app/keemobile/kotpass/builders/Entry.kt
+index 88d6166..f44fe6b 100644
+--- a/kotpass/src/main/kotlin/app/keemobile/kotpass/builders/Entry.kt
++++ b/kotpass/src/main/kotlin/app/keemobile/kotpass/builders/Entry.kt
+@@ -8,6 +8,7 @@ import app.keemobile.kotpass.models.Entry
+ import app.keemobile.kotpass.models.EntryFields
+ import app.keemobile.kotpass.models.EntryValue
+ import app.keemobile.kotpass.models.TimeData
++import org.redundent.kotlin.xml.Node
+ import java.util.UUID
+ 
+ internal class MutableEntry(
+@@ -25,7 +26,8 @@ internal class MutableEntry(
+     var history: MutableList<Entry> = mutableListOf(),
+     var customData: MutableMap<String, CustomDataValue> = mutableMapOf(),
+     var previousParentGroup: UUID? = null,
+-    var qualityCheck: Boolean = true
++    var qualityCheck: Boolean = true,
++    var unknownElements: MutableList<Node> = mutableListOf()
+ )
+ 
+ internal inline fun buildEntry(
+@@ -49,6 +51,7 @@ internal inline fun buildEntry(
+             history = history,
+             customData = customData,
+             previousParentGroup = previousParentGroup,
+-            qualityCheck = qualityCheck
++            qualityCheck = qualityCheck,
++            unknownElements = unknownElements
+         )
+     }
+diff --git a/kotpass/src/main/kotlin/app/keemobile/kotpass/builders/Group.kt b/kotpass/src/main/kotlin/app/keemobile/kotpass/builders/Group.kt
+index 76afb87..b236341 100644
+--- a/kotpass/src/main/kotlin/app/keemobile/kotpass/builders/Group.kt
++++ b/kotpass/src/main/kotlin/app/keemobile/kotpass/builders/Group.kt
+@@ -6,6 +6,7 @@ import app.keemobile.kotpass.models.CustomDataValue
+ import app.keemobile.kotpass.models.Entry
+ import app.keemobile.kotpass.models.Group
+ import app.keemobile.kotpass.models.TimeData
++import org.redundent.kotlin.xml.Node
+ import java.util.UUID
+ 
+ internal class MutableGroup(
+@@ -24,7 +25,8 @@ internal class MutableGroup(
+     var tags: MutableList<String> = mutableListOf(),
+     var groups: MutableList<Group> = mutableListOf(),
+     var entries: MutableList<Entry> = mutableListOf(),
+-    var customData: MutableMap<String, CustomDataValue> = mutableMapOf()
++    var customData: MutableMap<String, CustomDataValue> = mutableMapOf(),
++    var unknownElements: MutableList<Node> = mutableListOf()
+ )
+ 
+ internal inline fun buildGroup(
+@@ -49,6 +51,7 @@ internal inline fun buildGroup(
+             tags = tags,
+             groups = groups,
+             entries = entries,
+-            customData = customData
++            customData = customData,
++            unknownElements = unknownElements
+         )
+     }
+diff --git a/kotpass/src/main/kotlin/app/keemobile/kotpass/models/DatabaseContent.kt b/kotpass/src/main/kotlin/app/keemobile/kotpass/models/DatabaseContent.kt
+index c444720..26cb2c0 100644
+--- a/kotpass/src/main/kotlin/app/keemobile/kotpass/models/DatabaseContent.kt
++++ b/kotpass/src/main/kotlin/app/keemobile/kotpass/models/DatabaseContent.kt
+@@ -1,7 +1,11 @@
+ package app.keemobile.kotpass.models
+ 
++import org.redundent.kotlin.xml.Node
++
+ data class DatabaseContent(
+     val meta: Meta,
+     val group: Group,
+-    val deletedObjects: List<DeletedObject>
++    val deletedObjects: List<DeletedObject>,
++    val unknownElements: List<Node> = listOf(),
++    val unknownRootElements: List<Node> = listOf()
+ )
+diff --git a/kotpass/src/main/kotlin/app/keemobile/kotpass/models/Entry.kt b/kotpass/src/main/kotlin/app/keemobile/kotpass/models/Entry.kt
+index 557588c..eaa3571 100644
+--- a/kotpass/src/main/kotlin/app/keemobile/kotpass/models/Entry.kt
++++ b/kotpass/src/main/kotlin/app/keemobile/kotpass/models/Entry.kt
+@@ -2,6 +2,7 @@ package app.keemobile.kotpass.models
+ 
+ import app.keemobile.kotpass.constants.BasicField
+ import app.keemobile.kotpass.constants.PredefinedIcon
++import org.redundent.kotlin.xml.Node
+ import java.util.UUID
+ 
+ data class Entry(
+@@ -19,7 +20,8 @@ data class Entry(
+     val history: List<Entry> = listOf(),
+     val customData: Map<String, CustomDataValue> = mapOf(),
+     val previousParentGroup: UUID? = null,
+-    val qualityCheck: Boolean = true
++    val qualityCheck: Boolean = true,
++    val unknownElements: List<Node> = listOf()
+ ) : DatabaseElement {
+     operator fun get(field: BasicField): EntryValue? = fields[field()]
+ }
+diff --git a/kotpass/src/main/kotlin/app/keemobile/kotpass/models/Group.kt b/kotpass/src/main/kotlin/app/keemobile/kotpass/models/Group.kt
+index c6082f7..5ff68ed 100644
+--- a/kotpass/src/main/kotlin/app/keemobile/kotpass/models/Group.kt
++++ b/kotpass/src/main/kotlin/app/keemobile/kotpass/models/Group.kt
+@@ -2,6 +2,7 @@ package app.keemobile.kotpass.models
+ 
+ import app.keemobile.kotpass.constants.GroupOverride
+ import app.keemobile.kotpass.constants.PredefinedIcon
++import org.redundent.kotlin.xml.Node
+ import java.util.Stack
+ import java.util.UUID
+ 
+@@ -21,7 +22,8 @@ data class Group(
+     override val tags: List<String> = listOf(),
+     val groups: List<Group> = listOf(),
+     val entries: List<Entry> = listOf(),
+-    val customData: Map<String, CustomDataValue> = mapOf()
++    val customData: Map<String, CustomDataValue> = mapOf(),
++    val unknownElements: List<Node> = listOf()
+ ) : DatabaseElement {
+     fun traverse(
+         block: (DatabaseElement) -> Unit
+diff --git a/kotpass/src/main/kotlin/app/keemobile/kotpass/models/Meta.kt b/kotpass/src/main/kotlin/app/keemobile/kotpass/models/Meta.kt
+index f174c1e..94f7d73 100644
+--- a/kotpass/src/main/kotlin/app/keemobile/kotpass/models/Meta.kt
++++ b/kotpass/src/main/kotlin/app/keemobile/kotpass/models/Meta.kt
+@@ -3,6 +3,7 @@ package app.keemobile.kotpass.models
+ import app.keemobile.kotpass.constants.Defaults
+ import app.keemobile.kotpass.constants.MemoryProtectionFlag
+ import okio.ByteString
++import org.redundent.kotlin.xml.Node
+ import java.time.Instant
+ import java.util.UUID
+ 
+@@ -69,5 +70,6 @@ data class Meta(
+     val customIcons: Map<UUID, CustomIcon> = mapOf(),
+     val customData: Map<String, CustomDataValue> = mapOf(),
+     @PublishedApi
+-    internal val binaries: Map<ByteString, BinaryData> = linkedMapOf()
++    internal val binaries: Map<ByteString, BinaryData> = linkedMapOf(),
++    val unknownElements: List<Node> = listOf()
+ )
+diff --git a/kotpass/src/main/kotlin/app/keemobile/kotpass/xml/DefaultXmlContentParser.kt b/kotpass/src/main/kotlin/app/keemobile/kotpass/xml/DefaultXmlContentParser.kt
+index 5b584ed..2433024 100644
+--- a/kotpass/src/main/kotlin/app/keemobile/kotpass/xml/DefaultXmlContentParser.kt
++++ b/kotpass/src/main/kotlin/app/keemobile/kotpass/xml/DefaultXmlContentParser.kt
+@@ -44,8 +44,14 @@ object DefaultXmlContentParser : XmlContentParser {
+             ?.filter { it.nodeName == Tags.DeletedObjects.Object }
+             ?.mapNotNull(::unmarshalDeletedObject)
+             ?: listOf()
++        val unknownElements = documentNode
++            .childNodes()
++            .filter { it.nodeName != Tags.Meta.TagName && it.nodeName != Tags.Root }
++        val unknownRootElements = rootNode
++            .childNodes()
++            .filter { it.nodeName != Tags.Group.TagName && it.nodeName != Tags.DeletedObjects.TagName }
+ 
+-        return DatabaseContent(meta, rootGroup, deletedObjects)
++        return DatabaseContent(meta, rootGroup, deletedObjects, unknownElements, unknownRootElements)
+     }
+ 
+     override fun marshalContent(
+@@ -63,6 +69,13 @@ object DefaultXmlContentParser : XmlContentParser {
+                         addElement(it.marshal(context))
+                     }
+                 }
++                content.unknownRootElements.forEach {
++                    addElement(it)
++                }
++            }
++
++            content.unknownElements.forEach {
++                addElement(it)
+             }
+         }.toString(
+             PrintOptions(
+diff --git a/kotpass/src/main/kotlin/app/keemobile/kotpass/xml/Entry.kt b/kotpass/src/main/kotlin/app/keemobile/kotpass/xml/Entry.kt
+index 1e1247d..7dbbbda 100644
+--- a/kotpass/src/main/kotlin/app/keemobile/kotpass/xml/Entry.kt
++++ b/kotpass/src/main/kotlin/app/keemobile/kotpass/xml/Entry.kt
+@@ -33,6 +33,7 @@ internal fun unmarshalEntry(
+     return buildEntry(uuid) {
+         for (childNode in node.childNodes()) {
+             when (childNode.nodeName) {
++                Tags.Uuid -> Unit
+                 Tags.Entry.IconId -> {
+                     icon = childNode
+                         .getText()
+@@ -88,6 +89,7 @@ internal fun unmarshalEntry(
+                 Tags.Entry.QualityCheck -> {
+                     qualityCheck = childNode.getText()?.toBoolean() ?: true
+                 }
++                else -> unknownElements.add(childNode)
+             }
+         }
+ 
+@@ -204,6 +206,7 @@ internal fun Entry.marshal(
+             history.forEach { addElement(it.marshal(context)) }
+         }
+     }
++    unknownElements.forEach { addElement(it) }
+ }
+ 
+ private fun marshalFields(
+diff --git a/kotpass/src/main/kotlin/app/keemobile/kotpass/xml/Group.kt b/kotpass/src/main/kotlin/app/keemobile/kotpass/xml/Group.kt
+index e0adda2..070f36b 100644
+--- a/kotpass/src/main/kotlin/app/keemobile/kotpass/xml/Group.kt
++++ b/kotpass/src/main/kotlin/app/keemobile/kotpass/xml/Group.kt
+@@ -29,6 +29,7 @@ internal fun unmarshalGroup(
+     return buildGroup(uuid) {
+         for (childNode in node.childNodes()) {
+             when (childNode.nodeName) {
++                Tags.Uuid -> Unit
+                 Tags.Group.Name -> {
+                     name = childNode.getText() ?: ""
+                 }
+@@ -80,6 +81,7 @@ internal fun unmarshalGroup(
+                 Tags.CustomData.TagName -> {
+                     customData = CustomData.unmarshal(childNode).toMutableMap()
+                 }
++                else -> unknownElements.add(childNode)
+             }
+         }
+     }
+@@ -116,4 +118,5 @@ internal fun Group.marshal(
+     }
+     groups.forEach { group -> addElement(group.marshal(context)) }
+     entries.forEach { entry -> addElement(entry.marshal(context)) }
++    unknownElements.forEach { addElement(it) }
+ }
+diff --git a/kotpass/src/main/kotlin/app/keemobile/kotpass/xml/Meta.kt b/kotpass/src/main/kotlin/app/keemobile/kotpass/xml/Meta.kt
+index b0e9b33..dcb4b4f 100644
+--- a/kotpass/src/main/kotlin/app/keemobile/kotpass/xml/Meta.kt
++++ b/kotpass/src/main/kotlin/app/keemobile/kotpass/xml/Meta.kt
+@@ -6,6 +6,7 @@ import app.keemobile.kotpass.extensions.addBoolean
+ import app.keemobile.kotpass.extensions.addBytes
+ import app.keemobile.kotpass.extensions.addDateTime
+ import app.keemobile.kotpass.extensions.addUuid
++import app.keemobile.kotpass.extensions.childNodes
+ import app.keemobile.kotpass.extensions.getBytes
+ import app.keemobile.kotpass.extensions.getText
+ import app.keemobile.kotpass.extensions.getUuid
+@@ -16,6 +17,36 @@ import okio.ByteString.Companion.toByteString
+ import org.redundent.kotlin.xml.Node
+ import org.redundent.kotlin.xml.node
+ 
++private val KnownMetaTags = setOf(
++    Tags.Meta.Generator,
++    Tags.Meta.HeaderHash,
++    Tags.Meta.SettingsChanged,
++    Tags.Meta.DatabaseName,
++    Tags.Meta.DatabaseNameChanged,
++    Tags.Meta.DatabaseDescription,
++    Tags.Meta.DatabaseDescriptionChanged,
++    Tags.Meta.DefaultUserName,
++    Tags.Meta.DefaultUserNameChanged,
++    Tags.Meta.MaintenanceHistoryDays,
++    Tags.Meta.Color,
++    Tags.Meta.MasterKeyChanged,
++    Tags.Meta.MasterKeyChangeRec,
++    Tags.Meta.MasterKeyChangeForce,
++    Tags.Meta.RecycleBinEnabled,
++    Tags.Meta.RecycleBinUuid,
++    Tags.Meta.RecycleBinChanged,
++    Tags.Meta.EntryTemplatesGroup,
++    Tags.Meta.EntryTemplatesGroupChanged,
++    Tags.Meta.HistoryMaxItems,
++    Tags.Meta.HistoryMaxSize,
++    Tags.Meta.LastSelectedGroup,
++    Tags.Meta.LastTopVisibleGroup,
++    Tags.Meta.MemoryProtection.TagName,
++    Tags.Meta.Binaries.TagName,
++    Tags.Meta.CustomIcons.TagName,
++    Tags.CustomData.TagName
++)
++
+ internal fun unmarshalMeta(node: Node): Meta {
+     return Meta(
+         generator = node
+@@ -112,7 +143,10 @@ internal fun unmarshalMeta(node: Node): Meta {
+             ?: mapOf(),
+         customData = node.firstOrNull(Tags.CustomData.TagName)
+             ?.let(CustomData::unmarshal)
+-            ?: mapOf()
++            ?: mapOf(),
++        unknownElements = node
++            .childNodes()
++            .filterNot { it.nodeName in KnownMetaTags }
+     )
+ }
+ 
+@@ -188,6 +222,7 @@ internal fun Meta.marshal(context: XmlContext.Encode): Node {
+                 }
+             }
+         }
++        unknownElements.forEach { addElement(it) }
+     }
+ }
+ 
+-- 
+2.54.0.windows.1
+

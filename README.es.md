@@ -6,7 +6,7 @@
 
 Un gestor de contraseñas multiplataforma que prioriza la seguridad, construido sobre bibliotecas criptográficas consolidadas, bóvedas locales y sincronización fluida con Syncthing.
 
-> **Estado del proyecto: desarrollo temprano (v0.2.0).** El repositorio contiene la investigación, la arquitectura, el modelo de amenazas y un esqueleto de proyecto compilable, pero todavía no hay ninguna aplicación usable. Nada de lo descrito como *planificado* está implementado. No uses KeyNexa para guardar contraseñas reales hasta que una versión publicada diga lo contrario.
+> **Estado del proyecto: desarrollo temprano (v0.7.3).** Solo Android, para pruebas. Ya se puede crear o abrir una bóveda KDBX, explorarla, buscar, añadir y editar entradas, usar la papelera y generar contraseñas; el guardado pasa por un guardado seguro y los cambios hechos en otro sitio (por ejemplo con KeePassXC a través de Syncthing) se fusionan. **Todavía no está hecho:** bloqueo automático y protección de pantalla, borrado fiable del portapapeles, desbloqueo biométrico, fusión de archivos de conflicto desde la interfaz, los clientes de Windows y Linux, y cualquier versión publicada. No guardes contraseñas reales en KeyNexa hasta que una versión publicada diga lo contrario.
 
 ## Qué será KeyNexa
 
@@ -35,7 +35,7 @@ Consulta la [hoja de ruta](docs/es/ROADMAP.md) para ver qué está planificado e
 
 ## Requisitos, instalación y uso
 
-La aplicación todavía no es usable, pero el proyecto ya se puede compilar. Necesita JDK 17 y el SDK de Android 36 (consulta [Desarrollo](docs/es/DEVELOPMENT.md) para indicar a Gradle dónde está el SDK). Desde la raíz del repositorio:
+Todavía no hay ninguna versión publicada. Por ahora el proyecto se compila desde el código fuente. Necesita JDK 17 y el SDK de Android 36 (consulta [Desarrollo](docs/es/DEVELOPMENT.md) para indicar a Gradle dónde está el SDK). Desde la raíz del repositorio:
 
 ```sh
 ./gradlew build
@@ -43,7 +43,7 @@ La aplicación todavía no es usable, pero el proyecto ya se puede compilar. Nec
 ./gradlew :app-android:assembleDebug
 ```
 
-En Windows usa `gradlew.bat` en lugar de `./gradlew`. El APK de depuración se genera en `app-android/build/outputs/apk/debug/app-android-debug.apk`.
+En Windows usa `gradlew.bat` en lugar de `./gradlew`. El APK de depuración se genera en `app-android/build/outputs/apk/debug/app-android-debug.apk` y se puede instalar en un móvil para probar (usa solo bóvedas ficticias). Para probar la sincronización, deja la bóveda en una carpeta compartida con Syncthing y añádela a KeyNexa con *Abrir una bóveda existente*, eligiendo la carpeta (no un archivo suelto: Android revoca el permiso sobre un archivo suelto cuando Syncthing lo sustituye).
 
 ## Créditos y licencia
 

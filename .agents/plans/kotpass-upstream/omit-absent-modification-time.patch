@@ -1,0 +1,49 @@
+From 8e9e23e14dd01fb7b4a6bf30a864e6967fd10cdf Mon Sep 17 00:00:00 2001
+From: catlinux <marc.catlinux@gmail.com>
+Date: Wed, 14 Oct 2026 01:09:53 +0200
+Subject: [PATCH] Do not write a LastModificationTime that was absent
+
+Custom icons and custom data items of a KDBX 4.1 file got a LastModificationTime of year 1 when the original had
+none. The element is now omitted when the value is null.
+---
+ .../src/main/kotlin/app/keemobile/kotpass/xml/CustomData.kt | 6 ++++--
+ .../main/kotlin/app/keemobile/kotpass/xml/CustomIcons.kt    | 6 ++++--
+ 2 files changed, 8 insertions(+), 4 deletions(-)
+
+diff --git a/kotpass/src/main/kotlin/app/keemobile/kotpass/xml/CustomData.kt b/kotpass/src/main/kotlin/app/keemobile/kotpass/xml/CustomData.kt
+index 1c534ba..410f28a 100644
+--- a/kotpass/src/main/kotlin/app/keemobile/kotpass/xml/CustomData.kt
++++ b/kotpass/src/main/kotlin/app/keemobile/kotpass/xml/CustomData.kt
+@@ -43,8 +43,10 @@ internal object CustomData {
+                 element(FormatXml.Tags.CustomData.ItemValue) { text(item.value) }
+ 
+                 if (context.version.isAtLeast(4, 1)) {
+-                    element(FormatXml.Tags.TimeData.LastModificationTime) {
+-                        addDateTime(context, item.lastModified)
++                    if (item.lastModified != null) {
++                        element(FormatXml.Tags.TimeData.LastModificationTime) {
++                            addDateTime(context, item.lastModified)
++                        }
+                     }
+                 }
+             }
+diff --git a/kotpass/src/main/kotlin/app/keemobile/kotpass/xml/CustomIcons.kt b/kotpass/src/main/kotlin/app/keemobile/kotpass/xml/CustomIcons.kt
+index b2244d6..4f2f483 100644
+--- a/kotpass/src/main/kotlin/app/keemobile/kotpass/xml/CustomIcons.kt
++++ b/kotpass/src/main/kotlin/app/keemobile/kotpass/xml/CustomIcons.kt
+@@ -55,8 +55,10 @@ internal object CustomIcons {
+                     element(Tags.Meta.CustomIcons.ItemName) {
+                         if (item.name != null) text(item.name)
+                     }
+-                    element(Tags.TimeData.LastModificationTime) {
+-                        addDateTime(context, item.lastModified)
++                    if (item.lastModified != null) {
++                        element(Tags.TimeData.LastModificationTime) {
++                            addDateTime(context, item.lastModified)
++                        }
+                     }
+                 }
+             }
+-- 
+2.54.0.windows.1
+

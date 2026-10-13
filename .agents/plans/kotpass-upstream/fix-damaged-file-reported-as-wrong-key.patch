@@ -1,0 +1,75 @@
+From f7325c38891231e333703205b4a86f4a3bd7b351 Mon Sep 17 00:00:00 2001
+From: catlinux <marc.catlinux@gmail.com>
+Date: Wed, 14 Oct 2026 01:09:52 +0200
+Subject: [PATCH] Report damaged content as a format error, not a wrong key
+
+In KDBX 4 the header HMAC already proves the key, so a failure while decrypting the content means the file is
+damaged or incomplete. It is now reported as FormatError.InvalidContent instead of CryptoError.InvalidKey, and an
+invalid AES-KDF seed as FormatError.InvalidHeader. In KDBX 3.x the stream-start-bytes check built an exception
+but never threw it; it now throws CryptoError.InvalidKey.
+---
+ .../kotpass/cryptography/format/AesKdf.kt     |  3 ++-
+ .../app/keemobile/kotpass/database/Decoder.kt | 19 +++++++++++++------
+ 2 files changed, 15 insertions(+), 7 deletions(-)
+
+diff --git a/kotpass/src/main/kotlin/app/keemobile/kotpass/cryptography/format/AesKdf.kt b/kotpass/src/main/kotlin/app/keemobile/kotpass/cryptography/format/AesKdf.kt
+index a26bfcb..584545f 100644
+--- a/kotpass/src/main/kotlin/app/keemobile/kotpass/cryptography/format/AesKdf.kt
++++ b/kotpass/src/main/kotlin/app/keemobile/kotpass/cryptography/format/AesKdf.kt
+@@ -1,6 +1,7 @@
+ package app.keemobile.kotpass.cryptography.format
+ 
+ import app.keemobile.kotpass.errors.CryptoError
++import app.keemobile.kotpass.errors.FormatError
+ import app.keemobile.kotpass.extensions.clear
+ import app.keemobile.kotpass.extensions.sha256
+ import java.security.GeneralSecurityException
+@@ -30,7 +31,7 @@ internal object AesKdf {
+             if (error is NoSuchAlgorithmException) {
+                 throw CryptoError.AlgorithmUnavailable("AES/ECB encryption is not supported in current environment.")
+             } else {
+-                throw CryptoError.InvalidKey("Wrong KDF seed used for decryption.")
++                throw FormatError.InvalidHeader("KDF seed has an invalid length.")
+             }
+         } finally {
+             bytes.clear()
+diff --git a/kotpass/src/main/kotlin/app/keemobile/kotpass/database/Decoder.kt b/kotpass/src/main/kotlin/app/keemobile/kotpass/database/Decoder.kt
+index 719d57c..5008c2e 100644
+--- a/kotpass/src/main/kotlin/app/keemobile/kotpass/database/Decoder.kt
++++ b/kotpass/src/main/kotlin/app/keemobile/kotpass/database/Decoder.kt
+@@ -173,7 +173,7 @@ private fun decryptRawContent(
+             )
+             val streamStartBytes = header.streamStartBytes
+             if (!streamStartBytes.rangeEquals(0, contentBlocks, 0, streamStartBytes.size)) {
+-                FormatError.InvalidContent("Database content could be corrupted or cannot be decrypted.")
++                throw CryptoError.InvalidKey("Wrong key used for decryption.")
+             }
+ 
+             ContentBlocks.readContentBlocksVer3x(
+@@ -187,11 +187,18 @@ private fun decryptRawContent(
+             val encryptedContent = ContentBlocks
+                 .readContentBlocksVer4x(source, masterSeed, transformedKey)
+ 
+-            cipher.decrypt(
+-                key = KeyTransform.masterKey(masterSeed, transformedKey),
+-                iv = header.encryptionIV.toByteArray(),
+-                data = encryptedContent
+-            )
++            try {
++                cipher.decrypt(
++                    key = KeyTransform.masterKey(masterSeed, transformedKey),
++                    iv = header.encryptionIV.toByteArray(),
++                    data = encryptedContent
++                )
++            } catch (error: CryptoError.InvalidKey) {
++                // The header HMAC already proved the key, so a failure here means damaged content.
++                throw FormatError.InvalidContent("Database content is damaged or incomplete.").apply {
++                    initCause(error)
++                }
++            }
+         }
+     }
+ 
+-- 
+2.54.0.windows.1
+

@@ -6,6 +6,12 @@ All notable changes to this project are documented in this file. The format is b
 
 ## [Unreleased]
 
+## [0.7.4] - 2026-10-14
+
+### Changed
+
+- README and roadmap now describe the real state of the project (what works on Android, what is missing, how to try a debug build with Syncthing).
+
 ## [0.7.3] - 2026-10-14
 
 ### Fixed

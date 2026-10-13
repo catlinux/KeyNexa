@@ -11,6 +11,9 @@ Pasos detallados: consulta la [hoja de ruta](ROADMAP.md).
 - [ ] Medir Argon2 de kotpass en un móvil real cuando la app abra una bóveda; decidir sobre argon2kt (consulta `docs/es/BENCHMARKS.md`).
 - [ ] Aprobar el resto de la identidad propuesta en `docs/DESIGN.md` (paleta, fuente, interruptor manual claro/oscuro); la marca ya está decidida.
 
+- [ ] Aportar las correcciones de kotpass al proyecto original: hay cuatro parches preparados en `.agents/plans/kotpass-upstream/`; publicarlos necesita la aprobación del mantenedor y pruebas dentro de kotpass.
+- [ ] Primera versión preliminar en GitHub cuando estén hechas las fases D5, D6 y la revisión (E1); el flujo de publicación nunca se ha ejecutado.
+
 ## Prioridad media (fase D — MVP seguro)
 
 - [ ] Apertura de bóvedas, bloqueo y bloqueo automático.
@@ -22,9 +25,15 @@ Pasos detallados: consulta la [hoja de ruta](ROADMAP.md).
 
 ## Prioridad baja (más adelante)
 
+- [ ] Clientes de Windows y Linux, cuando la app de Android sea funcional (reutilizan los módulos `core-*`).
 - [ ] Servicio de autorrelleno y proveedor de credenciales (passkeys).
 - [ ] TOTP.
 - [ ] Clientes de escritorio (Windows, Linux).
+
+## En evaluación (decisión pendiente)
+
+- Sincronización propia que no dependa de Syncthing (por ejemplo, un cliente de escritorio que haga de enlace), dejando Syncthing como opción.
+- Integrar del todo en el proyecto las primitivas criptográficas (ya están vendorizadas con kotpass) en lugar de depender de binarios externos.
 
 ## Descartado
 

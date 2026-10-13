@@ -6,7 +6,7 @@
 
 A security-first, cross-platform password manager built around established cryptographic libraries, local vaults, and seamless Syncthing synchronization.
 
-> **Project status: early development (v0.2.0).** The repository contains the research, architecture, threat model and a compilable project skeleton, but no usable application yet. Nothing described as *planned* is implemented. Do not use KeyNexa to store real passwords until a release says otherwise.
+> **Project status: early development (v0.7.3).** Android only, for testing. You can already create or open a KDBX vault, browse, search, add and edit entries, use the recycle bin and generate passwords; saves go through a safe-save pipeline and changes made elsewhere (for example with KeePassXC through Syncthing) are merged. **Not done yet:** auto-lock and screen protection, reliable clipboard clearing, biometric unlock, conflict-file merging in the UI, the Windows and Linux clients, and any published release. Do not store real passwords in KeyNexa until a release says otherwise.
 
 ## What KeyNexa will be
 
@@ -35,7 +35,7 @@ See the [roadmap](docs/ROADMAP.md) for what is planned in each phase.
 
 ## Requirements, installation and usage
 
-The application is not usable yet, but the project can be compiled. It needs JDK 17 and the Android SDK 36 (see [Development](docs/DEVELOPMENT.md) for how to point Gradle at the SDK). From the repository root:
+There is no published release yet. For now the project is built from source. It needs JDK 17 and the Android SDK 36 (see [Development](docs/DEVELOPMENT.md) for how to point Gradle at the SDK). From the repository root:
 
 ```sh
 ./gradlew build
@@ -43,7 +43,7 @@ The application is not usable yet, but the project can be compiled. It needs JDK
 ./gradlew :app-android:assembleDebug
 ```
 
-On Windows use `gradlew.bat` instead of `./gradlew`. The debug APK is written to `app-android/build/outputs/apk/debug/app-android-debug.apk`.
+On Windows use `gradlew.bat` instead of `./gradlew`. The debug APK is written to `app-android/build/outputs/apk/debug/app-android-debug.apk` and can be installed on a phone for testing (use fictitious vaults only). To try synchronisation, put the vault in a folder shared with Syncthing and add it to KeyNexa with *Open existing vault*, choosing the folder (not a single file: Android revokes the permission on a single file when Syncthing replaces it).
 
 ## Credits and license
 

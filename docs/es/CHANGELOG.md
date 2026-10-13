@@ -6,6 +6,12 @@ Todos los cambios notables de este proyecto se documentan en este archivo. El fo
 
 ## [Sin publicar]
 
+## [0.7.4] - 2026-10-14
+
+### Cambiado
+
+- El README y la hoja de ruta describen ahora el estado real del proyecto (qué funciona en Android, qué falta, cómo probar una compilación de depuración con Syncthing).
+
 ## [0.7.3] - 2026-10-14
 
 ### Corregido
