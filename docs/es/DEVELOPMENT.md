@@ -43,6 +43,8 @@ Estos comandos se verificaron en local, en Windows, con JDK 17 (Temurin) y el SD
 - Errores: contraseña incorrecta, problemas con el archivo de clave, datos ajenos y archivos truncados o alterados. Un archivo KDBX 4 dañado se informa como dañado, nunca como contraseña incorrecta.
 - Ida y vuelta (AC2): decodificar, codificar y decodificar de nuevo da la misma bóveda para todas las bóvedas y para cada combinación de cifrado y derivación de clave.
 - Diferencial (AC2): la salida del motor se exporta a XML con `keepassxc-cli` y se compara con la exportación del original. Se omite sin error si KeePassXC no está instalado.
+- Fuzzing: copias dañadas al azar de las bóvedas (bits cambiados, cortes, inserciones, borrados) solo pueden fallar con una `VaultException`, dentro de un límite de tiempo. La semilla es fija; `KEYNEXA_FUZZ_ITERATIONS=3000 ./gradlew :core-kdbx:test --tests '*DecoderMutationFuzz*'` lo ejecuta durante mucho más tiempo.
+- Límites de la derivación de clave: un archivo que pida una memoria o iteraciones de Argon2 absurdas, o un número absurdo de rondas de AES-KDF, se rechaza antes de hacer ningún trabajo (`UnsupportedFormat`), porque los parámetros se leen de la cabecera sin cifrar.
 - Tiempos de Argon2, desactivados por defecto: `KEYNEXA_PERF=1 ./gradlew :core-kdbx:test --tests '*Argon2Performance*' -i` (consulta [Benchmarks](BENCHMARKS.md)). `KEYNEXA_TEST_HEAP` fija el heap de las pruebas (por defecto 2g).
 
 ## Estructura de módulos
@@ -84,7 +86,7 @@ No inventes sumas a mano.
 
 | Job | Qué hace |
 | --- | --- |
-| `build` | Prepara JDK 17 y el SDK de Android 36 y ejecuta `./gradlew build check`; si falla, sube los informes de lint, detekt y pruebas como artefacto |
+| `build` | Prepara JDK 17, el SDK de Android 36 y KeePassXC (para la prueba diferencial) y ejecuta `./gradlew build check`; si falla, sube los informes de lint, detekt y pruebas como artefacto |
 | `docs-i18n` | Ejecuta `bash scripts/check-docs-i18n.sh` |
 | `licenses` | Ejecuta `./gradlew generateLicenseReport` y sube `build/reports/dependency-license` |
 | `vulnerabilities` | Analiza solo las dependencias de runtime que se distribuyen con OSV-Scanner, desde los archivos `gradle.lockfile`, y falla ante vulnerabilidades conocidas |

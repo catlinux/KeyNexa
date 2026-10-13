@@ -7,6 +7,7 @@ Detailed steps: see the [roadmap](docs/ROADMAP.md).
 ## High priority (phase C — project foundation)
 
 - [ ] First signed test release: push a tag (with maintainer approval) and check the workflow, the signature and the checksum on GitHub.
+- [ ] Differential test of KeyNexa-written vaults against keepass-rs, and Jazzer fuzzing (ADR-0005; the mutation fuzzing and the keepassxc-cli comparison already run).
 - [ ] Measure kotpass Argon2 on a real phone once the app opens a vault; decide on argon2kt (see `docs/BENCHMARKS.md`).
 - [ ] Design system: original icon, palette, typography, spacing, components, light and dark themes.
 

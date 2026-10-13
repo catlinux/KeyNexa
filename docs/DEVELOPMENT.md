@@ -43,6 +43,8 @@ These commands were verified locally on Windows with JDK 17 (Temurin) and Androi
 - Errors: wrong password, key file problems, foreign data, and truncated or altered files. A damaged KDBX 4 file is reported as damaged, never as a wrong password.
 - Round trip (AC2): decode, encode and decode again give the same vault for every vault and for every cipher and key derivation combination.
 - Differential (AC2): the engine's output is exported to XML with `keepassxc-cli` and compared with the export of the original. It is skipped without error when KeePassXC is not installed.
+- Fuzzing: randomly damaged copies of vaults (bit flips, cuts, insertions, deletions) must only ever fail with a `VaultException`, within a time limit. The seed is fixed; `KEYNEXA_FUZZ_ITERATIONS=3000 ./gradlew :core-kdbx:test --tests '*DecoderMutationFuzz*'` runs it much longer.
+- Key derivation limits: a file that asks for absurd Argon2 memory or iterations, or an absurd number of AES-KDF rounds, is refused before any work (`UnsupportedFormat`), because the parameters are read from the unencrypted header.
 - Argon2 timing, off by default: `KEYNEXA_PERF=1 ./gradlew :core-kdbx:test --tests '*Argon2Performance*' -i` (see [Benchmarks](BENCHMARKS.md)). `KEYNEXA_TEST_HEAP` sets the test heap (default 2g).
 
 ## Module layout
@@ -84,7 +86,7 @@ Do not invent checksums by hand.
 
 | Job | What it does |
 | --- | --- |
-| `build` | Sets up JDK 17 and Android SDK 36, then runs `./gradlew build check`; on failure it uploads the lint, detekt and test reports as an artifact |
+| `build` | Sets up JDK 17, Android SDK 36 and KeePassXC (for the differential test), then runs `./gradlew build check`; on failure it uploads the lint, detekt and test reports as an artifact |
 | `docs-i18n` | Runs `bash scripts/check-docs-i18n.sh` |
 | `licenses` | Runs `./gradlew generateLicenseReport` and uploads `build/reports/dependency-license` |
 | `vulnerabilities` | Scans only the distributed runtime dependencies with OSV-Scanner, from the `gradle.lockfile` files, and fails on known vulnerabilities |

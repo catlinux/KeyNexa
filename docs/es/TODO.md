@@ -7,6 +7,7 @@ Pasos detallados: consulta la [hoja de ruta](ROADMAP.md).
 ## Prioridad alta (fase C — base del proyecto)
 
 - [ ] Primera publicación firmada de prueba: subir una etiqueta (con aprobación del responsable) y comprobar en GitHub el workflow, la firma y la suma de verificación.
+- [ ] Prueba diferencial de las bóvedas escritas por KeyNexa contra keepass-rs, y fuzzing con Jazzer (ADR-0005; el fuzzing por mutación y la comparación con keepassxc-cli ya se ejecutan).
 - [ ] Medir Argon2 de kotpass en un móvil real cuando la app abra una bóveda; decidir sobre argon2kt (consulta `docs/es/BENCHMARKS.md`).
 - [ ] Sistema de diseño: icono original, paleta, tipografía, espaciado, componentes, temas claro y oscuro.
 

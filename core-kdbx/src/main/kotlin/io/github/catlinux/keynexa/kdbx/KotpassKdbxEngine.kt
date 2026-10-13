@@ -56,6 +56,7 @@ class KotpassKdbxEngine : KdbxEngine {
     ): Vault =
         translateFailures {
             requireKdbxSignature(data)
+            inspect(data).requireAcceptableKdfCost()
             val kotpassCredentials = credentials.toKotpass()
 
             data.inputStream().use { stream ->

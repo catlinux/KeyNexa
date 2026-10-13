@@ -33,7 +33,7 @@ Fases A y B terminadas en 0.1.0 (documentación en `docs/`). Este plan lo ejecut
   - Tests de ida y vuelta (AC1, AC2): comprobar qué se pierde (XML desconocido) y corregirlo en `third_party/kotpass` (conservar XML desconocido y versión KDBX), documentándolo en su README.
   - Mide Argon2 (memoria 64 MiB y 1 GiB) en emulador y, si el usuario puede, en móvil real; si es inaceptable, propón argon2kt (nuevo ADR).
   - Añade kotpass, okio y los avisos de Bouncy Castle/Apache incluidos en kotpass a `CREDITS.md` (y `docs/es/CREDITS.md`) y a la tabla de terceros de los README.
-- [ ] **C5b. Refuerzo de kotpass** · 0.3.1 (parche) · Sonnet (alto).
+- [~] **C5b. Refuerzo de kotpass** · 0.3.1 (parcial: fuzzing por mutación y diferencial con keepassxc-cli hechos; faltan keepass-rs y Jazzer, ver TODO) (parche) · Sonnet (alto).
   - Pruebas diferenciales en CI: cada bóveda escrita por los tests se relee con `keepassxc-cli` y con keepass-rs (herramienta pequeña en `tools/`, solo CI) y se comparan contenidos.
   - Fuzzing del decodificador con Jazzer (solo tests). Terminado: CI verde y ningún fallo sin entender.
 - [ ] **C6. Sistema de diseño** · 0.4.0 (menor) · Sonnet (alto) propone; el usuario aprueba identidad.
