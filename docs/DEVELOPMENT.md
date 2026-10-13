@@ -69,14 +69,15 @@ Do not invent checksums by hand.
 
 ## Continuous integration
 
-[GitHub Actions](../.github/workflows/ci.yml) runs on every push to `master` and on every pull request, with `contents: read` and a concurrency group that cancels superseded runs of the same ref. It has four jobs:
+[GitHub Actions](../.github/workflows/ci.yml) runs on every push to `master` and on every pull request, with `contents: read` and a concurrency group that cancels superseded runs of the same ref. It has five jobs:
 
 | Job | What it does |
 | --- | --- |
 | `build` | Sets up JDK 17 and Android SDK 36, then runs `./gradlew build check`; on failure it uploads the lint, detekt and test reports as an artifact |
 | `docs-i18n` | Runs `bash scripts/check-docs-i18n.sh` |
 | `licenses` | Runs `./gradlew generateLicenseReport` and uploads `build/reports/dependency-license` |
-| `vulnerabilities` | Scans the repository with OSV-Scanner, which reads `gradle/verification-metadata.xml`, and fails on known vulnerabilities |
+| `vulnerabilities` | Scans only the distributed runtime dependencies with OSV-Scanner, from the `gradle.lockfile` files, and fails on known vulnerabilities |
+| `build-tooling-vulnerabilities` | Informational (it never fails the build): scans `gradle/verification-metadata.xml`, where the build tools appear; they are not distributed with the app |
 
 Run the same checks locally:
 
@@ -86,6 +87,14 @@ bash scripts/check-docs-i18n.sh
 ```
 
 `scripts/check-docs-i18n.sh` fails if an English document has no Spanish translation or the other way round, or if a document has no `[English](…) | [Español](…)` language line in its first six lines. Translations live under `docs/es/` mirroring the English paths; the only exception is `README.es.md`, next to `README.md`.
+
+### Dependency locking
+
+Dependency locking is active only for the runtime configurations that ship with the app (`runtimeClasspath` in the JVM modules and `releaseRuntimeClasspath` in the Android ones) and in `STRICT` mode, so the `gradle.lockfile` files under each module contain only distributed dependencies. `./gradlew build check` fails if a lock file is out of date. After changing a runtime dependency, regenerate the locks, review the diff and commit it together with `gradle/verification-metadata.xml`:
+
+```sh
+./gradlew build --write-locks
+```
 
 ## Test data
 

@@ -69,9 +69,24 @@ jobs:
     steps:
       - uses: actions/checkout@v7
       # Pinned to the exact release: the scanner action warns that its behaviour can change between minor versions.
-      - name: Scan dependencies for known vulnerabilities
+      - name: Scan distributed dependencies
         uses: google/osv-scanner-action/osv-scanner-action@v2.7.0
         with:
           scan-args: |-
-            --recursive
-            ./
+            --lockfile=core-vault/gradle.lockfile
+            --lockfile=core-kdbx/gradle.lockfile
+            --lockfile=core-sync/gradle.lockfile
+            --lockfile=platform-android/gradle.lockfile
+            --lockfile=app-android/gradle.lockfile
+
+  # Informational only: build tools are not distributed with the app.
+  build-tooling-vulnerabilities:
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v7
+      - name: Scan build tooling (informational)
+        uses: google/osv-scanner-action/osv-scanner-action@v2.7.0
+        with:
+          scan-args: |-
+            --lockfile=verification-metadata.xml:gradle/verification-metadata.xml

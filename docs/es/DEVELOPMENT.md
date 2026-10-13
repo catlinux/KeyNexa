@@ -69,14 +69,15 @@ No inventes sumas a mano.
 
 ## Integración continua
 
-[GitHub Actions](../.github/workflows/ci.yml) se ejecuta en cada push a `master` y en cada pull request, con `contents: read` y un grupo de concurrencia que cancela las ejecuciones reemplazadas de la misma referencia. Tiene cuatro jobs:
+[GitHub Actions](../.github/workflows/ci.yml) se ejecuta en cada push a `master` y en cada pull request, con `contents: read` y un grupo de concurrencia que cancela las ejecuciones reemplazadas de la misma referencia. Tiene cinco jobs:
 
 | Job | Qué hace |
 | --- | --- |
 | `build` | Prepara JDK 17 y el SDK de Android 36 y ejecuta `./gradlew build check`; si falla, sube los informes de lint, detekt y pruebas como artefacto |
 | `docs-i18n` | Ejecuta `bash scripts/check-docs-i18n.sh` |
 | `licenses` | Ejecuta `./gradlew generateLicenseReport` y sube `build/reports/dependency-license` |
-| `vulnerabilities` | Analiza el repositorio con OSV-Scanner, que lee `gradle/verification-metadata.xml`, y falla ante vulnerabilidades conocidas |
+| `vulnerabilities` | Analiza solo las dependencias de runtime que se distribuyen con OSV-Scanner, desde los archivos `gradle.lockfile`, y falla ante vulnerabilidades conocidas |
+| `build-tooling-vulnerabilities` | Informativo (nunca hace fallar el build): analiza `gradle/verification-metadata.xml`, donde aparecen las herramientas de build; no se distribuyen con la aplicación |
 
 Ejecuta las mismas comprobaciones en local:
 
@@ -86,6 +87,14 @@ bash scripts/check-docs-i18n.sh
 ```
 
 `scripts/check-docs-i18n.sh` falla si un documento en inglés no tiene su traducción al castellano o al revés, o si a un documento le falta la línea de idiomas `[English](…) | [Español](…)` en sus seis primeras líneas. Las traducciones viven en `docs/es/` con las mismas rutas que el inglés; la única excepción es `README.es.md`, junto a `README.md`.
+
+### Bloqueo de dependencias
+
+El bloqueo de dependencias está activo solo para las configuraciones de runtime que se distribuyen con la aplicación (`runtimeClasspath` en los módulos JVM y `releaseRuntimeClasspath` en los Android) y en modo `STRICT`, de modo que los archivos `gradle.lockfile` de cada módulo contienen únicamente dependencias distribuidas. `./gradlew build check` falla si un lockfile está desactualizado. Tras cambiar una dependencia de runtime, regenera los lockfiles, revisa el diff y confírmalo junto a `gradle/verification-metadata.xml`:
+
+```sh
+./gradlew build --write-locks
+```
 
 ## Datos de prueba
 

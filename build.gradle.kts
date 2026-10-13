@@ -3,6 +3,7 @@ import com.github.jk1.license.render.ReportRenderer
 import com.github.jk1.license.render.TextReportRenderer
 import io.gitlab.arturbosch.detekt.Detekt
 import io.gitlab.arturbosch.detekt.extensions.DetektExtension
+import org.gradle.api.artifacts.dsl.LockMode
 import org.jlleitschuh.gradle.ktlint.KtlintExtension
 
 plugins {
@@ -23,6 +24,28 @@ licenseReport {
 }
 
 subprojects {
+    configurations.configureEach {
+        if (name == "runtimeClasspath" || name == "releaseRuntimeClasspath") {
+            resolutionStrategy.activateDependencyLocking()
+        }
+    }
+
+    dependencyLocking {
+        lockMode = LockMode.STRICT
+    }
+
+    val resolveLockedConfigurations = tasks.register("resolveLockedConfigurations") {
+        group = "verification"
+        description = "Resolves the locked JVM 'runtimeClasspath' so its lock state is written and checked."
+        doLast {
+            configurations.findByName("runtimeClasspath")?.resolve()
+        }
+    }
+
+    tasks.matching { it.name == "check" }.configureEach {
+        dependsOn(resolveLockedConfigurations)
+    }
+
     pluginManager.apply("io.gitlab.arturbosch.detekt")
     pluginManager.apply("org.jlleitschuh.gradle.ktlint")
 
