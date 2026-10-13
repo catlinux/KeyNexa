@@ -8,6 +8,7 @@ Todos los cambios notables de este proyecto se documentan en este archivo. El fo
 
 ### Añadido
 
+- Base de la app (fase D4.2): `AppContainer` que conecta almacenamiento, motor, guardado seguro y almacenes privados; `VaultSession` (desbloquear, crear, editar con guardado seguro automático, reintentar, bloquear borrando las credenciales y recuperación tras un corte al abrir); la lista de bóvedas conocidas; y la navegación por estado.
 - Casos de uso de edición en `core-vault` (fase D4.1): `VaultEditor` (alta, edición con historial, mover, borrar a la papelera, restaurar, vaciarla y borrado definitivo con registro de objetos eliminados), `VaultSearch` (sin distinguir mayúsculas ni acentos, nunca lee contraseñas ni valores protegidos, deja fuera la papelera) y `NewVault` (bóveda KDBX 4.1 vacía con ChaCha20 y Argon2id).
 - ADR-0006: diseño del desbloqueo biométrico (fase D6): componentes de la clave compuesta envueltos por una clave del Android Keystore por bóveda, ligada a biometría fuerte en cada uso, invalidada al cambiar la biometría y con petición periódica de la contraseña maestra.
 

@@ -51,7 +51,7 @@ Fases A y B terminadas en 0.1.0 (documentación en `docs/`). Este plan lo ejecut
 - [ ] **D4. UI del MVP** · 0.7.0 · Sonnet (medio) orquesta, AgentRelay implementa pantalla a pantalla.
   - Selección/creación de bóveda, desbloqueo, lista de grupos, búsqueda, detalle, edición, papelera. Strings en/es, accesibilidad. Subpasos (cada uno con su commit; la versión 0.7.0 se sube en D4.5):
   - [x] **D4.1 Casos de uso puros** (`core-vault`, delegado, esfuerzo alto): `VaultSearch`, `VaultEditor` (alta/edición con historial, grupos, mover, papelera, restaurar, borrado definitivo con `DeletedObject`), `NewVault` (bóveda nueva Argon2id). Reloj inyectado, pruebas exhaustivas, sin Android.
-  - [ ] **D4.2 Base de la app** (`app-android`, yo): contenedor de dependencias (SAF, motor, `SafeSaver`, almacenes en `noBackupFilesDir`), `VaultSession` (desbloquear, guardar, bloquear, recuperación tras corte), lista de bóvedas conocidas, navegación por estado.
+  - [x] **D4.2 Base de la app** (`app-android`, yo): contenedor de dependencias (SAF, motor, `SafeSaver`, almacenes en `noBackupFilesDir`), `VaultSession` (desbloquear, guardar, bloquear, recuperación tras corte), lista de bóvedas conocidas, navegación por estado.
   - [ ] **D4.3 Pantallas de acceso** (delegado): inicio (bóvedas conocidas, añadir/crear), desbloqueo (contraseña y archivo de clave, errores claros, reconectar archivo).
   - [ ] **D4.4 Pantallas de contenido** (delegado, una tarea por pantalla): grupos y entradas con búsqueda, detalle, edición, papelera, aviso de conflictos `*.sync-conflict-*`.
   - [ ] **D4.5 Cierre**: revisión, accesibilidad, strings en/es, documentación y versión 0.7.0.
