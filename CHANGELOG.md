@@ -6,6 +6,12 @@ All notable changes to this project are documented in this file. The format is b
 
 ## [Unreleased]
 
+## [0.2.7] - 2026-10-13
+
+### Fixed
+
+- The CI and release workflows now locate `sdkmanager` under `ANDROID_HOME` instead of relying on the `PATH`, where the runner does not provide it (exit code 127).
+
 ## [0.2.6] - 2026-10-13
 
 ### Added

@@ -24,8 +24,10 @@ jobs:
       - uses: gradle/actions/setup-gradle@v6
       - name: Android SDK packages
         run: |
-          yes | sdkmanager --licenses > /dev/null || true
-          sdkmanager 'platforms;android-36' 'build-tools;36.0.0'
+          sdkmanager="$(find "$ANDROID_HOME/cmdline-tools" -name sdkmanager -type f | head -n 1)"
+          test -n "$sdkmanager" || { echo 'sdkmanager not found under ANDROID_HOME' >&2; exit 1; }
+          yes | "$sdkmanager" --licenses > /dev/null || true
+          "$sdkmanager" 'platforms;android-36' 'build-tools;36.0.0'
       - name: Build and check
         run: ./gradlew build check
       - name: Upload reports
@@ -55,8 +57,10 @@ jobs:
           java-version: '17'
       - name: Android SDK packages
         run: |
-          yes | sdkmanager --licenses > /dev/null || true
-          sdkmanager 'platforms;android-36' 'build-tools;36.0.0'
+          sdkmanager="$(find "$ANDROID_HOME/cmdline-tools" -name sdkmanager -type f | head -n 1)"
+          test -n "$sdkmanager" || { echo 'sdkmanager not found under ANDROID_HOME' >&2; exit 1; }
+          yes | "$sdkmanager" --licenses > /dev/null || true
+          "$sdkmanager" 'platforms;android-36' 'build-tools;36.0.0'
       - name: License report
         run: ./gradlew generateLicenseReport
       - uses: actions/upload-artifact@v7
