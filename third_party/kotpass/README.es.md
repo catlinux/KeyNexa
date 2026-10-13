@@ -24,6 +24,8 @@ Se conserva intacto con sus avisos:
 
 El código es idéntico al del commit upstream salvo por los cambios de abajo. Los cambios hechos en KeyNexa se anotan aquí, el más reciente primero, cada uno con su motivo; siguen bajo licencia MIT para poder ofrecerlos a upstream.
 
+- **Conservar los elementos XML desconocidos.** `xml/Entry.kt`, `xml/Group.kt`, `xml/Meta.kt` y `xml/DefaultXmlContentParser.kt` ignoraban en silencio los elementos que no reconocían dentro de `Meta`, `Group`, `Entry` (historial incluido) y el documento raíz, así que al reescribir una base de datos se perdía lo que hubieran añadido versiones más recientes de KeePass/KeePassXC. `Entry`, `Group`, `Meta` y `DatabaseContent` ahora los guardan en un campo nuevo `unknownElements` (`unknownRootElements` para los hijos de `Root`) y el parseador los vuelve a escribir. Limitación: un valor con `Protected="True"` dentro de un elemento desconocido no se descifra ni se vuelve a cifrar con el flujo interno, por lo que puede no sobrevivir a una ida y vuelta binaria; hoy ningún elemento de upstream anida valores protegidos dentro de desconocidos.
+
 - **No escribir una fecha de modificación que no existía.** `xml/CustomIcons.kt` y `xml/CustomData.kt` escribían `LastModificationTime` (año 1, cero ticks) en cada icono personalizado y elemento de datos personalizados de un archivo KDBX 4.1 aunque el original no la tuviera. Ahora omiten el elemento cuando el valor es nulo. Se detectó comparando las exportaciones XML de KeePassXC del corpus antes y después de una ida y vuelta.
 
 ## Estilo de código
