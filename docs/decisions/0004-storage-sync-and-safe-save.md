@@ -26,6 +26,12 @@ Users will keep vaults in folders synchronized by Syncthing. Findings (sources i
 6. **Conflict files** (`*.sync-conflict-*`) found next to the vault are offered for merge and never deleted automatically.
 7. **Private rotating backups** of the encrypted vault in app storage, excluded from Android backup.
 
+## Hot reconnect and private restore (F3)
+
+8. **Reconnecting without closing the vault.** When a save fails with `StorageError` the folder picker is offered from the save banner, on the open vault itself. [VaultSession.relocate(newLocation)] changes `vault.location` (and `loaded.location`) in the open session, keeps the edited and loaded vault, the credentials and the private unsaved copy, and retries the pending save through the normal pipeline, writing only when the chosen file is the same vault (`SaveOutcome.Unmergeable` otherwise, with nothing written). Nothing is re-encoded and the password is not asked again.
+9. **Location-keyed ledgers are not migrated.** The sync conflict ledger and the save journal are keyed by `VaultLocation`. After a reconnect the save runs under the new location and creates its own journal entry there; the previous location's journal (if any) is left untouched so it can still be recovered as that path's history, and the conflict ledger for the new location starts empty. This avoids recording or restoring against the wrong folder. The known-vaults list (outside the session) is updated by the caller with the same name.
+10. **Restoring without a prompt.** `SaveRecovery` can report a private `BackupRef` holding unsaved changes from an interrupted save (`SaveHadNotStarted`, `ChangedElsewhere` or `Restored`). On open that reference is shown but never read automatically; the user chooses *Restore* or *Discard*. *Restore* reads the encrypted copy with the already open credentials, merges it into the open vault (`VaultMerger`, ties to the open vault), saves through the normal pipeline and deletes the copy only on `Saved`; a failure leaves the reference so the choice can be made again. *Discard* deletes the copy. A copy that cannot be read or opened is reported and kept. StillDamaged has no restore action. Nothing of the private copy is logged or leaves app-private storage.
+
 ## Consequences
 
 - KeyNexa does not claim real-time or automatic synchronization; it detects changes made by any sync tool.

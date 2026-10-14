@@ -1,17 +1,20 @@
 package io.github.catlinux.keynexa.app.vault
 
 import io.github.catlinux.keynexa.sync.BackupRef
+import io.github.catlinux.keynexa.sync.BackupStore
 import io.github.catlinux.keynexa.sync.ConflictCopy
 import io.github.catlinux.keynexa.sync.ConflictMerger
 import io.github.catlinux.keynexa.sync.ConflictScan
 import io.github.catlinux.keynexa.sync.CopyProblem
 import io.github.catlinux.keynexa.sync.Fingerprint
 import io.github.catlinux.keynexa.sync.LoadedVault
+import io.github.catlinux.keynexa.sync.MergeResult
 import io.github.catlinux.keynexa.sync.RecoveryOutcome
 import io.github.catlinux.keynexa.sync.SafeSaver
 import io.github.catlinux.keynexa.sync.SaveFailure
 import io.github.catlinux.keynexa.sync.SaveOutcome
 import io.github.catlinux.keynexa.sync.SaveRecovery
+import io.github.catlinux.keynexa.sync.VaultMerger
 import io.github.catlinux.keynexa.sync.VaultReader
 import io.github.catlinux.keynexa.vault.Credentials
 import io.github.catlinux.keynexa.vault.KdbxEngine
@@ -128,6 +131,8 @@ class VaultSession(
     private val readers: VaultReaders,
     private val recovery: SaveRecovery,
     private val saver: SafeSaver,
+    private val backups: BackupStore,
+    private val vaultMerger: VaultMerger,
     private val executor: Executor,
     private val conflicts: ConflictMerger? = null,
     private val now: () -> Long = { System.currentTimeMillis() },
@@ -282,6 +287,133 @@ class VaultSession(
     fun dismissFailure() {
         mutableState.update { if (it is SessionState.Failed) SessionState.Closed else it }
     }
+
+    /**
+     * Reconnects the open vault to [newLocation] (a newly chosen file or folder entry) without closing it: it keeps
+     * the edited and loaded vaults, the credentials and the private unsaved copy, updates the location in the open
+     * session, and retries the pending save through the normal safe-save pipeline.
+     */
+    fun relocate(newLocation: VaultLocation) {
+        executor.execute { relocateNow(newLocation) }
+    }
+
+    /**
+     * Restores the unsaved copy recorded for the previous interrupted save (`recovered`), merging it into the open
+     * vault and saving through the normal pipeline. The copy is deleted only when the save succeeds.
+     */
+    fun restoreUnsaved() {
+        executor.execute { restoreUnsavedNow() }
+    }
+
+    /** Discards the unsaved copy recorded for the previous interrupted save and clears the recovery notice. */
+    fun discardUnsaved() {
+        executor.execute { discardRecoveredNow() }
+    }
+
+    private fun relocateNow(newLocation: VaultLocation) {
+        val open = mutableState.value as? SessionState.Open ?: return
+        val secrets = credentials ?: return
+        var updated: SessionState.Open? = null
+        mutableState.update { state ->
+            if (state is SessionState.Open && state.vault.location == open.vault.location) {
+                val next =
+                    state.copy(
+                        vault = state.vault.copy(location = newLocation),
+                        loaded = state.loaded.copy(location = newLocation),
+                        saving = true,
+                        saveProblem = null,
+                        conflicts = null,
+                    )
+                updated = next
+                next
+            } else {
+                state
+            }
+        }
+        val target = updated ?: return
+        val outcome = saver.save(target.loaded, target.current, secrets)
+        mutableState.update { state ->
+            if (state is SessionState.Open && state.vault.location == newLocation) {
+                state.after(outcome)
+            } else {
+                state
+            }
+        }
+    }
+
+    @Suppress("CyclomaticComplexMethod", "ReturnCount")
+    private fun restoreUnsavedNow() {
+        val open = mutableState.value as? SessionState.Open ?: return
+        val recovered = open.recovered
+        val ref = unsavedCopyOf(recovered) ?: open.unsavedCopy ?: return
+        val secrets = credentials ?: return
+        val bytes =
+            try {
+                backups.read(ref)
+            } catch (failure: IOException) {
+                return
+            }
+        val restoredVault =
+            try {
+                engine.decode(bytes, secrets)
+            } catch (_: Exception) {
+                return
+            }
+        val merged =
+            when (val result = vaultMerger.merge(open.current, restoredVault)) {
+                is MergeResult.Merged -> result.vault
+                is MergeResult.Unmergeable -> return
+            }
+        var target: SessionState.Open? = null
+        mutableState.update { state ->
+            if (state is SessionState.Open && state.isIdle) {
+                val next = state.copy(current = merged, saving = true, saveProblem = null)
+                target = next
+                next
+            } else {
+                state
+            }
+        }
+        val toSave = target ?: return
+        val outcome = saver.save(toSave.loaded, merged, secrets)
+        mutableState.update { state ->
+            if (state is SessionState.Open) {
+                val after = state.after(outcome)
+                if (outcome is SaveOutcome.Saved) {
+                    runCatching { backups.delete(ref) }
+                    after.copy(recovered = null)
+                } else {
+                    after
+                }
+            } else {
+                state
+            }
+        }
+    }
+
+    private fun discardRecoveredNow() {
+        val open = mutableState.value as? SessionState.Open ?: return
+        val ref = unsavedCopyOf(open.recovered) ?: open.unsavedCopy
+        if (ref != null) runCatching { backups.delete(ref) }
+        mutableState.update { state ->
+            if (state is SessionState.Open) {
+                state.copy(
+                    recovered = null,
+                    unsavedCopy = if (ref != null && ref == state.unsavedCopy) null else state.unsavedCopy,
+                )
+            } else {
+                state
+            }
+        }
+    }
+
+    private fun unsavedCopyOf(recovered: RecoveryOutcome?): BackupRef? =
+        when (recovered) {
+            is RecoveryOutcome.SaveHadNotStarted -> recovered.unsavedCopy
+            is RecoveryOutcome.ChangedElsewhere -> recovered.unsavedCopy
+            is RecoveryOutcome.Restored -> recovered.unsavedCopy
+            else -> null
+        }
 
     private fun openAfter(
         vault: KnownVault,

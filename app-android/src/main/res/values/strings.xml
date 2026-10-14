@@ -65,6 +65,10 @@
     <string name="save_problem_encode_failed">KeyNexa could not build the encrypted file for this vault.</string>
     <string name="save_problem_storage_error">The storage refused to write the file: permission, space or a provider failure.</string>
     <string name="save_problem_write_not_verified">The file does not hold exactly what KeyNexa wrote, so the save is not trusted.</string>
+    <string name="save_reconnect_folder">Reconnect folder</string>
+    <string name="save_recovered_title">Unsaved changes from your previous session were found.</string>
+    <string name="save_recovered_restore">Restore</string>
+    <string name="save_recovered_discard">Discard</string>
 
     <!-- Conflict copies: what Syncthing left behind and what to do with it (ADR-0007). -->
     <plurals name="conflict_merged_now">

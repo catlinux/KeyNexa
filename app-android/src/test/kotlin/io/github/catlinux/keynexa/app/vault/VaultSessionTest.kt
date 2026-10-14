@@ -4,11 +4,15 @@ import io.github.catlinux.keynexa.kdbx.KotpassKdbxEngine
 import io.github.catlinux.keynexa.platform.FileBackupStore
 import io.github.catlinux.keynexa.platform.FileMergedCopies
 import io.github.catlinux.keynexa.platform.FileSaveJournal
+import io.github.catlinux.keynexa.sync.BackupKind
 import io.github.catlinux.keynexa.sync.ConflictMerger
 import io.github.catlinux.keynexa.sync.CopyProblem
 import io.github.catlinux.keynexa.sync.Fingerprint
 import io.github.catlinux.keynexa.sync.KeePassMerger
+import io.github.catlinux.keynexa.sync.PendingSave
+import io.github.catlinux.keynexa.sync.RecoveryOutcome
 import io.github.catlinux.keynexa.sync.SafeSaver
+import io.github.catlinux.keynexa.sync.SaveFailure
 import io.github.catlinux.keynexa.sync.SaveRecovery
 import io.github.catlinux.keynexa.sync.VaultReader
 import io.github.catlinux.keynexa.vault.Argon2Variant
@@ -30,6 +34,7 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
 import java.io.IOException
+import java.time.Instant
 import java.util.concurrent.Executor
 
 class VaultSessionTest {
@@ -76,19 +81,21 @@ class VaultSessionTest {
     private val engine = KotpassKdbxEngine()
     private val direct = Executor { it.run() }
 
-    private fun session(conflicts: ConflictMerger? = null): VaultSession {
-        val backups = FileBackupStore(folder.newFolder())
-        val journal = FileSaveJournal(folder.newFolder())
-        return VaultSession(
+    private val backups by lazy { FileBackupStore(folder.newFolder()) }
+    private val journal by lazy { FileSaveJournal(folder.newFolder()) }
+
+    private fun session(conflicts: ConflictMerger? = null): VaultSession =
+        VaultSession(
             storage = storage,
             engine = engine,
             readers = VaultReaders(VaultReader(storage, engine, retryDelaysMillis = emptyList())),
             recovery = SaveRecovery(storage, engine, backups, journal),
             saver = SafeSaver(storage, engine, backups, journal, merger = KeePassMerger()),
+            backups = backups,
+            vaultMerger = KeePassMerger(),
             executor = direct,
             conflicts = conflicts,
         )
-    }
 
     /** A session with conflict merging on, over [ledger]. */
     private fun conflictSession(ledger: FileMergedCopies): VaultSession =
@@ -433,5 +440,125 @@ class VaultSessionTest {
         session.lock()
         session.unlock(known, credentials())
         assertNotNull((session.state.value as SessionState.Open).conflicts)
+    }
+
+    private val elsewhere = VaultLocation("memory://moved/vault.kdbx")
+
+    private fun titlesOf(bytes: ByteArray?): List<String> =
+        engine
+            .decode(requireNotNull(bytes), credentials())
+            .root.entries
+            .map { it.title }
+
+    @Test
+    fun reconnectingKeepsTheSessionAndSavesTheEditAtTheNewLocation() {
+        val session = session()
+        createVault(session)
+        val root = (session.state.value as SessionState.Open).current.root.id
+        val original = requireNotNull(files[location]).copyOf()
+        files[elsewhere] = original.copyOf()
+
+        unreadable = true
+        session.apply { VaultEditor().addEntry(it, root, "Bank") }
+        unreadable = false
+        assertEquals(SaveFailure.StorageError, (session.state.value as SessionState.Open).saveProblem)
+
+        session.relocate(elsewhere)
+
+        val open = session.state.value as SessionState.Open
+        assertEquals(elsewhere, open.vault.location)
+        assertEquals("Test", open.vault.name)
+        assertNull(open.saveProblem)
+        assertFalse(open.hasUnsavedChanges)
+        assertEquals(listOf("Bank"), titlesOf(files[elsewhere]))
+        assertTrue(original.contentEquals(files[location]))
+    }
+
+    @Test
+    fun reconnectingToAnotherVaultWritesNothing() {
+        val session = session()
+        createVault(session)
+        val root = (session.state.value as SessionState.Open).current.root.id
+        val other = engine.encode(NewVault().create("Other", cheapKdf), credentials())
+        files[elsewhere] = other.copyOf()
+
+        unreadable = true
+        session.apply { VaultEditor().addEntry(it, root, "Bank") }
+        unreadable = false
+
+        session.relocate(elsewhere)
+
+        val open = session.state.value as SessionState.Open
+        assertEquals(SaveFailure.Unmergeable, open.saveProblem)
+        assertTrue(open.hasUnsavedChanges)
+        assertTrue(other.contentEquals(files[elsewhere]))
+    }
+
+    // Leaves what a save killed before writing leaves behind: a journal entry and the private copy of the new version.
+    private fun interruptedSave(edited: Vault) {
+        val now = Instant.parse("2026-10-14T12:00:00Z")
+        val previous = requireNotNull(files[location])
+        val outgoing = engine.encode(edited, credentials())
+        journal.begin(
+            PendingSave(
+                location = location,
+                previous = Fingerprint.of(previous),
+                expected = Fingerprint.of(outgoing),
+                previousCopy = backups.put(location, BackupKind.BeforeSave, previous, now),
+                outgoingCopy = backups.put(location, BackupKind.UnsavedChanges, outgoing, now),
+                startedAt = now,
+            ),
+        )
+    }
+
+    private fun reopenAfterInterruptedSave(entry: String): VaultSession {
+        val session = session()
+        createVault(session)
+        val open = session.state.value as SessionState.Open
+        interruptedSave(VaultEditor().addEntry(open.current, open.current.root.id, entry))
+        session.lock()
+        session.unlock(known, credentials())
+        return session
+    }
+
+    @Test
+    fun unsavedChangesOfThePreviousSessionAreOfferedAndRestored() {
+        val session = reopenAfterInterruptedSave("Lost")
+        val open = session.state.value as SessionState.Open
+        assertTrue(open.recovered is RecoveryOutcome.SaveHadNotStarted)
+        assertEquals(emptyList<String>(), titlesOf(files[location]))
+
+        session.restoreUnsaved()
+
+        val restored = session.state.value as SessionState.Open
+        assertNull(restored.recovered)
+        assertNull(restored.saveProblem)
+        assertEquals(listOf("Lost"), titlesOf(files[location]))
+        assertTrue(backups.list(location).none { it.kind == BackupKind.UnsavedChanges })
+    }
+
+    @Test
+    fun restoringKeepsTheCopyWhenTheSaveFails() {
+        val session = reopenAfterInterruptedSave("Lost")
+
+        unwritable = true
+        session.restoreUnsaved()
+        unwritable = false
+
+        val open = session.state.value as SessionState.Open
+        assertNotNull(open.saveProblem)
+        assertTrue(backups.list(location).any { it.kind == BackupKind.UnsavedChanges })
+    }
+
+    @Test
+    fun discardingDeletesTheUnsavedCopyAndClearsTheNotice() {
+        val session = reopenAfterInterruptedSave("Lost")
+
+        session.discardUnsaved()
+
+        val open = session.state.value as SessionState.Open
+        assertNull(open.recovered)
+        assertEquals(emptyList<String>(), titlesOf(files[location]))
+        assertTrue(backups.list(location).none { it.kind == BackupKind.UnsavedChanges })
     }
 }

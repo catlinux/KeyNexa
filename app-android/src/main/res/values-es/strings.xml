@@ -65,6 +65,10 @@
     <string name="save_problem_encode_failed">KeyNexa no ha podido construir el archivo cifrado de esta bóveda.</string>
     <string name="save_problem_storage_error">El almacenamiento no ha querido escribir el archivo: permiso, espacio o un fallo del proveedor.</string>
     <string name="save_problem_write_not_verified">El archivo no contiene exactamente lo que KeyNexa escribió, así que el guardado no es de fiar.</string>
+    <string name="save_reconnect_folder">Reconectar carpeta</string>
+    <string name="save_recovered_title">Se encontraron cambios sin guardar de la sesión anterior.</string>
+    <string name="save_recovered_restore">Restaurar</string>
+    <string name="save_recovered_discard">Descartar</string>
 
     <!-- Copias de conflicto: lo que dejó Syncthing y qué hacer con ello (ADR-0007). -->
     <plurals name="conflict_merged_now">

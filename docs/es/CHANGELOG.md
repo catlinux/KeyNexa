@@ -6,6 +6,13 @@ Todos los cambios notables de este proyecto se documentan en este archivo. El fo
 
 ## [Sin publicar]
 
+## [0.13.0] - 2026-10-14
+
+### Añadido
+
+- Reconectar la carpeta sin cerrar la bóveda cuando un guardado falla por haber perdido el permiso, reintentando el guardado pendiente por el flujo normal (no escribe si el archivo elegido es otra bóveda).
+- Restaurar los cambios sin guardar de una sesión anterior interrumpida tras un reinicio: el aviso ofrece fusionar la copia privada con la bóveda abierta o descartarla, borrando la copia solo cuando el guardado tiene éxito.
+
 ## [0.12.0] - 2026-10-14
 
 ### Añadido

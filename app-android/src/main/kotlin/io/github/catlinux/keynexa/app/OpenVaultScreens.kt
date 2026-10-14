@@ -38,6 +38,7 @@ private val WEB_SCHEMES = setOf("http", "https")
 fun OpenVaultScreens(
     container: AppContainer,
     open: SessionState.Open,
+    onReconnect: () -> Unit,
 ) {
     val navigator = container.navigator
     val session = container.session
@@ -60,6 +61,7 @@ fun OpenVaultScreens(
                 isRoot = isRoot,
                 hiddenGroupId = vault.meta.recycleBinGroup,
                 status = SaveStatus(open.saving, open.saveProblem, open.hasUnsavedChanges),
+                recovered = open.recovered,
                 syncWarnDays = container.settings.values.syncWarnDays,
                 fileLastModifiedMillis = remember(group.id) { container.storage.lastModified(open.vault.location) },
                 lastKeyNexaSaveMillis = open.lastKeyNexaSaveMillis,
@@ -83,6 +85,9 @@ fun OpenVaultScreens(
                 onLock = lock,
                 onBack = if (isRoot) lock else back,
                 onRetrySave = session::retrySave,
+                onReconnect = onReconnect,
+                onRestoreUnsaved = session::restoreUnsaved,
+                onDiscardUnsaved = session::discardUnsaved,
                 onDeleteConflictCopies = session::deleteConflictCopies,
                 onMergeOtherPassword = { password ->
                     session.mergeOtherPasswordCopies(Credentials.of(password = password.toCharArray()))

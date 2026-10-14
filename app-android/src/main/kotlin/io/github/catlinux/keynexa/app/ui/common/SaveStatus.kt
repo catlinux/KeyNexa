@@ -51,10 +51,17 @@ fun SaveStatusBar(
     status: SaveStatus,
     onRetry: () -> Unit,
     modifier: Modifier = Modifier,
+    onReconnect: (() -> Unit)? = null,
 ) {
     val problem = status.problem
     when {
-        problem != null -> ProblemBanner(problem = problem, onRetry = onRetry, modifier = modifier)
+        problem != null ->
+            ProblemBanner(
+                problem = problem,
+                onRetry = onRetry,
+                onReconnect = onReconnect,
+                modifier = modifier,
+            )
         status.saving -> SavingLine(modifier = modifier)
     }
 }
@@ -87,6 +94,7 @@ private fun ProblemBanner(
     problem: SaveFailure,
     onRetry: () -> Unit,
     modifier: Modifier = Modifier,
+    onReconnect: (() -> Unit)? = null,
 ) {
     Surface(
         modifier =
@@ -121,6 +129,15 @@ private fun ProblemBanner(
                 modifier = Modifier.heightIn(min = TouchTarget),
             ) {
                 Text(text = stringResource(R.string.save_retry))
+            }
+            if (problem == SaveFailure.StorageError && onReconnect != null) {
+                TextButton(
+                    onClick = onReconnect,
+                    colors = ButtonDefaults.textButtonColors(contentColor = MaterialTheme.colorScheme.onErrorContainer),
+                    modifier = Modifier.heightIn(min = TouchTarget),
+                ) {
+                    Text(text = stringResource(R.string.save_reconnect_folder))
+                }
             }
         }
     }

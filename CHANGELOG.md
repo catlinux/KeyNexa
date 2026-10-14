@@ -6,6 +6,13 @@ All notable changes to this project are documented in this file. The format is b
 
 ## [Unreleased]
 
+## [0.13.0] - 2026-10-14
+
+### Added
+
+- Reconnect the folder without closing the open vault when a save fails because the grant was lost, and retry the pending save through the normal pipeline (it does not write when the chosen file is another vault).
+- Restore unsaved changes from a previous interrupted save after a restart: the notice offers to merge the private copy into the open vault or to discard it, deleting the copy only once the save succeeds.
+
 ## [0.12.0] - 2026-10-14
 
 ### Added

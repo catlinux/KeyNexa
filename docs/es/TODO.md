@@ -18,7 +18,6 @@ Pasos detallados: consulta la [hoja de ruta](ROADMAP.md).
 
 - [ ] La nube como punto de encuentro siempre disponible: permitir que una bóveda viva en WebDAV o almacenamiento compatible con S3 mediante un `StoragePort` remoto con escrituras condicionales (ETag / If-Match), de modo que el mismo flujo leer-fusionar-escribir sirva para dispositivos que nunca están encendidos a la vez. Necesita un ADR.
 - [ ] Mirar los cambios externos con menos coste: comparar primero tamaño y fecha de modificación y leer el archivo entero solo si difieren; mirar con menos frecuencia tras minutos sin actividad. Medir el consumo de batería en un móvil real antes y después.
-- [ ] Cuando un guardado falle por haber perdido el permiso, ofrecer reconectar la carpeta sin cerrar la bóveda; ofrecer restaurar la copia privada sin guardar tras un reinicio.
 - [ ] Borrado del portapapeles totalmente fiable (Android solo deja cambiar el portapapeles a la app que está delante).
 - [ ] Pedir la inclusión en F-Droid e IzzyOnDroid (E2.4): los metadatos en borrador y los pasos están en `.agents/plans/store-inclusion/`; las peticiones se hacen a mano (el formulario de Izzy pregunta por el uso de IA y exige respuestas sinceras).
 

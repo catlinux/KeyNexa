@@ -48,6 +48,7 @@ import io.github.catlinux.keynexa.app.ui.common.ConflictNotice
 import io.github.catlinux.keynexa.app.ui.common.ConflictNoticeBar
 import io.github.catlinux.keynexa.app.ui.common.SaveStatus
 import io.github.catlinux.keynexa.app.ui.common.SaveStatusBar
+import io.github.catlinux.keynexa.sync.RecoveryOutcome
 import io.github.catlinux.keynexa.vault.Entry
 import io.github.catlinux.keynexa.vault.Group
 import java.time.Instant
@@ -106,6 +107,10 @@ fun GroupScreen(
     onMergeOtherPassword: (String) -> Unit,
     onDismissConflicts: () -> Unit,
     modifier: Modifier = Modifier,
+    onReconnect: () -> Unit = {},
+    recovered: RecoveryOutcome? = null,
+    onRestoreUnsaved: () -> Unit = {},
+    onDiscardUnsaved: () -> Unit = {},
 ) {
     val navigation = GroupNavigation(onOpenGroup = onOpenGroup, onOpenEntry = onOpenEntry, onBack = onBack)
     val commands =
@@ -131,7 +136,7 @@ fun GroupScreen(
                 commands = commands,
                 onSyncStatus = { showSyncStatus = true },
             )
-            SaveStatusBar(status = status, onRetry = onRetrySave)
+            SaveStatusBar(status = status, onRetry = onRetrySave, onReconnect = onReconnect)
             if (conflicts != null) {
                 ConflictNoticeBar(
                     notice = conflicts,
@@ -139,6 +144,36 @@ fun GroupScreen(
                     onMergeOtherPassword = onMergeOtherPassword,
                     onDismiss = onDismissConflicts,
                 )
+            }
+            val hasRecoveredUnsaved =
+                recovered is RecoveryOutcome.SaveHadNotStarted ||
+                    recovered is RecoveryOutcome.ChangedElsewhere ||
+                    recovered is RecoveryOutcome.Restored
+            if (hasRecoveredUnsaved) {
+                Surface(
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = MaterialTheme.shapes.medium,
+                    color = MaterialTheme.colorScheme.tertiaryContainer,
+                ) {
+                    Column(
+                        modifier = Modifier.padding(12.dp),
+                        verticalArrangement = Arrangement.spacedBy(ItemGap),
+                    ) {
+                        Text(
+                            text = stringResource(R.string.save_recovered_title),
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onTertiaryContainer,
+                        )
+                        Row(horizontalArrangement = Arrangement.spacedBy(ItemGap)) {
+                            TextButton(onClick = onRestoreUnsaved) {
+                                Text(text = stringResource(R.string.save_recovered_restore))
+                            }
+                            TextButton(onClick = onDiscardUnsaved) {
+                                Text(text = stringResource(R.string.save_recovered_discard))
+                            }
+                        }
+                    }
+                }
             }
             if (isRoot && syncWarnDays > 0 && !syncWarningDismissed) {
                 val warningDays = syncWarning(fileLastModifiedMillis, System.currentTimeMillis(), syncWarnDays)

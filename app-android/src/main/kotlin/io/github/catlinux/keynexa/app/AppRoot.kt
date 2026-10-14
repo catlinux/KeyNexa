@@ -40,6 +40,7 @@ private const val REFRESH_MILLIS = 5_000L
  * Holds the list of known vaults and, while the system folder picker is open, the vault being created (name and
  * credentials) or reconnected.
  */
+@Suppress("TooManyFunctions")
 private class VaultFileActions(
     private val container: AppContainer,
 ) {
@@ -57,6 +58,9 @@ private class VaultFileActions(
     private var creating: Pair<String, Credentials>? = null
     private var reconnecting: KnownVault? = null
 
+    /** True while the folder picker is open to reconnect the vault that is already open, without closing it. */
+    private var reconnectingOpenVault = false
+
     fun beginCreate(
         name: String,
         credentials: Credentials,
@@ -68,6 +72,10 @@ private class VaultFileActions(
         reconnecting = vault
     }
 
+    fun beginReconnectOpenVault() {
+        reconnectingOpenVault = true
+    }
+
     fun dismissNotice() {
         notice = null
     }
@@ -75,12 +83,14 @@ private class VaultFileActions(
     fun dismissChoices() {
         choices = null
         reconnecting = null
+        reconnectingOpenVault = false
     }
 
     /** The user chose a folder to open a vault from (or to reconnect one when [beginReconnect] was called). */
     fun folderChosenToOpen(tree: Uri?) {
         if (tree == null) {
             reconnecting = null
+            reconnectingOpenVault = false
             return
         }
         grant(tree)
@@ -88,6 +98,7 @@ private class VaultFileActions(
         when {
             files.isEmpty() -> {
                 reconnecting = null
+                reconnectingOpenVault = false
                 notice = R.string.home_no_vaults_in_folder
             }
             files.size == 1 -> open(files.first())
@@ -98,6 +109,11 @@ private class VaultFileActions(
     /** The user picked one of several vault files in the folder. */
     fun open(file: SafVaultAccess.VaultFile) {
         choices = null
+        if (reconnectingOpenVault) {
+            reconnectingOpenVault = false
+            reconnectOpenVault(file)
+            return
+        }
         val previous = reconnecting
         reconnecting = null
         if (previous != null) {
@@ -107,6 +123,14 @@ private class VaultFileActions(
         val vault = KnownVault(previous?.name ?: file.name.removeSuffix(VAULT_EXTENSION), file.location)
         add(vault)
         container.navigator.push(Screen.Unlock(vault))
+    }
+
+    // The open vault keeps its session, edits and credentials: only where it is stored changes.
+    private fun reconnectOpenVault(file: SafVaultAccess.VaultFile) {
+        val current = (container.session.state.value as? SessionState.Open)?.vault ?: return
+        container.knownVaults.remove(current.location)
+        add(current.copy(location = file.location))
+        container.session.relocate(file.location)
     }
 
     /** The user chose the folder where the new vault file goes; null when they cancelled. */
@@ -388,6 +412,16 @@ private fun AppScreens(
                     navigator.back()
                 },
             )
-        else -> (state as? SessionState.Open)?.let { OpenVaultScreens(container, it) }
+        else ->
+            (state as? SessionState.Open)?.let {
+                OpenVaultScreens(
+                    container = container,
+                    open = it,
+                    onReconnect = {
+                        actions.beginReconnectOpenVault()
+                        onOpenFolder()
+                    },
+                )
+            }
     }
 }
