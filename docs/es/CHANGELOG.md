@@ -6,6 +6,18 @@ Todos los cambios notables de este proyecto se documentan en este archivo. El fo
 
 ## [Sin publicar]
 
+## [0.10.3] - 2026-10-14
+
+### Corregido
+
+- La bóveda se bloquea tras el tiempo elegido en segundo plano aunque la app siga allí; al volver, se cancela el temporizador y se comprueba el tiempo transcurrido.
+- Antes de borrar un secreto copiado, el portapapeles comprueba la marca de KeyNexa y conserva el contenido que haya sustituido otra app.
+- La protección de pantalla se aplica antes del primer fotograma según el ajuste guardado de capturas.
+
+### Cambiado
+
+- La compilación exige que los componentes menor y parche de la versión sean inferiores a 100 para que `versionCode` siga aumentando.
+
 ## [0.10.2] - 2026-10-14
 
 ### Corregido

@@ -6,6 +6,18 @@ All notable changes to this project are documented in this file. The format is b
 
 ## [Unreleased]
 
+## [0.10.3] - 2026-10-14
+
+### Fixed
+
+- The vault now locks after the selected background delay even if the app stays in the background; returning to the app cancels the timer and checks the elapsed time.
+- Clipboard clearing checks KeyNexa's marker before removing a copied secret, preserving clipboard content replaced by another app.
+- Screen protection is applied before the first frame using the saved screenshot setting.
+
+### Changed
+
+- The build now requires the minor and patch version components to stay below 100 so `versionCode` keeps increasing.
+
 ## [0.10.2] - 2026-10-14
 
 ### Fixed

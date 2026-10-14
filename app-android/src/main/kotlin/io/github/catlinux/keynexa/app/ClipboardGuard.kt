@@ -12,6 +12,7 @@ import android.widget.Toast
 
 private const val DEFAULT_CLEAR_SECONDS = 30
 private const val MILLIS_PER_SECOND = 1_000L
+private const val CLIP_MARKER = "io.github.catlinux.keynexa.CLIP"
 
 // ClipDescription.EXTRA_IS_SENSITIVE exists from Android 13; older versions ignore the extra.
 private const val EXTRA_IS_SENSITIVE = "android.content.extra.IS_SENSITIVE"
@@ -35,9 +36,11 @@ object ClipboardGuard {
     ) {
         val clipboard = context.getSystemService(ClipboardManager::class.java)
         val clip = ClipData.newPlainText(label, value)
-        if (sensitive) {
-            clip.description.extras = PersistableBundle().apply { putBoolean(EXTRA_IS_SENSITIVE, true) }
-        }
+        clip.description.extras =
+            PersistableBundle().apply {
+                putBoolean(CLIP_MARKER, true)
+                if (sensitive) putBoolean(EXTRA_IS_SENSITIVE, true)
+            }
         clipboard.setPrimaryClip(clip)
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
             Toast.makeText(context, context.getString(R.string.clipboard_copied, label), Toast.LENGTH_SHORT).show()
@@ -62,12 +65,24 @@ object ClipboardGuard {
     fun clearNow(context: Context) {
         if (dueAt == null) return
         val clipboard = context.getSystemService(ClipboardManager::class.java)
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-            clipboard.clearPrimaryClip()
-        } else {
-            clipboard.setPrimaryClip(ClipData.newPlainText("", ""))
+        val shouldClear =
+            try {
+                val description = clipboard.primaryClipDescription
+                description == null || description.extras?.getBoolean(CLIP_MARKER) == true
+            } catch (_: Exception) {
+                true
+            }
+        try {
+            if (shouldClear) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                    clipboard.clearPrimaryClip()
+                } else {
+                    clipboard.setPrimaryClip(ClipData.newPlainText("", ""))
+                }
+            }
+        } finally {
+            handler.removeCallbacksAndMessages(null)
+            dueAt = null
         }
-        handler.removeCallbacksAndMessages(null)
-        dueAt = null
     }
 }

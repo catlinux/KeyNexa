@@ -1,6 +1,8 @@
 package io.github.catlinux.keynexa.app
 
 import android.content.Context
+import android.os.Handler
+import android.os.Looper
 import android.os.SystemClock
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -10,6 +12,7 @@ import io.github.catlinux.keynexa.app.security.AutoLock
 import io.github.catlinux.keynexa.app.security.BiometricKeys
 import io.github.catlinux.keynexa.app.security.BiometricStore
 import io.github.catlinux.keynexa.app.security.BiometricUnlock
+import io.github.catlinux.keynexa.app.security.LockTimer
 import io.github.catlinux.keynexa.app.settings.AppSettings
 import io.github.catlinux.keynexa.app.vault.KnownVaultsStore
 import io.github.catlinux.keynexa.app.vault.SessionState
@@ -55,7 +58,30 @@ class AppContainer(
     /** True while the app is in front; the vault is only looked at for outside changes then. */
     var visible by mutableStateOf(false)
 
-    val autoLock = AutoLock(settings = { settings.values }, now = SystemClock::elapsedRealtime, lock = ::lockNow)
+    private val lockTimer =
+        object : LockTimer {
+            private val handler = Handler(Looper.getMainLooper())
+
+            override fun start(
+                delayMillis: Long,
+                action: () -> Unit,
+            ) {
+                cancel()
+                handler.postDelayed({ action() }, delayMillis)
+            }
+
+            override fun cancel() {
+                handler.removeCallbacksAndMessages(null)
+            }
+        }
+
+    val autoLock =
+        AutoLock(
+            settings = { settings.values },
+            now = SystemClock::elapsedRealtime,
+            timer = lockTimer,
+            lock = ::lockNow,
+        )
 
     init {
         val privateDir = appContext.noBackupFilesDir

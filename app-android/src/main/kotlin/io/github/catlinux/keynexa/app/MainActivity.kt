@@ -17,6 +17,7 @@ class MainActivity : FragmentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        applyScreenProtection(container.settings.values.allowScreenshots)
         setContent {
             val allowScreenshots = container.settings.values.allowScreenshots
             LaunchedEffect(allowScreenshots) { applyScreenProtection(allowScreenshots) }

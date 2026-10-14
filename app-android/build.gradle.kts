@@ -9,7 +9,12 @@ val appVersionCode: Int =
     appVersionName
         .split(".")
         .map(String::toInt)
-        .let { (major, minor, patch) -> major * 10000 + minor * 100 + patch }
+        .let { (major, minor, patch) ->
+            require(minor < 100 && patch < 100) {
+                "VERSION minor and patch components must each be less than 100 to calculate versionCode"
+            }
+            major * 10000 + minor * 100 + patch
+        }
 
 android {
     namespace = "io.github.catlinux.keynexa.app"
