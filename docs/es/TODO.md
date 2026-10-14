@@ -17,6 +17,7 @@ Pasos detallados: consulta la [hoja de ruta](ROADMAP.md).
 ## Prioridad media (fase D — MVP seguro)
 
 - [ ] Ofrecer en la interfaz las copias `*.sync-conflict-*` para fusionar.
+- [ ] Mirar los cambios externos con menos coste: comparar primero tamaño y fecha de modificación y leer el archivo entero solo si difieren; mirar con menos frecuencia tras minutos sin actividad. Medir el consumo de batería en un móvil real antes y después.
 - [ ] Cuando un guardado falle por haber perdido el permiso, ofrecer reconectar la carpeta sin cerrar la bóveda; ofrecer restaurar la copia privada sin guardar tras un reinicio.
 - [ ] Borrado del portapapeles totalmente fiable (Android solo deja cambiar el portapapeles a la app que está delante).
 - [ ] Desbloqueo biométrico.
@@ -32,7 +33,7 @@ Pasos detallados: consulta la [hoja de ruta](ROADMAP.md).
 
 - Sincronización propia que no dependa de Syncthing (por ejemplo, un cliente de escritorio que haga de enlace), dejando Syncthing como opción.
 - Integrar del todo en el proyecto las primitivas criptográficas (ya están vendorizadas con kotpass) en lugar de depender de binarios externos. No se prevé escribir algoritmos de cifrado nuevos: solo implementaciones auditadas, con versión fija y probadas contra los vectores oficiales.
-- Syncthing integrado en KeyNexa: llevar Syncthing (MPL-2.0, compatible con GPL-3.0) dentro de la app y manejarlo por su API REST, de modo que un solo programa lo haga todo con una única configuración, y usar sus eventos de cambio para refrescar la bóveda en segundos. Necesita un ADR (tamaño del APK, servicio en segundo plano, política de actualizaciones).
+- Syncthing como plugin opcional solo de los clientes de escritorio (Windows, Linux), nunca obligatorio: un solo dispositivo no necesita sincronización (la bóveda es local), y las copias de seguridad en la nube son una opción aparte y recomendada. El plugin se ofrece cuando se añade un segundo dispositivo (por ejemplo el móvil), y entonces el emparejamiento es un código QR. Android sigue usando Syncthing-Fork como app aparte. Llevar Syncthing (MPL-2.0, compatible con GPL-3.0) gestionado por su API REST. Necesita un ADR (tamaño, proceso en segundo plano, política de actualizaciones).
 - Configurar un dispositivo nuevo con una frase semilla: un paquete cifrado con los ajustes y el emparejamiento de la sincronización (nunca la contraseña maestra), protegido con una clave derivada de la frase, guardado en la carpeta sincronizada o mostrado como código QR. Necesita un ADR.
 - Copias de seguridad en la nube: primero a cualquier carpeta que el sistema exponga (Drive, Dropbox, Mega y otros a través de sus propias apps, sin SDK extra), después WebDAV y almacenamiento compatible con S3; sin SDK propietarios con telemetría. Necesita un ADR.
 - Mantener kotpass fuerte: ofrecerse a ayudar a mantenerlo en el proyecto original, añadir fuzzing con Jazzer y la comparación con keepass-rs (ya listados arriba) y reevaluar las alternativas cada año (ADR-0005).

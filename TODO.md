@@ -17,6 +17,7 @@ Detailed steps: see the [roadmap](docs/ROADMAP.md).
 ## Medium priority (phase D — secure MVP)
 
 - [ ] Offer `*.sync-conflict-*` copies for merge in the UI.
+- [ ] Cheaper look for outside changes: compare size and modification time first and read the whole file only when they differ; look less often after minutes without activity. Measure the battery cost on a real phone before and after.
 - [ ] When a save fails because the grant was lost, offer to reconnect the folder without closing the vault; offer to restore the private unsaved copy after a restart.
 - [ ] Fully reliable clipboard clearing (Android only lets the app in front change the clipboard).
 - [ ] Biometric unlock.
@@ -32,7 +33,7 @@ Detailed steps: see the [roadmap](docs/ROADMAP.md).
 
 - Built-in synchronisation that does not depend on Syncthing (for example a desktop client acting as the relay), keeping Syncthing as an option.
 - Bringing the cryptographic primitives fully inside the project (they are already vendored with kotpass) instead of depending on external binaries. Writing new cipher algorithms is not planned: only audited implementations, pinned and tested against official vectors.
-- Syncthing built into KeyNexa: ship Syncthing (MPL-2.0, compatible with GPL-3.0) inside the app and manage it through its REST API, so one program does everything with a single setup, and use its change events to refresh the vault within seconds. Needs an ADR (APK size, background service, update policy).
+- Syncthing as an optional plugin of the desktop clients only (Windows, Linux), never required: a single device needs no synchronisation (the vault is local), and cloud backup copies are a separate, recommended option. The plugin is offered when a second device is added (for example the phone), and then pairing is a QR code. Android keeps using Syncthing-Fork as a separate app. Ship Syncthing (MPL-2.0, compatible with GPL-3.0) managed through its REST API. Needs an ADR (size, background process, update policy).
 - Setting up a new device from a seed phrase: an encrypted bundle with the settings and the synchronisation pairing (never the master password), protected with a key derived from the phrase, kept in the synchronised folder or shown as a QR code. Needs an ADR.
 - Backup copies to the cloud: first to any folder the system exposes (Drive, Dropbox, Mega and others through their own apps, with no extra SDK), later WebDAV and S3-compatible storage; no proprietary SDKs with telemetry. Needs an ADR.
 - Keep kotpass strong: offer to help maintain it upstream, add Jazzer fuzzing and the keepass-rs comparison (already listed above), and re-evaluate alternatives yearly (ADR-0005).
