@@ -6,7 +6,7 @@ Detailed steps: see the [roadmap](docs/ROADMAP.md).
 
 ## High priority (phase C — project foundation)
 
-- [ ] Finish testing biometric unlock on a real phone (enabling and unlocking already checked on a Pixel 10 Pro; ADR-0006 matrix still open): enable, unlock, new fingerprint invalidates, password due after the chosen days, password changed on another device; with and without StrongBox, API 26-29 and 30+.
+- [ ] Biometric unlock: the ADR-0006 matrix is checked on a Pixel 10 Pro (enable, unlock, new fingerprint invalidates, password due after the chosen days, password changed on another device). Still open: phones without StrongBox and API 26-29.
 
 - [ ] First signed test release: push a tag (with maintainer approval) and check the workflow, the signature and the checksum on GitHub.
 - [ ] Differential test of KeyNexa-written vaults against keepass-rs, and Jazzer fuzzing (ADR-0005; the mutation fuzzing and the keepassxc-cli comparison already run).

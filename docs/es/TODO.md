@@ -6,7 +6,7 @@ Pasos detallados: consulta la [hoja de ruta](ROADMAP.md).
 
 ## Prioridad alta (fase C — base del proyecto)
 
-- [ ] Terminar de probar el desbloqueo biométrico en un móvil real (activar y desbloquear ya comprobados en un Pixel 10 Pro; falta el resto de la matriz del ADR-0006): activar, desbloquear, una huella nueva lo invalida, contraseña exigida tras los días elegidos, contraseña cambiada en otro dispositivo; con y sin StrongBox, API 26-29 y 30+.
+- [ ] Desbloqueo biométrico: la matriz del ADR-0006 está comprobada en un Pixel 10 Pro (activar, desbloquear, una huella nueva lo invalida, contraseña exigida tras los días elegidos, contraseña cambiada en otro dispositivo). Sigue abierto: móviles sin StrongBox y API 26-29.
 
 - [ ] Primera publicación firmada de prueba: subir una etiqueta (con aprobación del responsable) y comprobar en GitHub el workflow, la firma y la suma de verificación.
 - [ ] Prueba diferencial de las bóvedas escritas por KeyNexa contra keepass-rs, y fuzzing con Jazzer (ADR-0005; el fuzzing por mutación y la comparación con keepassxc-cli ya se ejecutan).
