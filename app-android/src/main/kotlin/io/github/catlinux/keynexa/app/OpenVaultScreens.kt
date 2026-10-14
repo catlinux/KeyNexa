@@ -21,6 +21,7 @@ import io.github.catlinux.keynexa.app.vault.findEntry
 import io.github.catlinux.keynexa.app.vault.findGroup
 import io.github.catlinux.keynexa.app.vault.mapEntry
 import io.github.catlinux.keynexa.app.vault.pathToEntry
+import io.github.catlinux.keynexa.vault.Credentials
 import io.github.catlinux.keynexa.vault.Entry
 import io.github.catlinux.keynexa.vault.FieldValue
 import io.github.catlinux.keynexa.vault.Group
@@ -64,6 +65,8 @@ fun OpenVaultScreens(
                             mergedNow = it.mergedNow,
                             deletable = it.deletable.size,
                             problems = it.failed.distinct(),
+                            canEnterOtherPassword = it.otherPasswordCopies.isNotEmpty(),
+                            otherPasswordRejected = it.otherPasswordRejected,
                         )
                     },
                 onOpenGroup = { navigator.push(Screen.Group(it)) },
@@ -76,6 +79,9 @@ fun OpenVaultScreens(
                 onBack = if (isRoot) lock else back,
                 onRetrySave = session::retrySave,
                 onDeleteConflictCopies = session::deleteConflictCopies,
+                onMergeOtherPassword = { password ->
+                    session.mergeOtherPasswordCopies(Credentials.of(password = password.toCharArray()))
+                },
                 onDismissConflicts = session::dismissConflicts,
             )
         }

@@ -26,7 +26,7 @@ Option 2.
 2. **What is skipped:** a copy whose fingerprint (SHA-256 of its bytes) is in the per-vault ledger of merged copies. The ledger lives in private storage excluded from backup and holds fingerprints only; it avoids paying a key derivation on every open.
 3. **How:** each remaining copy is decoded with the open vault's credentials and folded into the current vault with `KeePassMerger` (ties favour the open vault). The result goes through the normal save pipeline. Copies whose content adds nothing are recorded as merged without saving.
 4. **Recorded only after success:** the fingerprints are added to the ledger only once the save reports `Saved` (or when nothing needed saving). A failed save leaves them out, so the next open tries again.
-5. **Copies that cannot be merged** are reported and left alone, never deleted: another password (`WrongCredentials`; a later version may ask for that password), damaged or still in transfer (`Corrupted`, tried again next time), another vault (`Unmergeable`), or unreadable.
+5. **Copies that cannot be merged** are reported and left alone, never deleted: another password (`WrongCredentials`; the notice offers to type that password, and the copy is merged when the save succeeds), damaged or still in transfer (`Corrupted`, tried again next time), another vault (`Unmergeable`), or unreadable.
 6. **Deletion only with consent:** after a merge the app says how many copies were merged and offers to delete them. It deletes only copies in the ledger whose bytes still have the recorded fingerprint, read again just before deleting; anything else is kept. Declining keeps the copies, and the offer comes back on the next open.
 7. **Nothing secret leaves memory:** the copies are decoded in memory like the vault; only fingerprints are stored.
 
@@ -34,5 +34,5 @@ Option 2.
 
 - Two devices that edit without seeing each other end with the union of their changes after one of them opens the vault, without the user doing anything except confirming the cleanup.
 - Each new copy costs one key derivation when it is first found; known copies cost only a read and a hash.
-- A copy written with another password stays unmerged until that password is asked for; the UI says so.
+- A copy written with another password is not merged automatically: the app asks for that password, uses it once and wipes it, and merges the copy when the save succeeds.
 - `StoragePort` gains `name(location)` and `delete(location)`; the Android implementation uses the document's display name and `DocumentsContract.deleteDocument`.

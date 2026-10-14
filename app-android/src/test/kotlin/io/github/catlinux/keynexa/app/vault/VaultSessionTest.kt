@@ -359,6 +359,62 @@ class VaultSessionTest {
     }
 
     @Test
+    fun thePasswordOfACopyIsAskedForAndTheCopyIsThenMerged() {
+        val ledger = FileMergedCopies(folder.newFolder())
+        val session = conflictSession(ledger)
+        createVault(session)
+        val open = session.state.value as SessionState.Open
+        val bytes =
+            putCopy(
+                VaultEditor().addEntry(open.current, open.current.root.id, "FromAnotherKey"),
+                password = "another-password",
+            )
+        session.lock()
+        session.unlock(known, credentials())
+        val reported = (session.state.value as SessionState.Open).conflicts!!
+        assertEquals(listOf(CopyProblem.OtherPassword), reported.failed)
+        assertEquals(listOf(copyName), reported.otherPasswordCopies.map { it.name })
+        assertFalse(reported.otherPasswordRejected)
+
+        val extra = credentials("another-password")
+        session.mergeOtherPasswordCopies(extra)
+
+        val state = session.state.value as SessionState.Open
+        assertEquals(
+            listOf("FromAnotherKey"),
+            state.current.root.entries
+                .map { it.title },
+        )
+        assertFalse(state.hasUnsavedChanges)
+        assertEquals(1, state.conflicts?.mergedNow)
+        assertEquals(listOf(copyName), state.conflicts?.deletable?.map { it.file.name })
+        assertTrue(ledger.isMerged(location, Fingerprint.of(bytes)))
+        assertTrue(runCatching { extra.passwordCopy() }.exceptionOrNull() is IllegalStateException)
+    }
+
+    @Test
+    fun aRejectedPasswordLeavesTheCopyAndMarksTheReport() {
+        val ledger = FileMergedCopies(folder.newFolder())
+        val session = conflictSession(ledger)
+        createVault(session)
+        val open = session.state.value as SessionState.Open
+        val bytes = putCopy(open.current, password = "another-password")
+        session.lock()
+        session.unlock(known, credentials())
+
+        val extra = credentials("not-that-password")
+        session.mergeOtherPasswordCopies(extra)
+
+        val state = session.state.value as SessionState.Open
+        assertEquals(listOf(CopyProblem.OtherPassword), state.conflicts?.failed)
+        assertTrue(state.conflicts?.otherPasswordRejected == true)
+        assertTrue(state.conflicts?.deletable?.isEmpty() == true)
+        assertTrue(files.containsKey(copyLocation))
+        assertFalse(ledger.isMerged(location, Fingerprint.of(bytes)))
+        assertTrue(runCatching { extra.passwordCopy() }.exceptionOrNull() is IllegalStateException)
+    }
+
+    @Test
     fun dismissingTheReportHidesItUntilTheNextOpen() {
         val ledger = FileMergedCopies(folder.newFolder())
         val session = conflictSession(ledger)

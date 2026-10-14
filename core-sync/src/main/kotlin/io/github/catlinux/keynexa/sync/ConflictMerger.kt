@@ -35,7 +35,7 @@ data class ConflictCopy(
 
 /** Why a conflict copy could not be merged; all of them leave the copy on storage. */
 enum class CopyProblem {
-    /** Written with another password, changed on one device only. A later version may ask for that password. */
+    /** Written with another password, changed on one device only. The app asks for that password to merge it. */
     OtherPassword,
 
     /** Damaged or still being transferred; trying again on the next open may work. */
@@ -85,11 +85,31 @@ class ConflictMerger(
         location: VaultLocation,
         current: Vault,
         credentials: Credentials,
+    ): ConflictScan = absorbAll(location, current, copiesOf(location), credentials)
+
+    /**
+     * Folds in only [files], opened with [credentials], instead of every copy next to the vault. Used to retry the
+     * copies written with another password once the user types it; the ledger works the same, so a copy already
+     * merged is still skipped.
+     */
+    fun scanWith(
+        location: VaultLocation,
+        current: Vault,
+        files: List<SiblingFile>,
+        credentials: Credentials,
+    ): ConflictScan = absorbAll(location, current, files, credentials)
+
+    // The one scan both public methods share: absorb each file in turn and collect what happened.
+    private fun absorbAll(
+        location: VaultLocation,
+        current: Vault,
+        files: List<SiblingFile>,
+        credentials: Credentials,
     ): ConflictScan {
         val absorbed = mutableListOf<ConflictCopy>()
         val failed = mutableListOf<Pair<SiblingFile, CopyProblem>>()
         var folded = current
-        for (file in copiesOf(location)) {
+        for (file in files) {
             when (val step = absorb(location, folded, file, credentials)) {
                 is Absorb.Merged -> {
                     folded = step.vault

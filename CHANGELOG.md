@@ -6,6 +6,12 @@ All notable changes to this project are documented in this file. The format is b
 
 ## [Unreleased]
 
+## [0.11.0] - 2026-10-14
+
+### Added
+
+- A Syncthing conflict copy written with another password is no longer only reported: the notice offers to type that password, and the copy is merged into the vault when the save succeeds. The password is used once and wiped, also when it does not open the copy; a rejected password leaves the copy as it was and the notice says so.
+
 ## [0.10.3] - 2026-10-14
 
 ### Fixed

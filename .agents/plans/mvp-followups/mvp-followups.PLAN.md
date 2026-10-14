@@ -2,7 +2,7 @@
 
 Orquesta Sonnet; implementa AgentRelay (una tarea por paso, secuenciales, árbol limpio al lanzar). Cada paso: `.\gradlew.bat check` y `bash scripts/check-docs-i18n.sh` en verde, VERSION + CHANGELOG en/es en el mismo commit, quitar la línea del TODO (en/es) y tocar solo la documentación afectada. Antes de 1.0 una funcionalidad compatible sube la versión menor.
 
-- [ ] **F1. Pedir la contraseña de una copia con otra contraseña** · 0.11.0 (menor: funcionalidad nueva, compatible) · ejecutor AgentRelay, esfuerzo alto.
+- [x] **F1. Pedir la contraseña de una copia con otra contraseña** · 0.11.0 (menor: funcionalidad nueva, compatible) · ejecutor AgentRelay, esfuerzo alto.
   - `core-sync` `ConflictMerger`: `scanWith(location, current, files, credentials)` que procesa solo esos `SiblingFile` con unas credenciales dadas (misma lógica de `absorb`, mismo libro de huellas). `ConflictScan.failed` ya trae el `SiblingFile`; `ConflictReport` (app) pasa a guardar los `SiblingFile` de las copias `OtherPassword`, no solo el motivo.
   - `VaultSession.mergeOtherPasswordCopies(extra: Credentials)`: en el executor, solo con el vault inactivo; fusiona con `scanWith` las copias `OtherPassword` del informe, guarda con `saver.save`, registra huellas solo si `Saved`, publica el informe nuevo y borra (`wipe`) siempre `extra`. Contraseña incorrecta → las copias siguen en `failed` y el informe lleva `otherPasswordRejected = true` (se limpia al intentar de nuevo o cerrar). Las credenciales extra no se guardan ni se registran.
   - UI `ConflictNoticeBar`: si hay copias `OtherPassword`, botón «Escribir esa contraseña» → diálogo con campo de contraseña (tipo contraseña, sin autocorrección, sin copiar el texto en logs) y aviso si se rechazó. Cadenas en `values` y `values-es`.

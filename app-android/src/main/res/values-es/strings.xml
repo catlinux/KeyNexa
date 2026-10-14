@@ -84,6 +84,13 @@
     <string name="conflict_problem_damaged">Una copia parece dañada o se sigue sincronizando. KeyNexa lo volverá a intentar.</string>
     <string name="conflict_problem_other_vault">Una copia es de otra bóveda.</string>
     <string name="conflict_problem_unreadable">No se ha podido leer una copia.</string>
+    <string name="conflict_enter_other_password">Escribir esa contraseña</string>
+    <string name="conflict_other_password_rejected">Esa contraseña no ha abierto la copia, así que sigue sin fusionar.</string>
+    <string name="conflict_password_title">Contraseña de la copia</string>
+    <string name="conflict_password_label">Contraseña</string>
+    <string name="conflict_password_show">Mostrar la contraseña</string>
+    <string name="conflict_password_merge">Fusionar</string>
+    <string name="conflict_password_cancel">Cancelar</string>
 
     <!-- Grupo: recorrer las entradas y los subgrupos de un grupo. -->
     <string name="group_back">Volver</string>

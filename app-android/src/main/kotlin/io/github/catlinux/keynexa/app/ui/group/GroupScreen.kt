@@ -98,6 +98,7 @@ fun GroupScreen(
     onBack: () -> Unit,
     onRetrySave: () -> Unit,
     onDeleteConflictCopies: () -> Unit,
+    onMergeOtherPassword: (String) -> Unit,
     onDismissConflicts: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -123,6 +124,7 @@ fun GroupScreen(
                 ConflictNoticeBar(
                     notice = conflicts,
                     onDeleteCopies = onDeleteConflictCopies,
+                    onMergeOtherPassword = onMergeOtherPassword,
                     onDismiss = onDismissConflicts,
                 )
             }

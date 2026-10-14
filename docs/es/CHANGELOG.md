@@ -6,6 +6,12 @@ Todos los cambios notables de este proyecto se documentan en este archivo. El fo
 
 ## [Sin publicar]
 
+## [0.11.0] - 2026-10-14
+
+### Añadido
+
+- Una copia de conflicto de Syncthing escrita con otra contraseña ya no solo se informa: el aviso ofrece escribir esa contraseña y la copia se fusiona en la bóveda cuando el guardado va bien. La contraseña se usa una vez y se borra, también cuando no abre la copia; una contraseña rechazada deja la copia como estaba y el aviso lo indica.
+
 ## [0.10.3] - 2026-10-14
 
 ### Corregido

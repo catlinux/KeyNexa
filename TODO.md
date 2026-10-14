@@ -16,7 +16,6 @@ Detailed steps: see the [roadmap](docs/ROADMAP.md).
 
 ## Medium priority (phase D — secure MVP)
 
-- [ ] **Ask for the password of a copy written with another password**: a copy that no longer opens with the vault's credentials is reported and left as it is; offer to type that password so it can be merged too.
 - [ ] Sync status in the app: when the vault was last synchronised, changes not yet uploaded, and a warning after several days without syncing.
 - [ ] Cloud as an always-on hub: let a vault live in WebDAV or S3-compatible storage through a remote `StoragePort` with conditional writes (ETag / If-Match), so the same read-merge-write pipeline works for devices that are never on at the same time. Needs an ADR.
 - [ ] Cheaper look for outside changes: compare size and modification time first and read the whole file only when they differ; look less often after minutes without activity. Measure the battery cost on a real phone before and after.

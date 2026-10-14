@@ -2,6 +2,8 @@ package io.github.catlinux.keynexa.sync
 
 import io.github.catlinux.keynexa.vault.Credentials
 import io.github.catlinux.keynexa.vault.Entry
+import io.github.catlinux.keynexa.vault.FileMetadata
+import io.github.catlinux.keynexa.vault.SiblingFile
 import io.github.catlinux.keynexa.vault.Vault
 import io.github.catlinux.keynexa.vault.VaultLocation
 import org.junit.Assert.assertEquals
@@ -83,6 +85,54 @@ class ConflictMergerTest {
         assertNull(scan.merged)
         assertTrue(scan.absorbed.isEmpty())
         assertNotNull(storage.files[copyLocation()])
+    }
+
+    @Test
+    fun scanWithOpensACopyWrittenWithAnotherPassword() {
+        val base = sharedVault()
+        val otherKey = Credentials.of(password = "another key".toCharArray())
+        val other = base.addEntry(internet, newEntry("added-with-the-other-key", at(20)))
+        val storage = storageWith(engine.encode(base, credentials), engine.encode(other, otherKey))
+        val copy = reportedCopy(storage, base)
+
+        val scan = merger(storage).scanWith(location, base, listOf(copy), otherKey)
+
+        val merged = requireNotNull(scan.merged)
+        assertNotNull(merged.findEntry(uuid("added-with-the-other-key")))
+        assertEquals(listOf(copyName()), scan.absorbed.map { it.file.name })
+        assertTrue(scan.failed.isEmpty())
+    }
+
+    @Test
+    fun scanWithARejectedPasswordLeavesTheCopyReported() {
+        val base = sharedVault()
+        val otherKey = Credentials.of(password = "another key".toCharArray())
+        val storage = storageWith(engine.encode(base, credentials), engine.encode(base, otherKey))
+        val copy = reportedCopy(storage, base)
+        val wrongKey = Credentials.of(password = "one more key".toCharArray())
+
+        val scan = merger(storage).scanWith(location, base, listOf(copy), wrongKey)
+
+        assertEquals(copy, scan.failed.single().first)
+        assertEquals(CopyProblem.OtherPassword, scan.failed.single().second)
+        assertNull(scan.merged)
+        assertTrue(scan.absorbed.isEmpty())
+    }
+
+    @Test
+    fun scanWithSkipsACopyAlreadyInTheLedger() {
+        val base = sharedVault()
+        val bytes = engine.encode(base.addEntry(internet, newEntry("open-with-the-other-key", at(20))), credentials)
+        ledger.record(location, listOf(Fingerprint.of(bytes)))
+        val storage = storageWith(engine.encode(base, credentials), bytes)
+        val copy = SiblingFile(copyLocation(), copyName(), FileMetadata(bytes.size.toLong(), null))
+        engine.resetCounters()
+
+        val scan = merger(storage).scanWith(location, base, listOf(copy), credentials)
+
+        assertNull(scan.merged)
+        assertTrue(scan.absorbed.isEmpty())
+        assertEquals(0, engine.decodes)
     }
 
     @Test
@@ -240,6 +290,17 @@ class ConflictMergerTest {
         current: Vault,
         merger: VaultMerger = KeePassMerger(),
     ): ConflictScan = merger(storage, merger).scan(location, current, credentials)
+
+    /** The file of the only copy a plain scan reported, as the app hands it back to [ConflictMerger.scanWith]. */
+    private fun reportedCopy(
+        storage: FakeStorage,
+        current: Vault,
+    ): SiblingFile =
+        merger(storage)
+            .scan(location, current, credentials)
+            .failed
+            .single()
+            .first
 
     private fun merger(
         storage: FakeStorage,

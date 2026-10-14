@@ -26,7 +26,7 @@ Opción 2.
 2. **Qué se salta:** una copia cuya huella (SHA-256 de sus bytes) está en el registro de copias fusionadas de esa bóveda. El registro vive en almacenamiento privado excluido de las copias de seguridad y solo guarda huellas; evita pagar una derivación de clave en cada apertura.
 3. **Cómo:** cada copia restante se descifra con las credenciales de la bóveda abierta y se integra en la bóveda actual con `KeePassMerger` (los empates favorecen a la bóveda abierta). El resultado pasa por el guardado seguro normal. Las copias que no aportan nada se registran como fusionadas sin guardar.
 4. **Se registra solo tras el éxito:** las huellas se añaden al registro solo cuando el guardado devuelve `Saved` (o cuando no hacía falta guardar). Un guardado fallido no las registra, así que la próxima apertura lo intenta otra vez.
-5. **Las copias que no se pueden fusionar** se indican y se dejan como están, nunca se borran: otra contraseña (`WrongCredentials`; una versión posterior podrá pedirla), dañada o aún en transferencia (`Corrupted`, se reintenta la próxima vez), otra bóveda (`Unmergeable`) o ilegible.
+5. **Las copias que no se pueden fusionar** se indican y se dejan como están, nunca se borran: otra contraseña (`WrongCredentials`; el aviso ofrece escribir esa contraseña y la copia se fusiona cuando el guardado va bien), dañada o aún en transferencia (`Corrupted`, se reintenta la próxima vez), otra bóveda (`Unmergeable`) o ilegible.
 6. **Borrado solo con consentimiento:** tras una fusión, la app dice cuántas copias se fusionaron y ofrece borrarlas. Solo borra copias del registro cuyos bytes siguen teniendo la huella registrada, releídos justo antes de borrar; todo lo demás se conserva. Si el usuario no acepta, las copias se quedan y la oferta vuelve en la próxima apertura.
 7. **Nada secreto sale de la memoria:** las copias se descifran en memoria, como la bóveda; solo se guardan huellas.
 
@@ -34,5 +34,5 @@ Opción 2.
 
 - Dos dispositivos que editan sin verse acaban con la unión de sus cambios en cuanto uno de ellos abre la bóveda, sin que el usuario haga nada salvo confirmar la limpieza.
 - Cada copia nueva cuesta una derivación de clave la primera vez que se encuentra; las ya conocidas solo cuestan una lectura y un hash.
-- Una copia escrita con otra contraseña queda sin fusionar hasta que se pida esa contraseña; la interfaz lo indica.
+- Una copia escrita con otra contraseña no se fusiona automáticamente: la app pide esa contraseña, la usa una vez y la borra, y fusiona la copia cuando el guardado va bien.
 - `StoragePort` incorpora `name(location)` y `delete(location)`; la implementación de Android usa el nombre visible del documento y `DocumentsContract.deleteDocument`.

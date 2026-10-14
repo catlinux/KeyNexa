@@ -3,6 +3,7 @@ package io.github.catlinux.keynexa.app.vault
 import io.github.catlinux.keynexa.sync.BackupRef
 import io.github.catlinux.keynexa.sync.ConflictCopy
 import io.github.catlinux.keynexa.sync.ConflictMerger
+import io.github.catlinux.keynexa.sync.ConflictScan
 import io.github.catlinux.keynexa.sync.CopyProblem
 import io.github.catlinux.keynexa.sync.Fingerprint
 import io.github.catlinux.keynexa.sync.LoadedVault
@@ -14,6 +15,7 @@ import io.github.catlinux.keynexa.sync.SaveRecovery
 import io.github.catlinux.keynexa.sync.VaultReader
 import io.github.catlinux.keynexa.vault.Credentials
 import io.github.catlinux.keynexa.vault.KdbxEngine
+import io.github.catlinux.keynexa.vault.SiblingFile
 import io.github.catlinux.keynexa.vault.StoragePort
 import io.github.catlinux.keynexa.vault.Vault
 import io.github.catlinux.keynexa.vault.VaultException
@@ -77,16 +79,23 @@ sealed interface SessionState {
 }
 
 /**
- * What happened with the vault's Syncthing conflict copies: how many were folded in, which copies may be deleted and
- * which could not be merged. Only counts, fingerprints and reasons: never vault content or secrets.
+ * What happened with the vault's Syncthing conflict copies: how many were folded in, which copies may be deleted,
+ * which could not be merged and which are waiting for another password. Only counts, fingerprints, files and
+ * reasons: never vault content or secrets.
+ *
+ * [otherPasswordCopies] holds the copies written with another password (ADR-0007 §5), so the user can be asked for
+ * that password; [otherPasswordRejected] says the last attempt did not open them.
  */
 data class ConflictReport(
     val mergedNow: Int,
     val deletable: List<ConflictCopy>,
     val failed: List<CopyProblem>,
+    val otherPasswordCopies: List<SiblingFile> = emptyList(),
+    val otherPasswordRejected: Boolean = false,
 ) {
     /** True when there is nothing to tell and nothing to offer, so the report is not shown at all. */
-    val isEmpty: Boolean get() = mergedNow == 0 && deletable.isEmpty() && failed.isEmpty()
+    val isEmpty: Boolean
+        get() = mergedNow == 0 && deletable.isEmpty() && failed.isEmpty() && otherPasswordCopies.isEmpty()
 }
 
 /**
@@ -221,12 +230,30 @@ class VaultSession(
             val open = mutableState.value as? SessionState.Open ?: return@execute
             val report = open.conflicts ?: return@execute
             merger.delete(open.vault.location, report.deletable)
-            publishConflicts(
+            publishReport(
                 location = open.vault.location,
-                mergedNow = 0,
-                deletable = merger.deletable(open.vault.location),
-                failed = report.failed,
+                report =
+                    report.copy(
+                        mergedNow = 0,
+                        deletable = merger.deletable(open.vault.location),
+                    ),
             )
+        }
+    }
+
+    /**
+     * Folds in the copies written with another password, opening them with [extra]. Takes ownership of [extra] and
+     * always wipes it, also when it opens nothing: it is never kept for a retry. Runs on the executor, only while the
+     * vault has nothing unsaved, and follows the same rule as [foldConflicts]: what is merged is saved first and the
+     * ledger is written only when that save reports `Saved`. Nothing here is logged, and the password is never stored.
+     */
+    fun mergeOtherPasswordCopies(extra: Credentials) {
+        executor.execute {
+            try {
+                mergeOtherPasswordCopiesNow(extra)
+            } finally {
+                extra.wipe()
+            }
         }
     }
 
@@ -343,13 +370,62 @@ class VaultSession(
         open: SessionState.Open,
         secrets: Credentials,
     ) {
+        val scan = merger.scan(open.vault.location, open.loaded.vault, secrets)
+        saveAndReport(merger, open, secrets, scan, otherPasswordRejected = false)
+    }
+
+    // The body of [mergeOtherPasswordCopies], outside the wipe so the secrets are never left behind.
+    private fun mergeOtherPasswordCopiesNow(extra: Credentials) {
+        val merger = conflicts ?: return
+        val open = mutableState.value as? SessionState.Open ?: return
+        val secrets = credentials ?: return
+        val report = open.conflicts ?: return
+        if (!open.isIdle) return
+        val copies = report.otherPasswordCopies
+        if (copies.isEmpty()) return
+        val scan =
+            try {
+                merger.scanWith(open.vault.location, open.loaded.vault, copies, extra)
+            } catch (unavailable: IOException) {
+                // The vault, its copies or the ledger cannot be read or written right now.
+                return
+            }
+        // A copy still refusing the password says it was wrong; the others may have merged all the same.
+        saveAndReport(
+            merger = merger,
+            open = open,
+            secrets = secrets,
+            scan = scan,
+            otherPasswordRejected = scan.failed.any { it.second == CopyProblem.OtherPassword },
+            keptProblems = report.failed.filter { it != CopyProblem.OtherPassword },
+        )
+    }
+
+    /**
+     * Saves what [scan] folded in and publishes the resulting report. The ledger is written only once the save
+     * reports `Saved`, so a failed save leaves the copies to be tried again; the rejected flag only colours the
+     * report, it never changes what is saved.
+     */
+    private fun saveAndReport(
+        merger: ConflictMerger,
+        open: SessionState.Open,
+        secrets: Credentials,
+        scan: ConflictScan,
+        otherPasswordRejected: Boolean,
+        keptProblems: List<CopyProblem> = emptyList(),
+    ) {
         val location = open.vault.location
-        val scan = merger.scan(location, open.loaded.vault, secrets)
         val merged = scan.merged
-        val failed = scan.failed.map { it.second }
         if (merged == null) {
             merger.record(location, scan.absorbed)
-            publishConflicts(location, mergedNow = 0, deletable = merger.deletable(location), failed = failed)
+            publishConflicts(
+                location = location,
+                mergedNow = 0,
+                deletable = merger.deletable(location),
+                failed = scan.failed,
+                otherPasswordRejected = otherPasswordRejected,
+                keptProblems = keptProblems,
+            )
             return
         }
         var claimed = false
@@ -365,18 +441,17 @@ class VaultSession(
         if (!claimed) return
         val outcome = saver.save(open.loaded, merged, secrets)
         mutableState.update { state -> if (state is SessionState.Open) state.after(outcome) else state }
-        if (outcome !is SaveOutcome.Saved) {
-            // Not recorded, so the copies are not offered for deletion yet: the save-problem notice says what
-            // happened, and the next open merges them again.
-            publishConflicts(location, mergedNow = 0, deletable = merger.deletable(location), failed = failed)
-            return
-        }
-        merger.record(location, scan.absorbed)
+        // Not recorded when the save did not finish, so the copies are not offered for deletion yet: the save-problem
+        // notice says what happened, and the next open merges them again.
+        val saved = outcome is SaveOutcome.Saved
+        if (saved) merger.record(location, scan.absorbed)
         publishConflicts(
             location = location,
-            mergedNow = scan.absorbed.size,
+            mergedNow = if (saved) scan.absorbed.size else 0,
             deletable = merger.deletable(location),
-            failed = failed,
+            failed = scan.failed,
+            otherPasswordRejected = otherPasswordRejected,
+            keptProblems = keptProblems,
         )
     }
 
@@ -385,12 +460,31 @@ class VaultSession(
         location: VaultLocation,
         mergedNow: Int,
         deletable: List<ConflictCopy>,
-        failed: List<CopyProblem>,
+        failed: List<Pair<SiblingFile, CopyProblem>>,
+        otherPasswordRejected: Boolean = false,
+        keptProblems: List<CopyProblem> = emptyList(),
     ) {
-        val report = ConflictReport(mergedNow, deletable, failed).takeUnless { it.isEmpty }
+        publishReport(
+            location = location,
+            report =
+                ConflictReport(
+                    mergedNow = mergedNow,
+                    deletable = deletable,
+                    failed = failed.map { it.second } + keptProblems,
+                    otherPasswordCopies = failed.filter { it.second == CopyProblem.OtherPassword }.map { it.first },
+                    otherPasswordRejected = otherPasswordRejected,
+                ),
+        )
+    }
+
+    private fun publishReport(
+        location: VaultLocation,
+        report: ConflictReport,
+    ) {
+        val published = report.takeUnless { it.isEmpty }
         mutableState.update { state ->
             if (state is SessionState.Open && state.vault.location == location) {
-                state.copy(conflicts = report)
+                state.copy(conflicts = published)
             } else {
                 state
             }
