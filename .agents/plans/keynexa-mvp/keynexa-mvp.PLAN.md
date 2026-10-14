@@ -60,6 +60,9 @@ Fases A y B terminadas en 0.1.0 (documentación en `docs/`). Este plan lo ejecut
 - [ ] **D6. Desbloqueo biométrico** · 0.8.0 · **Opus (alto)** diseña y revisa; Sonnet implementa.
   - Diseño cerrado en ADR-0006 (docs/decisions/0006-biometric-unlock.md): seguirlo al pie de la letra. Keystore AES-GCM, `setUserAuthenticationRequired`, `BIOMETRIC_STRONG`, `CryptoObject`, invalidación por nuevas huellas, StrongBox si existe, reintroducir contraseña periódicamente.
 
+- [ ] **D7. Fusión automática de copias de conflicto** · 0.8.2/0.9.0 · Opus diseña (reglas de «ya fusionado» y borrado con permiso), Sonnet implementa.
+  - Al abrir una bóveda: listar `*.sync-conflict-*` (ya existe `conflictCopiesOf`), fusionarlas con `KeePassMerger` en el archivo principal por el guardado seguro, no borrar nada solo (preguntar), recordar en almacenamiento privado la huella de lo ya fusionado. Pruebas: dos dispositivos que editan sin verse (altas, ediciones, borrados) acaban con la unión sin pérdidas (AC4 ampliado), y prueba real con Syncthing en el móvil.
+
 ## Fase E: revisión
 
 - [ ] **E1. Revisión** · 0.9.0 · **Opus (alto)**: desviaciones de arquitectura, dependencias/licencias, código sensible, pruebas en dispositivo con Syncthing-Fork (AC4), docs al día, riesgos pendientes. Propuesta de primera pre-release.

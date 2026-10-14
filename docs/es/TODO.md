@@ -16,7 +16,9 @@ Pasos detallados: consulta la [hoja de ruta](ROADMAP.md).
 
 ## Prioridad media (fase D — MVP seguro)
 
-- [ ] Ofrecer en la interfaz las copias `*.sync-conflict-*` para fusionar.
+- [ ] **Fusionar automáticamente las copias `*.sync-conflict-*`** (prioridad: hace falta siempre que dos dispositivos editan sin estar conectados entre sí). Al abrir una bóveda, fusionar cada copia de conflicto en el archivo principal con el fusionador existente (las entradas tienen UUID aleatorios, así que las altas independientes nunca chocan), guardar y preguntar antes de borrar las copias; recordar lo ya fusionado para no repetirlo. Nada se borra solo.
+- [ ] Estado de sincronización en la app: cuándo se sincronizó la bóveda por última vez, cambios aún sin subir y un aviso tras varios días sin sincronizar.
+- [ ] La nube como punto de encuentro siempre disponible: permitir que una bóveda viva en WebDAV o almacenamiento compatible con S3 mediante un `StoragePort` remoto con escrituras condicionales (ETag / If-Match), de modo que el mismo flujo leer-fusionar-escribir sirva para dispositivos que nunca están encendidos a la vez. Necesita un ADR.
 - [ ] Mirar los cambios externos con menos coste: comparar primero tamaño y fecha de modificación y leer el archivo entero solo si difieren; mirar con menos frecuencia tras minutos sin actividad. Medir el consumo de batería en un móvil real antes y después.
 - [ ] Cuando un guardado falle por haber perdido el permiso, ofrecer reconectar la carpeta sin cerrar la bóveda; ofrecer restaurar la copia privada sin guardar tras un reinicio.
 - [ ] Borrado del portapapeles totalmente fiable (Android solo deja cambiar el portapapeles a la app que está delante).

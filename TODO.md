@@ -16,7 +16,9 @@ Detailed steps: see the [roadmap](docs/ROADMAP.md).
 
 ## Medium priority (phase D — secure MVP)
 
-- [ ] Offer `*.sync-conflict-*` copies for merge in the UI.
+- [ ] **Merge `*.sync-conflict-*` copies automatically** (priority: needed whenever two devices edit while they are not connected). When opening a vault, merge every conflict copy into the main file with the existing merger (entries have random UUIDs, so independent additions never collide), save, and ask before deleting the copies; remember what was merged so it is not repeated. Nothing is deleted by itself.
+- [ ] Sync status in the app: when the vault was last synchronised, changes not yet uploaded, and a warning after several days without syncing.
+- [ ] Cloud as an always-on hub: let a vault live in WebDAV or S3-compatible storage through a remote `StoragePort` with conditional writes (ETag / If-Match), so the same read-merge-write pipeline works for devices that are never on at the same time. Needs an ADR.
 - [ ] Cheaper look for outside changes: compare size and modification time first and read the whole file only when they differ; look less often after minutes without activity. Measure the battery cost on a real phone before and after.
 - [ ] When a save fails because the grant was lost, offer to reconnect the folder without closing the vault; offer to restore the private unsaved copy after a restart.
 - [ ] Fully reliable clipboard clearing (Android only lets the app in front change the clipboard).
