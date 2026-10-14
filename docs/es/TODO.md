@@ -18,7 +18,6 @@ Pasos detallados: consulta la [hoja de ruta](ROADMAP.md).
 
 ## Prioridad media (fase D — MVP seguro)
 
-- [ ] **Prueba en un dispositivo real de la fusión de copias de conflicto (D7.5)**: con una carpeta compartida por Syncthing, pausarlo en el móvil, editar la misma bóveda en el PC y en el móvil, reanudarlo y comprobar que KeyNexa fusiona la copia de conflicto al abrir la bóveda, que las dos ediciones están y que ofrece borrar la copia. Nunca con una bóveda real.
 - [ ] **Pedir la contraseña de una copia escrita con otra contraseña**: una copia que ya no se abre con las credenciales de la bóveda se informa y se deja como está; ofrecer escribir esa contraseña para poder fusionarla también.
 - [ ] Estado de sincronización en la app: cuándo se sincronizó la bóveda por última vez, cambios aún sin subir y un aviso tras varios días sin sincronizar.
 - [ ] La nube como punto de encuentro siempre disponible: permitir que una bóveda viva en WebDAV o almacenamiento compatible con S3 mediante un `StoragePort` remoto con escrituras condicionales (ETag / If-Match), de modo que el mismo flujo leer-fusionar-escribir sirva para dispositivos que nunca están encendidos a la vez. Necesita un ADR.
