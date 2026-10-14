@@ -105,7 +105,14 @@ class VaultSession(
      * The open vault's credentials in pre-hashed form, for enabling biometric unlock; the caller wipes them. Null
      * when no vault is open.
      */
-    fun hashedCredentials(): Credentials? = credentials?.let { engine.hashedForm(it) }
+    @Suppress("SwallowedException")
+    fun hashedCredentials(): Credentials? =
+        try {
+            credentials?.let { engine.hashedForm(it) }
+        } catch (locked: IllegalStateException) {
+            // The vault locked (and wiped the credentials) while this was being asked.
+            null
+        }
 
     /** Opens [vault]. Takes ownership of [credentials]: they are wiped on failure and when the session locks. */
     fun unlock(
