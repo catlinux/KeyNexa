@@ -27,6 +27,7 @@ Detailed steps: see the [roadmap](docs/ROADMAP.md).
 
 ## Low priority (later)
 
+- [ ] Update the Android Gradle plugin, Gradle and Kotlin (stable releases only) to clear the findings of the informational build-tooling scan in CI (104 on 2026-10-14, all in build tools, none in the APK).
 - [ ] Windows and Linux clients, once the Android app is functional (they reuse the `core-*` modules).
 - [ ] Autofill service and credential provider (passkeys).
 - [ ] TOTP.

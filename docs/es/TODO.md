@@ -27,6 +27,7 @@ Pasos detallados: consulta la [hoja de ruta](ROADMAP.md).
 
 ## Prioridad baja (más adelante)
 
+- [ ] Actualizar el plugin de Android para Gradle, Gradle y Kotlin (solo versiones estables) para eliminar los avisos del análisis informativo de herramientas de compilación del CI (104 el 2026-10-14, todos en herramientas de compilación, ninguno en el APK).
 - [ ] Clientes de Windows y Linux, cuando la app de Android sea funcional (reutilizan los módulos `core-*`).
 - [ ] Servicio de autorrelleno y proveedor de credenciales (passkeys).
 - [ ] TOTP.
