@@ -203,4 +203,5 @@
         <item quantity="many">%1$d minutos</item>
         <item quantity="other">%1$d minutos</item>
     </plurals>
+    <string name="home_settings">Ajustes</string>
 </resources>

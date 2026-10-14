@@ -6,6 +6,12 @@ Todos los cambios notables de este proyecto se documentan en este archivo. El fo
 
 ## [Sin publicar]
 
+## [0.8.1] - 2026-10-14
+
+### Añadido
+
+- Pantalla de ajustes (engranaje en el inicio): tiempo de bloqueo automático, bloquear al apagar la pantalla, permitir capturas de pantalla y cuánto tiempo queda un secreto copiado en el portapapeles. Comprobado en un Pixel 10 Pro: la bóveda se bloquea tras el tiempo elegido en segundo plano, la ventana no se puede capturar con las capturas desactivadas, un cambio externo aparece en segundos, y ni la contraseña ni ningún texto de entradas aparecen en el registro del sistema ni en los archivos de la app (AC6).
+
 ## [0.8.0] - 2026-10-14
 
 ### Añadido

@@ -13,6 +13,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -58,6 +59,7 @@ fun HomeScreen(
     onCreateNew: () -> Unit,
     onSelect: (KnownVault) -> Unit,
     onRemove: (KnownVault) -> Unit,
+    onOpenSettings: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     var askedToRemove by remember { mutableStateOf<KnownVault?>(null) }
@@ -66,10 +68,7 @@ fun HomeScreen(
             modifier = Modifier.fillMaxSize().padding(ScreenPadding),
             verticalArrangement = Arrangement.spacedBy(BlockGap),
         ) {
-            Text(
-                text = stringResource(R.string.home_title),
-                style = MaterialTheme.typography.headlineMedium,
-            )
+            HomeHeader(onOpenSettings = onOpenSettings)
             Box(modifier = Modifier.fillMaxWidth().weight(1f)) {
                 if (vaults.isEmpty()) {
                     EmptyVaults()
@@ -93,6 +92,30 @@ fun HomeScreen(
             },
             onDismiss = { askedToRemove = null },
         )
+    }
+}
+
+/** The title and the way to the settings. */
+@Composable
+private fun HomeHeader(
+    onOpenSettings: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Row(
+        modifier = modifier.fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween,
+    ) {
+        Text(
+            text = stringResource(R.string.home_title),
+            style = MaterialTheme.typography.headlineMedium,
+        )
+        IconButton(onClick = onOpenSettings) {
+            Icon(
+                imageVector = Icons.Default.Settings,
+                contentDescription = stringResource(R.string.home_settings),
+            )
+        }
     }
 }
 

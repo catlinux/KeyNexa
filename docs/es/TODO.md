@@ -18,7 +18,6 @@ Pasos detallados: consulta la [hoja de ruta](ROADMAP.md).
 
 - [ ] Ofrecer en la interfaz las copias `*.sync-conflict-*` para fusionar.
 - [ ] Cuando un guardado falle por haber perdido el permiso, ofrecer reconectar la carpeta sin cerrar la bóveda; ofrecer restaurar la copia privada sin guardar tras un reinicio.
-- [ ] Pantalla de ajustes (tiempo de bloqueo automático, bloqueo al apagar la pantalla, capturas, tiempo del portapapeles).
 - [ ] Borrado del portapapeles totalmente fiable (Android solo deja cambiar el portapapeles a la app que está delante).
 - [ ] Desbloqueo biométrico.
 

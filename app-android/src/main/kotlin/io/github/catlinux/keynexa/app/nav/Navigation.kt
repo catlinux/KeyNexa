@@ -33,6 +33,8 @@ sealed interface Screen {
 
     data object CreateVault : Screen
 
+    data object Settings : Screen
+
     data object RecycleBin : Screen
 }
 

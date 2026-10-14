@@ -18,7 +18,6 @@ Detailed steps: see the [roadmap](docs/ROADMAP.md).
 
 - [ ] Offer `*.sync-conflict-*` copies for merge in the UI.
 - [ ] When a save fails because the grant was lost, offer to reconnect the folder without closing the vault; offer to restore the private unsaved copy after a restart.
-- [ ] Settings screen (auto-lock delay, lock on screen off, screenshots, clipboard delay).
 - [ ] Fully reliable clipboard clearing (Android only lets the app in front change the clipboard).
 - [ ] Biometric unlock.
 

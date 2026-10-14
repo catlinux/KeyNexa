@@ -16,6 +16,7 @@ import io.github.catlinux.keynexa.app.ui.home.CreateVaultScreen
 import io.github.catlinux.keynexa.app.ui.home.HomeNoticeDialog
 import io.github.catlinux.keynexa.app.ui.home.HomeScreen
 import io.github.catlinux.keynexa.app.ui.home.PickVaultDialog
+import io.github.catlinux.keynexa.app.ui.settings.SettingsScreen
 import io.github.catlinux.keynexa.app.ui.unlock.UnlockScreen
 import io.github.catlinux.keynexa.app.vault.KnownVault
 import io.github.catlinux.keynexa.app.vault.SessionState
@@ -162,26 +163,52 @@ fun AppRoot(container: AppContainer) {
             session.refreshIfChanged()
         }
     }
-    BackHandler(enabled = navigator.current != Screen.Home) {
+    BackHandler(enabled = navigator.current == Screen.Settings) { navigator.back() }
+    BackHandler(enabled = navigator.current != Screen.Home && navigator.current != Screen.Settings) {
         ClipboardGuard.clearNow(context)
         if (state is SessionState.Open) session.lock() else session.dismissFailure()
         navigator.reset()
     }
 
+    AppScreens(container, actions, state, onOpenFolder = {
+        openPicker.launch(null)
+    }, onCreateFolder = { createPicker.launch(null) })
+    actions.choices?.let { PickVaultDialog(it, onPick = actions::open, onDismiss = actions::dismissChoices) }
+    actions.notice?.let { HomeNoticeDialog(it, onDismiss = actions::dismissNotice) }
+}
+
+/** The screen for the current navigation state, connected to the session and the file actions. */
+@Composable
+private fun AppScreens(
+    container: AppContainer,
+    actions: VaultFileActions,
+    state: SessionState,
+    onOpenFolder: () -> Unit,
+    onCreateFolder: () -> Unit,
+) {
+    val navigator = container.navigator
+    val session = container.session
     when (val screen = navigator.current) {
         Screen.Home ->
             HomeScreen(
                 vaults = actions.vaults,
-                onOpenExisting = { openPicker.launch(null) },
+                onOpenExisting = { onOpenFolder() },
                 onCreateNew = { navigator.push(Screen.CreateVault) },
                 onSelect = { navigator.push(Screen.Unlock(it)) },
                 onRemove = actions::remove,
+                onOpenSettings = { navigator.push(Screen.Settings) },
+            )
+        Screen.Settings ->
+            SettingsScreen(
+                values = container.settings.values,
+                onChange = container.settings::update,
+                onBack = { navigator.back() },
             )
         Screen.CreateVault ->
             CreateVaultScreen(
                 onCreate = { name, credentials ->
                     actions.beginCreate(name, credentials)
-                    createPicker.launch(null)
+                    onCreateFolder()
                 },
                 onBack = { navigator.back() },
             )
@@ -192,7 +219,7 @@ fun AppRoot(container: AppContainer) {
                 onUnlock = { session.unlock(screen.vault, it) },
                 onReconnect = {
                     actions.beginReconnect(screen.vault)
-                    openPicker.launch(null)
+                    onOpenFolder()
                 },
                 onBack = {
                     session.dismissFailure()
@@ -201,6 +228,4 @@ fun AppRoot(container: AppContainer) {
             )
         else -> (state as? SessionState.Open)?.let { OpenVaultScreens(container, it) }
     }
-    actions.choices?.let { PickVaultDialog(it, onPick = actions::open, onDismiss = actions::dismissChoices) }
-    actions.notice?.let { HomeNoticeDialog(it, onDismiss = actions::dismissNotice) }
 }

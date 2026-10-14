@@ -6,6 +6,12 @@ All notable changes to this project are documented in this file. The format is b
 
 ## [Unreleased]
 
+## [0.8.1] - 2026-10-14
+
+### Added
+
+- Settings screen (gear on the home screen): auto-lock delay, lock when the screen turns off, allow screenshots and how long a copied secret stays on the clipboard. Checked on a Pixel 10 Pro: the vault locks after the chosen time in the background, the window cannot be captured while screenshots are off, an outside change appears within seconds, and neither the password nor any entry text shows up in the system log or in the app's files (AC6).
+
 ## [0.8.0] - 2026-10-14
 
 ### Added
