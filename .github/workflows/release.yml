@@ -41,7 +41,10 @@ jobs:
           "$sdkmanager" 'platforms;android-36' 'build-tools;36.0.0'
 
       - name: Build and check
-        run: ./gradlew build check :app-android:assembleRelease
+        run: ./gradlew build check :app-android:assembleRelease 2>&1 | tee gradle.log
+      - name: Publish the Gradle error as an annotation
+        if: failure()
+        run: bash scripts/ci-gradle-error.sh gradle.log
 
       - name: Sign the APK
         env:

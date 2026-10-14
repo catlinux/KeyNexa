@@ -35,7 +35,7 @@ jobs:
           sudo apt-get install -y --no-install-recommends keepassxc
           keepassxc-cli --version
       - name: Build and check
-        run: ./gradlew build check 2>&1 | tee gradle.log
+        run: ./gradlew build check :app-android:assembleRelease 2>&1 | tee gradle.log
       - name: Publish the Gradle error as an annotation
         if: failure()
         run: bash scripts/ci-gradle-error.sh gradle.log
