@@ -64,6 +64,12 @@ class KotpassKdbxEngine : KdbxEngine {
             }
         }
 
+    override fun hashedForm(credentials: Credentials): Credentials =
+        translateFailures {
+            val kotpassCredentials = credentials.toKotpass()
+            Credentials.ofHashes(kotpassCredentials.passphrase?.getBinary(), kotpassCredentials.key?.getBinary())
+        }
+
     override fun encode(
         vault: Vault,
         credentials: Credentials,

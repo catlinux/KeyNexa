@@ -37,6 +37,14 @@ interface KdbxEngine {
     ): Vault
 
     /**
+     * The same credentials in their pre-hashed form ([Credentials.ofHashes]): the components KDBX hashes before the
+     * key derivation. They open the vault without the password or the raw key file. The caller wipes the result.
+     *
+     * @throws VaultException.InvalidKeyFile if the key file cannot be parsed.
+     */
+    fun hashedForm(credentials: Credentials): Credentials
+
+    /**
      * Serialises and encrypts [vault] with the format it carries ([Vault.format]), with fresh salts and seeds.
      *
      * @throws VaultException.UnsupportedFormat if [Vault.format] cannot be written.

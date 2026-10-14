@@ -40,6 +40,21 @@ class Credentials private constructor(
             key = EncryptedValue.fromBinary(parseKeyfile(keyData))
         )
 
+        /**
+         * Builds credentials from components that were already processed: the SHA-256 of the passphrase and the
+         * 32-byte key derived from the key file. Needed to reopen a database without keeping the passphrase.
+         */
+        fun fromHashes(passphraseHash: ByteArray?, keyHash: ByteArray?): Credentials {
+            require(passphraseHash != null || keyHash != null) { "At least one component is required" }
+            require(passphraseHash == null || passphraseHash.size == 32) { "Invalid passphrase hash size" }
+            require(keyHash == null || keyHash.size == 32) { "Invalid key hash size" }
+
+            return Credentials(
+                passphrase = passphraseHash?.let { EncryptedValue.fromBinary(it.copyOf()) },
+                key = keyHash?.let { EncryptedValue.fromBinary(it.copyOf()) }
+            )
+        }
+
         fun createKeyfile(key: ByteArray): String {
             val hash = key.sha256()
                 .sliceArray(0 until 4)

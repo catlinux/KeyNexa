@@ -52,6 +52,17 @@ private const val MESSAGE_UNSUPPORTED_FORMAT = "This vault format cannot be writ
 
 /** Builds the library's credentials without ever turning the password into a [String]. */
 internal fun Credentials.toKotpass(): KotpassCredentials {
+    if (isPreHashed) {
+        val passwordHash = passwordHashCopy()
+        val keyHash = keyHashCopy()
+        try {
+            return KotpassCredentials.fromHashes(passwordHash, keyHash)
+        } finally {
+            // fromHashes copies what it keeps.
+            passwordHash?.fill(0)
+            keyHash?.fill(0)
+        }
+    }
     val passwordChars = passwordCopy()
     val keyFile = keyFileCopy()
     var passwordBytes: ByteArray? = null

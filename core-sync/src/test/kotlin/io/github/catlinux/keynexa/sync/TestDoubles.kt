@@ -156,19 +156,33 @@ internal class FakeKdbxEngine(
         return id
     }
 
-    private fun credentialsId(credentials: Credentials): Long {
+    override fun hashedForm(credentials: Credentials): Credentials {
+        if (credentials.isPreHashed) {
+            return Credentials.ofHashes(
+                credentials.passwordHashCopy(),
+                credentials.keyHashCopy(),
+            )
+        }
         val password = credentials.passwordCopy()
         val keyFile = credentials.keyFileCopy()
-        try {
-            val digest = MessageDigest.getInstance("SHA-256")
-            password?.let { digest.update(utf8(it)) }
-            keyFile?.let { digest.update(it) }
-            return ByteBuffer.wrap(digest.digest()).long
-        } finally {
-            password?.fill('\u0000')
-            keyFile?.fill(0)
-        }
+        return Credentials.ofHashes(
+            password?.let { sha256(utf8(it)) },
+            keyFile?.let(::sha256),
+        )
     }
+
+    private fun credentialsId(credentials: Credentials): Long {
+        val hashed = hashedForm(credentials)
+        val passwordHash = hashed.passwordHashCopy()
+        val keyHash = hashed.keyHashCopy()
+        hashed.wipe()
+        val digest = MessageDigest.getInstance("SHA-256")
+        passwordHash?.let(digest::update)
+        keyHash?.let(digest::update)
+        return ByteBuffer.wrap(digest.digest()).long
+    }
+
+    private fun sha256(bytes: ByteArray): ByteArray = MessageDigest.getInstance("SHA-256").digest(bytes)
 
     private fun utf8(chars: CharArray): ByteArray {
         val buffer = Charsets.UTF_8.newEncoder().encode(CharBuffer.wrap(chars))
