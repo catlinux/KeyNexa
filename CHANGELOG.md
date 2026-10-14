@@ -6,6 +6,16 @@ All notable changes to this project are documented in this file. The format is b
 
 ## [Unreleased]
 
+## [0.10.1] - 2026-10-14
+
+### Fixed
+
+- "Open an existing vault" closed the app with `IllegalArgumentException: Can only use lower 16 bits for requestCode`: `androidx.biometric` 1.1.0 pulled in `androidx.fragment` 1.2.5, which rejects the request codes of the current Activity Result API. `androidx.fragment` 1.8.5 (Apache-2.0) is now a direct dependency. Bug introduced in 0.9.0.
+
+### Note
+
+- Conflict-copy merging (0.10.0) was checked on a real phone with Syncthing: both edits were merged, they reached the PC, the app offered to delete the copy and it disappeared from the Windows folder after accepting.
+
 ## [0.10.0] - 2026-10-14
 
 ### Added

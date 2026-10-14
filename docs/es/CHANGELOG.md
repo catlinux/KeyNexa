@@ -6,6 +6,16 @@ Todos los cambios notables de este proyecto se documentan en este archivo. El fo
 
 ## [Sin publicar]
 
+## [0.10.1] - 2026-10-14
+
+### Corregido
+
+- «Abrir una bóveda existente» cerraba la app con `IllegalArgumentException: Can only use lower 16 bits for requestCode`: `androidx.biometric` 1.1.0 arrastraba `androidx.fragment` 1.2.5, que rechaza los códigos de petición de la API actual de Activity Result. Ahora `androidx.fragment` 1.8.5 (Apache-2.0) es una dependencia directa. Fallo introducido en 0.9.0.
+
+### Nota
+
+- La fusión de copias de conflicto (0.10.0) se ha comprobado en un móvil real con Syncthing: se fusionaron las dos ediciones, llegaron al PC, la app ofreció borrar la copia y desapareció de la carpeta de Windows tras aceptar.
+
 ## [0.10.0] - 2026-10-14
 
 ### Añadido
