@@ -1,5 +1,12 @@
+@file:Suppress("TooManyFunctions", "MaxLineLength")
+
 package io.github.catlinux.keynexa.app.ui.edit
 
+import android.net.Uri
+import android.provider.OpenableColumns
+import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -33,9 +40,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
@@ -45,10 +54,19 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import io.github.catlinux.keynexa.app.R
+import io.github.catlinux.keynexa.vault.Attachment
+import io.github.catlinux.keynexa.vault.BinaryId
 import io.github.catlinux.keynexa.vault.Entry
 import io.github.catlinux.keynexa.vault.FieldValue
+import io.github.catlinux.keynexa.vault.MAX_ATTACHMENT_BYTES
 import io.github.catlinux.keynexa.vault.Options
 import io.github.catlinux.keynexa.vault.PasswordGenerator
+import io.github.catlinux.keynexa.vault.binaryIdOf
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import java.io.ByteArrayOutputStream
+import java.io.IOException
 import kotlin.math.roundToInt
 
 /** Spacing and touch targets of the design grid (docs/DESIGN.md). */
@@ -60,6 +78,8 @@ private val TouchTarget = 48.dp
 private const val MIN_GENERATED_LENGTH = Options.MIN_LENGTH
 
 private const val MAX_GENERATED_LENGTH = 64
+
+private const val IO_BUFFER_BYTES = 8192
 
 private const val LENGTH_STEPS = MAX_GENERATED_LENGTH - MIN_GENERATED_LENGTH - 1
 
@@ -161,6 +181,94 @@ private class EntryForm(
     private val passwordProtected: Boolean = initialFields[Entry.PASSWORD]?.protected ?: true
 }
 
+/** The attached files: each shows its name, with a button to remove it, plus a button to add one. */
+@Composable
+private fun AttachmentsSection(
+    attachments: List<Attachment>,
+    onRemove: (Attachment) -> Unit,
+    onAdd: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Column(
+        modifier = modifier.fillMaxWidth(),
+        verticalArrangement = Arrangement.spacedBy(ItemGap),
+    ) {
+        Text(
+            text = stringResource(R.string.edit_attachments_title),
+            style = MaterialTheme.typography.titleMedium,
+        )
+        attachments.forEach { attachment ->
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Text(
+                    text = attachment.name,
+                    style = MaterialTheme.typography.bodyLarge,
+                    modifier = Modifier.weight(1f),
+                )
+                TextButton(onClick = { onRemove(attachment) }) {
+                    Text(text = stringResource(R.string.edit_attachment_remove))
+                }
+            }
+        }
+        OutlinedButton(
+            onClick = onAdd,
+            modifier = Modifier.fillMaxWidth().heightIn(min = TouchTarget),
+        ) {
+            Text(text = stringResource(R.string.edit_attachment_add))
+        }
+    }
+}
+
+/** Result of trying to read one picked file for attaching. */
+private sealed interface ReadResult {
+    data object TooLarge : ReadResult
+
+    data object Failed : ReadResult
+
+    data class Success(
+        val name: String,
+        val bytes: ByteArray,
+    ) : ReadResult
+}
+
+/** Reads the display name of a picked document in a background-safe way. */
+private fun queryDisplayName(
+    context: android.content.Context,
+    uri: Uri,
+): String? =
+    try {
+        context.contentResolver.query(uri, arrayOf(OpenableColumns.DISPLAY_NAME), null, null, null)?.use { cursor ->
+            if (cursor.moveToFirst()) {
+                cursor.getString(
+                    cursor.getColumnIndexOrThrow(OpenableColumns.DISPLAY_NAME),
+                )
+            } else {
+                null
+            }
+        }
+    } catch (failure: IOException) {
+        null
+    }
+
+/** Reads the size of a picked document, or null when the provider does not say. */
+private fun querySize(
+    context: android.content.Context,
+    uri: Uri,
+): Long? =
+    try {
+        context.contentResolver.query(uri, arrayOf(OpenableColumns.SIZE), null, null, null)?.use { cursor ->
+            if (cursor.moveToFirst() && !cursor.isNull(cursor.getColumnIndexOrThrow(OpenableColumns.SIZE))) {
+                cursor.getLong(cursor.getColumnIndexOrThrow(OpenableColumns.SIZE))
+            } else {
+                null
+            }
+        }
+    } catch (failure: IOException) {
+        null
+    }
+
 /**
  * Creates or edits one entry.
  *
@@ -168,24 +276,95 @@ private class EntryForm(
  * protected fields are hidden by default, are never written to saved state and are never logged. [initial] is null
  * while creating an entry.
  */
+@Suppress("LongParameterList", "LongMethod", "CyclomaticComplexMethod")
 @Composable
 fun EntryEditScreen(
     initial: Map<String, FieldValue>?,
     isNew: Boolean,
-    onSave: (fields: Map<String, FieldValue>) -> Unit,
+    initialAttachments: List<Attachment>,
+    onSave: (
+        fields: Map<String, FieldValue>,
+        attachments: List<Attachment>,
+        newBinaries: Map<BinaryId, ByteArray>,
+    ) -> Unit,
     onCancel: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val context = LocalContext.current
+    val scope = rememberCoroutineScope()
     val form = remember(initial) { EntryForm(initial) }
+    val attachments =
+        remember {
+            androidx.compose.runtime
+                .mutableStateListOf<Attachment>()
+                .apply { addAll(initialAttachments) }
+        }
+    val newBinaries = remember { androidx.compose.runtime.mutableStateMapOf<BinaryId, ByteArray>() }
     var generating by remember { mutableStateOf(false) }
     var confirmingCancel by remember { mutableStateOf(false) }
+    var attachmentsChanged by remember { mutableStateOf(false) }
+    val formUnchanged =
+        form.unchanged && !attachmentsChanged && attachments.toList() == initialAttachments
     val requestCancel: () -> Unit = {
-        if (form.unchanged) {
+        if (formUnchanged) {
             onCancel()
         } else {
             confirmingCancel = true
         }
     }
+    val filePicker =
+        rememberLauncherForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
+            if (uri != null) {
+                scope.launch {
+                    val result =
+                        withContext(Dispatchers.IO) {
+                            val name =
+                                queryDisplayName(context, uri) ?: uri.lastPathSegment ?: "attachment"
+                            val size = querySize(context, uri)
+                            if (size != null && size > MAX_ATTACHMENT_BYTES) {
+                                ReadResult.TooLarge
+                            } else {
+                                val bytes =
+                                    try {
+                                        context.contentResolver.openInputStream(uri)?.use { input ->
+                                            val buffer = ByteArrayOutputStream()
+                                            val chunk = ByteArray(IO_BUFFER_BYTES)
+                                            var remaining = MAX_ATTACHMENT_BYTES + 1
+                                            while (remaining > 0) {
+                                                val read = input.read(chunk, 0, minOf(chunk.size, remaining))
+                                                if (read < 0) break
+                                                buffer.write(chunk, 0, read)
+                                                remaining -= read
+                                            }
+                                            buffer.toByteArray()
+                                        }
+                                    } catch (failure: IOException) {
+                                        null
+                                    }
+                                if (bytes == null) {
+                                    ReadResult.Failed
+                                } else if (bytes.size > MAX_ATTACHMENT_BYTES) {
+                                    ReadResult.TooLarge
+                                } else {
+                                    ReadResult.Success(name, bytes)
+                                }
+                            }
+                        }
+                    when (result) {
+                        ReadResult.TooLarge ->
+                            Toast.makeText(context, R.string.edit_attachment_too_large, Toast.LENGTH_SHORT).show()
+                        ReadResult.Failed -> Unit
+                        is ReadResult.Success -> {
+                            val id = binaryIdOf(result.bytes)
+                            attachments.removeAll { it.name == result.name }
+                            attachments += Attachment(result.name, id)
+                            newBinaries[id] = result.bytes
+                            attachmentsChanged = true
+                        }
+                    }
+                }
+            }
+        }
     Surface(modifier = modifier.fillMaxSize()) {
         Column(
             modifier = Modifier.fillMaxSize().padding(ScreenPadding),
@@ -196,11 +375,19 @@ fun EntryEditScreen(
                 Column(modifier = Modifier.fillMaxSize().verticalScroll(rememberScrollState())) {
                     BasicSection(form = form, onGenerate = { generating = true })
                     CustomSection(form = form)
+                    AttachmentsSection(
+                        attachments = attachments,
+                        onRemove = { attachment ->
+                            attachments -= attachment
+                            attachmentsChanged = true
+                        },
+                        onAdd = { filePicker.launch(arrayOf("*/*")) },
+                    )
                 }
             }
             EditActions(
                 saveEnabled = !form.blocked,
-                onSave = { onSave(form.toFields()) },
+                onSave = { onSave(form.toFields(), attachments.toList(), newBinaries.toMap()) },
                 onCancel = requestCancel,
             )
         }

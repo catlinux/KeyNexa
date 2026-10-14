@@ -277,4 +277,13 @@
     <string name="biometric_offer_enable">Activar</string>
     <string name="biometric_offer_later">Ahora no</string>
     <string name="biometric_offer_never">No volver a preguntar</string>
+    <string name="entry_detail_save_attachment">Guardar en…</string>
+    <string name="entry_detail_attachment_saved">Adjunto guardado</string>
+    <string name="entry_detail_attachment_save_failed">No se pudo guardar el adjunto</string>
+    <string name="entry_detail_attachment_missing">Adjunto no encontrado en la bóveda</string>
+    <string name="entry_detail_attachment_unencrypted">El archivo guardado no está cifrado.</string>
+    <string name="edit_attachments_title">Archivos adjuntos</string>
+    <string name="edit_attachment_remove">Quitar</string>
+    <string name="edit_attachment_add">Añadir un archivo</string>
+    <string name="edit_attachment_too_large">Demasiado grande (máximo 10 MB)</string>
 </resources>

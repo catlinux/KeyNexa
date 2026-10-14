@@ -6,6 +6,12 @@ Todos los cambios notables de este proyecto se documentan en este archivo. El fo
 
 ## [Sin publicar]
 
+## [0.14.0] - 2026-10-14
+
+### Añadido
+
+- Añadir, quitar y guardar en un archivo los adjuntos de una entrada: `VaultEditor.addAttachment`/`removeAttachment` se ejecutan mediante `editEntry` (así se guarda versión), reemplazando el adjunto de mismo nombre, recolectando los binarios que ya no referencia nadie en el árbol ni su historial y rechazando adjuntos de más de 10 MB o con nombre en blanco. La pantalla de detalle muestra nombre y tamaño legible de cada adjunto con la acción «Guardar en…» que escribe el binario en el archivo elegido (con el aviso claro de que el archivo guardado no está cifrado), y la pantalla de edición permite añadir archivos (`*/*`) y quitar adjuntos, aplicándolos junto con el resto de los campos al guardar.
+
 ## [0.13.1] - 2026-10-14
 
 ### Corregido

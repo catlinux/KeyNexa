@@ -6,6 +6,12 @@ All notable changes to this project are documented in this file. The format is b
 
 ## [Unreleased]
 
+## [0.14.0] - 2026-10-14
+
+### Added
+
+- Add, remove and save to a file the attachments of an entry: `VaultEditor.addAttachment`/`removeAttachment` run through `editEntry` (so a version is kept), replacing an attachment with the same name, garbage-collecting binaries that nothing in the tree or its history references, and rejecting attachments above 10 MB or with a blank name. The entry detail screen shows each attachment's name and readable size with a "Save to…" action that writes the binary to a chosen file (with a clear notice that the saved file is not encrypted), and the edit screen lets you add files (`*/*`) and remove attachments, applied together with the other fields on Save.
+
 ## [0.13.1] - 2026-10-14
 
 ### Fixed

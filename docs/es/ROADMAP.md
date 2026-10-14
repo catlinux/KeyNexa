@@ -28,7 +28,7 @@ Leyenda: ✅ hecho · 🔄 en curso · ⏳ planificado. Nada está «hecho» has
 7. Desbloqueo biométrico opcional (clave maestra envuelta con el Keystore).
 8. Interfaz en inglés y español, temas claro y oscuro, accesible (etiquetas de TalkBack, texto escalable).
 
-**Fuera del alcance del MVP:** autorrelleno y passkeys, generación de TOTP, edición de adjuntos (los adjuntos se conservan, solo lectura), proveedores en la nube, clientes de escritorio, archivos KDB (KeePass 1.x).
+**Fuera del alcance del MVP:** autorrelleno y passkeys, generación de TOTP, proveedores en la nube, clientes de escritorio, archivos KDB (KeePass 1.x).
 
 ## Criterios de aceptación del MVP
 

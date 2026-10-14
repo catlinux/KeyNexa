@@ -28,7 +28,7 @@ Legend: ✅ done · 🔄 in progress · ⏳ planned. Nothing is "done" until its
 7. Optional biometric unlock (Keystore-wrapped master key).
 8. English and Spanish UI, light and dark themes, accessible (TalkBack labels, scalable text).
 
-**Out of scope for the MVP:** autofill and passkeys, TOTP generation, attachments editing (attachments are preserved, read-only), cloud providers, desktop clients, KDB (KeePass 1.x) files.
+**Out of scope for the MVP:** autofill and passkeys, TOTP generation, cloud providers, desktop clients, KDB (KeePass 1.x) files.
 
 ## MVP acceptance criteria
 

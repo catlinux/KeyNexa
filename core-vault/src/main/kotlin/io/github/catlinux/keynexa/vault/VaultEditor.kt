@@ -1,5 +1,8 @@
+@file:Suppress("TooManyFunctions")
+
 package io.github.catlinux.keynexa.vault
 
+import java.security.MessageDigest
 import java.time.Clock
 import java.time.Instant
 import java.util.UUID
@@ -16,6 +19,9 @@ private const val NO_OBJECT = "There is no entry or group with that id in this v
 private const val ROOT_STAYS = "The root group cannot be moved or deleted."
 private const val MOVE_INTO_ITSELF = "A group cannot be moved inside itself or its descendants."
 
+/** Maximum size, in bytes, of a single attachment. */
+const val MAX_ATTACHMENT_BYTES = 10 * 1024 * 1024
+
 /** Times of a brand-new object: every one of them is the moment it was created. */
 internal fun creationTimes(at: Instant): Times =
     Times(created = at, lastAccessed = at, lastModified = at, locationChanged = at)
@@ -29,6 +35,7 @@ internal fun creationTimes(at: Instant): Times =
  * [IllegalArgumentException]: an unknown id, the root group, or a group moved inside its own subtree. Messages never
  * carry field values or any other secret.
  */
+@Suppress("TooManyFunctions")
 class VaultEditor(
     private val clock: Clock = Clock.systemUTC(),
     private val newId: () -> UUID = UUID::randomUUID,
@@ -87,6 +94,59 @@ class VaultEditor(
                 parent.copy(entries = parent.entries.map { if (it.id == entryId) edited else it })
             }
         return vault.copy(root = root)
+    }
+
+    /** Adds (or replaces) an attachment on the entry [entryId]; the binary is keyed by the SHA-256 of its content. */
+    fun addAttachment(
+        vault: Vault,
+        entryId: UUID,
+        name: String,
+        content: ByteArray,
+    ): Vault {
+        require(name.isNotBlank()) { "Attachment name must not be blank." }
+        require(content.size <= MAX_ATTACHMENT_BYTES) {
+            "Attachment is too large (maximum $MAX_ATTACHMENT_BYTES bytes)."
+        }
+        val id = binaryIdOf(content)
+        val edited =
+            editEntry(vault, entryId) { entry ->
+                val withoutSameName = entry.attachments.filterNot { it.name == name }
+                entry.copy(attachments = withoutSameName + Attachment(name, id))
+            }
+        if (edited.binaries.containsKey(id)) return edited
+        return edited.copy(binaries = edited.binaries + (id to Binary(content, protectedInMemory = false)))
+    }
+
+    /** Removes the attachment named [name] from the entry and garbage-collects binaries nobody references any more. */
+    fun removeAttachment(
+        vault: Vault,
+        entryId: UUID,
+        name: String,
+    ): Vault {
+        val edited =
+            editEntry(vault, entryId) { entry ->
+                entry.copy(attachments = entry.attachments.filterNot { it.name == name })
+            }
+        return dropUnreferencedBinaries(edited)
+    }
+
+    /**
+     * Stores the contents of attachments that an edit has just referenced by [binaryIdOf], and drops the binaries
+     * nobody references any more, so a removed attachment does not linger in the saved file.
+     */
+    fun storeBinaries(
+        vault: Vault,
+        added: Collection<ByteArray>,
+    ): Vault {
+        added.forEach { require(it.size <= MAX_ATTACHMENT_BYTES) { "Attachment is too large." } }
+        val stored = added.associate { binaryIdOf(it) to Binary(it, protectedInMemory = false) }
+        return dropUnreferencedBinaries(vault.copy(binaries = vault.binaries + stored))
+    }
+
+    private fun dropUnreferencedBinaries(vault: Vault): Vault {
+        val referenced = referencedBinaryIds(vault.root)
+        val filtered = vault.binaries.filterKeys { it in referenced }
+        return if (filtered == vault.binaries) vault else vault.copy(binaries = filtered)
     }
 
     /** Moves an entry or a group into the group [targetId], recording when it was put there. */
@@ -267,3 +327,24 @@ internal fun Group.removeObject(id: UUID): Group =
         groups = groups.filterNot { it.id == id }.map { it.removeObject(id) },
         entries = entries.filterNot { it.id == id },
     )
+
+/** Every [BinaryId] referenced by an entry or by any of its history versions anywhere in [root]. */
+private fun referencedBinaryIds(root: Group): Set<BinaryId> {
+    val result = mutableSetOf<BinaryId>()
+
+    fun walk(group: Group) {
+        group.entries.forEach { entry ->
+            entry.attachments.forEach { result += it.id }
+            entry.history.forEach { version -> version.attachments.forEach { result += it.id } }
+        }
+        group.groups.forEach(::walk)
+    }
+    walk(root)
+    return result
+}
+
+/** The id of an attachment's binary: the lowercase hexadecimal SHA-256 of its content. */
+fun binaryIdOf(content: ByteArray): BinaryId {
+    val digest = MessageDigest.getInstance("SHA-256").digest(content)
+    return BinaryId(digest.joinToString("") { "%02x".format(it) })
+}

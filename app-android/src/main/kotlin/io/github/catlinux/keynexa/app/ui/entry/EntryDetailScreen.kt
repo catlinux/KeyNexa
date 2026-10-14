@@ -1,5 +1,11 @@
+@file:Suppress("MaxLineLength")
+
 package io.github.catlinux.keynexa.app.ui.entry
 
+import android.text.format.Formatter
+import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -27,17 +33,26 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import io.github.catlinux.keynexa.app.R
+import io.github.catlinux.keynexa.vault.Attachment
+import io.github.catlinux.keynexa.vault.Binary
+import io.github.catlinux.keynexa.vault.BinaryId
 import io.github.catlinux.keynexa.vault.Entry
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import java.io.IOException
 import java.time.Instant
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
@@ -70,11 +85,12 @@ private val STANDARD_FIELDS = setOf(Entry.TITLE, Entry.USER_NAME, Entry.PASSWORD
  * after [REVEAL_MILLIS] and never survives the screen, no secret value is written to a description, and copying a
  * secret goes through [onCopy] with `sensitive` set.
  */
-@Suppress("LongParameterList")
+@Suppress("LongParameterList", "LongMethod")
 @Composable
 fun EntryDetailScreen(
     entry: Entry,
     path: List<String>,
+    vaultBinaries: Map<BinaryId, Binary>,
     onEdit: () -> Unit,
     onDelete: () -> Unit,
     onCopy: (label: String, value: String, sensitive: Boolean) -> Unit,
@@ -82,6 +98,51 @@ fun EntryDetailScreen(
     onBack: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val context = LocalContext.current
+    val scope = rememberCoroutineScope()
+    var attachmentToSave by remember { mutableStateOf<Attachment?>(null) }
+    val saveLauncher =
+        rememberLauncherForActivityResult(ActivityResultContracts.CreateDocument("application/octet-stream")) { uri ->
+            val attachment = attachmentToSave
+            attachmentToSave = null
+            if (uri != null && attachment != null) {
+                val bytes = vaultBinaries[attachment.id]?.content
+                if (bytes == null) {
+                    Toast
+                        .makeText(
+                            context,
+                            context.getString(R.string.entry_detail_attachment_missing),
+                            Toast.LENGTH_SHORT,
+                        ).show()
+                } else {
+                    scope.launch {
+                        val saved =
+                            withContext(Dispatchers.IO) {
+                                try {
+                                    val stream =
+                                        context.contentResolver.openOutputStream(uri, "wt") ?: return@withContext false
+                                    stream.use { it.write(bytes) }
+                                    true
+                                } catch (failure: IOException) {
+                                    false
+                                }
+                            }
+                        Toast
+                            .makeText(
+                                context,
+                                context.getString(
+                                    if (saved) {
+                                        R.string.entry_detail_attachment_saved
+                                    } else {
+                                        R.string.entry_detail_attachment_save_failed
+                                    },
+                                ),
+                                Toast.LENGTH_SHORT,
+                            ).show()
+                    }
+                }
+            }
+        }
     var revealed by remember { mutableStateOf<String?>(null) }
     var askingToDelete by remember { mutableStateOf(false) }
     LaunchedEffect(revealed) {
@@ -105,7 +166,14 @@ fun EntryDetailScreen(
                         onCopy = onCopy,
                         onOpenUrl = onOpenUrl,
                     )
-                    EntryMetadata(entry = entry)
+                    EntryMetadata(
+                        entry = entry,
+                        vaultBinaries = vaultBinaries,
+                        onSaveAttachment = { attachment ->
+                            attachmentToSave = attachment
+                            saveLauncher.launch(attachment.name)
+                        },
+                    )
                 }
             }
             EntryActions(onEdit = onEdit, onDelete = { askingToDelete = true })
@@ -283,7 +351,12 @@ private fun CopyButton(
 
 /** What is known about the entry itself: attachments, when it changed and how many older versions it keeps. */
 @Composable
-private fun EntryMetadata(entry: Entry) {
+private fun EntryMetadata(
+    entry: Entry,
+    vaultBinaries: Map<BinaryId, Binary>,
+    onSaveAttachment: (Attachment) -> Unit,
+) {
+    val context = LocalContext.current
     Column(verticalArrangement = Arrangement.spacedBy(ItemGap)) {
         if (entry.attachments.isNotEmpty()) {
             Text(
@@ -291,8 +364,26 @@ private fun EntryMetadata(entry: Entry) {
                 style = MaterialTheme.typography.titleMedium,
             )
             entry.attachments.forEach { attachment ->
-                Text(text = attachment.name, style = MaterialTheme.typography.bodyLarge)
+                val size = vaultBinaries[attachment.id]?.content?.size?.toLong() ?: 0L
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Text(
+                        text = "${attachment.name} (${Formatter.formatShortFileSize(context, size)})",
+                        style = MaterialTheme.typography.bodyLarge,
+                        modifier = Modifier.weight(1f),
+                    )
+                    TextButton(onClick = { onSaveAttachment(attachment) }) {
+                        Text(text = stringResource(R.string.entry_detail_save_attachment))
+                    }
+                }
             }
+            Text(
+                text = stringResource(R.string.entry_detail_attachment_unencrypted),
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
         }
         entry.times.lastModified?.let { modified ->
             Text(

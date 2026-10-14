@@ -1,10 +1,14 @@
 package io.github.catlinux.keynexa.kdbx
 
 import io.github.catlinux.keynexa.vault.Argon2Variant
+import io.github.catlinux.keynexa.vault.Attachment
+import io.github.catlinux.keynexa.vault.Binary
+import io.github.catlinux.keynexa.vault.BinaryId
 import io.github.catlinux.keynexa.vault.Cipher
 import io.github.catlinux.keynexa.vault.Compression
 import io.github.catlinux.keynexa.vault.Credentials
 import io.github.catlinux.keynexa.vault.Entry
+import io.github.catlinux.keynexa.vault.FieldValue
 import io.github.catlinux.keynexa.vault.FormatVersion
 import io.github.catlinux.keynexa.vault.Group
 import io.github.catlinux.keynexa.vault.Kdf
@@ -17,6 +21,8 @@ import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertThrows
 import org.junit.Test
+import java.security.MessageDigest
+import java.util.HexFormat
 import java.util.UUID
 
 /** AC2 (unit part): what the engine writes back can be read again without losing the documented content. */
@@ -95,6 +101,74 @@ class KotpassKdbxEngineRoundTripTest {
                 engine.decode(first, credentials).withoutGenerator(),
                 engine.decode(second, credentials).withoutGenerator(),
             )
+        }
+    }
+
+    @Test
+    @Suppress("LongMethod")
+    fun attachmentsSurviveARoundTrip() {
+        val smallContent = "small attachment payload".toByteArray()
+        val largeContent = ByteArray(1024 * 1024) { (it % 251).toByte() }
+        val smallId =
+            BinaryId(
+                HexFormat.of().formatHex(
+                    MessageDigest.getInstance("SHA-256").digest(smallContent),
+                ),
+            )
+        val largeId =
+            BinaryId(
+                HexFormat.of().formatHex(
+                    MessageDigest.getInstance("SHA-256").digest(largeContent),
+                ),
+            )
+
+        val entryId = UUID.randomUUID()
+        val rootId = UUID.randomUUID()
+        val vault =
+            Vault(
+                format = newFormat(FormatVersion(4, 1), Cipher.Aes256, aesKdf()),
+                meta = VaultMeta(name = "attachments"),
+                root =
+                    Group(
+                        id = rootId,
+                        name = "Root",
+                        entries =
+                            listOf(
+                                Entry(
+                                    id = entryId,
+                                    fields = mapOf(Entry.TITLE to FieldValue("Entry")),
+                                    attachments =
+                                        listOf(
+                                            Attachment("small.bin", smallId),
+                                            Attachment("large.bin", largeId),
+                                        ),
+                                ),
+                            ),
+                    ),
+                binaries =
+                    mapOf(
+                        smallId to Binary(smallContent, protectedInMemory = false),
+                        largeId to Binary(largeContent, protectedInMemory = false),
+                    ),
+            )
+        val credentials = Credentials.of(password = NEW_PASSWORD.toCharArray())
+
+        try {
+            val decoded = engine.decode(engine.encode(vault, credentials), credentials)
+            val decodedEntry = decoded.root.entries.single()
+
+            val originalEntries = vault.root.entries
+            val originalEntry = originalEntries.single()
+            val originalAttachments = originalEntry.attachments
+            assertEquals(originalAttachments, decodedEntry.attachments)
+
+            val smallDecoded = decoded.binaries[smallId]?.content?.toList()
+            assertEquals(smallContent.toList(), smallDecoded)
+
+            val largeDecoded = decoded.binaries[largeId]?.content?.toList()
+            assertEquals(largeContent.toList(), largeDecoded)
+        } finally {
+            credentials.wipe()
         }
     }
 

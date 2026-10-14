@@ -140,6 +140,7 @@ private fun EntryDetail(
     EntryDetailScreen(
         entry = entry,
         path = vault.root.pathToEntry(entryId),
+        vaultBinaries = vault.binaries,
         onEdit = { navigator.push(Screen.EntryEdit(entryId, null)) },
         onDelete = {
             if (container.session.apply { editor.delete(it, entryId) }) navigator.back()
@@ -173,12 +174,18 @@ private fun EntryEdit(
     EntryEditScreen(
         initial = existing?.fields,
         isNew = screen.entryId == null,
-        onSave = { fields ->
+        initialAttachments = existing?.attachments.orEmpty(),
+        onSave = { fields, attachments, newBinaries ->
             val saved =
                 if (screen.entryId != null) {
-                    container.session.apply { v -> editor.editEntry(v, screen.entryId) { it.copy(fields = fields) } }
+                    container.session.apply { v ->
+                        editor.storeBinaries(
+                            editor.editEntry(v, screen.entryId) { it.copy(fields = fields, attachments = attachments) },
+                            newBinaries.values,
+                        )
+                    }
                 } else {
-                    addEntry(container, screen.groupId ?: vault.root.id, fields)
+                    addEntry(container, screen.groupId ?: vault.root.id, fields, attachments, newBinaries)
                 }
             if (saved) navigator.back()
         },
@@ -191,13 +198,18 @@ private fun addEntry(
     container: AppContainer,
     groupId: UUID,
     fields: Map<String, FieldValue>,
+    attachments: List<io.github.catlinux.keynexa.vault.Attachment> = emptyList(),
+    newBinaries: Map<io.github.catlinux.keynexa.vault.BinaryId, ByteArray> = emptyMap(),
 ): Boolean {
     val id = UUID.randomUUID()
     val creator = VaultEditor(newId = { id })
     val title = fields[Entry.TITLE]?.value.orEmpty()
     return container.session.apply { v ->
         val added = creator.addEntry(v, groupId, title)
-        added.copy(root = added.root.mapEntry(id) { it.copy(fields = fields) })
+        creator.storeBinaries(
+            added.copy(root = added.root.mapEntry(id) { it.copy(fields = fields, attachments = attachments) }),
+            newBinaries.values,
+        )
     }
 }
 

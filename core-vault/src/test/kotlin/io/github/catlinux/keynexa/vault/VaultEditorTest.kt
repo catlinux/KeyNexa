@@ -104,6 +104,118 @@ class VaultEditorTest {
     }
 
     @Test
+    fun addAttachmentStoresBinaryAndAttachmentAndCreatesHistory() {
+        val vault = editorVault()
+        val content = byteArrayOf(1, 2, 3, 4)
+
+        val edited = editor().addAttachment(vault, GITHUB_ID, "file.bin", content)
+
+        val entry = requireNotNull(edited.root.findEntry(GITHUB_ID))
+        val attachment = entry.attachments.single()
+        assertEquals("file.bin", attachment.name)
+        assertEquals(content.toList(), edited.binaries[attachment.id]?.content?.toList())
+        assertEquals(1, entry.history.size)
+    }
+
+    @Test
+    fun addAttachmentReplacesAnAttachmentWithTheSameName() {
+        val vault = editorVault()
+        val first = byteArrayOf(1, 2, 3)
+        val second = byteArrayOf(9, 8, 7)
+
+        var edited = editor().addAttachment(vault, GITHUB_ID, "file.bin", first)
+        edited = editor().addAttachment(edited, GITHUB_ID, "file.bin", second)
+
+        val entry = requireNotNull(edited.root.findEntry(GITHUB_ID))
+        assertEquals(1, entry.attachments.size)
+        assertEquals(second.toList(), edited.binaries[entry.attachments.single().id]?.content?.toList())
+    }
+
+    @Test
+    fun removeAttachmentDropsItFromTheEntry() {
+        val vault = editorVault()
+        val content = byteArrayOf(1, 2, 3)
+
+        val added = editor().addAttachment(vault, GITHUB_ID, "file.bin", content)
+        val removed = editor().removeAttachment(added, GITHUB_ID, "file.bin")
+
+        val entry = requireNotNull(removed.root.findEntry(GITHUB_ID))
+        assertTrue(entry.attachments.isEmpty())
+    }
+
+    @Test
+    fun removeAttachmentGarbageCollectsUnreferencedBinaries() {
+        val vault = editorVault(VaultMeta(name = VAULT_NAME, historyMaxItems = 0))
+        val content = byteArrayOf(1, 2, 3)
+
+        val added = editor().addAttachment(vault, GITHUB_ID, "file.bin", content)
+        val id = requireNotNull(added.root.findEntry(GITHUB_ID)).attachments.single().id
+        val removed = editor().removeAttachment(added, GITHUB_ID, "file.bin")
+
+        assertTrue(id !in removed.binaries)
+    }
+
+    @Test
+    fun removeAttachmentKeepsBinariesStillReferencedElsewhere() {
+        val vault = editorVault(VaultMeta(name = VAULT_NAME, historyMaxItems = 0))
+        val content = byteArrayOf(1, 2, 3)
+
+        var edited = editor().addAttachment(vault, GITHUB_ID, "shared.bin", content)
+        edited = editor().addAttachment(edited, MAIL_ID, "shared.bin", content)
+        val id = requireNotNull(edited.root.findEntry(GITHUB_ID)).attachments.single().id
+        edited = editor().removeAttachment(edited, GITHUB_ID, "shared.bin")
+
+        assertTrue(id in edited.binaries)
+        edited = editor().removeAttachment(edited, MAIL_ID, "shared.bin")
+        assertTrue(id !in edited.binaries)
+    }
+
+    @Test
+    fun storeBinariesAddsNewContentAndDropsWhatNobodyReferences() {
+        val vault = editorVault(VaultMeta(name = VAULT_NAME, historyMaxItems = 0))
+        val kept = byteArrayOf(9, 8, 7)
+        val withAttachment =
+            editor().editEntry(
+                vault,
+                GITHUB_ID,
+            ) { it.copy(attachments = listOf(Attachment("kept.bin", binaryIdOf(kept)))) }
+
+        val stored = editor().storeBinaries(withAttachment, listOf(kept, byteArrayOf(5)))
+
+        assertTrue(binaryIdOf(kept) in stored.binaries)
+        // The second content is referenced by nobody, so it is not kept in the file.
+        assertTrue(binaryIdOf(byteArrayOf(5)) !in stored.binaries)
+        val withoutAttachment = editor().editEntry(stored, GITHUB_ID) { it.copy(attachments = emptyList()) }
+        assertTrue(binaryIdOf(kept) !in editor().storeBinaries(withoutAttachment, emptyList()).binaries)
+    }
+
+    @Test
+    fun binaryIdIsTheLowercaseSha256OfTheContent() {
+        assertEquals(
+            "ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad",
+            binaryIdOf("abc".toByteArray()).hex,
+        )
+    }
+
+    @Test
+    fun addAttachmentRejectsOversizedContent() {
+        val vault = editorVault()
+
+        assertThrows(IllegalArgumentException::class.java) {
+            editor().addAttachment(vault, GITHUB_ID, "big.bin", ByteArray(MAX_ATTACHMENT_BYTES + 1))
+        }
+    }
+
+    @Test
+    fun addAttachmentRejectsBlankName() {
+        val vault = editorVault()
+
+        assertThrows(IllegalArgumentException::class.java) {
+            editor().addAttachment(vault, GITHUB_ID, "   ", byteArrayOf(1, 2, 3))
+        }
+    }
+
+    @Test
     fun anEditThatChangesNoContentReturnsTheSameVault() {
         val vault = editorVault()
         val editor = editor()
