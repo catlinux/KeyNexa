@@ -6,6 +6,8 @@ Pasos detallados: consulta la [hoja de ruta](ROADMAP.md).
 
 ## Prioridad alta (fase C — base del proyecto)
 
+- [ ] Probar el desbloqueo biométrico en un móvil real (matriz del ADR-0006): activar, desbloquear, una huella nueva lo invalida, contraseña exigida tras los días elegidos, contraseña cambiada en otro dispositivo; con y sin StrongBox, API 26-29 y 30+.
+
 - [ ] Primera publicación firmada de prueba: subir una etiqueta (con aprobación del responsable) y comprobar en GitHub el workflow, la firma y la suma de verificación.
 - [ ] Prueba diferencial de las bóvedas escritas por KeyNexa contra keepass-rs, y fuzzing con Jazzer (ADR-0005; el fuzzing por mutación y la comparación con keepassxc-cli ya se ejecutan).
 - [ ] Medir Argon2 de kotpass en un móvil real cuando la app abra una bóveda; decidir sobre argon2kt (consulta `docs/es/BENCHMARKS.md`).
@@ -22,7 +24,6 @@ Pasos detallados: consulta la [hoja de ruta](ROADMAP.md).
 - [ ] Mirar los cambios externos con menos coste: comparar primero tamaño y fecha de modificación y leer el archivo entero solo si difieren; mirar con menos frecuencia tras minutos sin actividad. Medir el consumo de batería en un móvil real antes y después.
 - [ ] Cuando un guardado falle por haber perdido el permiso, ofrecer reconectar la carpeta sin cerrar la bóveda; ofrecer restaurar la copia privada sin guardar tras un reinicio.
 - [ ] Borrado del portapapeles totalmente fiable (Android solo deja cambiar el portapapeles a la app que está delante).
-- [ ] Desbloqueo biométrico.
 
 ## Prioridad baja (más adelante)
 

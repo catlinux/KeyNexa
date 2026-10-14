@@ -15,7 +15,7 @@
 The project skeleton includes the following components, each under its own license:
 
 - **Kotlin standard library and Gradle plugins** — JetBrains, Apache-2.0.
-- **AndroidX Core, AndroidX Activity, Jetpack Compose (UI and Material 3)** — The Android Open Source Project, Apache-2.0.
+- **AndroidX Core, AndroidX Activity, AndroidX Biometric (and its AndroidX dependencies), Jetpack Compose (UI and Material 3)** — The Android Open Source Project, Apache-2.0.
 - **JUnit 4** — JUnit team, EPL-1.0 (unit tests only; not distributed with the app).
 - **kotpass 0.13.0** — Denis T. (copyright 2021), MIT. Origin: https://github.com/keemobile/kotpass, commit `4e0bd6b6b13e59d48ebe0bd9c06de3f918de6945`. Files: `third_party/kotpass/` (its `LICENSE.txt` is kept; local changes are listed in its README). KDBX engine.
 - **Okio 3.15.0** — Square, Inc., Apache-2.0. Origin: https://github.com/square/okio. Runtime dependency of kotpass, not vendored.

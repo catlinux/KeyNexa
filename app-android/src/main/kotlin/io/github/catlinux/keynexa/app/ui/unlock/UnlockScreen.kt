@@ -34,6 +34,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -122,8 +123,12 @@ fun UnlockScreen(
     onReconnect: () -> Unit,
     onBack: () -> Unit,
     modifier: Modifier = Modifier,
+    biometric: BiometricUi = BiometricUi(),
 ) {
     val form = remember { UnlockForm() }
+    LaunchedEffect(vault.location) {
+        if (biometric.available) biometric.onUnlock()
+    }
     DisposableEffect(Unit) {
         onDispose { form.clearKeyFile() }
     }
@@ -149,6 +154,7 @@ fun UnlockScreen(
                 Column(modifier = Modifier.fillMaxSize().verticalScroll(rememberScrollState())) {
                     if (loading) ProgressPanel()
                     PasswordSection(form = form, enabled = !loading, onSubmit = submit)
+                    if (biometric.notice != null) NoticePanel(text = stringResource(biometric.notice))
                     if (failure != null) ErrorPanel(error = failure, onReconnect = onReconnect)
                     KeyFilePicker(form = form, enabled = !loading)
                 }
@@ -160,7 +166,66 @@ fun UnlockScreen(
             ) {
                 Text(text = stringResource(R.string.unlock_action))
             }
+            BiometricButtons(biometric = biometric, loading = loading)
         }
+    }
+}
+
+/** Unlock with biometrics, and the way to stop using it for this vault. */
+@Composable
+private fun BiometricButtons(
+    biometric: BiometricUi,
+    loading: Boolean,
+) {
+    if (biometric.available) {
+        OutlinedButton(
+            onClick = biometric.onUnlock,
+            enabled = !loading,
+            modifier = Modifier.fillMaxWidth().heightIn(min = TouchTarget),
+        ) {
+            Text(text = stringResource(R.string.biometric_unlock_action))
+        }
+    }
+    if (biometric.enrolled) {
+        TextButton(
+            onClick = biometric.onForget,
+            enabled = !loading,
+            modifier = Modifier.fillMaxWidth().heightIn(min = TouchTarget),
+        ) {
+            Text(text = stringResource(R.string.biometric_forget))
+        }
+    }
+}
+
+/** What the unlock screen needs for biometric unlock; the defaults show nothing. */
+class BiometricUi(
+    /** The button is offered and the system prompt appears when the screen opens. */
+    val available: Boolean = false,
+    /** Biometric unlock is enabled for this vault, even if the password is due. */
+    val enrolled: Boolean = false,
+    /** Why the password is needed instead, as a string resource. */
+    val notice: Int? = null,
+    val onUnlock: () -> Unit = {},
+    val onForget: () -> Unit = {},
+)
+
+/** An explanation that is not an error. */
+@Composable
+private fun NoticePanel(
+    text: String,
+    modifier: Modifier = Modifier,
+) {
+    Surface(
+        modifier = modifier.fillMaxWidth().padding(vertical = ItemGap).semantics { liveRegion = LiveRegionMode.Polite },
+        shape = MaterialTheme.shapes.medium,
+        color = MaterialTheme.colorScheme.secondaryContainer,
+    ) {
+        Text(
+            text = text,
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onSecondaryContainer,
+            modifier = Modifier.padding(PanelPadding),
+        )
     }
 }
 

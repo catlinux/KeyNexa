@@ -6,6 +6,8 @@ Detailed steps: see the [roadmap](docs/ROADMAP.md).
 
 ## High priority (phase C — project foundation)
 
+- [ ] Test biometric unlock on a real phone (ADR-0006 matrix): enable, unlock, new fingerprint invalidates, password due after the chosen days, password changed on another device; with and without StrongBox, API 26-29 and 30+.
+
 - [ ] First signed test release: push a tag (with maintainer approval) and check the workflow, the signature and the checksum on GitHub.
 - [ ] Differential test of KeyNexa-written vaults against keepass-rs, and Jazzer fuzzing (ADR-0005; the mutation fuzzing and the keepassxc-cli comparison already run).
 - [ ] Measure kotpass Argon2 on a real phone once the app opens a vault; decide on argon2kt (see `docs/BENCHMARKS.md`).
@@ -22,7 +24,6 @@ Detailed steps: see the [roadmap](docs/ROADMAP.md).
 - [ ] Cheaper look for outside changes: compare size and modification time first and read the whole file only when they differ; look less often after minutes without activity. Measure the battery cost on a real phone before and after.
 - [ ] When a save fails because the grant was lost, offer to reconnect the folder without closing the vault; offer to restore the private unsaved copy after a restart.
 - [ ] Fully reliable clipboard clearing (Android only lets the app in front change the clipboard).
-- [ ] Biometric unlock.
 
 ## Low priority (later)
 

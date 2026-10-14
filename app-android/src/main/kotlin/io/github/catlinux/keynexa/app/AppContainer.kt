@@ -7,6 +7,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import io.github.catlinux.keynexa.app.nav.Navigator
 import io.github.catlinux.keynexa.app.security.AutoLock
+import io.github.catlinux.keynexa.app.security.BiometricKeys
+import io.github.catlinux.keynexa.app.security.BiometricStore
+import io.github.catlinux.keynexa.app.security.BiometricUnlock
 import io.github.catlinux.keynexa.app.settings.AppSettings
 import io.github.catlinux.keynexa.app.vault.KnownVaultsStore
 import io.github.catlinux.keynexa.app.vault.SessionState
@@ -38,6 +41,14 @@ class AppContainer(
     val navigator = Navigator()
     val settings = AppSettings(appContext)
     val session: VaultSession
+
+    val biometric =
+        BiometricUnlock(
+            context = appContext,
+            keys = BiometricKeys(appContext),
+            store = BiometricStore(File(appContext.noBackupFilesDir, "biometric"), now = System::currentTimeMillis),
+            passwordDays = { settings.values.biometricPasswordDays },
+        )
 
     /** True while the app is in front; the vault is only looked at for outside changes then. */
     var visible by mutableStateOf(false)

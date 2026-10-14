@@ -86,6 +86,7 @@ class VaultReaders(
  * never overlaps another operation on the same vault. State is published in [state]; screens only observe it.
  * Credentials are kept only while a vault is open and are overwritten by [lock].
  */
+@Suppress("TooManyFunctions")
 class VaultSession(
     private val storage: StoragePort,
     private val engine: KdbxEngine,
@@ -97,7 +98,14 @@ class VaultSession(
     private val mutableState = MutableStateFlow<SessionState>(SessionState.Closed)
     val state: StateFlow<SessionState> = mutableState.asStateFlow()
 
+    @Volatile
     private var credentials: Credentials? = null
+
+    /**
+     * The open vault's credentials in pre-hashed form, for enabling biometric unlock; the caller wipes them. Null
+     * when no vault is open.
+     */
+    fun hashedCredentials(): Credentials? = credentials?.let { engine.hashedForm(it) }
 
     /** Opens [vault]. Takes ownership of [credentials]: they are wiped on failure and when the session locks. */
     fun unlock(

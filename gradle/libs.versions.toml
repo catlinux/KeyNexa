@@ -4,6 +4,7 @@ kotlin = "2.2.21"
 composeBom = "2025.09.00"
 activityCompose = "1.10.1"
 coreKtx = "1.18.0"
+biometric = "1.1.0"
 junit = "4.13.2"
 okio = "3.15.0"
 detekt = "1.23.8"
@@ -12,6 +13,7 @@ licenseReport = "3.1.4"
 
 [libraries]
 androidx-activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "activityCompose" }
+androidx-biometric = { group = "androidx.biometric", name = "biometric", version.ref = "biometric" }
 androidx-compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "composeBom" }
 androidx-compose-material3 = { group = "androidx.compose.material3", name = "material3" }
 androidx-compose-ui = { group = "androidx.compose.ui", name = "ui" }

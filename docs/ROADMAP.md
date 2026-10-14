@@ -11,7 +11,7 @@ Legend: ✅ done · 🔄 in progress · ⏳ planned. Nothing is "done" until its
 | A — Research | Environment, KDBX libraries, licenses, Android constraints | 0.1.0 | ✅ |
 | B — Architecture and security | Architecture, threat model, MVP, license decision | 0.1.0 | ✅ |
 | C — Project foundation | Gradle multi-module skeleton, CI, lint/format, i18n, design system, release workflow | 0.2.0 – 0.4.0 | ✅ |
-| D — Secure MVP | Open/lock/edit vaults, safe save, external changes and merge. Done: safe save, merge, Android storage, screens, auto-lock and screen protection (0.5.0 – 0.8.x). Pending: fully reliable clipboard clearing and biometric unlock | 0.5.0 – 0.8.0 | 🔄 |
+| D — Secure MVP | Open/lock/edit vaults, safe save, external changes and merge. Done: safe save, merge, Android storage, screens, auto-lock and screen protection (0.5.0 – 0.8.x). Biometric unlock written (0.9.0, pending device test). Pending: fully reliable clipboard clearing | 0.5.0 – 0.9.0 | 🔄 |
 | E — Review | Dependency and security review, interoperability tests, docs, first pre-release | 0.9.0 | ⏳ |
 | Later | Autofill, credential provider, TOTP, Windows and Linux clients (once the Android app is functional) | 1.0.0+ | ⏳ |
 

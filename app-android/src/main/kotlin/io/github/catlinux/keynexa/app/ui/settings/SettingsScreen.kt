@@ -106,6 +106,7 @@ fun SettingsScreen(
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
+            BiometricSettings(values = values, onChange = onChange)
         }
     }
 }
@@ -206,6 +207,28 @@ private fun SwitchSetting(
         }
         Switch(checked = checked, onCheckedChange = null)
     }
+}
+
+/** How long biometric unlock may go without the master password. */
+@Composable
+private fun BiometricSettings(
+    values: SettingsValues,
+    onChange: (SettingsValues) -> Unit,
+) {
+    SectionTitle(text = stringResource(R.string.settings_section_biometric))
+    Text(text = stringResource(R.string.settings_biometric_days), style = MaterialTheme.typography.bodyLarge)
+    SettingsValues.BIOMETRIC_DAYS_CHOICES.forEach { days ->
+        OptionRow(
+            label = pluralStringResource(R.plurals.settings_days, days, days),
+            selected = values.biometricPasswordDays == days,
+            onSelect = { onChange(values.copy(biometricPasswordDays = days)) },
+        )
+    }
+    Text(
+        text = stringResource(R.string.settings_biometric_note),
+        style = MaterialTheme.typography.bodyMedium,
+        color = MaterialTheme.colorScheme.onSurfaceVariant,
+    )
 }
 
 /** The word the auto-lock delay is shown with: seconds, minutes, "immediately" or "never". */

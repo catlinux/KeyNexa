@@ -6,6 +6,21 @@ Todos los cambios notables de este proyecto se documentan en este archivo. El fo
 
 ## [Sin publicar]
 
+## [0.9.0] - 2026-10-14
+
+### Añadido
+
+- Desbloqueo biométrico (fase D6, ADR-0006). Tras un desbloqueo con contraseña, la app ofrece activarlo para esa bóveda (activar, ahora no o no volver a preguntar). Guarda, cifrados con una clave del Keystore de Android por bóveda que exige una biometría fuerte en cada uso (StrongBox si existe, invalidada al registrar nuevos datos biométricos o quitar el bloqueo de pantalla), el hash de la contraseña y del archivo de clave, nunca la contraseña; la derivación de clave se sigue ejecutando en cada desbloqueo. La contraseña se pide de nuevo tras 7 días sin escribirla (de 1 a 30 días en los ajustes) y siempre que la clave se invalide o los datos guardados ya no abran la bóveda, con un mensaje que explica el motivo. Un botón en la pantalla de desbloqueo deja de usarlo para esa bóveda.
+- Kotpass incorpora `Credentials.fromHashes` (cambio local anotado en su README) y el motor `KdbxEngine.hashedForm`, de modo que una bóveda se abre desde los componentes ya hasheados. Probado con todo el corpus de pruebas, incluidas las bóvedas con archivo de clave.
+
+### Cambiado
+
+- `MainActivity` extiende `FragmentActivity` (lo necesita `BiometricPrompt`) y la app depende de `androidx.biometric` 1.1.0 (Apache-2.0).
+
+### Nota
+
+- Aún no comprobado en un móvil real: las pruebas unitarias cubren las reglas de almacenamiento y el formato de los componentes, pero el Keystore y el diálogo necesitan la matriz de pruebas en dispositivo (en el TODO).
+
 ## [0.8.1] - 2026-10-14
 
 ### Añadido

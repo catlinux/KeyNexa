@@ -204,4 +204,29 @@
         <item quantity="other">%1$d minutos</item>
     </plurals>
     <string name="home_settings">Ajustes</string>
+    <plurals name="settings_days">
+        <item quantity="one">%1$d día</item>
+        <item quantity="many">%1$d días</item>
+        <item quantity="other">%1$d días</item>
+    </plurals>
+
+    <!-- Desbloqueo biométrico (ADR-0006). -->
+    <string name="settings_section_biometric">Desbloqueo biométrico</string>
+    <string name="settings_biometric_days">Pedir de nuevo la contraseña maestra tras</string>
+    <string name="settings_biometric_note">El desbloqueo biométrico se activa por bóveda. Sea cual sea la opción, la contraseña también se pide de nuevo cuando se añaden huellas o rostros nuevos o cambia el bloqueo de pantalla.</string>
+    <string name="biometric_unlock_action">Desbloquear con biometría</string>
+    <string name="biometric_prompt_title">Desbloquear KeyNexa</string>
+    <string name="biometric_prompt_enable_title">Activar el desbloqueo biométrico</string>
+    <string name="biometric_prompt_negative">Usar la contraseña</string>
+    <string name="biometric_forget">Dejar de usar biometría en esta bóveda</string>
+    <string name="biometric_notice_password_due">Por seguridad, escribe la contraseña maestra: hace tiempo que no la usas.</string>
+    <string name="biometric_notice_invalidated">Han cambiado tus datos biométricos o el bloqueo de pantalla, así que se desactivó el desbloqueo biométrico de esta bóveda. Escribe la contraseña maestra; después puedes activarlo otra vez.</string>
+    <string name="biometric_notice_unusable">El desbloqueo biométrico dejó de funcionar y se desactivó para esta bóveda. Escribe la contraseña maestra.</string>
+    <string name="biometric_notice_changed">Los datos guardados ya no abren esta bóveda (quizá cambió la contraseña en otro dispositivo), así que se desactivó el desbloqueo biométrico. Escribe la contraseña maestra.</string>
+    <string name="biometric_notice_enable_failed">No se pudo activar el desbloqueo biométrico.</string>
+    <string name="biometric_offer_title">¿Desbloquear con biometría?</string>
+    <string name="biometric_offer_message">Puedes abrir esta bóveda con tu huella o tu rostro en lugar de escribir la contraseña maestra. La contraseña nunca se guarda y se vuelve a pedir de vez en cuando.</string>
+    <string name="biometric_offer_enable">Activar</string>
+    <string name="biometric_offer_later">Ahora no</string>
+    <string name="biometric_offer_never">No volver a preguntar</string>
 </resources>

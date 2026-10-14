@@ -15,12 +15,18 @@ data class SettingsValues(
     val allowScreenshots: Boolean = false,
     /** Seconds a copied secret stays on the clipboard. */
     val clipboardSeconds: Int = DEFAULT_CLIPBOARD_SECONDS,
+    /** Days after which the master password is asked again even if biometric unlock is on (ADR-0006). */
+    val biometricPasswordDays: Int = DEFAULT_BIOMETRIC_PASSWORD_DAYS,
 ) {
     companion object {
         const val LOCK_IMMEDIATELY = 0
         const val NEVER_LOCK = -1
         const val DEFAULT_AUTO_LOCK_SECONDS = 60
         const val DEFAULT_CLIPBOARD_SECONDS = 30
+        const val DEFAULT_BIOMETRIC_PASSWORD_DAYS = 7
+
+        /** The choices offered for how long biometric unlock may go without the password, in days. */
+        val BIOMETRIC_DAYS_CHOICES = listOf(1, 3, 7, 14, 30)
 
         /** The choices offered for the auto-lock delay, in seconds. */
         val AUTO_LOCK_CHOICES = listOf(LOCK_IMMEDIATELY, 15, 30, 60, 300, 900, NEVER_LOCK)
@@ -45,6 +51,7 @@ class AppSettings(
             putBoolean(SCREEN_OFF, new.lockOnScreenOff)
             putBoolean(SCREENSHOTS, new.allowScreenshots)
             putInt(CLIPBOARD, new.clipboardSeconds)
+            putInt(BIOMETRIC_DAYS, new.biometricPasswordDays)
         }
         values = new
     }
@@ -56,6 +63,7 @@ class AppSettings(
             lockOnScreenOff = preferences.getBoolean(SCREEN_OFF, defaults.lockOnScreenOff),
             allowScreenshots = preferences.getBoolean(SCREENSHOTS, defaults.allowScreenshots),
             clipboardSeconds = preferences.getInt(CLIPBOARD, defaults.clipboardSeconds),
+            biometricPasswordDays = preferences.getInt(BIOMETRIC_DAYS, defaults.biometricPasswordDays),
         )
     }
 
@@ -65,5 +73,6 @@ class AppSettings(
         const val SCREEN_OFF = "lock_on_screen_off"
         const val SCREENSHOTS = "allow_screenshots"
         const val CLIPBOARD = "clipboard_seconds"
+        const val BIOMETRIC_DAYS = "biometric_password_days"
     }
 }

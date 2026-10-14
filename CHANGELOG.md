@@ -6,6 +6,21 @@ All notable changes to this project are documented in this file. The format is b
 
 ## [Unreleased]
 
+## [0.9.0] - 2026-10-14
+
+### Added
+
+- Biometric unlock (phase D6, ADR-0006). After a password unlock the app offers to enable it for that vault (enable, not now, or never ask again). It stores, encrypted with a per-vault Android Keystore key that needs a strong biometric on every use (StrongBox when available, invalidated when new biometrics are enrolled or the screen lock is removed), the hash of the password and of the key file, never the password; the key derivation still runs on each unlock. The password is asked again after 7 days without typing it (1 to 30 days in the settings) and whenever the key is invalidated or the stored data no longer opens the vault, with a message that explains why. A button on the unlock screen stops using it for that vault.
+- Kotpass gains `Credentials.fromHashes` (local change recorded in its README) and the engine `KdbxEngine.hashedForm`, so a vault opens from the pre-hashed components. Tested against the whole test corpus, including key-file vaults.
+
+### Changed
+
+- `MainActivity` extends `FragmentActivity` (needed by `BiometricPrompt`) and the app depends on `androidx.biometric` 1.1.0 (Apache-2.0).
+
+### Note
+
+- Not checked on a real phone yet: the unit tests cover the storage rules and the component format, but the Keystore and the prompt need the device test matrix (listed in the TODO).
+
 ## [0.8.1] - 2026-10-14
 
 ### Added

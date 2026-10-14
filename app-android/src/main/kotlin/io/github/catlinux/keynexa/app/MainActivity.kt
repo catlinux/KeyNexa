@@ -2,7 +2,6 @@ package io.github.catlinux.keynexa.app
 
 import android.os.Bundle
 import android.view.WindowManager
-import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -10,9 +9,10 @@ import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
+import androidx.fragment.app.FragmentActivity
 import io.github.catlinux.keynexa.app.ui.theme.KeyNexaTheme
 
-class MainActivity : ComponentActivity() {
+class MainActivity : FragmentActivity() {
     private val container: AppContainer get() = (application as KeyNexaApplication).container
 
     override fun onCreate(savedInstanceState: Bundle?) {

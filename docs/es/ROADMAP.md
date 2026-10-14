@@ -11,7 +11,7 @@ Leyenda: ✅ hecho · 🔄 en curso · ⏳ planificado. Nada está «hecho» has
 | A — Investigación | Entorno, bibliotecas KDBX, licencias, restricciones de Android | 0.1.0 | ✅ |
 | B — Arquitectura y seguridad | Arquitectura, modelo de amenazas, MVP, decisión de licencia | 0.1.0 | ✅ |
 | C — Base del proyecto | Esqueleto multimódulo de Gradle, CI, lint/formato, i18n, sistema de diseño, flujo de publicación | 0.2.0 – 0.4.0 | ✅ |
-| D — MVP seguro | Abrir/bloquear/editar bóvedas, guardado seguro, cambios externos y fusión. Hecho: guardado seguro, fusión, almacenamiento Android, pantallas, bloqueo automático y protección de pantalla (0.5.0 – 0.8.x). Pendiente: borrado del portapapeles totalmente fiable y desbloqueo biométrico | 0.5.0 – 0.8.0 | 🔄 |
+| D — MVP seguro | Abrir/bloquear/editar bóvedas, guardado seguro, cambios externos y fusión. Hecho: guardado seguro, fusión, almacenamiento Android, pantallas, bloqueo automático y protección de pantalla (0.5.0 – 0.8.x). Desbloqueo biométrico escrito (0.9.0, pendiente de probar en dispositivo). Pendiente: borrado del portapapeles totalmente fiable | 0.5.0 – 0.9.0 | 🔄 |
 | E — Revisión | Revisión de dependencias y de seguridad, pruebas de interoperabilidad, documentación, primera versión preliminar | 0.9.0 | ⏳ |
 | Más adelante | Autorrelleno, proveedor de credenciales, TOTP, clientes de Windows y Linux (cuando la app de Android sea funcional) | 1.0.0+ | ⏳ |
 

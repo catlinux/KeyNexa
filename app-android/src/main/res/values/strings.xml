@@ -201,4 +201,28 @@
         <item quantity="other">%1$d minutes</item>
     </plurals>
     <string name="home_settings">Settings</string>
+    <plurals name="settings_days">
+        <item quantity="one">%1$d day</item>
+        <item quantity="other">%1$d days</item>
+    </plurals>
+
+    <!-- Biometric unlock (ADR-0006). -->
+    <string name="settings_section_biometric">Biometric unlock</string>
+    <string name="settings_biometric_days">Ask for the master password again after</string>
+    <string name="settings_biometric_note">Biometric unlock is enabled per vault. Whatever the choice, the password is also asked again when new fingerprints or faces are added or the screen lock changes.</string>
+    <string name="biometric_unlock_action">Unlock with biometrics</string>
+    <string name="biometric_prompt_title">Unlock KeyNexa</string>
+    <string name="biometric_prompt_enable_title">Enable biometric unlock</string>
+    <string name="biometric_prompt_negative">Use the password</string>
+    <string name="biometric_forget">Stop using biometrics for this vault</string>
+    <string name="biometric_notice_password_due">For your security, type the master password: it has been a while since you last did.</string>
+    <string name="biometric_notice_invalidated">Your biometrics or screen lock changed, so biometric unlock was turned off for this vault. Type the master password; you can enable it again afterwards.</string>
+    <string name="biometric_notice_unusable">Biometric unlock stopped working and was turned off for this vault. Type the master password.</string>
+    <string name="biometric_notice_changed">The stored data no longer opens this vault (the password may have changed on another device), so biometric unlock was turned off. Type the master password.</string>
+    <string name="biometric_notice_enable_failed">Biometric unlock could not be enabled.</string>
+    <string name="biometric_offer_title">Unlock with biometrics?</string>
+    <string name="biometric_offer_message">You can open this vault with your fingerprint or face instead of typing the master password. The password itself is never stored, and it is asked again from time to time.</string>
+    <string name="biometric_offer_enable">Enable</string>
+    <string name="biometric_offer_later">Not now</string>
+    <string name="biometric_offer_never">Don’t ask again</string>
 </resources>

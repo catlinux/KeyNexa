@@ -57,7 +57,7 @@ Fases A y B terminadas en 0.1.0 (documentación en `docs/`). Este plan lo ejecut
   - [ ] **D4.5 Cierre**: revisión, accesibilidad, strings en/es, documentación y versión 0.7.0.
 - [x] **D5. Protecciones** · 0.8.0–0.8.1 (hecho y comprobado en dispositivo: AC6 y AC7 en su parte de pruebas unitarias; falta el borrado fiable del portapapeles, ver TODO)  · Sonnet (alto), sin delegar.
   - Bloqueo manual/temporizador/pantalla apagada, `FLAG_SECURE`, portapapeles sensible con borrado, flags de IME, limpieza de memoria al bloquear. Terminado: AC6, AC7.
-- [ ] **D6. Desbloqueo biométrico** · 0.8.0 · **Opus (alto)** diseña y revisa; Sonnet implementa.
+- [x] **D6. Desbloqueo biométrico** · 0.9.0 (escrito y con pruebas unitarias; falta la matriz en dispositivo, ver TODO) · **Opus (alto)** diseña y revisa; Sonnet implementa.
   - Diseño cerrado en ADR-0006 (docs/decisions/0006-biometric-unlock.md): seguirlo al pie de la letra. Keystore AES-GCM, `setUserAuthenticationRequired`, `BIOMETRIC_STRONG`, `CryptoObject`, invalidación por nuevas huellas, StrongBox si existe, reintroducir contraseña periódicamente.
 
 - [ ] **D7. Fusión automática de copias de conflicto** · 0.8.2/0.9.0 · Opus diseña (reglas de «ya fusionado» y borrado con permiso), Sonnet implementa.

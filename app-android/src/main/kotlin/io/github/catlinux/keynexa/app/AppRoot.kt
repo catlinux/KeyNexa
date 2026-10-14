@@ -11,15 +11,21 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
+import androidx.fragment.app.FragmentActivity
 import io.github.catlinux.keynexa.app.nav.Screen
+import io.github.catlinux.keynexa.app.security.BiometricProblem
+import io.github.catlinux.keynexa.app.security.BiometricTexts
 import io.github.catlinux.keynexa.app.ui.home.CreateVaultScreen
 import io.github.catlinux.keynexa.app.ui.home.HomeNoticeDialog
 import io.github.catlinux.keynexa.app.ui.home.HomeScreen
 import io.github.catlinux.keynexa.app.ui.home.PickVaultDialog
 import io.github.catlinux.keynexa.app.ui.settings.SettingsScreen
+import io.github.catlinux.keynexa.app.ui.unlock.BiometricOfferDialog
+import io.github.catlinux.keynexa.app.ui.unlock.BiometricUi
 import io.github.catlinux.keynexa.app.ui.unlock.UnlockScreen
 import io.github.catlinux.keynexa.app.vault.KnownVault
 import io.github.catlinux.keynexa.app.vault.SessionState
+import io.github.catlinux.keynexa.app.vault.UnlockError
 import io.github.catlinux.keynexa.platform.SafVaultAccess
 import io.github.catlinux.keynexa.vault.Credentials
 import io.github.catlinux.keynexa.vault.NewVault
@@ -141,6 +147,148 @@ private class VaultFileActions(
     }
 }
 
+/**
+ * Biometric unlock around the session (ADR-0006): the prompt, the offer after a password unlock, and the messages
+ * when the biometric path ends. [viaBiometric] says how the current unlock attempt was started, so a stored blob
+ * that no longer opens the vault is dropped instead of retried.
+ */
+private class BiometricActions(
+    private val container: AppContainer,
+) {
+    /** Bumped when the stored state changes, so the screens ask again. */
+    var version by mutableStateOf(0)
+        private set
+
+    var notice by mutableStateOf<Int?>(null)
+        private set
+
+    /** The vault for which the enable offer is showing. */
+    var offer by mutableStateOf<KnownVault?>(null)
+        private set
+
+    var viaBiometric = false
+        private set
+
+    private var wasOpen = false
+
+    private val bio get() = container.biometric
+
+    fun uiFor(
+        vault: KnownVault,
+        activity: FragmentActivity?,
+        context: android.content.Context,
+    ): BiometricUi {
+        if (version < 0) return BiometricUi()
+        val location = vault.location.value
+        val enrolled = bio.isEnrolled(location)
+        val available = enrolled && activity != null && bio.canUnlock(location)
+        return BiometricUi(
+            available = available,
+            enrolled = enrolled,
+            notice = notice ?: R.string.biometric_notice_password_due.takeIf { enrolled && !available },
+            onUnlock = { if (activity != null) unlock(activity, vault, context) },
+            onForget = { forget(vault) },
+        )
+    }
+
+    private fun texts(context: android.content.Context) =
+        BiometricTexts(
+            title = context.getString(R.string.biometric_prompt_title),
+            negative = context.getString(R.string.biometric_prompt_negative),
+        )
+
+    private fun unlock(
+        activity: FragmentActivity,
+        vault: KnownVault,
+        context: android.content.Context,
+    ) {
+        notice = null
+        bio.unlock(activity, vault.location.value, texts(context)) { credentials, problem ->
+            if (credentials != null) {
+                viaBiometric = true
+                container.session.unlock(vault, credentials)
+            } else {
+                notice =
+                    when (problem) {
+                        BiometricProblem.Invalidated -> R.string.biometric_notice_invalidated
+                        BiometricProblem.Unusable -> R.string.biometric_notice_unusable
+                        BiometricProblem.PasswordDue -> R.string.biometric_notice_password_due
+                        BiometricProblem.Cancelled, null -> null
+                    }
+                version++
+            }
+        }
+    }
+
+    fun passwordUnlock(
+        vault: KnownVault,
+        credentials: io.github.catlinux.keynexa.vault.Credentials,
+    ) {
+        viaBiometric = false
+        notice = null
+        container.session.unlock(vault, credentials)
+    }
+
+    private fun forget(vault: KnownVault) {
+        bio.remove(vault.location.value)
+        notice = null
+        version++
+    }
+
+    /** The session reached a new state: drop a stored blob that failed, or offer biometrics after a password unlock. */
+    fun onState(state: SessionState) {
+        val justOpened = state is SessionState.Open && !wasOpen
+        wasOpen = state is SessionState.Open
+        when {
+            state is SessionState.Failed && viaBiometric && state.error == UnlockError.WrongCredentials -> {
+                bio.remove(state.vault.location.value)
+                notice = R.string.biometric_notice_changed
+                viaBiometric = false
+                version++
+            }
+            justOpened && state is SessionState.Open -> {
+                val location = state.vault.location.value
+                if (!viaBiometric) {
+                    bio.passwordTyped(location)
+                    if (bio.shouldOffer(location)) offer = state.vault
+                }
+                viaBiometric = false
+            }
+        }
+    }
+
+    fun enable(
+        activity: FragmentActivity,
+        context: android.content.Context,
+    ) {
+        val vault = offer ?: return
+        offer = null
+        val hashed = container.session.hashedCredentials() ?: return
+        bio.enroll(
+            activity,
+            vault.location.value,
+            BiometricTexts(
+                title = context.getString(R.string.biometric_prompt_enable_title),
+                negative = context.getString(R.string.biometric_offer_later),
+            ),
+            hashed,
+        ) { done ->
+            hashed.wipe()
+            if (!done) notice = R.string.biometric_notice_enable_failed
+            version++
+        }
+    }
+
+    fun later() {
+        offer = null
+    }
+
+    fun never() {
+        offer?.let { bio.decline(it.location.value) }
+        offer = null
+    }
+}
+
 /** Connects the screens to the session: navigation, the system folder pickers and the list of known vaults. */
 @Composable
 fun AppRoot(container: AppContainer) {
@@ -149,12 +297,15 @@ fun AppRoot(container: AppContainer) {
     val state by session.state.collectAsState()
     val context = LocalContext.current
     val actions = remember { VaultFileActions(container) }
+    val biometric = remember { BiometricActions(container) }
+    val activity = context as? FragmentActivity
     val openPicker = rememberLauncherForActivityResult(OpenVaultFolder(), actions::folderChosenToOpen)
     val createPicker = rememberLauncherForActivityResult(OpenVaultFolder(), actions::folderChosenToCreate)
 
     LaunchedEffect(state) {
         if (state is SessionState.Open && navigator.current is Screen.Unlock) navigator.push(Screen.Group(null))
     }
+    LaunchedEffect(state) { biometric.onState(state) }
     val isOpen = state is SessionState.Open
     LaunchedEffect(isOpen, container.visible) {
         // Another device or program may have changed the file: look every few seconds while the app is in front.
@@ -170,24 +321,34 @@ fun AppRoot(container: AppContainer) {
         navigator.reset()
     }
 
-    AppScreens(container, actions, state, onOpenFolder = {
+    AppScreens(container, actions, biometric, state, onOpenFolder = {
         openPicker.launch(null)
     }, onCreateFolder = { createPicker.launch(null) })
     actions.choices?.let { PickVaultDialog(it, onPick = actions::open, onDismiss = actions::dismissChoices) }
+    if (biometric.offer != null && activity != null) {
+        BiometricOfferDialog(
+            onEnable = { biometric.enable(activity, context) },
+            onLater = biometric::later,
+            onNever = biometric::never,
+        )
+    }
     actions.notice?.let { HomeNoticeDialog(it, onDismiss = actions::dismissNotice) }
 }
 
 /** The screen for the current navigation state, connected to the session and the file actions. */
+@Suppress("LongParameterList")
 @Composable
 private fun AppScreens(
     container: AppContainer,
     actions: VaultFileActions,
+    biometric: BiometricActions,
     state: SessionState,
     onOpenFolder: () -> Unit,
     onCreateFolder: () -> Unit,
 ) {
     val navigator = container.navigator
     val session = container.session
+    val context = LocalContext.current
     when (val screen = navigator.current) {
         Screen.Home ->
             HomeScreen(
@@ -216,7 +377,8 @@ private fun AppScreens(
             UnlockScreen(
                 vault = screen.vault,
                 state = state,
-                onUnlock = { session.unlock(screen.vault, it) },
+                onUnlock = { biometric.passwordUnlock(screen.vault, it) },
+                biometric = biometric.uiFor(screen.vault, context as? FragmentActivity, context),
                 onReconnect = {
                     actions.beginReconnect(screen.vault)
                     onOpenFolder()
