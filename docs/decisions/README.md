@@ -12,5 +12,6 @@ Each record explains one important decision: context, options, decision and cons
 | [0004](0004-storage-sync-and-safe-save.md) | Storage, Syncthing and safe save | Accepted |
 | [0005](0005-reinforced-kotpass.md) | Reinforced kotpass: vendored module, differential tests, fuzzing | Accepted |
 | [0006](0006-biometric-unlock.md) | Biometric unlock: Keystore-wrapped composite key, per-use biometrics | Accepted |
+| [0007](0007-conflict-copies.md) | Merging Syncthing conflict copies: automatic merge, deletion only with consent | Accepted |
 
 Template for new records: `docs/decisions/NNNN-short-title.md` and its translation `docs/es/decisions/NNNN-short-title.md`, with the sections *Context*, *Options*, *Decision*, *Consequences*.
