@@ -178,4 +178,29 @@
     <string name="home_no_vaults_in_folder">No hay ninguna bóveda .kdbx en esa carpeta. Elige la carpeta que contiene el archivo de tu bóveda.</string>
     <string name="home_cannot_create_in_folder">No se ha podido crear la bóveda en esa carpeta. Elige otra.</string>
     <string name="home_notice_ok">Aceptar</string>
+
+    <!-- Ajustes: cuándo se bloquea la bóveda y qué hace la app con la pantalla y el portapapeles. -->
+    <string name="settings_title">Ajustes</string>
+    <string name="settings_back">Volver</string>
+    <string name="settings_section_lock">Bloqueo</string>
+    <string name="settings_auto_lock">Bloquear tras estar en segundo plano</string>
+    <string name="settings_lock_on_screen_off">Bloquear al apagar la pantalla</string>
+    <string name="settings_section_privacy">Privacidad</string>
+    <string name="settings_allow_screenshots">Permitir capturas de pantalla</string>
+    <string name="settings_allow_screenshots_help">Si está desactivado, la app no se puede capturar ni grabar y se ve en blanco en las apps recientes. Recomendado.</string>
+    <string name="settings_clipboard_delay">Tiempo que un secreto copiado queda en el portapapeles</string>
+    <string name="settings_clipboard_note">Android solo permite borrar el portapapeles cuando KeyNexa está delante: si copias y cambias de app, se borra al volver. Al bloquear se borra siempre.</string>
+    <string name="settings_immediately">Inmediatamente</string>
+    <string name="settings_never">Nunca</string>
+    <string name="settings_no_lock_warning">Con este ajuste la bóveda sigue abierta hasta que la bloqueas a mano, lo cual es menos seguro.</string>
+    <plurals name="settings_seconds">
+        <item quantity="one">%1$d segundo</item>
+        <item quantity="many">%1$d segundos</item>
+        <item quantity="other">%1$d segundos</item>
+    </plurals>
+    <plurals name="settings_minutes">
+        <item quantity="one">%1$d minuto</item>
+        <item quantity="many">%1$d minutos</item>
+        <item quantity="other">%1$d minutos</item>
+    </plurals>
 </resources>

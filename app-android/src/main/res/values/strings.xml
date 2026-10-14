@@ -177,4 +177,27 @@
     <string name="home_no_vaults_in_folder">There is no .kdbx vault in that folder. Choose the folder that holds your vault file.</string>
     <string name="home_cannot_create_in_folder">The vault could not be created in that folder. Choose another one.</string>
     <string name="home_notice_ok">OK</string>
+
+    <!-- Settings: when the vault locks itself and what the app does with the screen and the clipboard. -->
+    <string name="settings_title">Settings</string>
+    <string name="settings_back">Back</string>
+    <string name="settings_section_lock">Locking</string>
+    <string name="settings_auto_lock">Lock after being in the background</string>
+    <string name="settings_lock_on_screen_off">Lock when the screen turns off</string>
+    <string name="settings_section_privacy">Privacy</string>
+    <string name="settings_allow_screenshots">Allow screenshots</string>
+    <string name="settings_allow_screenshots_help">If it is off, the app cannot be captured or recorded and it shows blank in the recent apps. Recommended.</string>
+    <string name="settings_clipboard_delay">How long a copied secret stays on the clipboard</string>
+    <string name="settings_clipboard_note">Android only lets KeyNexa clear the clipboard while KeyNexa is in front: if you copy and switch apps, it is cleared when you come back. Locking always clears it.</string>
+    <string name="settings_immediately">Immediately</string>
+    <string name="settings_never">Never</string>
+    <string name="settings_no_lock_warning">With this setting the vault stays open until you lock it by hand, which is less safe.</string>
+    <plurals name="settings_seconds">
+        <item quantity="one">%1$d second</item>
+        <item quantity="other">%1$d seconds</item>
+    </plurals>
+    <plurals name="settings_minutes">
+        <item quantity="one">%1$d minute</item>
+        <item quantity="other">%1$d minutes</item>
+    </plurals>
 </resources>
