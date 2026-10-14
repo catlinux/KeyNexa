@@ -41,6 +41,15 @@ interface StoragePort {
     /** Files in the same folder as [location], excluding the file itself. Empty if the folder cannot be listed. */
     fun listSiblings(location: VaultLocation): List<SiblingFile>
 
+    /** The file's real name, without any directory part: what the folder calls it, not what the app shows. */
+    fun name(location: VaultLocation): String
+
+    /**
+     * Deletes the file. It must fail with [java.io.IOException] when the provider refuses or the file is already
+     * gone, so the caller can keep for another attempt what it could not delete.
+     */
+    fun delete(location: VaultLocation)
+
     /**
      * Replaces the whole content of the file with [data]. Implementations must truncate: on Android open with mode
      * `"rwt"` and, where a provider ignores the truncation, truncate explicitly. The caller does not trust this

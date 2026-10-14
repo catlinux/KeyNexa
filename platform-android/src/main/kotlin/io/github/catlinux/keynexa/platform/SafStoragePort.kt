@@ -47,6 +47,26 @@ class SafStoragePort(
             emptyList()
         }
 
+    override fun name(location: VaultLocation): String =
+        guarded {
+            val uri = uriOf(location)
+            // A conflict copy is found by the file's real name, which is the provider's display name.
+            val projection = arrayOf(DocumentsContract.Document.COLUMN_DISPLAY_NAME)
+            val cursor = resolver.query(uri, projection, null, null, null)
+            cursor?.use {
+                if (!it.moveToFirst()) throw FileNotFoundException("document not found")
+                it.getString(0) ?: throw IOException("provider gave no display name")
+            } ?: throw IOException("provider gave no document")
+        }
+
+    override fun delete(location: VaultLocation) {
+        guarded {
+            if (!DocumentsContract.deleteDocument(resolver, uriOf(location))) {
+                throw IOException("provider did not delete the document")
+            }
+        }
+    }
+
     override fun write(
         location: VaultLocation,
         data: ByteArray,
@@ -84,8 +104,14 @@ class SafStoragePort(
         val authority = uri.authority ?: return emptyList()
         val treeId = DocumentsContract.getTreeDocumentId(uri)
         val documentId = DocumentsContract.getDocumentId(uri)
-        val parentId = parentIdOf(uri, documentId) ?: return emptyList()
-        val children = DocumentsContract.buildChildDocumentsUriUsingTree(treeUriOf(authority, treeId), parentId)
+        // Providers without findDocumentPath use "<root>:<relative/path>" ids (the external storage provider).
+        val path = DocumentsContract.findDocumentPath(resolver, uri)?.path
+        val parentId =
+            path?.dropLast(1)?.lastOrNull()
+                ?: documentId.substringBeforeLast('/', "").takeIf { it.isNotEmpty() }
+                ?: return emptyList()
+        val tree = DocumentsContract.buildTreeDocumentUri(authority, treeId)
+        val children = DocumentsContract.buildChildDocumentsUriUsingTree(tree, parentId)
         val projection =
             arrayOf(
                 DocumentsContract.Document.COLUMN_DOCUMENT_ID,
@@ -99,7 +125,7 @@ class SafStoragePort(
                 val id = cursor.getString(0)
                 val name = cursor.getString(1)
                 if (id == documentId || name == null) continue
-                val child = DocumentsContract.buildDocumentUriUsingTree(treeUriOf(authority, treeId), id)
+                val child = DocumentsContract.buildDocumentUriUsingTree(tree, id)
                 val metadata =
                     FileMetadata(
                         cursor.longOrNull(COL_SIZE),
@@ -110,21 +136,6 @@ class SafStoragePort(
         }
         return result
     }
-
-    private fun parentIdOf(
-        uri: Uri,
-        documentId: String,
-    ): String? {
-        val path = DocumentsContract.findDocumentPath(resolver, uri)?.path
-        path?.dropLast(1)?.lastOrNull()?.let { return it }
-        // Providers without findDocumentPath that use "<root>:<relative/path>" ids (the external storage provider).
-        return documentId.substringBeforeLast('/', "").takeIf { it.isNotEmpty() }
-    }
-
-    private fun treeUriOf(
-        authority: String,
-        treeId: String,
-    ): Uri = DocumentsContract.buildTreeDocumentUri(authority, treeId)
 
     private fun uriOf(location: VaultLocation): Uri = Uri.parse(location.value)
 

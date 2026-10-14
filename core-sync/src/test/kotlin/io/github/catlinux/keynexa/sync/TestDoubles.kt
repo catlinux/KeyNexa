@@ -250,6 +250,10 @@ internal class FakeStorage(
     var failReadAt: Int? = null
     var failWriteAt: Int? = null
 
+    /** A read or a delete of this file fails with [IOException], whatever the call number. */
+    var failReadFor: VaultLocation? = null
+    var failDeleteFor: VaultLocation? = null
+
     /** A write that succeeds but stores nothing: a provider that lies. */
     var silentWrite: Boolean = false
 
@@ -294,13 +298,23 @@ internal class FakeStorage(
         readCount++
         operations += "read#$readCount"
         reads[readCount]?.invoke(location)
-        if (readCount == failReadAt) throw IOException("injected read failure")
+        if (readCount == failReadAt || location == failReadFor) throw IOException("injected read failure")
         return files[location]?.copyOf() ?: throw IOException("no file at $location")
     }
 
     override fun metadata(location: VaultLocation): FileMetadata = FileMetadata(files[location]?.size?.toLong(), null)
 
-    override fun listSiblings(location: VaultLocation): List<SiblingFile> = emptyList()
+    override fun listSiblings(location: VaultLocation): List<SiblingFile> =
+        files.keys
+            .filter { it != location }
+            .map { SiblingFile(it, name(it), FileMetadata(files[it]?.size?.toLong(), null)) }
+
+    override fun name(location: VaultLocation): String = location.value.substringAfterLast('/')
+
+    override fun delete(location: VaultLocation) {
+        if (location == failDeleteFor) throw IOException("injected delete failure")
+        files.remove(location) ?: throw IOException("no file at $location")
+    }
 
     override fun write(
         location: VaultLocation,

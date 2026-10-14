@@ -46,6 +46,12 @@ class VaultSessionTest {
 
             override fun listSiblings(location: VaultLocation): List<SiblingFile> = emptyList()
 
+            override fun name(location: VaultLocation): String = location.value.substringAfterLast('/')
+
+            override fun delete(location: VaultLocation) {
+                files.remove(location) ?: throw IOException("missing")
+            }
+
             override fun write(
                 location: VaultLocation,
                 data: ByteArray,
