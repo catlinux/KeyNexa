@@ -28,6 +28,11 @@ android {
         versionName = appVersionName
     }
 
+    dependenciesInfo {
+        includeInApk = false
+        includeInBundle = false
+    }
+
     buildFeatures {
         compose = true
     }

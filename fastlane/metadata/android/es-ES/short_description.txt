@@ -1,0 +1,1 @@
+Gestor de contraseñas KDBX sin conexión, listo para Syncthing

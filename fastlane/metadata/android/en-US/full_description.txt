@@ -1,0 +1,8 @@
+KeyNexa is a security-first password manager that opens and edits KDBX vaults (the KeePass format), built around established cryptographic libraries. It is in beta: use fictitious vaults for testing.
+
+• Local vaults in the KDBX format; create or open existing ones, browse, search, add and edit entries, recycle bin and password generator.
+• No Internet permission: the app never talks to a network. Sync by putting the vault in a folder shared with Syncthing.
+• Safe saving, automatic merging of changes made elsewhere (for example with KeePassXC) and of Syncthing conflict copies, deleting them only with your consent.
+• Auto-lock (timer, background and screen off), screen capture protection, clipboard clearing and optional biometric unlock.
+
+Free software under the GPL-3.0-only license. Windows and Linux clients are planned.

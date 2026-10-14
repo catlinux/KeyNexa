@@ -1,0 +1,1 @@
+Correcciones: la bóveda se bloquea tras el tiempo elegido aunque la app esté en segundo plano, el portapapeles solo se borra si aún contiene lo que copió KeyNexa y la protección de pantalla se aplica desde el primer fotograma. Documentación actualizada.

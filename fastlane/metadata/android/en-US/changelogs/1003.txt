@@ -1,0 +1,1 @@
+Bug fixes: the vault now locks after the chosen time even while the app is in the background, the clipboard is only cleared if it still holds what KeyNexa copied, and screen protection applies from the first frame. Documentation updated.

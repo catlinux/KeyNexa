@@ -1,0 +1,8 @@
+KeyNexa es un gestor de contraseñas centrado en la seguridad que abre y edita bóvedas KDBX (el formato de KeePass), construido sobre bibliotecas criptográficas consolidadas. Está en beta: usa bóvedas ficticias para probar.
+
+• Bóvedas locales en formato KDBX; crear o abrir existentes, explorar, buscar, añadir y editar entradas, papelera y generador de contraseñas.
+• Sin permiso de Internet: la app nunca usa la red. Se sincroniza dejando la bóveda en una carpeta compartida con Syncthing.
+• Guardado seguro, fusión automática de los cambios hechos en otro sitio (por ejemplo con KeePassXC) y de las copias de conflicto de Syncthing, que solo se borran con tu consentimiento.
+• Bloqueo automático (temporizador, segundo plano y pantalla apagada), protección contra capturas de pantalla, borrado del portapapeles y desbloqueo biométrico opcional.
+
+Software libre bajo la licencia GPL-3.0-only. Se planean clientes para Windows y Linux.

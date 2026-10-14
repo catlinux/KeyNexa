@@ -1,0 +1,1 @@
+Offline KDBX password manager with Syncthing-friendly sync
