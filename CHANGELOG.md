@@ -6,6 +6,16 @@ All notable changes to this project are documented in this file. The format is b
 
 ## [Unreleased]
 
+## [0.12.0] - 2026-10-14
+
+### Added
+
+- Sync status of the vault file (file modification time, last save by KeyNexa, last change received from another device) with an optional warning after several days without changes. KeyNexa cannot tell what Syncthing has uploaded; the warning is a heuristic.
+
+### Changed
+
+- `StoragePort` gains `lastModified(location)`.
+
 ## [0.11.0] - 2026-10-14
 
 ### Added

@@ -6,6 +6,16 @@ Todos los cambios notables de este proyecto se documentan en este archivo. El fo
 
 ## [Sin publicar]
 
+## [0.12.0] - 2026-10-14
+
+### Añadido
+
+- Estado de sincronización del archivo de la bóveda (modificación del archivo, último guardado de KeyNexa, último cambio recibido de otro dispositivo) y aviso opcional tras varios días sin cambios. KeyNexa no sabe qué ha subido Syncthing; el aviso es una heurística.
+
+### Cambiado
+
+- `StoragePort` gana `lastModified(location)`.
+
 ## [0.11.0] - 2026-10-14
 
 ### Añadido

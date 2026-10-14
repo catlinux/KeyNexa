@@ -51,6 +51,8 @@ class VaultSessionTest {
 
             override fun metadata(location: VaultLocation) = FileMetadata(files[location]?.size?.toLong(), null)
 
+            override fun lastModified(location: VaultLocation): Long? = null
+
             override fun listSiblings(location: VaultLocation): List<SiblingFile> =
                 files.keys
                     .filter { it != location }

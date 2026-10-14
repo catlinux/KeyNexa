@@ -16,7 +16,6 @@ Pasos detallados: consulta la [hoja de ruta](ROADMAP.md).
 
 ## Prioridad media (fase D — MVP seguro)
 
-- [ ] Estado de sincronización en la app: cuándo se sincronizó la bóveda por última vez, cambios aún sin subir y un aviso tras varios días sin sincronizar.
 - [ ] La nube como punto de encuentro siempre disponible: permitir que una bóveda viva en WebDAV o almacenamiento compatible con S3 mediante un `StoragePort` remoto con escrituras condicionales (ETag / If-Match), de modo que el mismo flujo leer-fusionar-escribir sirva para dispositivos que nunca están encendidos a la vez. Necesita un ADR.
 - [ ] Mirar los cambios externos con menos coste: comparar primero tamaño y fecha de modificación y leer el archivo entero solo si difieren; mirar con menos frecuencia tras minutos sin actividad. Medir el consumo de batería en un móvil real antes y después.
 - [ ] Cuando un guardado falle por haber perdido el permiso, ofrecer reconectar la carpeta sin cerrar la bóveda; ofrecer restaurar la copia privada sin guardar tras un reinicio.
@@ -33,6 +32,7 @@ Pasos detallados: consulta la [hoja de ruta](ROADMAP.md).
 
 ## En evaluación (decisión pendiente)
 
+- Mostrar los cambios aún sin subir requiere el complemento de Syncthing (KeyNexa no usa su API REST).
 - Sincronización propia que no dependa de Syncthing (por ejemplo, un cliente de escritorio que haga de enlace), dejando Syncthing como opción.
 - Integrar del todo en el proyecto las primitivas criptográficas (ya están vendorizadas con kotpass) en lugar de depender de binarios externos. No se prevé escribir algoritmos de cifrado nuevos: solo implementaciones auditadas, con versión fija y probadas contra los vectores oficiales.
 - Syncthing como plugin opcional en todas las plataformas, nunca obligatorio: un solo dispositivo no necesita sincronización (la bóveda es local; las copias de seguridad en la nube son una opción aparte y recomendada). Motivo: cuando la sincronización es una app aparte es fácil olvidarse de arrancarla y entonces no se sincroniza nada; con el plugin, abrir KeyNexa la arranca, muestra el estado («sincronizado hace unos segundos») y evita errores de configuración como compartir la carpeta equivocada. Se ofrece al añadir un segundo dispositivo, emparejado con un código QR. Modos: integrado (recomendado) / usar un Syncthing externo / ninguno. En Android necesita un servicio en primer plano que siga vivo hasta terminar la subida pendiente al salir de la app. Llevar Syncthing (MPL-2.0, compatible con GPL-3.0) gestionado por su API REST (solo local, con clave aleatoria). Necesita un ADR (tamaño por arquitectura, reglas de procesos en segundo plano, política de actualizaciones, convivencia con Syncthing-Fork). Paso intermedio barato que hay que comprobar: pedir a un Syncthing-Fork instalado que arranque cuando se abre KeyNexa.

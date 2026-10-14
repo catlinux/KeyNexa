@@ -1,5 +1,6 @@
 package io.github.catlinux.keynexa.app.ui.group
 
+import android.text.format.DateUtils
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -80,7 +81,7 @@ private class GroupCommands(
  * touches the vault in memory and never holds a secret. Entries that have expired are marked with a word, not only
  * with a colour.
  */
-@Suppress("LongParameterList")
+@Suppress("LongParameterList", "LongMethod")
 @Composable
 fun GroupScreen(
     group: Group,
@@ -88,6 +89,10 @@ fun GroupScreen(
     hiddenGroupId: UUID?,
     status: SaveStatus,
     conflicts: ConflictNotice?,
+    syncWarnDays: Int,
+    fileLastModifiedMillis: Long?,
+    lastKeyNexaSaveMillis: Long?,
+    lastExternalChangeMillis: Long?,
     onOpenGroup: (UUID) -> Unit,
     onOpenEntry: (UUID) -> Unit,
     onAddEntry: () -> Unit,
@@ -113,12 +118,19 @@ fun GroupScreen(
         )
     val emptyMessage = stringResource(if (isRoot) R.string.group_empty_root else R.string.group_empty)
     var askingForName by remember { mutableStateOf(false) }
+    var showSyncStatus by remember { mutableStateOf(false) }
+    var syncWarningDismissed by remember { mutableStateOf(false) }
     Surface(modifier = modifier.fillMaxSize()) {
         Column(
             modifier = Modifier.fillMaxSize().padding(ScreenPadding),
             verticalArrangement = Arrangement.spacedBy(ItemGap),
         ) {
-            GroupTopBar(name = group.name, navigation = navigation, commands = commands)
+            GroupTopBar(
+                name = group.name,
+                navigation = navigation,
+                commands = commands,
+                onSyncStatus = { showSyncStatus = true },
+            )
             SaveStatusBar(status = status, onRetry = onRetrySave)
             if (conflicts != null) {
                 ConflictNoticeBar(
@@ -127,6 +139,32 @@ fun GroupScreen(
                     onMergeOtherPassword = onMergeOtherPassword,
                     onDismiss = onDismissConflicts,
                 )
+            }
+            if (isRoot && syncWarnDays > 0 && !syncWarningDismissed) {
+                val warningDays = syncWarning(fileLastModifiedMillis, System.currentTimeMillis(), syncWarnDays)
+                if (warningDays != null) {
+                    Surface(
+                        modifier = Modifier.fillMaxWidth(),
+                        shape = MaterialTheme.shapes.medium,
+                        color = MaterialTheme.colorScheme.tertiaryContainer,
+                    ) {
+                        Row(
+                            modifier = Modifier.padding(12.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(ItemGap),
+                        ) {
+                            Text(
+                                text = pluralStringResource(R.plurals.group_sync_warning, warningDays, warningDays),
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = MaterialTheme.colorScheme.onTertiaryContainer,
+                                modifier = Modifier.weight(1f),
+                            )
+                            TextButton(onClick = { syncWarningDismissed = true }) {
+                                Text(text = stringResource(R.string.group_sync_warning_dismiss))
+                            }
+                        }
+                    }
+                }
             }
             Box(modifier = Modifier.fillMaxWidth().weight(1f)) {
                 GroupList(
@@ -149,6 +187,14 @@ fun GroupScreen(
             onDismiss = { askingForName = false },
         )
     }
+    if (showSyncStatus) {
+        SyncStatusDialog(
+            fileLastModifiedMillis = fileLastModifiedMillis,
+            lastKeyNexaSaveMillis = lastKeyNexaSaveMillis,
+            lastExternalChangeMillis = lastExternalChangeMillis,
+            onDismiss = { showSyncStatus = false },
+        )
+    }
 }
 
 /** The name of the group, the way back, search, and the actions that do not fit in the list. */
@@ -157,6 +203,7 @@ private fun GroupTopBar(
     name: String,
     navigation: GroupNavigation,
     commands: GroupCommands,
+    onSyncStatus: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Row(
@@ -183,7 +230,7 @@ private fun GroupTopBar(
                 contentDescription = stringResource(R.string.group_search),
             )
         }
-        GroupMenu(commands = commands)
+        GroupMenu(commands = commands, onSyncStatus = onSyncStatus)
     }
 }
 
@@ -191,6 +238,7 @@ private fun GroupTopBar(
 @Composable
 private fun GroupMenu(
     commands: GroupCommands,
+    onSyncStatus: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     var open by remember { mutableStateOf(false) }
@@ -202,6 +250,13 @@ private fun GroupMenu(
             )
         }
         DropdownMenu(expanded = open, onDismissRequest = { open = false }) {
+            DropdownMenuItem(
+                text = { Text(text = stringResource(R.string.group_sync_status_menu)) },
+                onClick = {
+                    open = false
+                    onSyncStatus()
+                },
+            )
             DropdownMenuItem(
                 text = { Text(text = stringResource(R.string.group_recycle_bin)) },
                 onClick = {
@@ -348,6 +403,65 @@ private fun GroupActions(
             Text(text = stringResource(R.string.group_new_group))
         }
     }
+}
+
+/** Shows the vault file's synchronisation status: file modification, last KeyNexa save, last external change. */
+@Composable
+private fun SyncStatusDialog(
+    fileLastModifiedMillis: Long?,
+    lastKeyNexaSaveMillis: Long?,
+    lastExternalChangeMillis: Long?,
+    onDismiss: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        modifier = modifier,
+        title = { Text(text = stringResource(R.string.group_sync_status_title)) },
+        text = {
+            Column(verticalArrangement = Arrangement.spacedBy(ItemGap)) {
+                Text(text = stringResource(R.string.group_sync_file_modified, relativeTime(fileLastModifiedMillis)))
+                Text(
+                    text =
+                        stringResource(
+                            R.string.group_sync_last_saved,
+                            lastKeyNexaSaveMillis?.let { relativeTime(it) }
+                                ?: stringResource(R.string.group_sync_never_this_session),
+                        ),
+                )
+                Text(
+                    text =
+                        stringResource(
+                            R.string.group_sync_last_external,
+                            lastExternalChangeMillis?.let { relativeTime(it) }
+                                ?: stringResource(R.string.group_sync_never_this_session),
+                        ),
+                )
+                Text(
+                    text = stringResource(R.string.group_sync_status_note),
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
+        },
+        confirmButton = {
+            TextButton(onClick = onDismiss) {
+                Text(text = stringResource(R.string.group_sync_status_close))
+            }
+        },
+    )
+}
+
+/** Formats an instant as a relative span such as "2 hours ago". */
+@Composable
+private fun relativeTime(millis: Long?): String {
+    if (millis == null) return stringResource(R.string.group_sync_unknown)
+    return DateUtils
+        .getRelativeTimeSpanString(
+            millis,
+            System.currentTimeMillis(),
+            DateUtils.MINUTE_IN_MILLIS,
+        ).toString()
 }
 
 /** Asks for the name of a new group; an empty name cannot be created. */

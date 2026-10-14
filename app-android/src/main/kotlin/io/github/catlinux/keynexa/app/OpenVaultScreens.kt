@@ -33,6 +33,7 @@ import java.util.UUID
 private val WEB_SCHEMES = setOf("http", "https")
 
 /** The screens that show an open vault, connected to the session. Every edit goes through [VaultEditor]. */
+@Suppress("LongMethod")
 @Composable
 fun OpenVaultScreens(
     container: AppContainer,
@@ -59,6 +60,10 @@ fun OpenVaultScreens(
                 isRoot = isRoot,
                 hiddenGroupId = vault.meta.recycleBinGroup,
                 status = SaveStatus(open.saving, open.saveProblem, open.hasUnsavedChanges),
+                syncWarnDays = container.settings.values.syncWarnDays,
+                fileLastModifiedMillis = remember(group.id) { container.storage.lastModified(open.vault.location) },
+                lastKeyNexaSaveMillis = open.lastKeyNexaSaveMillis,
+                lastExternalChangeMillis = open.lastExternalChangeMillis,
                 conflicts =
                     open.conflicts?.let {
                         ConflictNotice(

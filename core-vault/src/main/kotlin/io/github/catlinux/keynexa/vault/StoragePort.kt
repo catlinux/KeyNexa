@@ -50,6 +50,9 @@ interface StoragePort {
      */
     fun delete(location: VaultLocation)
 
+    /** The file's modification time in epoch milliseconds, or null when the storage does not report it. */
+    fun lastModified(location: VaultLocation): Long?
+
     /**
      * Replaces the whole content of the file with [data]. Implementations must truncate: on Android open with mode
      * `"rwt"` and, where a provider ignores the truncation, truncate explicitly. The caller does not trust this

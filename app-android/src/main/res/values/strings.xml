@@ -96,6 +96,20 @@
     <string name="group_more">More options</string>
     <string name="group_recycle_bin">Recycle bin</string>
     <string name="group_lock">Lock</string>
+    <string name="group_sync_status_menu">Sync status</string>
+    <string name="group_sync_status_title">Sync status</string>
+    <string name="group_sync_file_modified">File modified: %1$s</string>
+    <string name="group_sync_last_saved">Last saved by KeyNexa: %1$s</string>
+    <string name="group_sync_last_external">Last change from another device: %1$s</string>
+    <string name="group_sync_never_this_session">not yet this session</string>
+    <string name="group_sync_unknown">unknown</string>
+    <string name="group_sync_status_note">KeyNexa cannot tell whether Syncthing has uploaded this change yet.</string>
+    <plurals name="group_sync_warning">
+        <item quantity="one">The vault file has not changed for %1$d day. If you sync it with another device, check that Syncthing is working.</item>
+        <item quantity="other">The vault file has not changed for %1$d days. If you sync it with another device, check that Syncthing is working.</item>
+    </plurals>
+    <string name="group_sync_warning_dismiss">Dismiss</string>
+    <string name="group_sync_status_close">Close</string>
     <string name="group_new_entry">New entry</string>
     <string name="group_new_group">New group</string>
     <string name="group_new_group_title">New group</string>
@@ -216,6 +230,9 @@
     <string name="settings_immediately">Immediately</string>
     <string name="settings_never">Never</string>
     <string name="settings_no_lock_warning">With this setting the vault stays open until you lock it by hand, which is less safe.</string>
+    <string name="settings_section_sync">Synchronization</string>
+    <string name="settings_sync_warn">Warn when the vault file has not changed</string>
+    <string name="settings_sync_warn_note">KeyNexa cannot know what Syncthing has uploaded. This warning is a heuristic: it only notices when the vault file has not changed for several days.</string>
     <plurals name="settings_seconds">
         <item quantity="one">%1$d second</item>
         <item quantity="other">%1$d seconds</item>

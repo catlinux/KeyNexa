@@ -54,6 +54,7 @@ private const val TWO_MINUTES = 2
  * A stateless screen: it shows [values] and reports every change through [onChange], and it stores nothing itself.
  * Every switch and every option is a row of at least 48 dp whose label is its accessible text.
  */
+@Suppress("LongMethod")
 @Composable
 fun SettingsScreen(
     values: SettingsValues,
@@ -107,6 +108,25 @@ fun SettingsScreen(
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
             BiometricSettings(values = values, onChange = onChange)
+            SectionTitle(text = stringResource(R.string.settings_section_sync))
+            Text(text = stringResource(R.string.settings_sync_warn), style = MaterialTheme.typography.bodyLarge)
+            SettingsValues.SYNC_WARN_CHOICES.forEach { days ->
+                OptionRow(
+                    label =
+                        if (days == 0) {
+                            stringResource(R.string.settings_never)
+                        } else {
+                            pluralStringResource(R.plurals.settings_days, days, days)
+                        },
+                    selected = values.syncWarnDays == days,
+                    onSelect = { onChange(values.copy(syncWarnDays = days)) },
+                )
+            }
+            Text(
+                text = stringResource(R.string.settings_sync_warn_note),
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
         }
     }
 }

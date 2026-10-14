@@ -98,6 +98,21 @@
     <string name="group_more">Más opciones</string>
     <string name="group_recycle_bin">Papelera</string>
     <string name="group_lock">Bloquear</string>
+    <string name="group_sync_status_menu">Estado de sincronización</string>
+    <string name="group_sync_status_title">Estado de sincronización</string>
+    <string name="group_sync_file_modified">Archivo modificado: %1$s</string>
+    <string name="group_sync_last_saved">Último guardado de KeyNexa: %1$s</string>
+    <string name="group_sync_last_external">Último cambio recibido de otro dispositivo: %1$s</string>
+    <string name="group_sync_never_this_session">aún no en esta sesión</string>
+    <string name="group_sync_unknown">desconocido</string>
+    <string name="group_sync_status_note">KeyNexa no sabe si Syncthing ya ha subido este cambio.</string>
+    <plurals name="group_sync_warning">
+        <item quantity="one">El archivo no cambia desde hace %1$d día. Si lo sincronizas con otro dispositivo, conviene comprobar que Syncthing funciona.</item>
+        <item quantity="many">El archivo no cambia desde hace %1$d días. Si lo sincronizas con otro dispositivo, conviene comprobar que Syncthing funciona.</item>
+        <item quantity="other">El archivo no cambia desde hace %1$d días. Si lo sincronizas con otro dispositivo, conviene comprobar que Syncthing funciona.</item>
+    </plurals>
+    <string name="group_sync_warning_dismiss">Descartar</string>
+    <string name="group_sync_status_close">Cerrar</string>>
     <string name="group_new_entry">Nueva entrada</string>
     <string name="group_new_group">Nuevo grupo</string>
     <string name="group_new_group_title">Grupo nuevo</string>
@@ -219,6 +234,9 @@
     <string name="settings_immediately">Inmediatamente</string>
     <string name="settings_never">Nunca</string>
     <string name="settings_no_lock_warning">Con este ajuste la bóveda sigue abierta hasta que la bloqueas a mano, lo cual es menos seguro.</string>
+    <string name="settings_section_sync">Sincronización</string>
+    <string name="settings_sync_warn">Avisar si el archivo de la bóveda no cambia</string>
+    <string name="settings_sync_warn_note">KeyNexa no sabe qué ha subido Syncthing. Este aviso es una heurística: solo nota cuando el archivo de la bóveda no cambia desde hace varios días.</string>
     <plurals name="settings_seconds">
         <item quantity="one">%1$d segundo</item>
         <item quantity="many">%1$d segundos</item>

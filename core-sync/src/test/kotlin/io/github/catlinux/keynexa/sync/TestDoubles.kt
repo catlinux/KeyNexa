@@ -302,7 +302,13 @@ internal class FakeStorage(
         return files[location]?.copyOf() ?: throw IOException("no file at $location")
     }
 
+    /** Modification time reported for every existing file; tests set it to make the sync status deterministic. */
+    var lastModifiedMillis: Long? = null
+
     override fun metadata(location: VaultLocation): FileMetadata = FileMetadata(files[location]?.size?.toLong(), null)
+
+    override fun lastModified(location: VaultLocation): Long? =
+        if (files.containsKey(location)) lastModifiedMillis else null
 
     override fun listSiblings(location: VaultLocation): List<SiblingFile> =
         files.keys

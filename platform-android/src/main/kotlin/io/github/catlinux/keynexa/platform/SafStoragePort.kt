@@ -18,6 +18,7 @@ import java.time.Instant
  * (tree) or a single granted file. Every provider failure, including a revoked permission, surfaces as
  * [IOException] because that is the contract the core relies on.
  */
+@Suppress("TooManyFunctions")
 class SafStoragePort(
     context: Context,
 ) : StoragePort {
@@ -39,6 +40,8 @@ class SafStoragePort(
                 FileMetadata(it.longOrNull(0), it.longOrNull(1)?.let(Instant::ofEpochMilli))
             } ?: throw IOException("provider gave no metadata")
         }
+
+    override fun lastModified(location: VaultLocation): Long? = metadata(location).lastModified?.toEpochMilli()
 
     override fun listSiblings(location: VaultLocation): List<SiblingFile> =
         try {

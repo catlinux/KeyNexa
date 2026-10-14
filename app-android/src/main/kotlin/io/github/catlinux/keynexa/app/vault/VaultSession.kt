@@ -70,6 +70,10 @@ sealed interface SessionState {
         val recovered: RecoveryOutcome? = null,
         /** What the Syncthing conflict copies did, when there is something to tell or to offer. */
         val conflicts: ConflictReport? = null,
+        /** Epoch millis of the last successful save performed by KeyNexa, or null this session. */
+        val lastKeyNexaSaveMillis: Long? = null,
+        /** Epoch millis of the last version written elsewhere that KeyNexa loaded, or null this session. */
+        val lastExternalChangeMillis: Long? = null,
     ) : SessionState {
         val hasUnsavedChanges: Boolean get() = current != loaded.vault
 
@@ -126,6 +130,7 @@ class VaultSession(
     private val saver: SafeSaver,
     private val executor: Executor,
     private val conflicts: ConflictMerger? = null,
+    private val now: () -> Long = { System.currentTimeMillis() },
 ) {
     private val mutableState = MutableStateFlow<SessionState>(SessionState.Closed)
     val state: StateFlow<SessionState> = mutableState.asStateFlow()
@@ -169,7 +174,7 @@ class VaultSession(
     ) {
         mutableState.value = SessionState.Unlocking(vault)
         executor.execute {
-            openAfter(vault, credentials, recovered = null) {
+            openAfter(vault, credentials, recovered = null, created = true) {
                 val bytes = engine.encode(content, credentials)
                 storage.write(vault.location, bytes)
                 if (Fingerprint.of(storage.read(vault.location)) != Fingerprint.of(bytes)) {
@@ -282,13 +287,21 @@ class VaultSession(
         vault: KnownVault,
         secrets: Credentials,
         recovered: RecoveryOutcome?,
+        created: Boolean = false,
         prepare: () -> Unit,
     ) {
         try {
             prepare()
             val loaded = readers.patient.open(vault.location, secrets)
             credentials = secrets
-            mutableState.value = SessionState.Open(vault, loaded, loaded.vault, recovered = recovered)
+            mutableState.value =
+                SessionState.Open(
+                    vault = vault,
+                    loaded = loaded,
+                    current = loaded.vault,
+                    recovered = recovered,
+                    lastKeyNexaSaveMillis = if (created) now() else null,
+                )
             foldConflicts()
         } catch (failure: VaultException) {
             secrets.wipe()
@@ -317,6 +330,7 @@ class VaultSession(
                     saving = false,
                     saveProblem = null,
                     unsavedCopy = null,
+                    lastKeyNexaSaveMillis = this@VaultSession.now(),
                 )
             is SaveOutcome.NotSaved ->
                 copy(saving = false, saveProblem = outcome.reason, unsavedCopy = outcome.unsavedCopy)
@@ -332,11 +346,15 @@ class VaultSession(
         try {
             if (!reader.hasChanged(open.vault.location, open.loaded.fingerprint)) return
             val loaded = reader.open(open.vault.location, secrets, credentialsKnownGood = true)
-            mutableState.update { now ->
-                if (now is SessionState.Open && now.isIdle && now.loaded == open.loaded) {
-                    now.copy(loaded = loaded, current = loaded.vault)
+            mutableState.update { state ->
+                if (state is SessionState.Open && state.isIdle && state.loaded == open.loaded) {
+                    state.copy(
+                        loaded = loaded,
+                        current = loaded.vault,
+                        lastExternalChangeMillis = this@VaultSession.now(),
+                    )
                 } else {
-                    now
+                    state
                 }
             }
             foldConflicts()

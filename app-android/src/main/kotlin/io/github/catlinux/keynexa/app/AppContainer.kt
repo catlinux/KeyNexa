@@ -106,6 +106,7 @@ class AppContainer(
                 saver = SafeSaver(storage, engine, backups, journal, merger = keeper),
                 conflicts = ConflictMerger(storage, engine, keeper, mergedCopies),
                 executor = worker,
+                now = System::currentTimeMillis,
             )
     }
 
