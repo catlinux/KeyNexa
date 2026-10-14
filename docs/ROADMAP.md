@@ -11,7 +11,7 @@ Legend: ✅ done · 🔄 in progress · ⏳ planned. Nothing is "done" until its
 | A — Research | Environment, KDBX libraries, licenses, Android constraints | 0.1.0 | ✅ |
 | B — Architecture and security | Architecture, threat model, MVP, license decision | 0.1.0 | ✅ |
 | C — Project foundation | Gradle multi-module skeleton, CI, lint/format, i18n, design system, release workflow | 0.2.0 – 0.4.0 | ✅ |
-| D — Secure MVP | Open/lock/edit vaults, safe save, external changes and merge. Done: safe save, merge, Android storage, screens, auto-lock and screen protection (0.5.0 – 0.8.x). Biometric unlock written (0.9.0, pending device test). Pending: fully reliable clipboard clearing | 0.5.0 – 0.9.0 | 🔄 |
+| D — Secure MVP | Open/lock/edit vaults, safe save, external changes and merge. Done: safe save, merge, Android storage, screens, auto-lock and screen protection (0.5.0 – 0.8.x). Biometric unlock written (0.9.0, pending device test). Conflict copies merged when the vault is opened and offered for deletion (0.10.0, pending the real device test D7.5). Pending: fully reliable clipboard clearing | 0.5.0 – 0.10.0 | 🔄 |
 | E — Review | Dependency and security review, interoperability tests, docs, first pre-release | 0.9.0 | ⏳ |
 | Later | Autofill, credential provider, TOTP, Windows and Linux clients (once the Android app is functional) | 1.0.0+ | ⏳ |
 
@@ -23,7 +23,7 @@ Legend: ✅ done · 🔄 in progress · ⏳ planned. Nothing is "done" until its
 2. Create a new KDBX 4 vault (Argon2id, AES-256 or ChaCha20).
 3. Browse groups, search entries, view an entry; copy username/password with sensitive-clipboard flag and auto-clear.
 4. Create, edit, move and delete entries and groups (to the recycle bin when enabled), keeping history.
-5. Save with the safe-save pipeline; detect external changes; automatic merge; conflict files offered for merge.
+5. Save with the safe-save pipeline; detect external changes; automatic merge; conflict copies merged when the vault is opened and offered for deletion, never deleted without consent.
 6. Lock manually, on timeout and on screen off; `FLAG_SECURE`; no backup of app data.
 7. Optional biometric unlock (Keystore-wrapped master key).
 8. English and Spanish UI, light and dark themes, accessible (TalkBack labels, scalable text).

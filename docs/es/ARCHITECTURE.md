@@ -85,6 +85,18 @@ Implementado en `core-sync` como `KeePassMerger`, con estas reglas adicionales: 
 
 Si los archivos no se pueden fusionar (por ejemplo, por tener contraseñas maestras distintas), KeyNexa no escribe: conserva ambas versiones y consulta al usuario.
 
+### Copias de conflicto de Syncthing
+
+Cuando dos dispositivos cambian la bóveda sin verse entre sí, Syncthing conserva una versión como archivo de la bóveda y renombra la otra a `<nombre>.sync-conflict-<fecha>-<hora>-<dispositivo>.kdbx`. KeyNexa pliega esas copias en la bóveda por su cuenta, para que sus cambios no se pierdan hasta que alguien abra la copia a mano ([ADR-0007](decisions/0007-conflict-copies.md)):
+
+- Las copias se buscan entre los archivos hermanos del archivo de la bóveda, usando el nombre real del archivo en el almacenamiento (no el nombre que muestra la app).
+- Un registro por bóveda en almacenamiento privado, excluido de las copias de seguridad, guarda las huellas SHA-256 de las copias ya fusionadas, de modo que una copia conocida no se descifra otra vez ni se fusiona dos veces.
+- Cada copia restante se descifra con las credenciales de la bóveda abierta y se pliega con `KeePassMerger`; el resultado pasa por el canal de guardado normal, y las copias se registran solo cuando ese guardado se completa (si falla, se quedan fuera y la siguiente apertura lo vuelve a intentar).
+- Las copias que no se pueden fusionar se informan y se dejan como están: escritas con otra contraseña, dañadas o aún en transferencia, de otra bóveda o ilegibles.
+- **Nada se borra sin consentimiento.** Tras una fusión, la app dice cuántas copias se han fusionado y ofrece borrarlas, y solo borra las copias del registro cuyos bytes siguen coincidiendo con la huella grabada, releída justo antes de borrar. Si se rechaza, se conservan y la oferta vuelve en la siguiente apertura.
+
+Vive en `core-sync` como `ConflictMerger` (con el puerto `MergedCopies` para el registro); la app de Android lo conecta en `VaultSession`, guarda el registro con `FileMergedCopies` y muestra el aviso en la pantalla de grupos. Como en el resto de la bóveda, solo se guardan huellas y motivos: nunca contenido ni secretos.
+
 ## Estrategia multiplataforma
 
 | Opción | Veredicto |

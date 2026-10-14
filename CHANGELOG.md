@@ -6,6 +6,20 @@ All notable changes to this project are documented in this file. The format is b
 
 ## [Unreleased]
 
+## [0.10.0] - 2026-10-14
+
+### Added
+
+- Syncthing conflict copies are merged into the vault automatically (phase D7, ADR-0007): when a vault is opened and when a version written elsewhere is loaded, the `*.sync-conflict-*` copies next to the vault file are decoded with the open vault's credentials and folded in with the merge semantics, and the result goes through the safe-save pipeline. A per-vault ledger of fingerprints in private storage (excluded from backup) avoids decrypting the same copy twice, and a copy is recorded only once the save that merged it reports success. The vault screen then says how many copies were merged and offers to delete them, and only copies that still match the recorded fingerprint are deleted: nothing is deleted without consent, declining keeps the copies and brings the offer back on the next open. A copy written with another password, damaged or still in transfer, belonging to another vault or unreadable is reported with its reason and left untouched.
+
+### Changed
+
+- `StoragePort` gains `name(location)` (the file's real name in storage) and `delete(location)`; the Android implementation uses the document's display name and `DocumentsContract.deleteDocument`.
+
+### Note
+
+- Not checked on a real phone yet: merging on open, the offer to delete the copies and the case of a copy written with another password still need the device test with Syncthing (D7.5).
+
 ## [0.9.0] - 2026-10-14
 
 ### Added

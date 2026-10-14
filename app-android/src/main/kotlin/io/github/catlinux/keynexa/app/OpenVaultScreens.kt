@@ -10,6 +10,7 @@ import androidx.core.net.toUri
 import io.github.catlinux.keynexa.app.nav.Screen
 import io.github.catlinux.keynexa.app.ui.bin.BinItem
 import io.github.catlinux.keynexa.app.ui.bin.RecycleBinScreen
+import io.github.catlinux.keynexa.app.ui.common.ConflictNotice
 import io.github.catlinux.keynexa.app.ui.common.SaveStatus
 import io.github.catlinux.keynexa.app.ui.edit.EntryEditScreen
 import io.github.catlinux.keynexa.app.ui.entry.EntryDetailScreen
@@ -57,6 +58,14 @@ fun OpenVaultScreens(
                 isRoot = isRoot,
                 hiddenGroupId = vault.meta.recycleBinGroup,
                 status = SaveStatus(open.saving, open.saveProblem, open.hasUnsavedChanges),
+                conflicts =
+                    open.conflicts?.let {
+                        ConflictNotice(
+                            mergedNow = it.mergedNow,
+                            deletable = it.deletable.size,
+                            problems = it.failed.distinct(),
+                        )
+                    },
                 onOpenGroup = { navigator.push(Screen.Group(it)) },
                 onOpenEntry = { navigator.push(Screen.EntryDetail(it)) },
                 onAddEntry = { navigator.push(Screen.EntryEdit(null, group.id)) },
@@ -66,6 +75,8 @@ fun OpenVaultScreens(
                 onLock = lock,
                 onBack = if (isRoot) lock else back,
                 onRetrySave = session::retrySave,
+                onDeleteConflictCopies = session::deleteConflictCopies,
+                onDismissConflicts = session::dismissConflicts,
             )
         }
         is Screen.Search ->

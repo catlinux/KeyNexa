@@ -43,6 +43,8 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import io.github.catlinux.keynexa.app.R
+import io.github.catlinux.keynexa.app.ui.common.ConflictNotice
+import io.github.catlinux.keynexa.app.ui.common.ConflictNoticeBar
 import io.github.catlinux.keynexa.app.ui.common.SaveStatus
 import io.github.catlinux.keynexa.app.ui.common.SaveStatusBar
 import io.github.catlinux.keynexa.vault.Entry
@@ -85,6 +87,7 @@ fun GroupScreen(
     isRoot: Boolean,
     hiddenGroupId: UUID?,
     status: SaveStatus,
+    conflicts: ConflictNotice?,
     onOpenGroup: (UUID) -> Unit,
     onOpenEntry: (UUID) -> Unit,
     onAddEntry: () -> Unit,
@@ -94,6 +97,8 @@ fun GroupScreen(
     onLock: () -> Unit,
     onBack: () -> Unit,
     onRetrySave: () -> Unit,
+    onDeleteConflictCopies: () -> Unit,
+    onDismissConflicts: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val navigation = GroupNavigation(onOpenGroup = onOpenGroup, onOpenEntry = onOpenEntry, onBack = onBack)
@@ -114,6 +119,13 @@ fun GroupScreen(
         ) {
             GroupTopBar(name = group.name, navigation = navigation, commands = commands)
             SaveStatusBar(status = status, onRetry = onRetrySave)
+            if (conflicts != null) {
+                ConflictNoticeBar(
+                    notice = conflicts,
+                    onDeleteCopies = onDeleteConflictCopies,
+                    onDismiss = onDismissConflicts,
+                )
+            }
             Box(modifier = Modifier.fillMaxWidth().weight(1f)) {
                 GroupList(
                     subgroups = group.groups.filterNot { it.id == hiddenGroupId },

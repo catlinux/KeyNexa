@@ -85,6 +85,18 @@ Implemented in `core-sync` as `KeePassMerger`, with these further rules: ties fa
 
 If the files cannot be merged (for example, different master keys), KeyNexa does not write: it keeps both versions and asks the user.
 
+### Syncthing conflict copies
+
+When two devices change the vault while they cannot see each other, Syncthing keeps one version as the vault file and renames the other to `<name>.sync-conflict-<date>-<time>-<device>.kdbx`. KeyNexa folds those copies into the vault by itself, so their changes are not forgotten until somebody opens the copy by hand ([ADR-0007](decisions/0007-conflict-copies.md)):
+
+- The copies are found among the siblings of the vault file, using the file's real name in storage (not the name shown in the app).
+- A per-vault ledger in app-private storage, excluded from backup, holds the SHA-256 fingerprints of the copies already merged, so a known copy is neither decrypted again nor merged twice.
+- Each remaining copy is decoded with the open vault's credentials and folded in with `KeePassMerger`; the result goes through the normal save pipeline, and the copies are recorded in the ledger only once that save reports success (a save that fails leaves them out, so the next open tries again).
+- Copies that cannot be merged are reported and left alone: written with another password, damaged or still in transfer, belonging to another vault, or unreadable.
+- **Nothing is deleted without consent.** After a merge the app says how many copies were merged and offers to delete them, and it deletes only copies in the ledger whose bytes still match the recorded fingerprint, read again just before deleting. Declining keeps them, and the offer comes back on the next open.
+
+It lives in `core-sync` as `ConflictMerger` (with the `MergedCopies` port for the ledger); the Android app wires it in `VaultSession`, stores the ledger with `FileMergedCopies` and shows the notice in the group screen. As with the rest of the vault, only fingerprints and reasons are kept: never content or secrets.
+
 ## Multiplatform strategy
 
 | Option | Verdict |

@@ -11,7 +11,7 @@ Leyenda: ✅ hecho · 🔄 en curso · ⏳ planificado. Nada está «hecho» has
 | A — Investigación | Entorno, bibliotecas KDBX, licencias, restricciones de Android | 0.1.0 | ✅ |
 | B — Arquitectura y seguridad | Arquitectura, modelo de amenazas, MVP, decisión de licencia | 0.1.0 | ✅ |
 | C — Base del proyecto | Esqueleto multimódulo de Gradle, CI, lint/formato, i18n, sistema de diseño, flujo de publicación | 0.2.0 – 0.4.0 | ✅ |
-| D — MVP seguro | Abrir/bloquear/editar bóvedas, guardado seguro, cambios externos y fusión. Hecho: guardado seguro, fusión, almacenamiento Android, pantallas, bloqueo automático y protección de pantalla (0.5.0 – 0.8.x). Desbloqueo biométrico escrito (0.9.0, pendiente de probar en dispositivo). Pendiente: borrado del portapapeles totalmente fiable | 0.5.0 – 0.9.0 | 🔄 |
+| D — MVP seguro | Abrir/bloquear/editar bóvedas, guardado seguro, cambios externos y fusión. Hecho: guardado seguro, fusión, almacenamiento Android, pantallas, bloqueo automático y protección de pantalla (0.5.0 – 0.8.x). Desbloqueo biométrico escrito (0.9.0, pendiente de probar en dispositivo). Copias de conflicto fusionadas al abrir la bóveda y ofrecidas para borrar (0.10.0, pendiente la prueba en dispositivo D7.5). Pendiente: borrado del portapapeles totalmente fiable | 0.5.0 – 0.10.0 | 🔄 |
 | E — Revisión | Revisión de dependencias y de seguridad, pruebas de interoperabilidad, documentación, primera versión preliminar | 0.9.0 | ⏳ |
 | Más adelante | Autorrelleno, proveedor de credenciales, TOTP, clientes de Windows y Linux (cuando la app de Android sea funcional) | 1.0.0+ | ⏳ |
 
@@ -23,7 +23,7 @@ Leyenda: ✅ hecho · 🔄 en curso · ⏳ planificado. Nada está «hecho» has
 2. Crear una nueva bóveda KDBX 4 (Argon2id, AES-256 o ChaCha20).
 3. Explorar grupos, buscar entradas, ver una entrada; copiar usuario/contraseña con el indicador de portapapeles sensible y borrado automático.
 4. Crear, editar, mover y eliminar entradas y grupos (a la papelera de reciclaje cuando esté activada), conservando el historial.
-5. Guardar con el flujo de guardado seguro; detectar cambios externos; fusión automática; archivos de conflicto ofrecidos para fusionar.
+5. Guardar con el flujo de guardado seguro; detectar cambios externos; fusión automática; copias de conflicto fusionadas al abrir la bóveda y ofrecidas para borrar, nunca borradas sin consentimiento.
 6. Bloquear manualmente, por tiempo de inactividad y al apagar la pantalla; `FLAG_SECURE`; sin copia de seguridad de los datos de la aplicación.
 7. Desbloqueo biométrico opcional (clave maestra envuelta con el Keystore).
 8. Interfaz en inglés y español, temas claro y oscuro, accesible (etiquetas de TalkBack, texto escalable).

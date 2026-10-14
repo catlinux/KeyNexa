@@ -6,6 +6,20 @@ Todos los cambios notables de este proyecto se documentan en este archivo. El fo
 
 ## [Sin publicar]
 
+## [0.10.0] - 2026-10-14
+
+### Añadido
+
+- Las copias de conflicto de Syncthing se fusionan en la bóveda automáticamente (fase D7, ADR-0007): al abrir una bóveda y al cargar una versión escrita en otro sitio, las copias `*.sync-conflict-*` que hay junto al archivo de la bóveda se descifran con las credenciales de la bóveda abierta y se pliegan con la semántica de fusión, y el resultado pasa por el canal de guardado seguro. Un registro de huellas por bóveda en almacenamiento privado (excluido de las copias de seguridad) evita descifrar dos veces la misma copia, y una copia solo se registra cuando el guardado que la fusionó se completa. La pantalla de la bóveda dice entonces cuántas copias se han fusionado y ofrece borrarlas, y solo se borran las copias cuya huella grabada sigue coincidiendo: nada se borra sin consentimiento, y si se rechaza las copias se conservan y la oferta vuelve en la siguiente apertura. Una copia escrita con otra contraseña, dañada o aún en transferencia, de otra bóveda o ilegible se informa con su motivo y se deja intacta.
+
+### Cambiado
+
+- `StoragePort` incorpora `name(location)` (el nombre real del archivo en el almacenamiento) y `delete(location)`; la implementación de Android usa el nombre visible del documento y `DocumentsContract.deleteDocument`.
+
+### Nota
+
+- Aún no comprobado en un móvil real: la fusión al abrir, la oferta de borrar las copias y el caso de una copia escrita con otra contraseña necesitan la prueba en dispositivo con Syncthing (D7.5).
+
 ## [0.9.0] - 2026-10-14
 
 ### Añadido

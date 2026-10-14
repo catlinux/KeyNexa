@@ -6,7 +6,7 @@
 
 A security-first, cross-platform password manager built around established cryptographic libraries, local vaults, and seamless Syncthing synchronization.
 
-> **Project status: early development (v0.9.0).** Android only, for testing. You can already create or open a KDBX vault, browse, search, add and edit entries, use the recycle bin and generate passwords; saves go through a safe-save pipeline and changes made elsewhere (for example with KeePassXC through Syncthing) are merged. **Also working:** auto-lock (timer and screen off), screen protection, a settings screen and changes made elsewhere being picked up within seconds. **Also:** biometric unlock (not yet checked on a real phone). **Not done yet:** fully reliable clipboard clearing, conflict-file merging in the UI, the Windows and Linux clients, and any published release. Do not store real passwords in KeyNexa until a release says otherwise.
+> **Project status: early development (v0.10.0).** Android only, for testing. You can already create or open a KDBX vault, browse, search, add and edit entries, use the recycle bin and generate passwords; saves go through a safe-save pipeline and changes made elsewhere (for example with KeePassXC through Syncthing) are merged. **Also working:** auto-lock (timer and screen off), screen protection, a settings screen, changes made elsewhere being picked up within seconds, and the Syncthing conflict copies being merged when the vault is opened, with an offer to delete them. **Also:** biometric unlock (not yet checked on a real phone). **Not done yet:** fully reliable clipboard clearing, the Windows and Linux clients, and any published release. Do not store real passwords in KeyNexa until a release says otherwise.
 
 ## What KeyNexa will be
 

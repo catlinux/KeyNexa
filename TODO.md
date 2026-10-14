@@ -18,7 +18,8 @@ Detailed steps: see the [roadmap](docs/ROADMAP.md).
 
 ## Medium priority (phase D — secure MVP)
 
-- [ ] **Merge `*.sync-conflict-*` copies automatically** (priority: needed whenever two devices edit while they are not connected). When opening a vault, merge every conflict copy into the main file with the existing merger (entries have random UUIDs, so independent additions never collide), save, and ask before deleting the copies; remember what was merged so it is not repeated. Nothing is deleted by itself.
+- [ ] **Real device test of conflict-copy merging (D7.5)**: with a folder shared through Syncthing, pause it on the phone, edit the same vault on the PC and on the phone, resume it, and check that KeyNexa merges the conflict copy when the vault is opened, that both edits are there and that it offers to delete the copy. Never with a real vault.
+- [ ] **Ask for the password of a copy written with another password**: a copy that no longer opens with the vault's credentials is reported and left as it is; offer to type that password so it can be merged too.
 - [ ] Sync status in the app: when the vault was last synchronised, changes not yet uploaded, and a warning after several days without syncing.
 - [ ] Cloud as an always-on hub: let a vault live in WebDAV or S3-compatible storage through a remote `StoragePort` with conditional writes (ETag / If-Match), so the same read-merge-write pipeline works for devices that are never on at the same time. Needs an ADR.
 - [ ] Cheaper look for outside changes: compare size and modification time first and read the whole file only when they differ; look less often after minutes without activity. Measure the battery cost on a real phone before and after.
