@@ -22,6 +22,7 @@ Detailed steps: see the [roadmap](docs/ROADMAP.md).
 - [ ] Cheaper look for outside changes: compare size and modification time first and read the whole file only when they differ; look less often after minutes without activity. Measure the battery cost on a real phone before and after.
 - [ ] When a save fails because the grant was lost, offer to reconnect the folder without closing the vault; offer to restore the private unsaved copy after a restart.
 - [ ] Fully reliable clipboard clearing (Android only lets the app in front change the clipboard).
+- [ ] Ask for inclusion in F-Droid and IzzyOnDroid (E2.4): the draft metadata and the steps are in `.agents/plans/store-inclusion/`; the requests are filed by hand (Izzy's form asks about AI use and needs honest answers).
 
 ## Low priority (later)
 
