@@ -6,6 +6,13 @@ All notable changes to this project are documented in this file. The format is b
 
 ## [Unreleased]
 
+## [0.13.1] - 2026-10-14
+
+### Fixed
+
+- The app no longer closes when the vault file disappears or becomes unreachable while the vault is open: the file's modification time (0.12.0) was read on the screen thread and its failure was not caught; it is now read in the background.
+- The "Which vault?" list no longer offers Syncthing conflict copies as if they were vaults.
+
 ## [0.13.0] - 2026-10-14
 
 ### Added

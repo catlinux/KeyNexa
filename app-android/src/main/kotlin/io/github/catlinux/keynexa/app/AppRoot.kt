@@ -32,6 +32,7 @@ import io.github.catlinux.keynexa.vault.NewVault
 import kotlinx.coroutines.delay
 
 private const val VAULT_EXTENSION = ".kdbx"
+private const val CONFLICT_MARKER = ".sync-conflict-"
 private const val REFRESH_MILLIS = 5_000L
 
 /**
@@ -94,7 +95,8 @@ private class VaultFileActions(
             return
         }
         grant(tree)
-        val files = container.access.listVaultFiles(tree)
+        // A Syncthing conflict copy is not a vault of its own: it is merged into its vault when that is opened.
+        val files = container.access.listVaultFiles(tree).filterNot { CONFLICT_MARKER in it.name }
         when {
             files.isEmpty() -> {
                 reconnecting = null

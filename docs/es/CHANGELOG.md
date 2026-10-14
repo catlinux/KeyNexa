@@ -6,6 +6,13 @@ Todos los cambios notables de este proyecto se documentan en este archivo. El fo
 
 ## [Sin publicar]
 
+## [0.13.1] - 2026-10-14
+
+### Corregido
+
+- La app ya no se cierra cuando el archivo de la bóveda desaparece o deja de ser accesible con la bóveda abierta: la fecha de modificación del archivo (0.12.0) se leía en el hilo de la pantalla y su fallo no se capturaba; ahora se lee en segundo plano.
+- La lista «¿Qué bóveda?» ya no ofrece las copias de conflicto de Syncthing como si fueran bóvedas.
+
 ## [0.13.0] - 2026-10-14
 
 ### Añadido

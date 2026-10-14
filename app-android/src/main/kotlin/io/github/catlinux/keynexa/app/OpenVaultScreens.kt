@@ -4,6 +4,8 @@ import android.content.Context
 import android.content.Intent
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
 import androidx.core.net.toUri
@@ -28,6 +30,9 @@ import io.github.catlinux.keynexa.vault.Group
 import io.github.catlinux.keynexa.vault.Vault
 import io.github.catlinux.keynexa.vault.VaultEditor
 import io.github.catlinux.keynexa.vault.VaultSearch
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
+import java.io.IOException
 import java.util.UUID
 
 private val WEB_SCHEMES = setOf("http", "https")
@@ -56,6 +61,17 @@ fun OpenVaultScreens(
         is Screen.Group -> {
             val group = screen.groupId?.let(vault.root::findGroup) ?: vault.root
             val isRoot = group.id == vault.root.id
+            // Storage is slow and may fail (a moved or revoked file): never ask it from the composition thread.
+            val fileModified by produceState<Long?>(null, group.id, open.loaded.fingerprint) {
+                value =
+                    withContext(Dispatchers.IO) {
+                        try {
+                            container.storage.lastModified(open.vault.location)
+                        } catch (unavailable: IOException) {
+                            null
+                        }
+                    }
+            }
             GroupScreen(
                 group = group,
                 isRoot = isRoot,
@@ -63,7 +79,7 @@ fun OpenVaultScreens(
                 status = SaveStatus(open.saving, open.saveProblem, open.hasUnsavedChanges),
                 recovered = open.recovered,
                 syncWarnDays = container.settings.values.syncWarnDays,
-                fileLastModifiedMillis = remember(group.id) { container.storage.lastModified(open.vault.location) },
+                fileLastModifiedMillis = fileModified,
                 lastKeyNexaSaveMillis = open.lastKeyNexaSaveMillis,
                 lastExternalChangeMillis = open.lastExternalChangeMillis,
                 conflicts =
