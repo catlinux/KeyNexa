@@ -154,6 +154,14 @@
     <string name="entry_detail_attachments">Attachments</string>
     <string name="entry_detail_last_modified">Last modified: %1$s</string>
     <string name="entry_detail_history">Previous versions: %1$d</string>
+    <string name="entry_detail_clear_history">Clear previous versions</string>
+    <string name="entry_detail_clear_history_title">Clear previous versions?</string>
+    <plurals name="entry_detail_clear_history_message">
+        <item quantity="one">The %1$d previous version of this entry will be deleted, including old attachments and passwords. This cannot be undone.</item>
+        <item quantity="other">The %1$d previous versions of this entry will be deleted, including old attachments and passwords. This cannot be undone.</item>
+    </plurals>
+    <string name="entry_detail_clear_history_cancel">Cancel</string>
+    <string name="entry_detail_clear_history_confirm">Clear</string>
     <string name="entry_detail_edit">Edit</string>
     <string name="entry_detail_delete">Delete</string>
     <string name="entry_detail_delete_title">Delete this entry?</string>

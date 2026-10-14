@@ -158,6 +158,15 @@
     <string name="entry_detail_attachments">Adjuntos</string>
     <string name="entry_detail_last_modified">Última modificación: %1$s</string>
     <string name="entry_detail_history">Versiones anteriores: %1$d</string>
+    <string name="entry_detail_clear_history">Borrar versiones anteriores</string>
+    <string name="entry_detail_clear_history_title">¿Borrar las versiones anteriores?</string>
+    <plurals name="entry_detail_clear_history_message">
+        <item quantity="one">Se borra la %1$d versión anterior de esta entrada, incluidos los adjuntos y contraseñas antiguos. No se puede deshacer.</item>
+        <item quantity="other">Se borran las %1$d versiones anteriores de esta entrada, incluidos los adjuntos y contraseñas antiguos. No se puede deshacer.</item>
+        <item quantity="many">Se borran las %1$d versiones anteriores de esta entrada, incluidos los adjuntos y contraseñas antiguos. No se puede deshacer.</item>
+    </plurals>
+    <string name="entry_detail_clear_history_cancel">Cancelar</string>
+    <string name="entry_detail_clear_history_confirm">Borrar</string>
     <string name="entry_detail_edit">Editar</string>
     <string name="entry_detail_delete">Eliminar</string>
     <string name="entry_detail_delete_title">¿Eliminar esta entrada?</string>

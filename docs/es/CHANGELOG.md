@@ -6,6 +6,12 @@ Todos los cambios notables de este proyecto se documentan en este archivo. El fo
 
 ## [Sin publicar]
 
+## [0.15.0] - 2026-10-14
+
+### Añadido
+
+- Borrar las versiones anteriores de una entrada con `VaultEditor.clearHistory`, que vacía el historial de la entrada (sin crear versión nueva ni cambiar su fecha de modificación) y recolecta los binarios de adjuntos que solo referenciaba el historial. La pantalla de detalle ofrece «Borrar versiones anteriores» junto a «Versiones anteriores: N» con un diálogo de confirmación; al quitar un adjunto, su contenido queda en el historial hasta usar esta acción.
+
 ## [0.14.0] - 2026-10-14
 
 ### Añadido

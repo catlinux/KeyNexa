@@ -1,4 +1,4 @@
-@file:Suppress("MaxLineLength")
+@file:Suppress("MaxLineLength", "TooManyFunctions")
 
 package io.github.catlinux.keynexa.app.ui.entry
 
@@ -38,6 +38,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
@@ -96,11 +97,13 @@ fun EntryDetailScreen(
     onCopy: (label: String, value: String, sensitive: Boolean) -> Unit,
     onOpenUrl: (String) -> Unit,
     onBack: () -> Unit,
+    onClearHistory: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
     var attachmentToSave by remember { mutableStateOf<Attachment?>(null) }
+    var askingToClearHistory by remember { mutableStateOf(false) }
     val saveLauncher =
         rememberLauncherForActivityResult(ActivityResultContracts.CreateDocument("application/octet-stream")) { uri ->
             val attachment = attachmentToSave
@@ -173,6 +176,7 @@ fun EntryDetailScreen(
                             attachmentToSave = attachment
                             saveLauncher.launch(attachment.name)
                         },
+                        onClearHistory = { askingToClearHistory = true },
                     )
                 }
             }
@@ -186,6 +190,16 @@ fun EntryDetailScreen(
                 askingToDelete = false
             },
             onDismiss = { askingToDelete = false },
+        )
+    }
+    if (askingToClearHistory) {
+        ClearHistoryDialog(
+            count = entry.history.size,
+            onConfirm = {
+                onClearHistory()
+                askingToClearHistory = false
+            },
+            onDismiss = { askingToClearHistory = false },
         )
     }
 }
@@ -355,6 +369,7 @@ private fun EntryMetadata(
     entry: Entry,
     vaultBinaries: Map<BinaryId, Binary>,
     onSaveAttachment: (Attachment) -> Unit,
+    onClearHistory: () -> Unit,
 ) {
     val context = LocalContext.current
     Column(verticalArrangement = Arrangement.spacedBy(ItemGap)) {
@@ -391,10 +406,21 @@ private fun EntryMetadata(
                 style = MaterialTheme.typography.bodyMedium,
             )
         }
-        Text(
-            text = stringResource(R.string.entry_detail_history, entry.history.size),
-            style = MaterialTheme.typography.bodyMedium,
-        )
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(ItemGap),
+        ) {
+            Text(
+                text = stringResource(R.string.entry_detail_history, entry.history.size),
+                style = MaterialTheme.typography.bodyMedium,
+                modifier = Modifier.weight(1f),
+            )
+            if (entry.history.isNotEmpty()) {
+                TextButton(onClick = onClearHistory) {
+                    Text(text = stringResource(R.string.entry_detail_clear_history))
+                }
+            }
+        }
     }
 }
 
@@ -448,6 +474,35 @@ private fun DeleteDialog(
                 colors = ButtonDefaults.textButtonColors(contentColor = MaterialTheme.colorScheme.error),
             ) {
                 Text(text = stringResource(R.string.entry_detail_delete_confirm))
+            }
+        },
+    )
+}
+
+/** Asks before deleting the previous versions of an entry. */
+@Composable
+private fun ClearHistoryDialog(
+    count: Int,
+    onConfirm: () -> Unit,
+    onDismiss: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        modifier = modifier,
+        title = { Text(text = stringResource(R.string.entry_detail_clear_history_title)) },
+        text = { Text(text = pluralStringResource(R.plurals.entry_detail_clear_history_message, count, count)) },
+        confirmButton = {
+            TextButton(
+                onClick = onConfirm,
+                colors = ButtonDefaults.textButtonColors(contentColor = MaterialTheme.colorScheme.error),
+            ) {
+                Text(text = stringResource(R.string.entry_detail_clear_history_confirm))
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) {
+                Text(text = stringResource(R.string.entry_detail_clear_history_cancel))
             }
         },
     )

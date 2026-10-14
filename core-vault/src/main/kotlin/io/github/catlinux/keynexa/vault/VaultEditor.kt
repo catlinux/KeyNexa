@@ -149,6 +149,24 @@ class VaultEditor(
         return if (filtered == vault.binaries) vault else vault.copy(binaries = filtered)
     }
 
+    /**
+     * Clears the previous versions of the entry [entryId] without creating a new one or touching its modification time.
+     */
+    fun clearHistory(
+        vault: Vault,
+        entryId: UUID,
+    ): Vault {
+        val entry = requireNotNull(vault.root.findEntry(entryId)) { NO_ENTRY }
+        if (entry.history.isEmpty()) return vault
+        val cleared = entry.copy(history = emptyList())
+        val holder = requireNotNull(vault.root.pathTo(entryId).lastOrNull()).id
+        val root =
+            vault.root.mapGroup(holder) { parent ->
+                parent.copy(entries = parent.entries.map { if (it.id == entryId) cleared else it })
+            }
+        return dropUnreferencedBinaries(vault.copy(root = root))
+    }
+
     /** Moves an entry or a group into the group [targetId], recording when it was put there. */
     fun move(
         vault: Vault,

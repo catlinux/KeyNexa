@@ -6,6 +6,12 @@ All notable changes to this project are documented in this file. The format is b
 
 ## [Unreleased]
 
+## [0.15.0] - 2026-10-14
+
+### Added
+
+- Clear an entry's previous versions with `VaultEditor.clearHistory`, which empties the entry's history (without creating a new version or changing its modification time) and garbage-collects attachment binaries only the history referenced. The entry detail screen offers "Clear previous versions" next to "Previous versions: N" with a confirmation dialog; removing an attachment leaves its content in the history until this action is used.
+
 ## [0.14.0] - 2026-10-14
 
 ### Added

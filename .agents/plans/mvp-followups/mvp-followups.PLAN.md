@@ -32,7 +32,7 @@ Imprevistos de diseño: parar y anotarlos aquí.
   - Docs en/es: README (funciones), ROADMAP (quitar la edición de adjuntos de lo que queda fuera del MVP), CHANGELOG, THREAT_MODEL solo si añade riesgo (el guardado en claro lo elige el usuario; dilo en docs).
   - Hecho cuando: `check` verde; un adjunto añadido en el móvil se abre en KeePassXC (`keepassxc-cli attachment-export`) y uno de KeePassXC se guarda desde la app (lo prueba Sonnet con adb).
 
-- [ ] **G2. Borrar las versiones anteriores de una entrada** · 0.15.0 (menor) · AgentRelay, esfuerzo medio.
+- [x] **G2. Borrar las versiones anteriores de una entrada** · 0.15.0 (menor) · AgentRelay, esfuerzo medio.
   - Motivo: al quitar un adjunto, su contenido sigue en el historial de la entrada (semántica KeePass) y no hay forma de borrarlo.
   - `core-vault`: `VaultEditor.clearHistory(vault, entryId)`: deja `history = emptyList()` (sin crear versión nueva ni cambiar `lastModified`), y elimina de `vault.binaries` lo que ya no referencia nadie (reutiliza `dropUnreferencedBinaries`). Si la entrada no tiene historial, devuelve el mismo vault.
   - UI detalle (`EntryDetailScreen`): junto a «Versiones anteriores: N» (solo si N > 0) un botón «Borrar versiones anteriores» que abre un diálogo de confirmación («Se borran las N versiones anteriores de esta entrada, incluidos los adjuntos y contraseñas antiguos. No se puede deshacer.») con Cancelar / Borrar; al confirmar `session.apply { editor.clearHistory(it, id) }`.

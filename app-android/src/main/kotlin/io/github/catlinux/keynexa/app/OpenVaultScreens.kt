@@ -145,6 +145,7 @@ private fun EntryDetail(
         onDelete = {
             if (container.session.apply { editor.delete(it, entryId) }) navigator.back()
         },
+        onClearHistory = { container.session.apply { editor.clearHistory(it, entryId) } },
         onCopy = {
             label,
             value,

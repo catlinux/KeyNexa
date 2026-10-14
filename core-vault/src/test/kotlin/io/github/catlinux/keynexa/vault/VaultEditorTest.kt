@@ -216,6 +216,77 @@ class VaultEditorTest {
     }
 
     @Test
+    fun clearHistoryEmptiesTheHistory() {
+        val vault = editorVault()
+        val edited = editor().editEntry(vault, GITHUB_ID) { it.withField(Entry.URL, GITHUB_URL) }
+
+        val cleared = editor().clearHistory(edited, GITHUB_ID)
+
+        val entry = requireNotNull(cleared.root.findEntry(GITHUB_ID))
+        assertTrue(entry.history.isEmpty())
+        assertEquals(GITHUB_URL, entry.fields[Entry.URL]?.value)
+    }
+
+    @Test
+    fun clearHistoryDoesNotChangeLastModified() {
+        val vault = editorVault()
+        val edited = editor().editEntry(vault, GITHUB_ID) { it.withField(Entry.URL, GITHUB_URL) }
+
+        val cleared = editor().clearHistory(edited, GITHUB_ID)
+
+        assertEquals(
+            requireNotNull(edited.root.findEntry(GITHUB_ID)).times.lastModified,
+            requireNotNull(cleared.root.findEntry(GITHUB_ID)).times.lastModified,
+        )
+    }
+
+    @Test
+    fun clearHistoryGarbageCollectsBinariesOnlyTheHistoryReferenced() {
+        val vault = editorVault()
+        val content = byteArrayOf(1, 2, 3)
+
+        var edited = editor().addAttachment(vault, GITHUB_ID, "file.bin", content)
+        edited = editor().removeAttachment(edited, GITHUB_ID, "file.bin")
+        val editedEntry = requireNotNull(edited.root.findEntry(GITHUB_ID))
+        val historyAttachment = editedEntry.history.flatMap { it.attachments }.single()
+        val id = historyAttachment.id
+
+        val cleared = editor().clearHistory(edited, GITHUB_ID)
+
+        assertTrue(id !in cleared.binaries)
+        assertTrue(requireNotNull(cleared.root.findEntry(GITHUB_ID)).history.isEmpty())
+    }
+
+    @Test
+    fun clearHistoryKeepsBinariesReferencedByTheCurrentVersion() {
+        val vault = editorVault()
+        val content = byteArrayOf(1, 2, 3)
+
+        val edited = editor().addAttachment(vault, GITHUB_ID, "file.bin", content)
+        val id = requireNotNull(edited.root.findEntry(GITHUB_ID)).attachments.single().id
+
+        // A following edit creates a history version, but the binary is still current.
+        val withHistory = editor().editEntry(edited, GITHUB_ID) { it.withField(Entry.URL, GITHUB_URL) }
+        val cleared = editor().clearHistory(withHistory, GITHUB_ID)
+
+        assertTrue(id in cleared.binaries)
+    }
+
+    @Test
+    fun clearHistoryWithNoHistoryReturnsTheSameVault() {
+        val vault = editorVault()
+
+        assertSame(vault, editor().clearHistory(vault, GITHUB_ID))
+    }
+
+    @Test
+    fun clearHistoryRejectsAnUnknownEntry() {
+        val vault = editorVault()
+
+        assertThrows(IllegalArgumentException::class.java) { editor().clearHistory(vault, id(999)) }
+    }
+
+    @Test
     fun anEditThatChangesNoContentReturnsTheSameVault() {
         val vault = editorVault()
         val editor = editor()
