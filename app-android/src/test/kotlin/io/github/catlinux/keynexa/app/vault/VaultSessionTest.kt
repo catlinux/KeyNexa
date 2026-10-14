@@ -2,7 +2,11 @@ package io.github.catlinux.keynexa.app.vault
 
 import io.github.catlinux.keynexa.kdbx.KotpassKdbxEngine
 import io.github.catlinux.keynexa.platform.FileBackupStore
+import io.github.catlinux.keynexa.platform.FileMergedCopies
 import io.github.catlinux.keynexa.platform.FileSaveJournal
+import io.github.catlinux.keynexa.sync.ConflictMerger
+import io.github.catlinux.keynexa.sync.CopyProblem
+import io.github.catlinux.keynexa.sync.Fingerprint
 import io.github.catlinux.keynexa.sync.KeePassMerger
 import io.github.catlinux.keynexa.sync.SafeSaver
 import io.github.catlinux.keynexa.sync.SaveRecovery
@@ -14,11 +18,13 @@ import io.github.catlinux.keynexa.vault.Kdf
 import io.github.catlinux.keynexa.vault.NewVault
 import io.github.catlinux.keynexa.vault.SiblingFile
 import io.github.catlinux.keynexa.vault.StoragePort
+import io.github.catlinux.keynexa.vault.Vault
 import io.github.catlinux.keynexa.vault.VaultEditor
 import io.github.catlinux.keynexa.vault.VaultLocation
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotNull
+import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
@@ -34,6 +40,7 @@ class VaultSessionTest {
     private val known = KnownVault("Test", location)
     private val files = HashMap<VaultLocation, ByteArray>()
     private var unreadable = false
+    private var unwritable = false
 
     private val storage =
         object : StoragePort {
@@ -44,7 +51,10 @@ class VaultSessionTest {
 
             override fun metadata(location: VaultLocation) = FileMetadata(files[location]?.size?.toLong(), null)
 
-            override fun listSiblings(location: VaultLocation): List<SiblingFile> = emptyList()
+            override fun listSiblings(location: VaultLocation): List<SiblingFile> =
+                files.keys
+                    .filter { it != location }
+                    .map { SiblingFile(it, name(it), FileMetadata(files[it]?.size?.toLong(), null)) }
 
             override fun name(location: VaultLocation): String = location.value.substringAfterLast('/')
 
@@ -56,6 +66,7 @@ class VaultSessionTest {
                 location: VaultLocation,
                 data: ByteArray,
             ) {
+                if (unwritable) throw IOException("injected")
                 files[location] = data.copyOf()
             }
         }
@@ -63,7 +74,7 @@ class VaultSessionTest {
     private val engine = KotpassKdbxEngine()
     private val direct = Executor { it.run() }
 
-    private fun session(): VaultSession {
+    private fun session(conflicts: ConflictMerger? = null): VaultSession {
         val backups = FileBackupStore(folder.newFolder())
         val journal = FileSaveJournal(folder.newFolder())
         return VaultSession(
@@ -73,8 +84,22 @@ class VaultSessionTest {
             recovery = SaveRecovery(storage, engine, backups, journal),
             saver = SafeSaver(storage, engine, backups, journal, merger = KeePassMerger()),
             executor = direct,
+            conflicts = conflicts,
         )
     }
+
+    /** A session with conflict merging on, over [ledger]. */
+    private fun conflictSession(ledger: FileMergedCopies): VaultSession =
+        session(ConflictMerger(storage, engine, KeePassMerger(), ledger))
+
+    private val copyName = "vault.sync-conflict-20261014-120000-ABCDEFG.kdbx"
+    private val copyLocation = VaultLocation("memory://$copyName")
+
+    /** Puts a conflict copy of [vault], written with [password], next to the vault file. */
+    private fun putCopy(
+        vault: Vault,
+        password: String = "test-password-1",
+    ): ByteArray = engine.encode(vault, credentials(password)).also { files[copyLocation] = it }
 
     private fun credentials(password: String = "test-password-1") = Credentials.of(password = password.toCharArray())
 
@@ -225,5 +250,130 @@ class VaultSessionTest {
                 .map { it.title },
         )
         assertTrue(state.hasUnsavedChanges)
+    }
+
+    @Test
+    fun aConflictCopyIsFoldedInAndRecordedAfterSaving() {
+        val ledger = FileMergedCopies(folder.newFolder())
+        val session = conflictSession(ledger)
+        createVault(session)
+        val open = session.state.value as SessionState.Open
+        val bytes = putCopy(VaultEditor().addEntry(open.current, open.current.root.id, "FromTheOtherDevice"))
+        session.lock()
+
+        session.unlock(known, credentials())
+
+        val state = session.state.value as SessionState.Open
+        assertEquals(
+            listOf("FromTheOtherDevice"),
+            state.current.root.entries
+                .map { it.title },
+        )
+        assertFalse(state.hasUnsavedChanges)
+        assertEquals(1, state.conflicts?.mergedNow)
+        assertEquals(listOf(copyName), state.conflicts?.deletable?.map { it.file.name })
+        assertTrue(ledger.isMerged(location, Fingerprint.of(bytes)))
+    }
+
+    @Test
+    fun aConflictCopyThatArrivesLaterIsFoldedInWhenTheFileChanges() {
+        val ledger = FileMergedCopies(folder.newFolder())
+        val session = conflictSession(ledger)
+        createVault(session)
+        val open = session.state.value as SessionState.Open
+        // Another device writes the vault again and leaves a conflict copy next to it.
+        files[location] = engine.encode(open.current, credentials())
+        val bytes = putCopy(VaultEditor().addEntry(open.current, open.current.root.id, "Later"))
+
+        session.refreshIfChanged()
+
+        val state = session.state.value as SessionState.Open
+        assertEquals(
+            listOf("Later"),
+            state.current.root.entries
+                .map { it.title },
+        )
+        assertEquals(1, state.conflicts?.mergedNow)
+        assertTrue(ledger.isMerged(location, Fingerprint.of(bytes)))
+    }
+
+    @Test
+    fun aSaveThatFailsDoesNotRecordTheCopy() {
+        val ledger = FileMergedCopies(folder.newFolder())
+        val session = conflictSession(ledger)
+        createVault(session)
+        val open = session.state.value as SessionState.Open
+        val bytes = putCopy(VaultEditor().addEntry(open.current, open.current.root.id, "Pending"))
+        session.lock()
+        unwritable = true
+
+        session.unlock(known, credentials())
+
+        val state = session.state.value as SessionState.Open
+        assertNotNull(state.saveProblem)
+        assertTrue(state.hasUnsavedChanges)
+        assertEquals(
+            listOf("Pending"),
+            state.current.root.entries
+                .map { it.title },
+        )
+        assertNull(state.conflicts)
+        assertFalse(ledger.isMerged(location, Fingerprint.of(bytes)))
+        assertTrue(files.containsKey(copyLocation))
+    }
+
+    @Test
+    fun deleteConflictCopiesRemovesThemAndClearsTheOffer() {
+        val ledger = FileMergedCopies(folder.newFolder())
+        val session = conflictSession(ledger)
+        createVault(session)
+        val open = session.state.value as SessionState.Open
+        putCopy(VaultEditor().addEntry(open.current, open.current.root.id, "Other"))
+        session.lock()
+        session.unlock(known, credentials())
+        assertNotNull((session.state.value as SessionState.Open).conflicts)
+
+        session.deleteConflictCopies()
+
+        val state = session.state.value as SessionState.Open
+        assertNull(state.conflicts)
+        assertFalse(files.containsKey(copyLocation))
+    }
+
+    @Test
+    fun aCopyWithAnotherPasswordIsReportedAndNotDeleted() {
+        val ledger = FileMergedCopies(folder.newFolder())
+        val session = conflictSession(ledger)
+        createVault(session)
+        val open = session.state.value as SessionState.Open
+        val bytes = putCopy(open.current, password = "another-password")
+        session.lock()
+
+        session.unlock(known, credentials())
+
+        val state = session.state.value as SessionState.Open
+        assertEquals(listOf(CopyProblem.OtherPassword), state.conflicts?.failed)
+        assertTrue(state.conflicts?.deletable?.isEmpty() == true)
+        assertTrue(files.containsKey(copyLocation))
+        assertFalse(ledger.isMerged(location, Fingerprint.of(bytes)))
+    }
+
+    @Test
+    fun dismissingTheReportHidesItUntilTheNextOpen() {
+        val ledger = FileMergedCopies(folder.newFolder())
+        val session = conflictSession(ledger)
+        createVault(session)
+        val open = session.state.value as SessionState.Open
+        putCopy(VaultEditor().addEntry(open.current, open.current.root.id, "Elsewhere"))
+        session.lock()
+        session.unlock(known, credentials())
+        assertNotNull((session.state.value as SessionState.Open).conflicts)
+
+        session.dismissConflicts()
+        assertNull((session.state.value as SessionState.Open).conflicts)
+
+        session.lock()
+        session.unlock(known, credentials())
+        assertNotNull((session.state.value as SessionState.Open).conflicts)
     }
 }

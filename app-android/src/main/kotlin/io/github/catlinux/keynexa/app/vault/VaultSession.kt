@@ -1,6 +1,9 @@
 package io.github.catlinux.keynexa.app.vault
 
 import io.github.catlinux.keynexa.sync.BackupRef
+import io.github.catlinux.keynexa.sync.ConflictCopy
+import io.github.catlinux.keynexa.sync.ConflictMerger
+import io.github.catlinux.keynexa.sync.CopyProblem
 import io.github.catlinux.keynexa.sync.Fingerprint
 import io.github.catlinux.keynexa.sync.LoadedVault
 import io.github.catlinux.keynexa.sync.RecoveryOutcome
@@ -14,6 +17,7 @@ import io.github.catlinux.keynexa.vault.KdbxEngine
 import io.github.catlinux.keynexa.vault.StoragePort
 import io.github.catlinux.keynexa.vault.Vault
 import io.github.catlinux.keynexa.vault.VaultException
+import io.github.catlinux.keynexa.vault.VaultLocation
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -62,12 +66,27 @@ sealed interface SessionState {
         val unsavedCopy: BackupRef? = null,
         /** What recovery found when the vault was opened, if a previous save had been interrupted. */
         val recovered: RecoveryOutcome? = null,
+        /** What the Syncthing conflict copies did, when there is something to tell or to offer. */
+        val conflicts: ConflictReport? = null,
     ) : SessionState {
         val hasUnsavedChanges: Boolean get() = current != loaded.vault
 
         /** Nothing is being saved and nothing is waiting to be saved. */
         val isIdle: Boolean get() = !saving && !hasUnsavedChanges
     }
+}
+
+/**
+ * What happened with the vault's Syncthing conflict copies: how many were folded in, which copies may be deleted and
+ * which could not be merged. Only counts, fingerprints and reasons: never vault content or secrets.
+ */
+data class ConflictReport(
+    val mergedNow: Int,
+    val deletable: List<ConflictCopy>,
+    val failed: List<CopyProblem>,
+) {
+    /** True when there is nothing to tell and nothing to offer, so the report is not shown at all. */
+    val isEmpty: Boolean get() = mergedNow == 0 && deletable.isEmpty() && failed.isEmpty()
 }
 
 /**
@@ -85,8 +104,11 @@ class VaultReaders(
  * Slow work (key derivation, storage) runs on [executor], which must run tasks one at a time and in order so a save
  * never overlaps another operation on the same vault. State is published in [state]; screens only observe it.
  * Credentials are kept only while a vault is open and are overwritten by [lock].
+ *
+ * [conflicts] folds in the Syncthing conflict copies of the vault: on open, and whenever a version written
+ * elsewhere is loaded. When it is null the whole feature is off and nothing changes.
  */
-@Suppress("TooManyFunctions")
+@Suppress("LongParameterList", "TooManyFunctions")
 class VaultSession(
     private val storage: StoragePort,
     private val engine: KdbxEngine,
@@ -94,6 +116,7 @@ class VaultSession(
     private val recovery: SaveRecovery,
     private val saver: SafeSaver,
     private val executor: Executor,
+    private val conflicts: ConflictMerger? = null,
 ) {
     private val mutableState = MutableStateFlow<SessionState>(SessionState.Closed)
     val state: StateFlow<SessionState> = mutableState.asStateFlow()
@@ -183,8 +206,34 @@ class VaultSession(
                 secrets != null &&
                 open.isIdle
             ) {
-                reloadIfChanged(mutableState, readers.quick, open, secrets)
+                reloadIfChanged(readers.quick, open, secrets)
             }
+        }
+    }
+
+    /**
+     * Deletes the conflict copies that were folded in and have not changed since. The offer is refreshed, and it
+     * goes away once there is nothing left to delete or to tell.
+     */
+    fun deleteConflictCopies() {
+        executor.execute {
+            val merger = conflicts ?: return@execute
+            val open = mutableState.value as? SessionState.Open ?: return@execute
+            val report = open.conflicts ?: return@execute
+            merger.delete(open.vault.location, report.deletable)
+            publishConflicts(
+                location = open.vault.location,
+                mergedNow = 0,
+                deletable = merger.deletable(open.vault.location),
+                failed = report.failed,
+            )
+        }
+    }
+
+    /** Hides the conflict report until the vault is opened again. */
+    fun dismissConflicts() {
+        mutableState.update { state ->
+            if (state is SessionState.Open) state.copy(conflicts = null) else state
         }
     }
 
@@ -213,6 +262,7 @@ class VaultSession(
             val loaded = readers.patient.open(vault.location, secrets)
             credentials = secrets
             mutableState.value = SessionState.Open(vault, loaded, loaded.vault, recovered = recovered)
+            foldConflicts()
         } catch (failure: VaultException) {
             secrets.wipe()
             mutableState.value = SessionState.Failed(vault, failure.toUnlockError())
@@ -244,6 +294,108 @@ class VaultSession(
             is SaveOutcome.NotSaved ->
                 copy(saving = false, saveProblem = outcome.reason, unsavedCopy = outcome.unsavedCopy)
         }
+
+    // Loads the file again if another program changed it, and folds in the conflict copies that came with it. A
+    // transfer in progress or a storage hiccup is not an error: the next look will see it again.
+    private fun reloadIfChanged(
+        reader: VaultReader,
+        open: SessionState.Open,
+        secrets: Credentials,
+    ) {
+        try {
+            if (!reader.hasChanged(open.vault.location, open.loaded.fingerprint)) return
+            val loaded = reader.open(open.vault.location, secrets, credentialsKnownGood = true)
+            mutableState.update { now ->
+                if (now is SessionState.Open && now.isIdle && now.loaded == open.loaded) {
+                    now.copy(loaded = loaded, current = loaded.vault)
+                } else {
+                    now
+                }
+            }
+            foldConflicts()
+        } catch (ignored: IOException) {
+            // Try again at the next look.
+        } catch (ignored: VaultException) {
+            // The file may be incomplete: try again at the next look.
+        }
+    }
+
+    /**
+     * Folds the conflict copies into the open vault. Whatever is folded in is saved first and recorded in the ledger
+     * only when that save reports success: a save that does not finish leaves the copies out, so the next open tries
+     * again. Runs on the executor, and only when the vault has nothing unsaved. Nothing here is logged, and a
+     * storage failure never keeps the vault from opening: the next open tries the copies again.
+     */
+    private fun foldConflicts() {
+        val merger = conflicts ?: return
+        val open = mutableState.value as? SessionState.Open ?: return
+        val secrets = credentials ?: return
+        if (!open.isIdle) return
+        try {
+            fold(merger, open, secrets)
+        } catch (unavailable: IOException) {
+            // The vault, its copies or the ledger cannot be read or written right now.
+        }
+    }
+
+    private fun fold(
+        merger: ConflictMerger,
+        open: SessionState.Open,
+        secrets: Credentials,
+    ) {
+        val location = open.vault.location
+        val scan = merger.scan(location, open.loaded.vault, secrets)
+        val merged = scan.merged
+        val failed = scan.failed.map { it.second }
+        if (merged == null) {
+            merger.record(location, scan.absorbed)
+            publishConflicts(location, mergedNow = 0, deletable = merger.deletable(location), failed = failed)
+            return
+        }
+        var claimed = false
+        mutableState.update { state ->
+            claimed = state is SessionState.Open && state.isIdle
+            if (state is SessionState.Open && claimed) {
+                state.copy(current = merged, saving = true, saveProblem = null)
+            } else {
+                state
+            }
+        }
+        // The user edited in the meantime: their save merges the copies' changes later, and the ledger stays empty.
+        if (!claimed) return
+        val outcome = saver.save(open.loaded, merged, secrets)
+        mutableState.update { state -> if (state is SessionState.Open) state.after(outcome) else state }
+        if (outcome !is SaveOutcome.Saved) {
+            // Not recorded, so the copies are not offered for deletion yet: the save-problem notice says what
+            // happened, and the next open merges them again.
+            publishConflicts(location, mergedNow = 0, deletable = merger.deletable(location), failed = failed)
+            return
+        }
+        merger.record(location, scan.absorbed)
+        publishConflicts(
+            location = location,
+            mergedNow = scan.absorbed.size,
+            deletable = merger.deletable(location),
+            failed = failed,
+        )
+    }
+
+    // Publishes what the copies did to the vault, or clears the report when it has nothing left to say.
+    private fun publishConflicts(
+        location: VaultLocation,
+        mergedNow: Int,
+        deletable: List<ConflictCopy>,
+        failed: List<CopyProblem>,
+    ) {
+        val report = ConflictReport(mergedNow, deletable, failed).takeUnless { it.isEmpty }
+        mutableState.update { state ->
+            if (state is SessionState.Open && state.vault.location == location) {
+                state.copy(conflicts = report)
+            } else {
+                state
+            }
+        }
+    }
 }
 
 private fun VaultException.toUnlockError(): UnlockError =
@@ -254,28 +406,3 @@ private fun VaultException.toUnlockError(): UnlockError =
         is VaultException.UnsupportedFormat -> UnlockError.UnsupportedFormat
         is VaultException.Corrupted -> UnlockError.Damaged
     }
-
-// Loads the file again if another program changed it. A transfer in progress or a storage hiccup is not an error:
-// the next look will see the file again.
-private fun reloadIfChanged(
-    state: MutableStateFlow<SessionState>,
-    reader: VaultReader,
-    open: SessionState.Open,
-    secrets: Credentials,
-) {
-    try {
-        if (!reader.hasChanged(open.vault.location, open.loaded.fingerprint)) return
-        val loaded = reader.open(open.vault.location, secrets, credentialsKnownGood = true)
-        state.update { now ->
-            if (now is SessionState.Open && now.isIdle && now.loaded == open.loaded) {
-                now.copy(loaded = loaded, current = loaded.vault)
-            } else {
-                now
-            }
-        }
-    } catch (ignored: IOException) {
-        // Try again at the next look.
-    } catch (ignored: VaultException) {
-        // The file may be incomplete: try again at the next look.
-    }
-}

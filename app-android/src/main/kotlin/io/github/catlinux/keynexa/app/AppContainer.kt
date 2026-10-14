@@ -17,9 +17,11 @@ import io.github.catlinux.keynexa.app.vault.VaultReaders
 import io.github.catlinux.keynexa.app.vault.VaultSession
 import io.github.catlinux.keynexa.kdbx.KotpassKdbxEngine
 import io.github.catlinux.keynexa.platform.FileBackupStore
+import io.github.catlinux.keynexa.platform.FileMergedCopies
 import io.github.catlinux.keynexa.platform.FileSaveJournal
 import io.github.catlinux.keynexa.platform.SafStoragePort
 import io.github.catlinux.keynexa.platform.SafVaultAccess
+import io.github.catlinux.keynexa.sync.ConflictMerger
 import io.github.catlinux.keynexa.sync.KeePassMerger
 import io.github.catlinux.keynexa.sync.SafeSaver
 import io.github.catlinux.keynexa.sync.SaveRecovery
@@ -59,6 +61,8 @@ class AppContainer(
         val privateDir = appContext.noBackupFilesDir
         val backups = FileBackupStore(File(privateDir, "backups"))
         val journal = FileSaveJournal(File(privateDir, "journal"))
+        val mergedCopies = FileMergedCopies(File(privateDir, "merged-copies"))
+        val keeper = KeePassMerger()
         val worker =
             Executors.newSingleThreadExecutor { task ->
                 Thread(task, "keynexa-vault").apply { isDaemon = true }
@@ -73,7 +77,8 @@ class AppContainer(
                         quick = VaultReader(storage, engine, retryDelaysMillis = emptyList()),
                     ),
                 recovery = SaveRecovery(storage, engine, backups, journal),
-                saver = SafeSaver(storage, engine, backups, journal, merger = KeePassMerger()),
+                saver = SafeSaver(storage, engine, backups, journal, merger = keeper),
+                conflicts = ConflictMerger(storage, engine, keeper, mergedCopies),
                 executor = worker,
             )
     }
