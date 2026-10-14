@@ -99,10 +99,11 @@ jobs:
   # Informational only: build tools are not distributed with the app.
   build-tooling-vulnerabilities:
     runs-on: ubuntu-latest
-    continue-on-error: true
     steps:
       - uses: actions/checkout@v7
       - name: Scan build tooling (informational)
+        # On the step, not the job: a failed job paints a red cross on every commit even when it does not block.
+        continue-on-error: true
         uses: google/osv-scanner-action/osv-scanner-action@v2.7.0
         with:
           scan-args: |-

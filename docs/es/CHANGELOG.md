@@ -6,6 +6,12 @@ Todos los cambios notables de este proyecto se documentan en este archivo. El fo
 
 ## [Sin publicar]
 
+## [0.10.2] - 2026-10-14
+
+### Corregido
+
+- El análisis informativo de las herramientas de compilación ya no pinta una ✗ roja en cada commit: `continue-on-error` pasa del job a su paso, de modo que el job termina en verde y los avisos siguen visibles en el log. Sigue sin bloquear nada.
+
 ## [0.10.1] - 2026-10-14
 
 ### Corregido

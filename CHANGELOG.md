@@ -6,6 +6,12 @@ All notable changes to this project are documented in this file. The format is b
 
 ## [Unreleased]
 
+## [0.10.2] - 2026-10-14
+
+### Fixed
+
+- The informational scan of the build tooling no longer shows a red cross on every commit: `continue-on-error` moves from the job to its step, so the job ends green and its findings stay visible in the log. It still does not block anything.
+
 ## [0.10.1] - 2026-10-14
 
 ### Fixed
