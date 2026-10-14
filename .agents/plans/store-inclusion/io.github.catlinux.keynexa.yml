@@ -1,0 +1,26 @@
+Categories:
+  - Security
+License: GPL-3.0-only
+AuthorName: CatLinux
+WebSite: https://github.com/catlinux/KeyNexa
+SourceCode: https://github.com/catlinux/KeyNexa
+IssueTracker: https://github.com/catlinux/KeyNexa/issues
+Changelog: https://github.com/catlinux/KeyNexa/blob/HEAD/CHANGELOG.md
+
+AutoName: KeyNexa
+
+RepoType: git
+Repo: https://github.com/catlinux/KeyNexa.git
+
+Builds:
+  - versionName: 0.10.3
+    versionCode: 1003
+    commit: dd78d06508ad259b223577ed5774cb3bb0d955e2
+    subdir: app-android
+    gradle:
+      - yes
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags
+CurrentVersion: 0.10.3
+CurrentVersionCode: 1003
