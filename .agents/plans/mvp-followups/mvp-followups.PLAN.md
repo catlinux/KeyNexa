@@ -20,3 +20,14 @@ Orquesta Sonnet; implementa AgentRelay (una tarea por paso, secuenciales, árbol
   - Prueba real en el móvil al acabar (revocar el permiso de la carpeta con la bóveda abierta; matar la app con un guardado pendiente): la hace el usuario o Sonnet con adb.
 
 Imprevistos de diseño: parar y anotarlos aquí.
+
+## Segunda tanda
+
+- [ ] **G1. Adjuntos: añadir, quitar y guardar en un archivo** · 0.14.0 (menor) · AgentRelay, esfuerzo alto.
+  - El modelo ya lo soporta: `Vault.binaries` (`BinaryId` = SHA-256 del contenido, sin colisiones entre archivos), `Entry.attachments` (nombre + `BinaryId`), `KeePassMerger` ya fusiona y descarta binarios sin referencias, el adaptador kotpass los escribe. Hoy la app solo muestra el nombre.
+  - `core-vault`: `VaultEditor.addAttachment(vault, entryId, name, content)` y `removeAttachment(vault, entryId, name)`, ambos por `editEntry` (así queda versión en el historial). Mismo nombre ya existente se reemplaza. Binario nuevo con `Binary(content, protectedInMemory = false)` e id SHA-256 hex del contenido (función en core-vault, `java.security.MessageDigest`). Al quitar, se eliminan de `binaries` los que ya no referencia nadie (ni la entrada actual ni el historial). Constante `MAX_ATTACHMENT_BYTES = 10 MiB`: el editor rechaza (`IllegalArgumentException`) lo que la supere; la UI lo comprueba antes de leer.
+  - UI detalle (`EntryDetailScreen`): por adjunto, nombre, tamaño legible y botón «Guardar en…» (`ActivityResultContracts.CreateDocument`, nombre sugerido = el del adjunto) que escribe el contenido en el URI elegido, en hilo de fondo, con aviso de éxito o fallo y una nota «el archivo guardado no está cifrado». Sin vista previa ni «abrir con» (evita FileProvider y fugas).
+  - UI edición (`EntryEditScreen`): sección de adjuntos con «Quitar» por adjunto y «Añadir un archivo» (`OpenDocument`, `*/*`): comprobar el tamaño con `OpenableColumns.SIZE` antes de leer y rechazar con mensaje si pasa del límite; el nombre es el de visualización. Los cambios se guardan junto con los demás campos en el mismo `session.apply` al pulsar Guardar (al cancelar no se aplica nada). Nunca hacer E/S de almacenamiento en la composición (hilo de fondo con `withContext(Dispatchers.IO)` y `try/catch`).
+  - Pruebas JVM: `VaultEditor` (añadir, reemplazar, quitar, GC de binarios, historial, límite de tamaño) y ida y vuelta por el motor kotpass (`encode`/`decode`) conservando contenido y nombre.
+  - Docs en/es: README (funciones), ROADMAP (quitar la edición de adjuntos de lo que queda fuera del MVP), CHANGELOG, THREAT_MODEL solo si añade riesgo (el guardado en claro lo elige el usuario; dilo en docs).
+  - Hecho cuando: `check` verde; un adjunto añadido en el móvil se abre en KeePassXC (`keepassxc-cli attachment-export`) y uno de KeePassXC se guarda desde la app (lo prueba Sonnet con adb).
