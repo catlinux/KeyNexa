@@ -8,13 +8,11 @@ Pasos detallados: consulta la [hoja de ruta](ROADMAP.md).
 
 - [ ] Desbloqueo biométrico: la matriz del ADR-0006 está comprobada en un Pixel 10 Pro (activar, desbloquear, una huella nueva lo invalida, contraseña exigida tras los días elegidos, contraseña cambiada en otro dispositivo). Sigue abierto: móviles sin StrongBox y API 26-29.
 
-- [ ] Primera publicación firmada de prueba: subir una etiqueta (con aprobación del responsable) y comprobar en GitHub el workflow, la firma y la suma de verificación.
 - [ ] Prueba diferencial de las bóvedas escritas por KeyNexa contra keepass-rs, y fuzzing con Jazzer (ADR-0005; el fuzzing por mutación y la comparación con keepassxc-cli ya se ejecutan).
 - [ ] Medir Argon2 de kotpass en un móvil real cuando la app abra una bóveda; decidir sobre argon2kt (consulta `docs/es/BENCHMARKS.md`).
 - [ ] Aprobar el resto de la identidad propuesta en `docs/DESIGN.md` (paleta, fuente, interruptor manual claro/oscuro); la marca ya está decidida.
 
 - [ ] Aportar las correcciones de kotpass al proyecto original: hay cuatro parches preparados en `.agents/plans/kotpass-upstream/`; publicarlos necesita la aprobación del mantenedor y pruebas dentro de kotpass.
-- [ ] Primera versión preliminar en GitHub cuando estén hechas las fases D5, D6 y la revisión (E1); el flujo de publicación nunca se ha ejecutado.
 
 ## Prioridad media (fase D — MVP seguro)
 

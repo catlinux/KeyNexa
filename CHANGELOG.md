@@ -16,6 +16,7 @@ All notable changes to this project are documented in this file. The format is b
 
 ### Changed
 
+- Documentation now describes the published v0.10.2 pre-release, implemented mitigations and the APK runtime dependencies.
 - The build now requires the minor and patch version components to stay below 100 so `versionCode` keeps increasing.
 
 ## [0.10.2] - 2026-10-14

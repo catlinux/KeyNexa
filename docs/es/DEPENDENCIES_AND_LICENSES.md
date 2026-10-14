@@ -37,21 +37,24 @@ El código propio de KeyNexa se distribuye bajo **GPL-3.0-only** con los términ
 - Commit verificado: `4e0bd6b6b13e59d48ebe0bd9c06de3f918de6945`.
 - Importado al repositorio en la fase C5 como módulo Gradle `:kotpass` (`third_party/kotpass/`): solo las fuentes principales, con los archivos de licencia originales intactos. Consulta su [README](../../third_party/kotpass/README.es.md) para los cambios locales.
 
-## Dependencias de Android y escritorio
+## Dependencias de tiempo de ejecución del APK de Android
 
-El esqueleto del proyecto (fase C1) ya usa Kotlin, AndroidX Core, AndroidX Activity, Compose (IU y Material 3) y JUnit; las demás filas siguen previstas.
+Las entradas siguientes son los módulos externos fijados para `releaseRuntimeClasspath` en [app-android/gradle.lockfile](../../app-android/gradle.lockfile), agrupados por proyecto. Se excluyen las dependencias de pruebas y de compilación. El módulo fuente `:kotpass`, incluido en la app, está vendorizado y no aparece como coordenada externa en el lockfile; sus licencias de código integrado se indican abajo. Las entradas BOM del lockfile alinean versiones y no se empaquetan en el APK.
 
-| Componente | Licencia | Fuente | Notas |
-| --- | --- | --- | --- |
-| Kotlin stdlib, kotlinx.coroutines | Apache-2.0 | JetBrains | *Licencia de coroutines no reverificada para este documento* |
-| Jetpack Compose, AndroidX (activity, lifecycle, navigation) | Apache-2.0 | POM de Google Maven | |
-| JUnit 4 | EPL-1.0 | [junit-team/junit4](https://github.com/junit-team/junit4) | Solo pruebas unitarias; no se distribuye con la aplicación |
-| `androidx.biometric` 1.1.0 (con sus librerías AndroidX transitivas: appcompat 1.2.0, lifecycle-livedata, loader, drawerlayout y otras) | Apache-2.0 | POM de `biometric-1.1.0` | En uso desde 0.9.0 (ADR-0006); `androidx.fragment` 1.8.5 se declara directamente desde 0.10.1 porque la 1.2.5 que arrastra rompe la API de Activity Result. Versión estable; las líneas 1.2/1.4 son alfa. `BiometricPrompt` necesita un `FragmentActivity`, así que `MainActivity` lo extiende. |
-| Compose Multiplatform (escritorio, futuro) | Apache-2.0 | [JetBrains/compose-multiplatform](https://github.com/JetBrains/compose-multiplatform) | Estable 1.12.1 (2026-09-22) |
-| Bouncy Castle (solo si hace falta además de kotpass) | Bouncy Castle License (texto MIT) | [bc-java LICENSE.md](https://github.com/bcgit/bc-java) | 1.86 (2026-09-11) |
-| argon2kt (opcional, Argon2 nativo en Android) | MIT; el código C de referencia de Argon2 incluido es CC0-1.0 o Apache-2.0 | [lambdapioneer/argon2kt](https://github.com/lambdapioneer/argon2kt) | Solo si las pruebas de rendimiento lo justifican; última versión 1.6.0 (2024-09-06) |
-| Inter o Manrope (fuente tipográfica) | SIL OFL 1.1 | [rsms/inter](https://github.com/rsms/inter), [google/fonts](https://github.com/google/fonts/tree/main/ofl/manrope) | Elección final en el sistema de diseño |
-| Material Symbols (iconos) | Apache-2.0 (según el README del repositorio; *archivo de licencia exacto de Symbols no verificado*) | [google/material-design-icons](https://github.com/google/material-design-icons) | Alternativas: Lucide (ISC), Phosphor (MIT) |
+| Proyecto | Módulos fijados y versiones | Licencia |
+| --- | --- | --- |
+| AndroidX | androidx.activity: activity-compose, activity-ktx, activity 1.10.1; androidx.annotation: annotation-experimental 1.4.1, annotation-jvm y annotation 1.9.1; androidx.appcompat: appcompat-resources, appcompat 1.2.0; androidx.arch.core: core-common, core-runtime 2.2.0; androidx.autofill: autofill 1.0.0; androidx.biometric: biometric 1.1.0; androidx.collection: collection-jvm, collection-ktx, collection 1.5.0; androidx.concurrent: concurrent-futures 1.1.0; androidx.core: core-ktx, core-viewtree, core 1.18.0; androidx.cursoradapter: cursoradapter 1.0.0; androidx.customview: customview-poolingcontainer, customview 1.0.0; androidx.drawerlayout: drawerlayout 1.0.0; androidx.emoji2: emoji2 1.4.0; androidx.fragment: fragment 1.8.5; androidx.graphics: graphics-path 1.0.1; androidx.interpolator: interpolator 1.0.0; androidx.lifecycle: lifecycle-common-java8, lifecycle-common-jvm, lifecycle-common, lifecycle-livedata-core-ktx, lifecycle-livedata-core, lifecycle-livedata, lifecycle-process, lifecycle-runtime-android, lifecycle-runtime-compose-android, lifecycle-runtime-compose, lifecycle-runtime-ktx-android, lifecycle-runtime-ktx, lifecycle-runtime, lifecycle-viewmodel-android, lifecycle-viewmodel-ktx, lifecycle-viewmodel-savedstate-android, lifecycle-viewmodel-savedstate, lifecycle-viewmodel 2.9.0; androidx.loader: loader 1.0.0; androidx.profileinstaller: profileinstaller 1.4.0; androidx.savedstate: savedstate-android, savedstate-compose-android, savedstate-compose, savedstate-ktx, savedstate 1.3.0; androidx.startup: startup-runtime 1.1.1; androidx.tracing: tracing 1.2.0; androidx.vectordrawable: vectordrawable-animated, vectordrawable 1.1.0; androidx.versionedparcelable: versionedparcelable 1.1.1; androidx.viewpager: viewpager 1.0.0 | Apache-2.0 |
+| Jetpack Compose | androidx.compose.animation: animation-android, animation-core-android, animation-core, animation 1.9.1; androidx.compose.foundation: foundation-android, foundation-layout-android, foundation-layout, foundation 1.9.1; androidx.compose.material: material-icons-core-android, material-icons-core 1.7.8; material-ripple-android, material-ripple 1.9.1; androidx.compose.material3: material3-android, material3 1.3.2; androidx.compose.runtime: runtime-android, runtime-annotation-android, runtime-annotation, runtime-saveable-android, runtime-saveable, runtime 1.9.1; androidx.compose.ui: ui-android, ui-geometry-android, ui-geometry, ui-graphics-android, ui-graphics, ui-text-android, ui-text, ui-unit-android, ui-unit, ui-util-android, ui-util, ui 1.9.1; BOM 2025.09.00 | Apache-2.0 |
+| Kotlin | `kotlin-stdlib`, `kotlin-stdlib-common` 2.2.21 | Apache-2.0 |
+| kotlinx.coroutines | `kotlinx-coroutines-android`, `kotlinx-coroutines-core`, `kotlinx-coroutines-core-jvm` 1.9.0 | Apache-2.0 (ya documentada; licencia de la versión fijada sin reverificar) |
+| kotlinx.serialization | `kotlinx-serialization-core`, `kotlinx-serialization-core-jvm` 1.7.3 | Por verificar |
+| kotpass (código fuente vendorizado) | Motor KDBX, versión 0.13.0; incluye Kotlin XML Builder 1.9.3, partes de Apache Commons Lang 3.17.0 y código criptográfico portado de Bouncy Castle | MIT; XML Builder y Commons Lang incluidos, Apache-2.0; Bouncy Castle License (texto MIT) |
+| Okio | `okio`, `okio-jvm` 3.15.0 | Apache-2.0 |
+| Guava | `listenablefuture` 1.0 | Por verificar |
+| JetBrains | `annotations` 23.0.0 | Por verificar |
+| JSpecify | `jspecify` 1.0.0 | Por verificar |
+
+JUnit 4 solo se usa en las pruebas y no aparece en `releaseRuntimeClasspath`. Las herramientas de compilación se enumeran por separado más abajo. El lockfile también contiene androidx.compose:compose-bom 2025.09.00, kotlinx-coroutines-bom 1.9.0 y kotlinx-serialization-bom 1.7.3; son metadatos para alinear versiones, no contenido del APK.
 
 ### Evitados explícitamente
 

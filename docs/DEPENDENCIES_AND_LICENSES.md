@@ -37,21 +37,24 @@ KeyNexa's own code is licensed under **GPL-3.0-only** with the additional terms 
 - Verified commit: `4e0bd6b6b13e59d48ebe0bd9c06de3f918de6945`.
 - Imported into the repository in phase C5 as the Gradle module `:kotpass` (`third_party/kotpass/`): main sources only, upstream license files intact. See its [README](../third_party/kotpass/README.md) for local changes.
 
-## Android and desktop dependencies
+## Runtime dependencies in the Android APK
 
-The project skeleton (phase C1) already uses Kotlin, AndroidX Core, AndroidX Activity, Compose (UI and Material 3) and JUnit; the remaining rows are still planned.
+The entries below are the external modules locked for `releaseRuntimeClasspath` in [app-android/gradle.lockfile](../app-android/gradle.lockfile), grouped by project. Test-only and build-only dependencies are excluded. The vendored `:kotpass` source module is included in the app but is not an external lockfile coordinate; its bundled source licenses are listed below. BOM entries in the lockfile provide version alignment and are not packaged in the APK.
 
-| Component | License | Source | Notes |
-| --- | --- | --- | --- |
-| Kotlin stdlib, kotlinx.coroutines | Apache-2.0 | JetBrains | *License of coroutines not re-verified for this document* |
-| Jetpack Compose, AndroidX (activity, lifecycle, navigation) | Apache-2.0 | Google Maven POMs | |
-| JUnit 4 | EPL-1.0 | [junit-team/junit4](https://github.com/junit-team/junit4) | Unit tests only; not distributed with the app |
-| `androidx.biometric` 1.1.0 (with its transitive AndroidX libraries: appcompat 1.2.0, lifecycle-livedata, loader, drawerlayout and others) | Apache-2.0 | POM of `biometric-1.1.0` | In use since 0.9.0 (ADR-0006); `androidx.fragment` 1.8.5 is declared directly since 0.10.1 because the 1.2.5 it pulls in breaks the Activity Result API. Stable release; the 1.2/1.4 lines are alpha. `BiometricPrompt` needs a `FragmentActivity`, so `MainActivity` extends it. |
-| Compose Multiplatform (desktop, future) | Apache-2.0 | [JetBrains/compose-multiplatform](https://github.com/JetBrains/compose-multiplatform) | Stable 1.12.1 (2026-09-22) |
-| Bouncy Castle (only if needed beyond kotpass) | Bouncy Castle License (MIT text) | [bc-java LICENSE.md](https://github.com/bcgit/bc-java) | 1.86 (2026-09-11) |
-| argon2kt (optional, native Argon2 on Android) | MIT; bundled reference Argon2 C code is CC0-1.0 or Apache-2.0 | [lambdapioneer/argon2kt](https://github.com/lambdapioneer/argon2kt) | Only if benchmarks justify it; last release 1.6.0 (2024-09-06) |
-| Inter or Manrope (font) | SIL OFL 1.1 | [rsms/inter](https://github.com/rsms/inter), [google/fonts](https://github.com/google/fonts/tree/main/ofl/manrope) | Final choice in the design system |
-| Material Symbols (icons) | Apache-2.0 (per repository README; *exact Symbols license file not verified*) | [google/material-design-icons](https://github.com/google/material-design-icons) | Alternatives: Lucide (ISC), Phosphor (MIT) |
+| Project | Locked modules and versions | License |
+| --- | --- | --- |
+| AndroidX | androidx.activity: activity-compose, activity-ktx, activity 1.10.1; androidx.annotation: annotation-experimental 1.4.1, annotation-jvm and annotation 1.9.1; androidx.appcompat: appcompat-resources, appcompat 1.2.0; androidx.arch.core: core-common, core-runtime 2.2.0; androidx.autofill: autofill 1.0.0; androidx.biometric: biometric 1.1.0; androidx.collection: collection-jvm, collection-ktx, collection 1.5.0; androidx.concurrent: concurrent-futures 1.1.0; androidx.core: core-ktx, core-viewtree, core 1.18.0; androidx.cursoradapter: cursoradapter 1.0.0; androidx.customview: customview-poolingcontainer, customview 1.0.0; androidx.drawerlayout: drawerlayout 1.0.0; androidx.emoji2: emoji2 1.4.0; androidx.fragment: fragment 1.8.5; androidx.graphics: graphics-path 1.0.1; androidx.interpolator: interpolator 1.0.0; androidx.lifecycle: lifecycle-common-java8, lifecycle-common-jvm, lifecycle-common, lifecycle-livedata-core-ktx, lifecycle-livedata-core, lifecycle-livedata, lifecycle-process, lifecycle-runtime-android, lifecycle-runtime-compose-android, lifecycle-runtime-compose, lifecycle-runtime-ktx-android, lifecycle-runtime-ktx, lifecycle-runtime, lifecycle-viewmodel-android, lifecycle-viewmodel-ktx, lifecycle-viewmodel-savedstate-android, lifecycle-viewmodel-savedstate, lifecycle-viewmodel 2.9.0; androidx.loader: loader 1.0.0; androidx.profileinstaller: profileinstaller 1.4.0; androidx.savedstate: savedstate-android, savedstate-compose-android, savedstate-compose, savedstate-ktx, savedstate 1.3.0; androidx.startup: startup-runtime 1.1.1; androidx.tracing: tracing 1.2.0; androidx.vectordrawable: vectordrawable-animated, vectordrawable 1.1.0; androidx.versionedparcelable: versionedparcelable 1.1.1; androidx.viewpager: viewpager 1.0.0 | Apache-2.0 |
+| Jetpack Compose | androidx.compose.animation: animation-android, animation-core-android, animation-core, animation 1.9.1; androidx.compose.foundation: foundation-android, foundation-layout-android, foundation-layout, foundation 1.9.1; androidx.compose.material: material-icons-core-android, material-icons-core 1.7.8; material-ripple-android, material-ripple 1.9.1; androidx.compose.material3: material3-android, material3 1.3.2; androidx.compose.runtime: runtime-android, runtime-annotation-android, runtime-annotation, runtime-saveable-android, runtime-saveable, runtime 1.9.1; androidx.compose.ui: ui-android, ui-geometry-android, ui-geometry, ui-graphics-android, ui-graphics, ui-text-android, ui-text, ui-unit-android, ui-unit, ui-util-android, ui-util, ui 1.9.1; BOM 2025.09.00 | Apache-2.0 |
+| Kotlin | `kotlin-stdlib`, `kotlin-stdlib-common` 2.2.21 | Apache-2.0 |
+| kotlinx.coroutines | `kotlinx-coroutines-android`, `kotlinx-coroutines-core`, `kotlinx-coroutines-core-jvm` 1.9.0 | Apache-2.0 (documented previously; license for the locked version not re-verified) |
+| kotlinx.serialization | `kotlinx-serialization-core`, `kotlinx-serialization-core-jvm` 1.7.3 | To verify |
+| kotpass (vendored source) | KDBX engine, version 0.13.0; includes Kotlin XML Builder 1.9.3, parts of Apache Commons Lang 3.17.0 and cryptographic source ported from Bouncy Castle | MIT; bundled XML Builder and Commons Lang Apache-2.0; Bouncy Castle License (MIT text) |
+| Okio | `okio`, `okio-jvm` 3.15.0 | Apache-2.0 |
+| Guava | `listenablefuture` 1.0 | To verify |
+| JetBrains | `annotations` 23.0.0 | To verify |
+| JSpecify | `jspecify` 1.0.0 | To verify |
+
+JUnit 4 is test-only and does not appear in `releaseRuntimeClasspath`. Build tools are listed separately below. The lockfile also contains androidx.compose:compose-bom 2025.09.00, kotlinx-coroutines-bom 1.9.0 and kotlinx-serialization-bom 1.7.3; these are alignment metadata, not APK payloads.
 
 ### Explicitly avoided
 

@@ -8,13 +8,11 @@ Detailed steps: see the [roadmap](docs/ROADMAP.md).
 
 - [ ] Biometric unlock: the ADR-0006 matrix is checked on a Pixel 10 Pro (enable, unlock, new fingerprint invalidates, password due after the chosen days, password changed on another device). Still open: phones without StrongBox and API 26-29.
 
-- [ ] First signed test release: push a tag (with maintainer approval) and check the workflow, the signature and the checksum on GitHub.
 - [ ] Differential test of KeyNexa-written vaults against keepass-rs, and Jazzer fuzzing (ADR-0005; the mutation fuzzing and the keepassxc-cli comparison already run).
 - [ ] Measure kotpass Argon2 on a real phone once the app opens a vault; decide on argon2kt (see `docs/BENCHMARKS.md`).
 - [ ] Approve the rest of the identity proposed in `docs/DESIGN.md` (palette, font, manual light/dark switch); the mark is decided.
 
 - [ ] Contribute the kotpass fixes upstream: four patches are ready in `.agents/plans/kotpass-upstream/`; publishing needs the maintainer's approval and tests inside kotpass.
-- [ ] First pre-release on GitHub once phases D5, D6 and the review (E1) are done; the release workflow has never run.
 
 ## Medium priority (phase D — secure MVP)
 

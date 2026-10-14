@@ -16,6 +16,7 @@ Todos los cambios notables de este proyecto se documentan en este archivo. El fo
 
 ### Cambiado
 
+- La documentación ya describe la versión preliminar v0.10.2 publicada, las mitigaciones implementadas y las dependencias de ejecución del APK.
 - La compilación exige que los componentes menor y parche de la versión sean inferiores a 100 para que `versionCode` siga aumentando.
 
 ## [0.10.2] - 2026-10-14

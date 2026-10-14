@@ -6,7 +6,7 @@
 
 A security-first, cross-platform password manager built around established cryptographic libraries, local vaults, and seamless Syncthing synchronization.
 
-> **Project status: early development (v0.10.0).** Android only, for testing. You can already create or open a KDBX vault, browse, search, add and edit entries, use the recycle bin and generate passwords; saves go through a safe-save pipeline and changes made elsewhere (for example with KeePassXC through Syncthing) are merged. **Also working:** auto-lock (timer and screen off), screen protection, a settings screen, changes made elsewhere being picked up within seconds, and the Syncthing conflict copies being merged when the vault is opened, with an offer to delete them. **Also:** biometric unlock (not yet checked on a real phone). **Not done yet:** fully reliable clipboard clearing, the Windows and Linux clients, and any published release. Do not store real passwords in KeyNexa until a release says otherwise.
+> **Project status: early development (0.10.x; v0.10.2 pre-release published).** Android only, for testing. You can already create or open a KDBX vault, browse, search, add and edit entries, use the recycle bin and generate passwords; saves go through a safe-save pipeline and changes made elsewhere (for example with KeePassXC through Syncthing) are merged. **Also working:** auto-lock (including in the background), screen protection, a settings screen, changes made elsewhere being picked up within seconds, and Syncthing conflict copies being merged when the vault is opened, with deletion offered after consent. **Also:** biometric unlock. **Not done yet:** fully reliable clipboard clearing and the Windows and Linux clients. Do not store real passwords in KeyNexa until a full release says otherwise.
 
 ## What KeyNexa will be
 
@@ -35,7 +35,16 @@ See the [roadmap](docs/ROADMAP.md) for what is planned in each phase.
 
 ## Requirements, installation and usage
 
-There is no published release yet. For now the project is built from source. It needs JDK 17 and the Android SDK 36 (see [Development](docs/DEVELOPMENT.md) for how to point Gradle at the SDK). From the repository root:
+A pre-release is available from [GitHub Releases](https://github.com/catlinux/KeyNexa/releases). Download `keynexa-0.10.2.apk` and `keynexa-0.10.2.apk.sha256`. In the directory containing both files, verify the APK checksum and signer:
+
+```sh
+sha256sum -c keynexa-0.10.2.apk.sha256
+apksigner verify --print-certs keynexa-0.10.2.apk
+```
+
+Compare the SHA-256 certificate fingerprint reported by `apksigner` with `51:ca:da:3c:d0:8c:35:5f:13:67:90:b1:be:83:09:00:8b:b9:a3:1e:e9:44:b4:e6:e3:74:7e:6a:e9:d0:44:9b`. KeyNexa does not request the Internet permission.
+
+To build from source instead, you need JDK 17 and Android SDK 36 (see [Development](docs/DEVELOPMENT.md) for how to point Gradle at the SDK). From the repository root:
 
 ```sh
 ./gradlew build
