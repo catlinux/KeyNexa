@@ -70,6 +70,7 @@
     <string name="cloud_status_error_unavailable">No se pudo conectar la última vez.</string>
     <string name="cloud_status_error_generic">La última copia falló.</string>
     <string name="cloud_status_copy_now">Copiar ahora</string>
+    <string name="cloud_status_copy_now_needs_vault">Para copiar ahora, abre antes una bóveda y vuelve a Ajustes.</string>
     <string name="cloud_status_change_service">Cambiar de servicio</string>
 
     <string name="cloud_reminder_title">Protege tu bóveda: guarda una copia en la nube</string>

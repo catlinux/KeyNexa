@@ -10,6 +10,12 @@ All notable changes to this project are documented in this file. The format is b
 
 - ADR-0008 (proposed) and the plan for optional cloud copies of the vault with an assistant: an `offline` build with no network access and a `cloud` build, S3 first and then Dropbox, OneDrive and Google Drive.
 
+## [0.21.4] - 2026-10-15
+
+### Changed
+
+- Cloud variant: when Settings is opened with no vault open, the disabled "Copy now" button now says why and what to do.
+
 ## [0.21.3] - 2026-10-15
 
 ### Fixed

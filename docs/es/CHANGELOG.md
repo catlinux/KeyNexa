@@ -10,6 +10,12 @@ Todos los cambios notables de este proyecto se documentan en este archivo. El fo
 
 - ADR-0008 (propuesta) y el plan de las copias opcionales de la bóveda en la nube con un asistente: una compilación `offline` sin acceso a la red y una `cloud`, primero S3 y después Dropbox, OneDrive y Google Drive.
 
+## [0.21.4] - 2026-10-15
+
+### Cambiado
+
+- Variante cloud: cuando se abren los Ajustes sin ninguna bóveda abierta, el botón «Copiar ahora» desactivado explica ahora por qué y qué hacer.
+
 ## [0.21.3] - 2026-10-15
 
 ### Corregido

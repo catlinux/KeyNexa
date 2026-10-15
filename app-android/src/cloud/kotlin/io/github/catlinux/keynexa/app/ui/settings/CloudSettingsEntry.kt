@@ -773,6 +773,13 @@ private fun StatusBody(
     ) {
         Text(text = stringResource(R.string.cloud_status_copy_now))
     }
+    if (source == null) {
+        Text(
+            text = stringResource(R.string.cloud_status_copy_now_needs_vault),
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
+    }
     OutlinedButton(
         onClick = onChangeService,
         modifier = Modifier.fillMaxWidth().heightIn(min = CloudTouchTarget),

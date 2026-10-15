@@ -70,6 +70,7 @@
     <string name="cloud_status_error_unavailable">The last connection failed.</string>
     <string name="cloud_status_error_generic">The last copy failed.</string>
     <string name="cloud_status_copy_now">Copy now</string>
+    <string name="cloud_status_copy_now_needs_vault">To copy now, open a vault first and then come back to Settings.</string>
     <string name="cloud_status_change_service">Change service</string>
 
     <string name="cloud_reminder_title">Protect your vault: keep a copy in the cloud</string>
