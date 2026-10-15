@@ -10,6 +10,12 @@ All notable changes to this project are documented in this file. The format is b
 
 - ADR-0008 (proposed) and the plan for optional cloud copies of the vault with an assistant: an `offline` build with no network access and a `cloud` build, S3 first and then Dropbox, OneDrive and Google Drive.
 
+## [0.17.0] - 2026-10-15
+
+### Added
+
+- The internal base of the cloud copies (ADR-0008 §3), still without network code or user interface: `CloudBackend` in `core-sync` (put, get, list and delete of opaque encrypted backups, with a `conditionalWrites` capability and a `CloudAuthException` for credentials failures) and `BackupUploader`, which names a copy `<prefix><vault>/<vault>-<UTC>.kdbx`, uploads at most once a day (`backupNow` ignores the limit), rotates only the copies it created down to the chosen number, and reports a failure as a result value so it can never stop a save.
+
 ## [0.16.0] - 2026-10-15
 
 ### Added

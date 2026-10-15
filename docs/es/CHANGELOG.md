@@ -10,6 +10,12 @@ Todos los cambios notables de este proyecto se documentan en este archivo. El fo
 
 - ADR-0008 (propuesta) y el plan de las copias opcionales de la bóveda en la nube con un asistente: una compilación `offline` sin acceso a la red y una `cloud`, primero S3 y después Dropbox, OneDrive y Google Drive.
 
+## [0.17.0] - 2026-10-15
+
+### Añadido
+
+- La base interna de las copias en la nube (ADR-0008 §3), todavía sin código de red ni interfaz de usuario: `CloudBackend` en `core-sync` (put, get, list y delete de copias cifradas opacas, con la capacidad `conditionalWrites` y una `CloudAuthException` para los fallos de credenciales) y `BackupUploader`, que nombra la copia `<prefijo><bóveda>/<bóveda>-<UTC>.kdbx`, sube como mucho una vez al día (`backupNow` ignora el límite), rota solo las copias que él mismo creó hasta el número elegido e informa de un fallo como valor de resultado, de modo que nunca puede impedir un guardado.
+
 ## [0.16.0] - 2026-10-15
 
 ### Añadido

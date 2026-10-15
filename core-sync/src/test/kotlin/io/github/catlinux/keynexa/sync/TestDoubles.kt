@@ -397,6 +397,68 @@ internal class InMemoryBackupStore(
     }
 }
 
+/** In-memory cloud store with programmable failures and a call counter per operation. */
+internal class InMemoryCloudBackend(
+    override val capabilities: CloudCapabilities = CloudCapabilities(conditionalWrites = false),
+) : CloudBackend {
+    val objects: MutableMap<String, ByteArray> = LinkedHashMap()
+    private val etags = HashMap<String, String>()
+
+    /** A failure injected into the next call of that operation; a [CloudAuthException] is also an [IOException]. */
+    var failPut: IOException? = null
+    var failGet: IOException? = null
+    var failList: IOException? = null
+    var failDelete: IOException? = null
+
+    var puts: Int = 0
+        private set
+    var gets: Int = 0
+        private set
+    var lists: Int = 0
+        private set
+    var deletes: Int = 0
+        private set
+
+    override fun put(
+        name: String,
+        content: ByteArray,
+        ifMatch: String?,
+    ): CloudObject {
+        puts++
+        failPut?.let { throw it }
+        if (capabilities.conditionalWrites && ifMatch != null && etags[name] != ifMatch) {
+            throw IOException("conditional write rejected for $name")
+        }
+        objects[name] = content.copyOf()
+        val etag = "etag-$puts"
+        etags[name] = etag
+        return CloudObject(name, content.size.toLong(), null, etag)
+    }
+
+    override fun get(name: String): ByteArray {
+        gets++
+        failGet?.let { throw it }
+        return objects[name]?.copyOf() ?: throw IOException("no object $name")
+    }
+
+    override fun list(prefix: String): List<CloudObject> {
+        lists++
+        failList?.let { throw it }
+        return objects
+            .filterKeys { it.startsWith(prefix) }
+            .map { (name, bytes) -> CloudObject(name, bytes.size.toLong(), null, etags[name]) }
+    }
+
+    override fun delete(name: String) {
+        deletes++
+        failDelete?.let { throw it }
+        objects.remove(name) ?: throw IOException("no object $name")
+        etags.remove(name)
+    }
+
+    fun stored(name: String): ByteArray? = objects[name]
+}
+
 internal class InMemorySaveJournal(
     private val failOnBegin: Boolean = false,
     private val failOnPending: Boolean = false,

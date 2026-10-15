@@ -21,5 +21,6 @@ exceptions:
       - NumberFormatException
       - ParseException
       - IOException
+      - CloudAuthException
       - VaultException
       - WrongCredentials
