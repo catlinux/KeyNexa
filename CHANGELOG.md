@@ -10,6 +10,18 @@ All notable changes to this project are documented in this file. The format is b
 
 - ADR-0008 (proposed) and the plan for optional cloud copies of the vault with an assistant: an `offline` build with no network access and a `cloud` build, S3 first and then Dropbox, OneDrive and Google Drive.
 
+## [0.23.0] - 2026-10-15
+
+### Added
+
+- The S3 assistant deduces the region from the endpoint for Backblaze B2, Amazon S3 and Cloudflare R2 (`regionFromEndpoint` in `platform-cloud`), so the region field is optional for them and only an error when it cannot be deduced. The help text says so.
+- After "Copy now", the state screen shows a short result (the copy was uploaded, or the error) and keeps it until the screen is left.
+
+### Changed
+
+- "Disconnect and delete" also deletes the backup state (`FileBackupState.clearAll()` and `CloudBackupService.reset()`), so a new connection does not show the previous "last copy".
+- The cloud setup guide explains that the region is filled in automatically for Backblaze, Amazon and Cloudflare, and the TODO no longer lists these finished items.
+
 ## [0.22.1] - 2026-10-15
 
 ### Changed

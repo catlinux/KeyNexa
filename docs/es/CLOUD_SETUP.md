@@ -6,7 +6,7 @@
 
 KeyNexa solo envía **el archivo `.kdbx` cifrado** al servicio que tú elijas, y solo después de que aceptes la pantalla de consentimiento. La contraseña maestra, las claves y el contenido descifrado nunca salen del dispositivo. Consulta [Privacidad](PRIVACY.md).
 
-Abre **Ajustes → Copias en la nube** y sigue el asistente. Tiene cinco pasos: consentimiento, elegir el servicio, qué necesitas, el formulario y el estado de las copias.
+Abre **Ajustes → Copias en la nube** y sigue el asistente. Tiene cinco pasos: consentimiento, elegir el servicio, qué necesitas, el formulario y el estado de las copias. Con Backblaze, Amazon S3 y Cloudflare R2 la región se rellena sola a partir del endpoint, así que puedes dejar vacío el campo de la región.
 
 ## Backblaze B2
 
@@ -15,14 +15,14 @@ Abre **Ajustes → Copias en la nube** y sigue el asistente. Tiene cinco pasos: 
 3. En los detalles del cubo, apunta el **endpoint** (puede aparecer como «Endpoint», «Punto final», «S3 endpoint» o similar, por ejemplo `s3.eu-central-003.backblazeb2.com`). El panel lo muestra sin `https://`; el asistente lo necesita con `https://`.
 4. Crea una clave de aplicación (*Application Keys → Add a New Application Key*) **limitada a ese cubo**, con permiso de lectura y escritura.
 5. Copia el `keyID` y la `applicationKey` (la clave de aplicación solo se muestra una vez) en el asistente. Escríbelos en el móvil desde tu gestor de contraseñas.
-6. En el formulario: endpoint `https://s3.<región>.backblazeb2.com`, región la parte del endpoint que sigue a `s3.` (por ejemplo `eu-central-003`), el nombre del cubo, y deja activado «usar rutas con el cubo en la ruta».
+6. En el formulario: endpoint `https://s3.<región>.backblazeb2.com`, el nombre del cubo, y deja activado «usar rutas con el cubo en la ruta». La región es opcional: el asistente la rellena desde el endpoint (por ejemplo `eu-central-003`), así que puedes dejar el campo vacío.
 
 ## Cloudflare R2
 
 1. Crea una cuenta de Cloudflare y abre R2 en <https://developers.cloudflare.com/r2/>.
 2. Crea un cubo (privado por defecto).
 3. Crea un token de API con permiso de lectura y escritura sobre ese cubo y copia el Access Key ID y el Secret Access Key.
-4. Para el endpoint, usa `https://<ID de cuenta>.r2.cloudflarestorage.com`; en la región escribe `auto`. Deja activado «usar rutas con el cubo en la ruta».
+4. Para el endpoint, usa `https://<ID de cuenta>.r2.cloudflarestorage.com`. La región es opcional: el asistente rellena `auto`. Deja activado «usar rutas con el cubo en la ruta».
 
 ## MinIO u otro servidor propio
 

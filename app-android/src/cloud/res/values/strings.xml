@@ -39,7 +39,7 @@
     <string name="cloud_form_endpoint">Endpoint</string>
     <string name="cloud_form_endpoint_help">For B2: https://s3.us-west-004.backblazeb2.com. For R2: https://&lt;account id&gt;.r2.cloudflarestorage.com.</string>
     <string name="cloud_form_region">Region</string>
-    <string name="cloud_form_region_help">For B2 it looks like us-west-004; for R2, auto.</string>
+    <string name="cloud_form_region_help">Filled in automatically for Backblaze, Amazon and Cloudflare; you can leave it empty there. Otherwise, type the region your service uses.</string>
     <string name="cloud_form_bucket">Bucket</string>
     <string name="cloud_form_bucket_help">The private bucket you created.</string>
     <string name="cloud_form_access_key">Access key ID</string>
@@ -70,6 +70,7 @@
     <string name="cloud_status_error_unavailable">The last connection failed.</string>
     <string name="cloud_status_error_generic">The last copy failed.</string>
     <string name="cloud_status_copy_now">Copy now</string>
+    <string name="cloud_status_copy_done">Copy uploaded successfully</string>
     <string name="cloud_status_copy_now_needs_vault">To copy now, open a vault first and then come back to Settings.</string>
     <string name="cloud_status_change_service">Change service</string>
 

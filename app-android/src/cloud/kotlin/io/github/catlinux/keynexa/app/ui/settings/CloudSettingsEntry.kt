@@ -60,6 +60,7 @@ import io.github.catlinux.keynexa.app.cloud.CloudStores
 import io.github.catlinux.keynexa.app.vault.CloudBackupSource
 import io.github.catlinux.keynexa.cloud.ConnectionResult
 import io.github.catlinux.keynexa.cloud.S3Setup
+import io.github.catlinux.keynexa.cloud.regionFromEndpoint
 import io.github.catlinux.keynexa.cloud.testConnection
 import io.github.catlinux.keynexa.cloud.vaultIdOf
 import io.github.catlinux.keynexa.sync.BackupError
@@ -103,6 +104,9 @@ fun CloudSettingsEntry(source: CloudBackupSource?) {
     val serviceStatus by CloudBackupService.status.collectAsState()
     var status by remember { mutableStateOf<CloudBackupStatus?>(null) }
     var rowStatus by remember { mutableStateOf<RowStatus?>(null) }
+    var copyMessage by remember { mutableStateOf<CopyMessage?>(null) }
+    var awaitingCopy by remember { mutableStateOf(false) }
+    var sawCopyRunning by remember { mutableStateOf(false) }
 
     LaunchedEffect(showing) {
         if (!showing) return@LaunchedEffect
@@ -139,6 +143,20 @@ fun CloudSettingsEntry(source: CloudBackupSource?) {
                 val bucket = (setup ?: CloudStores.credentials(context).load()?.let(S3Setup::fromValues))?.bucket
                 RowStatus(bucket)
             }
+    }
+    // The copy message lives only while the state screen is on.
+    LaunchedEffect(showing, step) {
+        if (!showing || step != CloudStep.Status) copyMessage = null
+    }
+    // A "Copy now" is over when the service stops running: show its outcome until the screen is left.
+    LaunchedEffect(serviceStatus.running) {
+        if (serviceStatus.running) {
+            if (awaitingCopy) sawCopyRunning = true
+        } else if (awaitingCopy && sawCopyRunning) {
+            awaitingCopy = false
+            sawCopyRunning = false
+            copyMessage = serviceStatus.lastError?.let { CopyMessage.Failure(it) } ?: CopyMessage.Success
+        }
     }
 
     Row(
@@ -226,9 +244,14 @@ fun CloudSettingsEntry(source: CloudBackupSource?) {
                                     setup = saved,
                                     source = source,
                                     status = status,
+                                    copyMessage = copyMessage,
                                     onKeep = { newKeep -> changeKeep(saved, newKeep, scope, context) { setup = it } },
                                     onCopyNow = {
-                                        source?.let { CloudBackupService.backupNow(context, it.vault, it.read) }
+                                        source?.let {
+                                            sawCopyRunning = false
+                                            awaitingCopy = true
+                                            CloudBackupService.backupNow(context, it.vault, it.read)
+                                        }
                                     },
                                     onChangeService = {
                                         form.reset()
@@ -257,6 +280,7 @@ fun CloudSettingsEntry(source: CloudBackupSource?) {
                             withContext(Dispatchers.IO) {
                                 CloudStores.credentials(context).clear()
                                 CloudConsentStore(context).revoke()
+                                CloudBackupService.reset(context)
                             }
                             setup = null
                             step = CloudStep.Consent
@@ -306,16 +330,18 @@ private class SetupForm {
         testedOk = false
     }
 
-    fun toSetup(): S3Setup =
-        S3Setup(
-            endpoint = endpoint.trim(),
-            region = region.trim(),
+    fun toSetup(): S3Setup {
+        val trimmedEndpoint = endpoint.trim()
+        return S3Setup(
+            endpoint = trimmedEndpoint,
+            region = region.trim().ifEmpty { regionFromEndpoint(trimmedEndpoint).orEmpty() },
             bucket = bucket.trim(),
             pathStyle = pathStyle,
             accessKeyId = accessKeyId.trim(),
             secretAccessKey = secretAccessKey,
             keep = keep,
         )
+    }
 }
 
 /** Which fields are wrong, for the messages under each one. */
@@ -334,6 +360,15 @@ private data class RowStatus(
     val bucket: String?,
 )
 
+/** The outcome of a "Copy now", kept on the state screen until it is left. */
+private sealed interface CopyMessage {
+    data object Success : CopyMessage
+
+    data class Failure(
+        val error: BackupError,
+    ) : CopyMessage
+}
+
 @Composable
 private fun rowStatusText(status: RowStatus?): String {
     val bucket = status?.bucket
@@ -347,7 +382,8 @@ private fun rowStatusText(status: RowStatus?): String {
 private fun validate(form: SetupForm): SetupFormErrors =
     SetupFormErrors(
         endpoint = !form.endpoint.trim().startsWith(HTTPS_PREFIX),
-        region = form.region.isBlank(),
+        // The region is optional when the endpoint says which one it is (Backblaze, Amazon, Cloudflare).
+        region = form.region.isBlank() && regionFromEndpoint(form.endpoint.trim()) == null,
         bucket = form.bucket.isBlank(),
         accessKeyId = form.accessKeyId.isBlank(),
         secretAccessKey = form.secretAccessKey.isBlank(),
@@ -740,6 +776,7 @@ private fun StatusBody(
     setup: S3Setup,
     source: CloudBackupSource?,
     status: CloudBackupStatus?,
+    copyMessage: CopyMessage?,
     onKeep: (Int) -> Unit,
     onCopyNow: () -> Unit,
     onChangeService: () -> Unit,
@@ -763,6 +800,22 @@ private fun StatusBody(
             text = errorMessage(error),
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.error,
+        )
+    }
+    copyMessage?.let { message ->
+        Text(
+            text =
+                when (message) {
+                    CopyMessage.Success -> stringResource(R.string.cloud_status_copy_done)
+                    is CopyMessage.Failure -> errorMessage(message.error)
+                },
+            style = MaterialTheme.typography.bodyMedium,
+            color =
+                if (message == CopyMessage.Success) {
+                    MaterialTheme.colorScheme.primary
+                } else {
+                    MaterialTheme.colorScheme.error
+                },
         )
     }
     KeepChoices(selected = setup.keep, onSelect = onKeep)

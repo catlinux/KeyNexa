@@ -1,5 +1,7 @@
 package io.github.catlinux.keynexa.cloud
 
+import java.net.URI
+import java.net.URISyntaxException
 import java.time.Clock
 
 /**
@@ -72,3 +74,33 @@ data class S3Setup(
         }
     }
 }
+
+/**
+ * The region an S3 endpoint implies, or null when it cannot be deduced.
+ *
+ * It knows the shapes used by Backblaze B2 and Amazon S3 (`s3.<region>.<provider>.com`) and by Cloudflare R2
+ * (`<account>.r2.cloudflarestorage.com`, whose region is `auto`). It parses the host, ignores case, and uses no
+ * regular expressions. An endpoint without `https://` has no host to read, so it answers null.
+ */
+@Suppress("SwallowedException")
+fun regionFromEndpoint(endpoint: String): String? {
+    val host =
+        try {
+            URI(endpoint.trim()).host
+        } catch (failure: URISyntaxException) {
+            null
+        } ?: return null
+    val labels = host.lowercase().split('.')
+    if (labels.size != HOST_LABELS) return null
+    return when {
+        labels[0] == "s3" && labels[PROVIDER_LABEL] == "backblazeb2" && labels[TLD_LABEL] == "com" -> labels[1]
+        labels[0] == "s3" && labels[PROVIDER_LABEL] == "amazonaws" && labels[TLD_LABEL] == "com" -> labels[1]
+        labels[1] == "r2" && labels[PROVIDER_LABEL] == "cloudflarestorage" && labels[TLD_LABEL] == "com" -> R2_REGION
+        else -> null
+    }
+}
+
+private const val HOST_LABELS = 4
+private const val PROVIDER_LABEL = 2
+private const val TLD_LABEL = 3
+private const val R2_REGION = "auto"

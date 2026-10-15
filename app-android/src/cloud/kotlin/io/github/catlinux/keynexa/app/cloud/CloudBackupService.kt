@@ -64,6 +64,15 @@ object CloudBackupService {
     /** True when any vault already has a successful copy on record (for the reminder). */
     fun hasAnyBackup(context: Context): Boolean = stateFor(context.applicationContext).hasAnySuccess()
 
+    /**
+     * Forgets every vault's state and deletes the state file, and resets the published status. Used when the user
+     * disconnects, so a new connection does not show the previous "last copy".
+     */
+    fun reset(context: Context) {
+        stateFor(context.applicationContext).clearAll()
+        mutableStatus.value = CloudBackupStatus(null, null, running = false)
+    }
+
     private fun enqueue(
         context: Context,
         vault: KnownVault,

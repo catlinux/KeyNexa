@@ -10,6 +10,18 @@ Todos los cambios notables de este proyecto se documentan en este archivo. El fo
 
 - ADR-0008 (propuesta) y el plan de las copias opcionales de la bóveda en la nube con un asistente: una compilación `offline` sin acceso a la red y una `cloud`, primero S3 y después Dropbox, OneDrive y Google Drive.
 
+## [0.23.0] - 2026-10-15
+
+### Añadido
+
+- El asistente de S3 deduce la región a partir del endpoint con Backblaze B2, Amazon S3 y Cloudflare R2 (`regionFromEndpoint` en `platform-cloud`), así que el campo de la región es opcional con ellos y solo es un error cuando no se puede deducir. El texto de ayuda lo indica.
+- Tras «Copiar ahora», la pantalla de estado muestra un mensaje breve (copia subida o el error) y lo mantiene hasta salir de la pantalla.
+
+### Cambiado
+
+- «Desconectar y borrar» borra también el estado de las copias (`FileBackupState.clearAll()` y `CloudBackupService.reset()`), así que una conexión nueva no muestra la «última copia» anterior.
+- La guía de configuración de la nube explica que la región se rellena sola con Backblaze, Amazon y Cloudflare, y el TODO ya no lista estos puntos terminados.
+
 ## [0.22.1] - 2026-10-15
 
 ### Cambiado

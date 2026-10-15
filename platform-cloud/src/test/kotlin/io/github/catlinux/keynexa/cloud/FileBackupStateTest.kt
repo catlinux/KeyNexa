@@ -74,6 +74,27 @@ class FileBackupStateTest {
     }
 
     @Test
+    fun clearAllForgetsEverythingAndDeletesTheFile() {
+        val state = FileBackupState(file())
+        state.recordSuccess(VAULT_ID, AT)
+        state.recordError(VAULT_ID, BackupError.Unavailable, AT)
+
+        state.clearAll()
+
+        assertNull(state.lastSuccess(VAULT_ID))
+        assertNull(state.lastError(VAULT_ID))
+        assertFalse(file().exists())
+        assertNull(FileBackupState(file()).lastSuccess(VAULT_ID))
+    }
+
+    @Test
+    fun clearAllOnAMissingFileDoesNothing() {
+        FileBackupState(file()).clearAll()
+
+        assertFalse(file().exists())
+    }
+
+    @Test
     fun vaultIdIsAStableShortSha256() {
         val id = vaultIdOf("content://vault.kdbx")
 

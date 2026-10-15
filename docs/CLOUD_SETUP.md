@@ -6,7 +6,7 @@
 
 KeyNexa only ever sends **the encrypted `.kdbx` file** to the service you choose, and only after you accept the consent screen. The master password, the keys and the decrypted content never leave the device. See [Privacy](PRIVACY.md).
 
-Open **Settings → Copies in the cloud** and follow the assistant. It has five steps: consent, choose the service, what you need, the form and the state of the copies.
+Open **Settings → Copies in the cloud** and follow the assistant. It has five steps: consent, choose the service, what you need, the form and the state of the copies. For Backblaze, Amazon S3 and Cloudflare R2 the region is filled in automatically from the endpoint, so you can leave the region field empty.
 
 ## Backblaze B2
 
@@ -15,14 +15,14 @@ Open **Settings → Copies in the cloud** and follow the assistant. It has five 
 3. In the bucket details, note the **endpoint** (it can appear as "Endpoint", "S3 endpoint" or similar, for example `s3.eu-central-003.backblazeb2.com`). The panel shows it without `https://`; the assistant needs it with `https://`.
 4. Create an application key (*Application Keys → Add a New Application Key*) **limited to that bucket**, with read and write permission.
 5. Copy the `keyID` and the `applicationKey` (the application key is shown only once) into the assistant. Type them in the phone from your password manager.
-6. In the form: endpoint `https://s3.<region>.backblazeb2.com`, region the part of the endpoint after `s3.` (for example `eu-central-003`), the bucket name, and leave "use the bucket in the path" on.
+6. In the form: endpoint `https://s3.<region>.backblazeb2.com`, the bucket name, and leave "use the bucket in the path" on. The region is optional: the assistant fills it in from the endpoint (for example `eu-central-003`), so you can leave the field empty.
 
 ## Cloudflare R2
 
 1. Create a Cloudflare account and open R2 at <https://developers.cloudflare.com/r2/>.
 2. Create a bucket (private by default).
 3. Create an API token with read and write permission over that bucket, and copy the Access Key ID and the Secret Access Key.
-4. For the endpoint, use `https://<account id>.r2.cloudflarestorage.com`; for the region, type `auto`. Leave "use the bucket in the path" on.
+4. For the endpoint, use `https://<account id>.r2.cloudflarestorage.com`. The region is optional: the assistant fills in `auto`. Leave "use the bucket in the path" on.
 
 ## MinIO or another server of your own
 

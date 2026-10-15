@@ -39,7 +39,7 @@
     <string name="cloud_form_endpoint">Endpoint</string>
     <string name="cloud_form_endpoint_help">Para B2: https://s3.us-west-004.backblazeb2.com. Para R2: https://&lt;ID de cuenta&gt;.r2.cloudflarestorage.com.</string>
     <string name="cloud_form_region">Región</string>
-    <string name="cloud_form_region_help">En B2 tiene una forma como us-west-004; en R2, auto.</string>
+    <string name="cloud_form_region_help">Se rellena sola con Backblaze, Amazon y Cloudflare; puedes dejarla vacía en esos casos. En los demás, escribe la región que use tu servicio.</string>
     <string name="cloud_form_bucket">Cubo</string>
     <string name="cloud_form_bucket_help">El cubo privado que has creado.</string>
     <string name="cloud_form_access_key">ID de la clave de acceso</string>
@@ -70,6 +70,7 @@
     <string name="cloud_status_error_unavailable">No se pudo conectar la última vez.</string>
     <string name="cloud_status_error_generic">La última copia falló.</string>
     <string name="cloud_status_copy_now">Copiar ahora</string>
+    <string name="cloud_status_copy_done">Copia subida correctamente</string>
     <string name="cloud_status_copy_now_needs_vault">Para copiar ahora, abre antes una bóveda y vuelve a Ajustes.</string>
     <string name="cloud_status_change_service">Cambiar de servicio</string>
 

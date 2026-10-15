@@ -12,18 +12,25 @@ import java.nio.file.StandardCopyOption
 import java.security.MessageDigest
 import java.time.Instant
 import java.time.format.DateTimeParseException
-import java.util.HexFormat
 import java.util.Properties
 
 private const val VAULT_ID_LENGTH = 16
 private const val TEMPORARY_SUFFIX = ".tmp"
+private const val BYTE_MASK = 0xFF
+private const val NIBBLE_BITS = 4
+private const val NIBBLE_MASK = 0x0F
+private const val HEX_DIGITS = "0123456789abcdef"
 
 /** The id of a vault for the backup state: the first [VAULT_ID_LENGTH] hex digits of the SHA-256 of its location. */
-fun vaultIdOf(location: String): String =
-    HexFormat
-        .of()
-        .formatHex(MessageDigest.getInstance("SHA-256").digest(location.toByteArray(Charsets.UTF_8)))
-        .take(VAULT_ID_LENGTH)
+fun vaultIdOf(location: String): String {
+    val digest = MessageDigest.getInstance("SHA-256").digest(location.toByteArray(Charsets.UTF_8))
+    val builder = StringBuilder(digest.size * 2)
+    for (byte in digest) {
+        val value = byte.toInt() and BYTE_MASK
+        builder.append(HEX_DIGITS[value ushr NIBBLE_BITS]).append(HEX_DIGITS[value and NIBBLE_MASK])
+    }
+    return builder.toString().take(VAULT_ID_LENGTH)
+}
 
 /**
  * The backup state on disk, as a `Properties` text file: no secret ever reaches it.
@@ -86,6 +93,15 @@ class FileBackupState(
         errors.remove(vaultId)
         errorTimes.remove(vaultId)
         persist()
+    }
+
+    /** Forgets every vault and deletes the state file, so a new connection starts with no old "last copy". */
+    fun clearAll() {
+        successes.clear()
+        errors.clear()
+        errorTimes.clear()
+        loaded = true
+        if (file.exists()) file.delete()
     }
 
     private fun ensureLoaded() {
