@@ -31,7 +31,7 @@ Detailed steps: see the [roadmap](docs/ROADMAP.md).
 
 ## Low priority (later)
 
-- [ ] Update the Android Gradle plugin, Gradle and Kotlin (stable releases only) to clear the findings of the informational build-tooling scan in CI (104 on 2026-10-14, all in build tools, none in the APK).
+- [ ] Move to the next major lines of the build tools (stable releases only): Gradle 9.x, Android Gradle plugin 9.x (it changes how Kotlin is integrated) and Kotlin 2.3 or 2.4. It is a migration, not maintenance: do it in its own step with the CI scan (104 findings on 2026-10-14, all in build tools, none in the APK) as the measure. Patch updates inside the current lines (Gradle 8.14.6, AGP 8.13.2) are done; Kotlin 2.2.21 has no newer patch.
 - [ ] Windows and Linux clients, once the Android app is functional (they reuse the `core-*` modules).
 - [ ] Autofill service and credential provider (passkeys).
 - [ ] TOTP.

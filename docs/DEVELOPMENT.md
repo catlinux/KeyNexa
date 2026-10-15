@@ -6,7 +6,7 @@
 
 - JDK 17 (Temurin is what we use locally). The core modules and Android builds use a Java 17 toolchain.
 - Android SDK with platform 36 and build-tools 36.0.0. Point Gradle at it with `local.properties` (`sdk.dir=...`, git-ignored) or the `ANDROID_HOME` environment variable.
-- No local Gradle installation: the committed wrapper downloads Gradle 8.14.
+- No local Gradle installation: the committed wrapper downloads Gradle 8.14.6.
 
 ## Toolchain
 
@@ -14,7 +14,7 @@
 | --- | --- |
 | JDK | 17 (Temurin) |
 | Gradle | 8.14 (wrapper) |
-| Android Gradle Plugin | 8.13.1 |
+| Android Gradle Plugin | 8.13.2 |
 | Kotlin | 2.2.21 |
 | Compose BOM | 2025.09.00 (Material 3) |
 | Android SDK | compileSdk/targetSdk 36, minSdk 26 |

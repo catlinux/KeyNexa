@@ -6,7 +6,7 @@
 
 - JDK 17 (en local usamos Temurin). Los módulos core y las compilaciones Android usan una cadena de herramientas Java 17.
 - SDK de Android con la plataforma 36 y build-tools 36.0.0. Indica a Gradle dónde está con `local.properties` (`sdk.dir=...`, ignorado por git) o con la variable de entorno `ANDROID_HOME`.
-- No hace falta instalar Gradle: el wrapper incluido descarga Gradle 8.14.
+- No hace falta instalar Gradle: el wrapper incluido descarga Gradle 8.14.6.
 
 ## Cadena de herramientas
 
@@ -14,7 +14,7 @@
 | --- | --- |
 | JDK | 17 (Temurin) |
 | Gradle | 8.14 (wrapper) |
-| Android Gradle Plugin | 8.13.1 |
+| Android Gradle Plugin | 8.13.2 |
 | Kotlin | 2.2.21 |
 | Compose BOM | 2025.09.00 (Material 3) |
 | SDK de Android | compileSdk/targetSdk 36, minSdk 26 |
