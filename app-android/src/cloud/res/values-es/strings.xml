@@ -1,4 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">KeyNexa (cloud)</string>
+
+    <string name="cloud_settings_entry">Copias en la nube</string>
+    <string name="cloud_consent_title">Copias en la nube</string>
+    <string name="cloud_consent_sent">Solo se envía una copia del archivo cifrado de tu bóveda: nunca la contraseña maestra, ni claves, ni el contenido descifrado.</string>
+    <string name="cloud_consent_where">Va solo al servicio que tú elijas.</string>
+    <string name="cloud_consent_why">Solo para guardar copias de seguridad y, más adelante, para sincronizar entre tus dispositivos.</string>
+    <string name="cloud_consent_no_servers">KeyNexa no tiene servidores propios ni envía estadísticas.</string>
+    <string name="cloud_consent_old_copies">Las copias antiguas pueden contener contraseñas antiguas, por eso se limita su número.</string>
+    <string name="cloud_consent_stop">Para dejar de usarlo, usa «Desconectar y borrar»: borra las credenciales de este dispositivo. Las copias ya subidas se borran desde el propio servicio.</string>
+    <string name="cloud_consent_offline">También existe una variante sin acceso a la red.</string>
+    <string name="cloud_consent_accept">Aceptar y continuar</string>
+    <string name="cloud_consent_decline">Ahora no</string>
+    <string name="cloud_status_no_service">Copias en la nube: aún sin servicio configurado (la configuración llega en la próxima versión).</string>
+    <string name="cloud_disconnect">Desconectar y borrar</string>
+    <string name="cloud_disconnect_title">¿Desconectar y borrar?</string>
+    <string name="cloud_disconnect_message">Se borrarán las credenciales de la nube guardadas en este dispositivo. Las copias ya subidas siguen en el servicio; bórralas allí.</string>
+    <string name="cloud_disconnect_confirm">Desconectar y borrar</string>
+    <string name="cloud_cancel">Cancelar</string>
+    <string name="cloud_close">Cerrar</string>
 </resources>

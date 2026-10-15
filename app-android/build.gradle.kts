@@ -66,6 +66,9 @@ dependencies {
     implementation(project(":platform-android"))
     implementation(project(":core-kdbx"))
 
+    // The cloud client and its credential store exist only in the cloud flavor; the offline APK must not carry them.
+    "cloudImplementation"(project(":platform-cloud"))
+
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.compose.material3)

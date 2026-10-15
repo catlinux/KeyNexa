@@ -10,6 +10,12 @@ All notable changes to this project are documented in this file. The format is b
 
 - ADR-0008 (proposed) and the plan for optional cloud copies of the vault with an assistant: an `offline` build with no network access and a `cloud` build, S3 first and then Dropbox, OneDrive and Google Drive.
 
+## [0.19.0] - 2026-10-15
+
+### Added
+
+- An encrypted store for the cloud credentials and the consent screen, only in the `cloud` variant (ADR-0008): `SecretBox`/`AesGcmSecretBox` and `CloudCredentialStore` in `platform-cloud` (AES-256-GCM, atomic writes, nothing readable on disk), a `KeystoreSecretBox` whose non-exportable key lives in the Android Keystore, a consent mark in `noBackupFilesDir`, and a "Copies in the cloud" entry in Settings with the consent flow and a "Disconnect and delete" action. The `offline` variant keeps an empty entry and carries no cloud code. New [privacy statement](docs/PRIVACY.md) and cloud threats in the [threat model](docs/THREAT_MODEL.md).
+
 ## [0.18.0] - 2026-10-15
 
 ### Added

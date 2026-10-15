@@ -24,6 +24,7 @@ Consulta la [hoja de ruta](docs/es/ROADMAP.md) para ver qué está planificado e
 | --- | --- |
 | [Arquitectura](docs/es/ARCHITECTURE.md) | Módulos, elecciones tecnológicas, estrategia multiplataforma |
 | [Modelo de amenazas](docs/es/THREAT_MODEL.md) | Activos, atacantes, amenazas, mitigaciones, riesgos residuales |
+| [Privacidad](docs/es/PRIVACY.md) | Qué hace cada variante con tus datos |
 | [Dependencias y licencias](docs/es/DEPENDENCIES_AND_LICENSES.md) | Bibliotecas investigadas, licencias verificadas, fuentes |
 | [Desarrollo](docs/es/DEVELOPMENT.md) | Requisitos, cadena de herramientas y cómo compilar y probar |
 | [Hoja de ruta](docs/es/ROADMAP.md) | MVP, criterios de aceptación y fases posteriores |

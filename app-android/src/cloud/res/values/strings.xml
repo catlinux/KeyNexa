@@ -1,4 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">KeyNexa (cloud)</string>
+
+    <string name="cloud_settings_entry">Copies in the cloud</string>
+    <string name="cloud_consent_title">Copies in the cloud</string>
+    <string name="cloud_consent_sent">Only an encrypted copy of your vault file is sent: never your master password, your keys or the decrypted content.</string>
+    <string name="cloud_consent_where">It goes only to the service you choose.</string>
+    <string name="cloud_consent_why">Only to keep backup copies and, later, to sync between your devices.</string>
+    <string name="cloud_consent_no_servers">KeyNexa has no servers of its own and sends no statistics.</string>
+    <string name="cloud_consent_old_copies">Old copies may still hold old passwords, so their number is limited.</string>
+    <string name="cloud_consent_stop">To stop using it, use “Disconnect and delete”: it deletes the credentials on this device. Copies already uploaded are deleted from the service itself.</string>
+    <string name="cloud_consent_offline">There is also a build with no network access at all.</string>
+    <string name="cloud_consent_accept">Accept and continue</string>
+    <string name="cloud_consent_decline">Not now</string>
+    <string name="cloud_status_no_service">Cloud copies: no service configured yet (setup arrives in the next version).</string>
+    <string name="cloud_disconnect">Disconnect and delete</string>
+    <string name="cloud_disconnect_title">Disconnect and delete?</string>
+    <string name="cloud_disconnect_message">The cloud credentials stored on this device will be deleted. Copies already uploaded stay in the service; delete them there.</string>
+    <string name="cloud_disconnect_confirm">Disconnect and delete</string>
+    <string name="cloud_cancel">Cancel</string>
+    <string name="cloud_close">Close</string>
 </resources>

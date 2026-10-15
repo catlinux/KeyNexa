@@ -10,6 +10,12 @@ Todos los cambios notables de este proyecto se documentan en este archivo. El fo
 
 - ADR-0008 (propuesta) y el plan de las copias opcionales de la bóveda en la nube con un asistente: una compilación `offline` sin acceso a la red y una `cloud`, primero S3 y después Dropbox, OneDrive y Google Drive.
 
+## [0.19.0] - 2026-10-15
+
+### Añadido
+
+- Un almacén cifrado de las credenciales de la nube y la pantalla de consentimiento, solo en la variante `cloud` (ADR-0008): `SecretBox`/`AesGcmSecretBox` y `CloudCredentialStore` en `platform-cloud` (AES-256-GCM, escrituras atómicas, nada legible en disco), un `KeystoreSecretBox` cuya clave no exportable vive en el Android Keystore, una marca de consentimiento en `noBackupFilesDir` y una fila «Copias en la nube» en Ajustes con el flujo de consentimiento y una acción «Desconectar y borrar». La variante `offline` mantiene una entrada vacía y no lleva código de nube. Nueva [declaración de privacidad](PRIVACY.md) y amenazas de nube en el [modelo de amenazas](THREAT_MODEL.md).
+
 ## [0.18.0] - 2026-10-15
 
 ### Añadido

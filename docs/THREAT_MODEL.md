@@ -44,9 +44,13 @@
 | T12 | Data loss on save (interruption, truncation, partial writes) | Safe-save pipeline: private backup, `"rwt"` write, read-back verification, restore on failure ([ADR-0004](decisions/0004-storage-sync-and-safe-save.md)). |
 | T13 | External changes and sync conflicts overwritten | **Implemented:** fingerprint checks run before saves and on resume; external vault changes are merged automatically by UUID and timestamps. Syncthing `.sync-conflict-` copies are merged when the vault opens. The app offers to delete successfully merged copies and deletes them only after consent and a matching fingerprint check. |
 | T14 | Phishing through autofill (fake package names) | Credentials matched to apps by verified signing certificate and Digital Asset Links, not by package name alone; explicit confirmation when not verified. (Phase 2.) |
-| T15 | Excessive permissions | No internet permission in the MVP; no `MANAGE_EXTERNAL_STORAGE`; SAF only. |
+| T15 | Excessive permissions | **Implemented:** the `offline` build declares no `INTERNET` permission and never accesses the network; the `cloud` build declares `INTERNET` only to reach the service the user configures, and only the `offline` build is published until the cloud features are complete; no `MANAGE_EXTERNAL_STORAGE`; SAF only. |
 | T16 | Supply chain | Few dependencies, pinned in a version catalog; Gradle dependency verification (checksums); automated vulnerability and license checks in CI; reproducible-build investigation before 1.0. |
 | T17 | Signing key compromise | Key kept offline by the maintainer; CI signs only through encrypted repository secrets; never committed. |
+| T18 | Cloud account compromise (someone gets into the chosen service) | Only encrypted copies are uploaded, so the attacker gets ciphertext; a strong master password and an optional key file are the real protection. The copy count is limited and the consent text warns that old copies can hold old passwords. Only the `cloud` variant includes this code. |
+| T19 | Theft of the local cloud credentials | Stored encrypted with a non-exportable AES-256-GCM key from the Android Keystore, in app-private storage excluded from Android backup; never logged and never shown; "Disconnect and delete" removes them. |
+| T20 | Exposure of file metadata (name, size, times) | The service sees only the object name (the vault name sanitised to letters, digits, `-` and `_`), its size and its times, never its content; the user can choose a vault name that does not identify it. |
+| T21 | Interception of the connection | HTTPS only in production, with the system's TLS validation; redirects are not followed, so a signed request is never re-sent to another host; URLs, headers, keys and bodies are never logged. |
 
 ## Residual risks (accepted, documented to users)
 

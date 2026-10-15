@@ -127,6 +127,7 @@ fun SettingsScreen(
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
+            CloudSettingsEntry()
         }
     }
 }
