@@ -10,6 +10,12 @@ All notable changes to this project are documented in this file. The format is b
 
 - ADR-0008 (proposed) and the plan for optional cloud copies of the vault with an assistant: an `offline` build with no network access and a `cloud` build, S3 first and then Dropbox, OneDrive and Google Drive.
 
+## [0.21.2] - 2026-10-15
+
+### Fixed
+
+- Cloud variant: "Test connection" always said it could not connect on a real phone, because Android's XML parser rejects the Apache hardening options used to read S3 answers. The options are now set one by one, and an answer with a DOCTYPE or entities is refused before parsing.
+
 ## [0.21.1] - 2026-10-15
 
 ### Changed

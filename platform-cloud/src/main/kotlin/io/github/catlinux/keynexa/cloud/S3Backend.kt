@@ -155,17 +155,24 @@ class S3Backend(
         name: String,
     ): String? = parent?.getElementsByTagName(name)?.item(0)?.textContent
 
-    // The parser never loads a DTD or an external entity, and a malformed document becomes an IOException.
+    // A document with a DTD or entities is refused before parsing (an S3 answer never has one); the parser features
+    // are then hardening on top, set one by one because Android's parser rejects the Apache ones. A malformed
+    // document becomes an IOException.
     @Suppress("ThrowsCount")
     private fun parse(body: ByteArray): org.w3c.dom.Document {
+        val text = String(body, Charsets.ISO_8859_1)
+        if (text.contains("<!DOCTYPE", ignoreCase = true) || text.contains("<!ENTITY", ignoreCase = true)) {
+            throw IOException("S3 returned a list that could not be read")
+        }
         val factory = DocumentBuilderFactory.newInstance()
         return try {
-            factory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true)
-            factory.setFeature("http://xml.org/sax/features/external-general-entities", false)
-            factory.setFeature("http://xml.org/sax/features/external-parameter-entities", false)
-            factory.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false)
-            factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true)
-            factory.isXIncludeAware = false
+            for (feature in HARDENING_FEATURES) {
+                try {
+                    factory.setFeature(feature.first, feature.second)
+                } catch (_: ParserConfigurationException) {
+                    // This parser does not have the feature; the DOCTYPE check above still holds.
+                }
+            }
             factory.isExpandEntityReferences = false
             factory.newDocumentBuilder().parse(ByteArrayInputStream(body))
         } catch (failure: ParserConfigurationException) {
@@ -183,6 +190,14 @@ class S3Backend(
         const val FORBIDDEN = 403
         const val NOT_FOUND = 404
         val AUTH_CODES = setOf("InvalidAccessKeyId", "SignatureDoesNotMatch", "AccessDenied")
+        val HARDENING_FEATURES =
+            listOf(
+                "http://apache.org/xml/features/disallow-doctype-decl" to true,
+                "http://xml.org/sax/features/external-general-entities" to false,
+                "http://xml.org/sax/features/external-parameter-entities" to false,
+                "http://apache.org/xml/features/nonvalidating/load-external-dtd" to false,
+                XMLConstants.FEATURE_SECURE_PROCESSING to true,
+            )
     }
 }
 

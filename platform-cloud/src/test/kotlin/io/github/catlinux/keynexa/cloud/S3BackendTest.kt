@@ -102,6 +102,14 @@ class S3BackendTest {
     }
 
     @Test
+    fun aListWithADoctypeIsRefused() {
+        val body = "<!DOCTYPE r [<!ENTITY x \"y\">]><ListBucketResult></ListBucketResult>"
+        val transport = RecordingTransport { HttpResponse(200, emptyMap(), body.toByteArray()) }
+
+        assertThrows(IOException::class.java) { backend(transport).list("KeyNexa/") }
+    }
+
+    @Test
     fun aMalformedListIsAnIoException() {
         val transport =
             RecordingTransport {
