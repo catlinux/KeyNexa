@@ -24,6 +24,16 @@ Open **Settings → Copies in the cloud** and follow the assistant. It has five 
 3. Create an API token with read and write permission over that bucket, and copy the Access Key ID and the Secret Access Key.
 4. For the endpoint, use `https://<account id>.r2.cloudflarestorage.com`. The region is optional: the assistant fills in `auto`. Leave "use the bucket in the path" on.
 
+## Amazon S3
+
+Not tried with a real account yet. Amazon asks for a payment card when you sign up and bills by use; a vault is tiny, but check the current prices and free tier on Amazon's own pages.
+
+1. Create an AWS account at <https://aws.amazon.com/s3/> and open the S3 console.
+2. Create a bucket. Choose the region closest to you (for example `eu-west-1`) and leave **Block all public access** turned on.
+3. In IAM, create a user for KeyNexa with no console access and a policy limited to that bucket: it needs `s3:ListBucket` on the bucket and `s3:GetObject`, `s3:PutObject` and `s3:DeleteObject` on its objects.
+4. Create an access key for that user and copy the Access Key ID and the Secret Access Key (the secret is shown only once) into the assistant.
+5. For the endpoint, use `https://s3.<region>.amazonaws.com` (for example `https://s3.eu-west-1.amazonaws.com`). The region is filled in from the endpoint, and you can leave "use the bucket in the path" on.
+
 ## MinIO or another server of your own
 
 1. Create a bucket on your server, private.

@@ -24,6 +24,16 @@ Abre **Ajustes → Copias en la nube** y sigue el asistente. Tiene cinco pasos: 
 3. Crea un token de API con permiso de lectura y escritura sobre ese cubo y copia el Access Key ID y el Secret Access Key.
 4. Para el endpoint, usa `https://<ID de cuenta>.r2.cloudflarestorage.com`. La región es opcional: el asistente rellena `auto`. Deja activado «usar rutas con el cubo en la ruta».
 
+## Amazon S3
+
+Todavía no probado con una cuenta real. Amazon pide una tarjeta de pago al registrarte y cobra por uso; una bóveda ocupa muy poco, pero consulta los precios y el nivel gratuito vigentes en las páginas de Amazon.
+
+1. Crea una cuenta de AWS en <https://aws.amazon.com/s3/> y abre la consola de S3.
+2. Crea un cubo. Elige la región más cercana (por ejemplo `eu-west-1`) y deja activado **Block all public access**.
+3. En IAM, crea un usuario para KeyNexa sin acceso a la consola y con una política limitada a ese cubo: necesita `s3:ListBucket` sobre el cubo y `s3:GetObject`, `s3:PutObject` y `s3:DeleteObject` sobre sus objetos.
+4. Crea una clave de acceso para ese usuario y copia el Access Key ID y el Secret Access Key (el secreto solo se muestra una vez) en el asistente.
+5. Para el endpoint, usa `https://s3.<región>.amazonaws.com` (por ejemplo `https://s3.eu-west-1.amazonaws.com`). La región se rellena sola a partir del endpoint, y puedes dejar activado «usar rutas con el cubo en la ruta».
+
 ## MinIO u otro servidor propio
 
 1. Crea un cubo privado en tu servidor.
