@@ -2,7 +2,7 @@
 
 [English](0008-cloud-backup.md) | [Español](../es/decisions/0008-cloud-backup.md)
 
-- **Status:** Proposed
+- **Status:** Accepted (2026-10-15, by the project owner)
 - **Date:** 2026-10-15
 - **Extends:** [ADR-0004](0004-storage-sync-and-safe-save.md); the later "cloud as an always-on hub" step needs its own record
 

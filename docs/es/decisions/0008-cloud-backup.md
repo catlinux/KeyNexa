@@ -2,7 +2,7 @@
 
 [English](../../decisions/0008-cloud-backup.md) | [Español](0008-cloud-backup.md)
 
-- **Estado:** Propuesta
+- **Estado:** Aceptada (2026-10-15, por el propietario del proyecto)
 - **Fecha:** 2026-10-15
 - **Amplía:** el [ADR-0004](0004-storage-sync-and-safe-save.md); el paso posterior de «la nube como punto de encuentro siempre disponible» necesitará su propio registro
 
