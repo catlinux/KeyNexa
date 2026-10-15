@@ -45,6 +45,12 @@ class FileBackupState(
         return successes[vaultId]
     }
 
+    /** True when any vault has a recorded successful copy. */
+    fun hasAnySuccess(): Boolean {
+        ensureLoaded()
+        return successes.isNotEmpty()
+    }
+
     override fun recordSuccess(
         vaultId: String,
         at: Instant,

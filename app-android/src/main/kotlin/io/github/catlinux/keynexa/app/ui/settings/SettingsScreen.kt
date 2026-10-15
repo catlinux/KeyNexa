@@ -33,6 +33,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import io.github.catlinux.keynexa.app.R
 import io.github.catlinux.keynexa.app.settings.SettingsValues
+import io.github.catlinux.keynexa.app.vault.CloudBackupSource
 
 /** Spacing and touch targets of the design grid (docs/DESIGN.md). */
 private val ScreenPadding = 16.dp
@@ -61,6 +62,7 @@ fun SettingsScreen(
     onChange: (SettingsValues) -> Unit,
     onBack: () -> Unit,
     modifier: Modifier = Modifier,
+    cloudSource: CloudBackupSource? = null,
 ) {
     Surface(modifier = modifier.fillMaxSize()) {
         Column(
@@ -127,7 +129,7 @@ fun SettingsScreen(
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
-            CloudSettingsEntry()
+            CloudSettingsEntry(cloudSource)
         }
     }
 }

@@ -80,6 +80,7 @@ fun HomeScreen(
                     )
                 }
             }
+            CloudReminder(onOpenSettings = onOpenSettings)
             HomeActions(onOpenExisting = onOpenExisting, onCreateNew = onCreateNew)
         }
     }

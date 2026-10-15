@@ -10,6 +10,16 @@ All notable changes to this project are documented in this file. The format is b
 
 - ADR-0008 (proposed) and the plan for optional cloud copies of the vault with an assistant: an `offline` build with no network access and a `cloud` build, S3 first and then Dropbox, OneDrive and Google Drive.
 
+## [0.21.0] - 2026-10-15
+
+### Added
+
+- The cloud-copy assistant (S3 path) in the `cloud` variant (ADR-0008 §4): a step-by-step screen with consent, the service choice, what each provider needs (with links that open the browser), the endpoint/region/bucket/keys form (secret key as a password field, never in saved state), a connection test with clear per-case messages, saving the configuration and a state screen with the last copy, the last error, the copy count (5/10/20), "Copy now", "Change service" and "Disconnect and delete". A discreet, never-modal reminder appears on the home screen until a service is configured and a copy exists, and can be postponed for a week. New bilingual [cloud setup guide](CLOUD_SETUP.md).
+
+### Changed
+
+- `CloudSettingsEntry` now receives the open vault (`CloudBackupSource`) so "Copy now" can upload it; the offline variant keeps empty hooks with the same signature.
+
 ## [0.20.0] - 2026-10-15
 
 ### Added

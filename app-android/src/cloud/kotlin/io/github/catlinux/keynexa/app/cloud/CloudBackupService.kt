@@ -11,7 +11,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
-import java.io.File
 import java.time.Instant
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.Executors
@@ -31,8 +30,6 @@ data class CloudBackupStatus(
  * touches the composition or the main thread.
  */
 object CloudBackupService {
-    private const val BACKUP_STATE_FILE = "backup-state.properties"
-
     private val executor =
         Executors.newSingleThreadExecutor { task ->
             Thread(task, "keynexa-cloud-backup").apply { isDaemon = true }
@@ -63,6 +60,9 @@ object CloudBackupService {
         val state = stateFor(context.applicationContext)
         return CloudBackupStatus(state.lastSuccess(vaultId), state.lastError(vaultId), vaultId in pending)
     }
+
+    /** True when any vault already has a successful copy on record (for the reminder). */
+    fun hasAnyBackup(context: Context): Boolean = stateFor(context.applicationContext).hasAnySuccess()
 
     private fun enqueue(
         context: Context,
@@ -102,6 +102,5 @@ object CloudBackupService {
         mutableStatus.value = CloudBackupStatus(state.lastSuccess(vaultId), state.lastError(vaultId), running = false)
     }
 
-    private fun stateFor(context: Context): FileBackupState =
-        FileBackupState(File(CloudStores.directory(context), BACKUP_STATE_FILE))
+    private fun stateFor(context: Context): FileBackupState = FileBackupState(CloudStores.backupStateFile(context))
 }

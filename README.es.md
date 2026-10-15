@@ -45,7 +45,7 @@ apksigner verify --print-certs keynexa-0.10.2.apk
 
 Compara la huella SHA-256 del certificado que muestra `apksigner` con `51:ca:da:3c:d0:8c:35:5f:13:67:90:b1:be:83:09:00:8b:b9:a3:1e:e9:44:b4:e6:e3:74:7e:6a:e9:d0:44:9b`. La compilación `offline` publicada no solicita el permiso de Internet; la `cloud` lo declara para las copias en la nube opcionales cuando lleguen.
 
-Como alternativa, puedes compilar desde el código fuente. Necesitas JDK 17 y Android SDK 36 (consulta [Desarrollo](docs/es/DEVELOPMENT.md) para indicar a Gradle dónde está el SDK). KeyNexa se distribuye en dos variantes: `offline` (sin acceso a la red) y `cloud` (declara `INTERNET`; las funciones de nube aún están por llegar). Desde la raíz del repositorio:
+Como alternativa, puedes compilar desde el código fuente. Necesitas JDK 17 y Android SDK 36 (consulta [Desarrollo](docs/es/DEVELOPMENT.md) para indicar a Gradle dónde está el SDK). KeyNexa se distribuye en dos variantes: `offline` (sin acceso a la red) y `cloud` (declara `INTERNET` para las copias en la nube opcionales; consulta la [guía de configuración de las copias en la nube](docs/es/CLOUD_SETUP.md)). Desde la raíz del repositorio:
 
 ```sh
 ./gradlew build

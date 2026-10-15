@@ -23,6 +23,7 @@ import io.github.catlinux.keynexa.app.ui.settings.SettingsScreen
 import io.github.catlinux.keynexa.app.ui.unlock.BiometricOfferDialog
 import io.github.catlinux.keynexa.app.ui.unlock.BiometricUi
 import io.github.catlinux.keynexa.app.ui.unlock.UnlockScreen
+import io.github.catlinux.keynexa.app.vault.CloudBackupSource
 import io.github.catlinux.keynexa.app.vault.KnownVault
 import io.github.catlinux.keynexa.app.vault.SessionState
 import io.github.catlinux.keynexa.app.vault.UnlockError
@@ -362,7 +363,7 @@ fun AppRoot(container: AppContainer) {
 }
 
 /** The screen for the current navigation state, connected to the session and the file actions. */
-@Suppress("LongParameterList")
+@Suppress("LongParameterList", "LongMethod")
 @Composable
 private fun AppScreens(
     container: AppContainer,
@@ -390,6 +391,10 @@ private fun AppScreens(
                 values = container.settings.values,
                 onChange = container.settings::update,
                 onBack = { navigator.back() },
+                cloudSource =
+                    (state as? SessionState.Open)?.let { open ->
+                        CloudBackupSource(open.vault) { container.storage.read(open.vault.location) }
+                    },
             )
         Screen.CreateVault ->
             CreateVaultScreen(

@@ -10,6 +10,16 @@ Todos los cambios notables de este proyecto se documentan en este archivo. El fo
 
 - ADR-0008 (propuesta) y el plan de las copias opcionales de la bóveda en la nube con un asistente: una compilación `offline` sin acceso a la red y una `cloud`, primero S3 y después Dropbox, OneDrive y Google Drive.
 
+## [0.21.0] - 2026-10-15
+
+### Añadido
+
+- El asistente de copias en la nube (camino S3) en la variante `cloud` (ADR-0008 §4): una pantalla paso a paso con el consentimiento, la elección del servicio, lo que necesita cada proveedor (con botones que abren el navegador), el formulario de endpoint/región/cubo/claves (la clave secreta como campo de contraseña, nunca en el estado guardado), una prueba de conexión con mensajes claros por caso, el guardado de la configuración y una pantalla de estado con la última copia, el último error, el número de copias (5/10/20), «Copiar ahora», «Cambiar de servicio» y «Desconectar y borrar». En la pantalla de inicio aparece un recordatorio discreto, nunca modal, mientras no haya servicio configurado ni copia, que se puede aplazar una semana. Nueva [guía de configuración de las copias en la nube](CLOUD_SETUP.md) bilingüe.
+
+### Cambiado
+
+- `CloudSettingsEntry` recibe ahora la bóveda abierta (`CloudBackupSource`) para que «Copiar ahora» pueda subirla; la variante `offline` mantiene huecos vacíos con la misma firma.
+
 ## [0.20.0] - 2026-10-15
 
 ### Añadido

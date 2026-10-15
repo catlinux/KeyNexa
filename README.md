@@ -45,7 +45,7 @@ apksigner verify --print-certs keynexa-0.10.2.apk
 
 Compare the SHA-256 certificate fingerprint reported by `apksigner` with `51:ca:da:3c:d0:8c:35:5f:13:67:90:b1:be:83:09:00:8b:b9:a3:1e:e9:44:b4:e6:e3:74:7e:6a:e9:d0:44:9b`. The published `offline` build does not request the Internet permission; the `cloud` build declares it for the optional cloud copies when they arrive.
 
-To build from source instead, you need JDK 17 and Android SDK 36 (see [Development](docs/DEVELOPMENT.md) for how to point Gradle at the SDK). KeyNexa ships two variants: `offline` (no network access) and `cloud` (declares `INTERNET`; the cloud features are still to come). From the repository root:
+To build from source instead, you need JDK 17 and Android SDK 36 (see [Development](docs/DEVELOPMENT.md) for how to point Gradle at the SDK). KeyNexa ships two variants: `offline` (no network access) and `cloud` (declares `INTERNET` for the optional cloud copies; see the [cloud copies setup guide](docs/CLOUD_SETUP.md)). From the repository root:
 
 ```sh
 ./gradlew build
