@@ -10,6 +10,12 @@ All notable changes to this project are documented in this file. The format is b
 
 - ADR-0008 (proposed) and the plan for optional cloud copies of the vault with an assistant: an `offline` build with no network access and a `cloud` build, S3 first and then Dropbox, OneDrive and Google Drive.
 
+## [0.21.1] - 2026-10-15
+
+### Changed
+
+- Polished the cloud-copy assistant (cloud variant only): the "Test connection" result now appears right above the button, so it is visible without scrolling; the "Copies in the cloud" settings row looks like a tappable row with a trailing arrow and a second line showing the current state; the S3 description no longer says "without a KeyNexa account" and instead says that KeyNexa has no accounts or servers of its own; and the consent screen groups its sentences under the bold headings "What is sent", "Where it goes", "What it is for" and "How to stop using it".
+
 ## [0.21.0] - 2026-10-15
 
 ### Added

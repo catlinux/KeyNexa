@@ -11,13 +11,20 @@
     <string name="cloud_consent_old_copies">Las copias antiguas pueden contener contraseñas antiguas, por eso se limita su número.</string>
     <string name="cloud_consent_stop">Para dejar de usarlo, usa «Desconectar y borrar»: borra las credenciales de este dispositivo. Las copias ya subidas se borran desde el propio servicio.</string>
     <string name="cloud_consent_offline">También existe una variante sin acceso a la red.</string>
+    <string name="cloud_consent_heading_sent">Qué se envía</string>
+    <string name="cloud_consent_heading_where">A dónde</string>
+    <string name="cloud_consent_heading_why">Para qué</string>
+    <string name="cloud_consent_heading_stop">Cómo dejar de usarlo</string>
     <string name="cloud_consent_accept">Aceptar y continuar</string>
     <string name="cloud_consent_decline">Ahora no</string>
+
+    <string name="cloud_settings_entry_status_off">Sin servicio configurado</string>
+    <string name="cloud_settings_entry_status_on">S3 · %1$s</string>
 
     <string name="cloud_wizard_back">Atrás</string>
     <string name="cloud_service_title">Elige el servicio</string>
     <string name="cloud_service_s3_title">S3 (Backblaze B2, Cloudflare R2, MinIO…)</string>
-    <string name="cloud_service_s3_description">Un servicio de almacenamiento compatible con Amazon S3: creas un cubo privado y una clave de acceso, y KeyNexa sube ahí tus copias cifradas. Para quien quiera una nube gratuita o barata sin tener cuenta con KeyNexa.</string>
+    <string name="cloud_service_s3_description">Un servicio de almacenamiento compatible con Amazon S3: creas un cubo privado y una clave de acceso, y KeyNexa sube ahí tus copias cifradas. KeyNexa no tiene cuentas ni servidores propios: la cuenta es solo con el servicio de almacenamiento que elijas.</string>
     <string name="cloud_needs_title">Qué necesitas</string>
     <string name="cloud_needs_step_number">%1$d. %2$s</string>
     <string name="cloud_needs_step_1">Una cuenta gratuita o de pago en un servicio compatible con S3.</string>

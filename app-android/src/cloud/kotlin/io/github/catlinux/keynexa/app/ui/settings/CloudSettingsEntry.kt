@@ -5,6 +5,7 @@ package io.github.catlinux.keynexa.app.ui.settings
 import android.content.Context
 import android.content.Intent
 import android.text.format.DateUtils
+import androidx.annotation.StringRes
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -18,6 +19,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
@@ -42,6 +44,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
@@ -99,6 +102,7 @@ fun CloudSettingsEntry(source: CloudBackupSource?) {
     var confirmingDisconnect by remember { mutableStateOf(false) }
     val serviceStatus by CloudBackupService.status.collectAsState()
     var status by remember { mutableStateOf<CloudBackupStatus?>(null) }
+    var rowStatus by remember { mutableStateOf<RowStatus?>(null) }
 
     LaunchedEffect(showing) {
         if (!showing) return@LaunchedEffect
@@ -129,6 +133,14 @@ fun CloudSettingsEntry(source: CloudBackupSource?) {
             }
     }
 
+    LaunchedEffect(setup, serviceStatus) {
+        rowStatus =
+            withContext(Dispatchers.IO) {
+                val bucket = (setup ?: CloudStores.credentials(context).load()?.let(S3Setup::fromValues))?.bucket
+                RowStatus(bucket)
+            }
+    }
+
     Row(
         modifier =
             Modifier
@@ -137,8 +149,23 @@ fun CloudSettingsEntry(source: CloudBackupSource?) {
                 .clickable { showing = true }
                 .padding(vertical = CloudGap),
         verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(CloudGap),
     ) {
-        Text(text = stringResource(R.string.cloud_settings_entry), style = MaterialTheme.typography.bodyLarge)
+        Column(
+            modifier = Modifier.weight(1f),
+            verticalArrangement = Arrangement.spacedBy(CloudGap),
+        ) {
+            Text(text = stringResource(R.string.cloud_settings_entry), style = MaterialTheme.typography.bodyLarge)
+            Text(
+                text = rowStatusText(rowStatus),
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+        }
+        Icon(
+            imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
+            contentDescription = null,
+        )
     }
 
     if (showing) {
@@ -302,6 +329,21 @@ private data class SetupFormErrors(
     val any: Boolean get() = endpoint || region || bucket || accessKeyId || secretAccessKey
 }
 
+/** What the settings row says under its title: the bucket of the configured service, or nothing. */
+private data class RowStatus(
+    val bucket: String?,
+)
+
+@Composable
+private fun rowStatusText(status: RowStatus?): String {
+    val bucket = status?.bucket
+    return if (bucket == null) {
+        stringResource(R.string.cloud_settings_entry_status_off)
+    } else {
+        stringResource(R.string.cloud_settings_entry_status_on, bucket)
+    }
+}
+
 private fun validate(form: SetupForm): SetupFormErrors =
     SetupFormErrors(
         endpoint = !form.endpoint.trim().startsWith(HTTPS_PREFIX),
@@ -413,18 +455,20 @@ private fun ConsentBody(
     onAccept: () -> Unit,
     onDecline: () -> Unit,
 ) {
-    val paragraphs =
-        listOf(
-            R.string.cloud_consent_sent,
-            R.string.cloud_consent_where,
-            R.string.cloud_consent_why,
-            R.string.cloud_consent_no_servers,
-            R.string.cloud_consent_old_copies,
-            R.string.cloud_consent_stop,
-            R.string.cloud_consent_offline,
+    ConsentGroup(heading = R.string.cloud_consent_heading_sent, body = R.string.cloud_consent_sent)
+    ConsentGroup(heading = R.string.cloud_consent_heading_where, body = R.string.cloud_consent_where)
+    ConsentGroup(heading = R.string.cloud_consent_heading_why, body = R.string.cloud_consent_why)
+    ConsentGroup(heading = R.string.cloud_consent_heading_stop, body = R.string.cloud_consent_stop)
+    listOf(
+        R.string.cloud_consent_no_servers,
+        R.string.cloud_consent_old_copies,
+        R.string.cloud_consent_offline,
+    ).forEach { note ->
+        Text(
+            text = stringResource(note),
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
-    paragraphs.forEach { paragraph ->
-        Text(text = stringResource(paragraph), style = MaterialTheme.typography.bodyMedium)
     }
     Button(
         onClick = onAccept,
@@ -438,6 +482,20 @@ private fun ConsentBody(
     ) {
         Text(text = stringResource(R.string.cloud_consent_decline))
     }
+}
+
+/** A bold heading with the sentence that belongs to it. */
+@Composable
+private fun ConsentGroup(
+    @StringRes heading: Int,
+    @StringRes body: Int,
+) {
+    Text(
+        text = stringResource(heading),
+        style = MaterialTheme.typography.titleSmall,
+        fontWeight = FontWeight.Bold,
+    )
+    Text(text = stringResource(body), style = MaterialTheme.typography.bodyMedium)
 }
 
 /** The one implemented service: a card that opens the "what you need" step. */
@@ -545,6 +603,15 @@ private fun SetupFormBody(
         onCheckedChange = { form.pathStyle = it },
     )
     KeepChoices(selected = form.keep, onSelect = { form.keep = it })
+    form.testResult?.let { result ->
+        val color =
+            if (result == ConnectionResult.Ok) {
+                MaterialTheme.colorScheme.primary
+            } else {
+                MaterialTheme.colorScheme.error
+            }
+        Text(text = testMessage(result), style = MaterialTheme.typography.bodyMedium, color = color)
+    }
     Button(
         onClick = onTest,
         enabled = !form.testing,
@@ -556,15 +623,6 @@ private fun SetupFormBody(
                     if (form.testing) R.string.cloud_form_testing else R.string.cloud_form_test,
                 ),
         )
-    }
-    form.testResult?.let { result ->
-        val color =
-            if (result == ConnectionResult.Ok) {
-                MaterialTheme.colorScheme.primary
-            } else {
-                MaterialTheme.colorScheme.error
-            }
-        Text(text = testMessage(result), style = MaterialTheme.typography.bodyMedium, color = color)
     }
     if (form.testedOk) {
         Button(

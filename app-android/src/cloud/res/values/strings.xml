@@ -11,13 +11,20 @@
     <string name="cloud_consent_old_copies">Old copies may still hold old passwords, so their number is limited.</string>
     <string name="cloud_consent_stop">To stop using it, use “Disconnect and delete”: it deletes the credentials on this device. Copies already uploaded are deleted from the service itself.</string>
     <string name="cloud_consent_offline">There is also a build with no network access at all.</string>
+    <string name="cloud_consent_heading_sent">What is sent</string>
+    <string name="cloud_consent_heading_where">Where it goes</string>
+    <string name="cloud_consent_heading_why">What it is for</string>
+    <string name="cloud_consent_heading_stop">How to stop using it</string>
     <string name="cloud_consent_accept">Accept and continue</string>
     <string name="cloud_consent_decline">Not now</string>
+
+    <string name="cloud_settings_entry_status_off">No service configured</string>
+    <string name="cloud_settings_entry_status_on">S3 · %1$s</string>
 
     <string name="cloud_wizard_back">Back</string>
     <string name="cloud_service_title">Choose the service</string>
     <string name="cloud_service_s3_title">S3 (Backblaze B2, Cloudflare R2, MinIO…)</string>
-    <string name="cloud_service_s3_description">A storage service compatible with Amazon S3: you create a private bucket and an access key, and KeyNexa uploads your encrypted copies there. For anyone who wants a free or cheap cloud without a KeyNexa account.</string>
+    <string name="cloud_service_s3_description">A storage service compatible with Amazon S3: you create a private bucket and an access key, and KeyNexa uploads your encrypted copies there. KeyNexa has no accounts and no servers of its own: the account is only with the storage service you choose.</string>
     <string name="cloud_needs_title">What you need</string>
     <string name="cloud_needs_step_number">%1$d. %2$s</string>
     <string name="cloud_needs_step_1">A free or paid account in an S3-compatible service.</string>

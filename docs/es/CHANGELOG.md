@@ -10,6 +10,12 @@ Todos los cambios notables de este proyecto se documentan en este archivo. El fo
 
 - ADR-0008 (propuesta) y el plan de las copias opcionales de la bóveda en la nube con un asistente: una compilación `offline` sin acceso a la red y una `cloud`, primero S3 y después Dropbox, OneDrive y Google Drive.
 
+## [0.21.1] - 2026-10-15
+
+### Cambiado
+
+- Pulido del asistente de copias en la nube (solo variante cloud): el resultado de «Probar conexión» aparece ahora justo encima del botón, de modo que se ve sin desplazarse; la fila «Copias en la nube» de Ajustes parece una fila pulsable, con una flecha al final y una segunda línea con el estado actual; la descripción de S3 ya no dice «sin tener cuenta con KeyNexa» y en su lugar indica que KeyNexa no tiene cuentas ni servidores propios; y la pantalla de consentimiento agrupa sus frases bajo los subtítulos en negrita «Qué se envía», «A dónde», «Para qué» y «Cómo dejar de usarlo».
+
 ## [0.21.0] - 2026-10-15
 
 ### Añadido
