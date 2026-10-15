@@ -10,6 +10,12 @@ Todos los cambios notables de este proyecto se documentan en este archivo. El fo
 
 - ADR-0008 (propuesta) y el plan de las copias opcionales de la bóveda en la nube con un asistente: una compilación `offline` sin acceso a la red y una `cloud`, primero S3 y después Dropbox, OneDrive y Google Drive.
 
+## [0.22.1] - 2026-10-15
+
+### Cambiado
+
+- Guía de configuración de la nube verificada con una cuenta real de Backblaze B2: alta, cubo, nombres del endpoint, clave, primera copia y el límite de la carpeta Descargas.
+
 ## [0.22.0] - 2026-10-15
 
 ### Añadido

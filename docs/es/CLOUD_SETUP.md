@@ -2,7 +2,7 @@
 
 [English](../CLOUD_SETUP.md) | [Español](CLOUD_SETUP.md)
 
-> **Todavía no está verificada con una cuenta real.** Estos pasos siguen la documentación de cada servicio y están escritos para coincidir con lo que pide el asistente; se comprobarán con una cuenta real en la prueba H6. Los planes gratuitos, los precios y los límites cambian con el tiempo y aquí no se prometen. Solo se enlazan las páginas oficiales.
+> **Verificada con una cuenta real solo para Backblaze B2** (2026-10-15). Los pasos de Cloudflare R2 y MinIO siguen la documentación de cada servicio y aún no se han probado. Los planes gratuitos, los precios y los límites cambian con el tiempo y aquí no se prometen. Solo se enlazan las páginas oficiales.
 
 KeyNexa solo envía **el archivo `.kdbx` cifrado** al servicio que tú elijas, y solo después de que aceptes la pantalla de consentimiento. La contraseña maestra, las claves y el contenido descifrado nunca salen del dispositivo. Consulta [Privacidad](PRIVACY.md).
 
@@ -10,11 +10,12 @@ Abre **Ajustes → Copias en la nube** y sigue el asistente. Tiene cinco pasos: 
 
 ## Backblaze B2
 
-1. Crea una cuenta gratuita en <https://www.backblaze.com/cloud-storage>.
-2. Crea un cubo **privado** (que no sea público).
-3. Crea una clave de aplicación **limitada a ese cubo**, con permiso de lectura y escritura.
-4. Copia el `keyID` y la `applicationKey` (la clave de aplicación solo se muestra una vez) en el asistente.
-5. Para el endpoint, usa `https://s3.<región>.backblazeb2.com`; la región es la que muestra el cubo (por ejemplo `us-west-004`). Deja activado «usar rutas con el cubo en la ruta».
+1. Crea una cuenta gratuita en <https://www.backblaze.com/cloud-storage>. La página puede tardar un rato en cambiar de pantalla tras escribir el correo. Confirma el correo, elige una contraseña (vale el generador de tu gestor de contraseñas), elige la región donde se guardan tus datos (por ejemplo Europa o Estados Unidos), acepta los términos y elige *personal* u *organización*. Al entrar te pide un código enviado al correo (doble comprobación); puedes indicar que confíe en ese navegador.
+2. Crea un cubo **privado** (que no sea público) con un nombre único y sin datos personales, por ejemplo `keynexa-copias-4821`. Deja las opciones del servidor como vienen: la copia ya va cifrada por KDBX.
+3. En los detalles del cubo, apunta el **endpoint** (puede aparecer como «Endpoint», «Punto final», «S3 endpoint» o similar, por ejemplo `s3.eu-central-003.backblazeb2.com`). El panel lo muestra sin `https://`; el asistente lo necesita con `https://`.
+4. Crea una clave de aplicación (*Application Keys → Add a New Application Key*) **limitada a ese cubo**, con permiso de lectura y escritura.
+5. Copia el `keyID` y la `applicationKey` (la clave de aplicación solo se muestra una vez) en el asistente. Escríbelos en el móvil desde tu gestor de contraseñas.
+6. En el formulario: endpoint `https://s3.<región>.backblazeb2.com`, región la parte del endpoint que sigue a `s3.` (por ejemplo `eu-central-003`), el nombre del cubo, y deja activado «usar rutas con el cubo en la ruta».
 
 ## Cloudflare R2
 
@@ -45,7 +46,10 @@ No se guarda nada hasta que la prueba funcione.
 - Tras un guardado correcto, KeyNexa sube una copia en segundo plano, como mucho una vez al día. Puedes forzar una con **Copiar ahora**.
 - Solo se rotan las copias creadas por KeyNexa: se conservan las más nuevas y se borran las más antiguas. Tú eliges 5, 10 o 20.
 - Si una copia falla, la pantalla de estado muestra un mensaje breve; una subida fallida nunca bloquea el guardado de la bóveda.
+- **Copiar ahora** necesita una bóveda abierta: abre la bóveda, luego **Ajustes** en su menú (los tres puntos) y **Copias en la nube**. Los Ajustes abiertos desde la lista de bóvedas no tienen ninguna bóveda que copiar.
+- La primera copia no muestra ningún aviso: la línea de estado pasa a «Última copia: hace 0 minutos». Compruébala en el panel del propio servicio (en Backblaze: *Buckets → tu cubo → Browse Files*, carpeta `KeyNexa/`).
 - Si las claves dejan de valer, vuelve a configurar el servicio con **Cambiar de servicio**.
+- Android no deja que una aplicación use la carpeta *Descargas* del sistema como ubicación de una bóveda; guarda las bóvedas en otra carpeta.
 
 ## Borrar las copias
 
