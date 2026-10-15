@@ -10,6 +10,12 @@ Todos los cambios notables de este proyecto se documentan en este archivo. El fo
 
 - ADR-0008 (propuesta) y el plan de las copias opcionales de la bóveda en la nube con un asistente: una compilación `offline` sin acceso a la red y una `cloud`, primero S3 y después Dropbox, OneDrive y Google Drive.
 
+## [0.21.3] - 2026-10-15
+
+### Corregido
+
+- Variante cloud: «Guardar y activar» cerraba la app en un móvil real, porque el Keystore de Android rechaza un vector de inicialización elegido por quien llama. Ahora lo genera el propio cifrador.
+
 ## [0.21.2] - 2026-10-15
 
 ### Corregido

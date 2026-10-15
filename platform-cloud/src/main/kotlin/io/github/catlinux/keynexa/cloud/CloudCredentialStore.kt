@@ -8,7 +8,6 @@ import java.nio.file.AtomicMoveNotSupportedException
 import java.nio.file.Files
 import java.nio.file.StandardCopyOption
 import java.security.GeneralSecurityException
-import java.security.SecureRandom
 import java.util.Properties
 import javax.crypto.Cipher
 import javax.crypto.SecretKey
@@ -27,9 +26,11 @@ class AesGcmSecretBox(
     private val key: SecretKey,
 ) : SecretBox {
     override fun seal(plain: ByteArray): ByteArray {
-        val iv = ByteArray(IV_BYTES).also(RANDOM::nextBytes)
+        // The cipher picks the IV itself: the Android Keystore refuses an IV given by the caller.
         val cipher = Cipher.getInstance(TRANSFORMATION)
-        cipher.init(Cipher.ENCRYPT_MODE, key, GCMParameterSpec(TAG_BITS, iv))
+        cipher.init(Cipher.ENCRYPT_MODE, key)
+        val iv = cipher.iv
+        check(iv.size == IV_BYTES) { "unexpected IV length" }
         val encrypted = cipher.doFinal(plain)
         return ByteArray(HEADER_BYTES + encrypted.size).also { sealed ->
             sealed[0] = VERSION
@@ -61,7 +62,6 @@ class AesGcmSecretBox(
         const val TAG_BITS = 128
         const val TAG_BYTES = TAG_BITS / 8
         const val HEADER_BYTES = VERSION_BYTES + IV_BYTES
-        val RANDOM = SecureRandom()
     }
 }
 

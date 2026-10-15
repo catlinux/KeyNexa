@@ -10,6 +10,12 @@ All notable changes to this project are documented in this file. The format is b
 
 - ADR-0008 (proposed) and the plan for optional cloud copies of the vault with an assistant: an `offline` build with no network access and a `cloud` build, S3 first and then Dropbox, OneDrive and Google Drive.
 
+## [0.21.3] - 2026-10-15
+
+### Fixed
+
+- Cloud variant: "Save and turn on" closed the app on a real phone, because the Android Keystore refuses an initialisation vector chosen by the caller. The cipher now generates it.
+
 ## [0.21.2] - 2026-10-15
 
 ### Fixed
