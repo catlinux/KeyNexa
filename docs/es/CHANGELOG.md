@@ -10,6 +10,12 @@ Todos los cambios notables de este proyecto se documentan en este archivo. El fo
 
 - ADR-0008 (propuesta) y el plan de las copias opcionales de la bóveda en la nube con un asistente: una compilación `offline` sin acceso a la red y una `cloud`, primero S3 y después Dropbox, OneDrive y Google Drive.
 
+## [0.23.4] - 2026-10-15
+
+### Añadido
+
+- ADR-0009 (propuesta): sincronización a través de la nube, primero local, con escrituras condicionales y una prueba por servicio antes de ofrecerla.
+
 ## [0.23.3] - 2026-10-15
 
 ### Añadido

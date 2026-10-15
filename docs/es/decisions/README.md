@@ -14,5 +14,6 @@ Cada registro explica una decisión importante: contexto, opciones, decisión y 
 | [0006](0006-biometric-unlock.md) | Desbloqueo biométrico: clave compuesta envuelta por el Keystore, biometría en cada uso | Aceptada |
 | [0007](0007-conflict-copies.md) | Fusión de copias de conflicto de Syncthing: fusión automática, borrado solo con consentimiento | Aceptada |
 | [0008](0008-cloud-backup.md) | Copias de la bóveda en la nube: asistente opcional, variante `cloud` y servicios | Aceptada |
+| [0009](0009-cloud-sync.md) | Sincronización a través de la nube: primero local, escrituras condicionales | Propuesta |
 
 Plantilla para nuevos registros: `docs/decisions/NNNN-short-title.md` y su traducción `docs/es/decisions/NNNN-short-title.md`, con las secciones *Contexto*, *Opciones*, *Decisión*, *Consecuencias*.

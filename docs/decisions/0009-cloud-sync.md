@@ -1,0 +1,53 @@
+# ADR-0009: Synchronisation through the cloud: local-first, conditional writes
+
+[English](0009-cloud-sync.md) | [Español](../es/decisions/0009-cloud-sync.md)
+
+- **Status:** Proposed
+- **Date:** 2026-10-15
+- **Extends:** [ADR-0004](0004-storage-sync-and-safe-save.md) and [ADR-0008](0008-cloud-backup.md), whose decision 9 left this step for its own record
+
+## Context
+
+[ADR-0008](0008-cloud-backup.md) added optional cloud **copies**: write-only snapshots, rotated, never read back by the app. The owner also wants the same service to act as a meeting point, so two devices that are never on at the same time (a phone and a desktop) end up with the same vault without Syncthing.
+
+What the project already has:
+
+- A safe-save pipeline in `core-sync` (private backup, fingerprint re-check, merge by UUID and modification times with history, write, read-back) and a merge engine that never overwrites what it cannot merge.
+- A `CloudBackend` interface (put, get, list, delete by name) with a capability flag for conditional writes, and an S3 client that today reports `conditionalWrites = false`.
+- Encrypted credentials, a consent screen and a `cloud` build variant.
+
+What a shared remote file needs that a local file does not: two devices can both read version A, both edit, and both upload. Without a "only if unchanged" write the second upload silently destroys the first.
+
+## Options
+
+1. **The cloud as the vault's own `StoragePort`.** The vault location is a remote object; every read and write goes to the network. Simple model, but the vault is unusable offline, every unlock waits for the network, and a failed upload leaves no local copy to fall back on.
+2. **Local-first with the cloud as a hub (this record).** The vault stays where it is today (a SAF file). A sync step downloads the remote object, merges it with the local file using the existing merge engine, writes the merged result locally through the existing safe-save pipeline, and uploads it only if the remote object has not changed since it was read. Offline use is unaffected.
+3. **A server of our own.** Rejected in [ADR-0008](0008-cloud-backup.md): no servers, no accounts.
+4. **Keep Syncthing as the only synchronisation.** Stays available and recommended for people who already use it; it does not serve devices that are never online together.
+
+## Decision
+
+1. **Option 2: local-first.** The local file remains the source of truth for the user. The cloud holds one extra object per vault, `KeyNexa/sync/<vault id>.kdbx`, separate from the rotated copies of ADR-0008 and never rotated or deleted by the app (except by an explicit "stop syncing and delete" action).
+2. **One reconcile step**, used by every trigger: read the remote object and its entity tag; if it differs from the last one this device saw, merge it into the local vault with the existing merge engine (a failed merge never overwrites, as today); save locally through the safe-save pipeline; then upload the result with a conditional write against the entity tag that was read. If the service answers "changed meanwhile" (a precondition failure), repeat from the read, a few times at most, then report it quietly and keep the local state.
+3. **A service is offered for synchronisation only if its conditional write has been tested** against the real API (an upload with a stale tag must fail and change nothing). For the others, including any S3-compatible service that does not honour it, the cloud stays a backup, as ADR-0008 decided. `CloudCapabilities.conditionalWrites` becomes true per backend only after that test, and the user interface says which services can synchronise.
+4. **Triggers, first version:** after a successful local save (like the daily copy of ADR-0008, but without the once-a-day limit), when the app comes to the foreground with an open vault, and a "Sync now" button. No background service and no periodic polling in this version; the battery cost is measured first (see the TODO on cheaper change detection).
+5. **First connection of a second device:** the remote object is downloaded and merged into the local vault; if the user has no local vault yet, they choose a folder (SAF) to keep it in. If the two vaults have different master passwords the merge cannot read the other one: the existing flow for conflict copies with another password (F1) is reused, never a silent overwrite.
+6. **Deletions** travel as KDBX's own deleted-objects list, as in the merge engine today; the history of entries is kept. Nothing new is invented for them.
+7. **The remote object is the same encrypted `.kdbx`**: the cloud sees only ciphertext, exactly as in ADR-0008. The same consent screen, credentials store and "Disconnect" apply; synchronisation is a separate switch inside the cloud assistant, off by default, with its own explanation (what it does, that old versions stay in the entries' history, that deleting the vault on one device deletes it everywhere after the next sync).
+8. **Failures never block saving or unlocking**: a failed or refused sync shows a quiet state ("last synchronised…", "could not sync: …") and leaves the local vault exactly as it was.
+
+## Consequences
+
+- Devices that are never on at the same time can converge through any service whose conditional write passes the test; the others keep working as backups.
+- One more object per vault in the user's cloud account, and more traffic than backups (each save and each foreground uploads or downloads the whole file; a vault is small).
+- Two devices editing the same entry offline still produce a merge by modification times, as with Syncthing: the later edit wins and the earlier one stays in the entry's history.
+- The remote object is a single point of divergence: if a service returns a stale read after a write (weak consistency), a device can briefly work from an old version; the conditional write is what keeps it from overwriting a newer one.
+- The threat model must add: an attacker with the cloud account can delete or roll back the synchronised object (the app keeps its local file and private backups, and the user can restore from the rotated copies), and can see its size, name and times.
+- The reconcile step is plain `core-sync` logic over `CloudBackend`; it needs a fake backend with injectable preconditions to test races on the JVM before any real service is used.
+
+## Open points (to verify before they are promised)
+
+- Which services honour a conditional write reliably: Dropbox (`update` mode with a `rev`), OneDrive (`If-Match` with the entity tag, answered with 412), Google Drive (not found in the documentation), and each S3-compatible provider (Backblaze B2, Cloudflare R2, Amazon S3, MinIO) with `If-Match` on an upload. See `.agents/plans/cloud-backup/oauth-providers.RESEARCH.md` for what is and is not confirmed.
+- How the vault id is chosen so two devices agree on it (the SAF location differs per device): probably a random id stored in the vault's own custom data, or the user's choice at first connection.
+- Whether a background sync is worth its battery cost, and with which Android mechanism, once the foreground version has been measured.
+- What happens on two devices with different master passwords after one changed it (reuse of the F1 flow, or a dedicated message).

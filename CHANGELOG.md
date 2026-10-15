@@ -10,6 +10,12 @@ All notable changes to this project are documented in this file. The format is b
 
 - ADR-0008 (proposed) and the plan for optional cloud copies of the vault with an assistant: an `offline` build with no network access and a `cloud` build, S3 first and then Dropbox, OneDrive and Google Drive.
 
+## [0.23.4] - 2026-10-15
+
+### Added
+
+- ADR-0009 (proposed): synchronisation through the cloud, local-first, with conditional writes and a per-service test before it is offered.
+
 ## [0.23.3] - 2026-10-15
 
 ### Added
