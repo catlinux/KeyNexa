@@ -10,6 +10,17 @@ Todos los cambios notables de este proyecto se documentan en este archivo. El fo
 
 - ADR-0008 (propuesta) y el plan de las copias opcionales de la bóveda en la nube con un asistente: una compilación `offline` sin acceso a la red y una `cloud`, primero S3 y después Dropbox, OneDrive y Google Drive.
 
+## [0.16.0] - 2026-10-15
+
+### Añadido
+
+- Dos sabores de compilación, `offline` y `cloud`, en la dimensión `distribution`. `offline` es el predeterminado y se comporta como antes: se comprueba que su manifiesto fusionado no lleva el permiso `INTERNET`, aunque lo añada una biblioteca. `cloud` declara `INTERNET` (para las copias en la nube que aún están por llegar) y muestra «KeyNexa (cloud)» como nombre de la aplicación; por ahora no cambia nada más. Ambos comparten `applicationId`, `versionCode`, `versionName` y firma.
+
+### Cambiado
+
+- Las rutas de los APK ahora llevan el sabor: `app-android/build/outputs/apk/<sabor>/<tipo>/app-android-<sabor>-<tipo>.apk`. El workflow de publicación compila y comprueba ambos sabores, pero solo publica el `offline`.
+- El bloqueo de dependencias cubre las configuraciones de runtime de los sabores (`offlineReleaseRuntimeClasspath`, `cloudReleaseRuntimeClasspath`), por lo que se regeneraron los lockfiles.
+
 ## [0.15.0] - 2026-10-14
 
 ### Añadido

@@ -41,11 +41,13 @@ jobs:
           "$sdkmanager" 'platforms;android-36' 'build-tools;36.0.0'
 
       - name: Build and check
-        run: ./gradlew build check :app-android:assembleRelease 2>&1 | tee gradle.log
+        run: ./gradlew build check :app-android:assembleOfflineRelease :app-android:assembleCloudRelease 2>&1 | tee gradle.log
       - name: Publish the Gradle error as an annotation
         if: failure()
         run: bash scripts/ci-gradle-error.sh gradle.log
 
+      # Only the offline flavor is published: the cloud flavor asks for the Internet permission and has no cloud
+      # features yet, so it is built and checked but not released (ADR-0008).
       - name: Sign the APK
         env:
           KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
@@ -60,7 +62,7 @@ jobs:
           mkdir -p "$out"
           printf '%s' "$KEYSTORE_BASE64" | base64 --decode > "$keystore"
           "$tools/zipalign" -p -f 4 \
-            app-android/build/outputs/apk/release/app-android-release-unsigned.apk \
+            app-android/build/outputs/apk/offline/release/app-android-offline-release-unsigned.apk \
             "$RUNNER_TEMP/aligned.apk"
           "$tools/apksigner" sign \
             --ks "$keystore" \

@@ -1,3 +1,5 @@
+import com.android.build.api.artifact.SingleArtifact
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -26,6 +28,12 @@ android {
         targetSdk = 36
         versionCode = appVersionCode
         versionName = appVersionName
+    }
+
+    flavorDimensions += "distribution"
+    productFlavors {
+        create("offline") { dimension = "distribution" }
+        create("cloud") { dimension = "distribution" }
     }
 
     dependenciesInfo {
@@ -67,4 +75,34 @@ dependencies {
     implementation(libs.androidx.core.ktx)
 
     testImplementation(libs.junit)
+}
+
+// The offline build must never carry the Internet permission, even if a library adds it: a check on the merged
+// manifest catches both cases. The cloud build is checked the other way round.
+androidComponents {
+    onVariants { variant ->
+        val expectations =
+            mapOf(
+                "offlineRelease" to ("verifyOfflineHasNoInternet" to false),
+                "offlineDebug" to ("verifyOfflineDebugHasNoInternet" to false),
+                "cloudRelease" to ("verifyCloudHasInternet" to true),
+            )
+        val (taskName, expectInternet) = expectations[variant.name] ?: return@onVariants
+        val manifest = variant.artifacts.get(SingleArtifact.MERGED_MANIFEST)
+        val expectation = if (expectInternet) "contain" else "lack"
+        val verify =
+            tasks.register(taskName) {
+                group = "verification"
+                description = "Fails when the merged ${variant.name} manifest does not $expectation INTERNET."
+                inputs.file(manifest)
+                doLast {
+                    val text = manifest.get().asFile.readText()
+                    val hasInternet = text.contains("android.permission.INTERNET")
+                    check(hasInternet == expectInternet) {
+                        "Merged ${variant.name} manifest has INTERNET=$hasInternet but expected $expectInternet."
+                    }
+                }
+            }
+        tasks.matching { it.name == "check" }.configureEach { dependsOn(verify) }
+    }
 }

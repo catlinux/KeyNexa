@@ -10,6 +10,17 @@ All notable changes to this project are documented in this file. The format is b
 
 - ADR-0008 (proposed) and the plan for optional cloud copies of the vault with an assistant: an `offline` build with no network access and a `cloud` build, S3 first and then Dropbox, OneDrive and Google Drive.
 
+## [0.16.0] - 2026-10-15
+
+### Added
+
+- Two build flavors, `offline` and `cloud`, under the `distribution` dimension. `offline` is the default and behaves as before: its merged manifest is checked to carry no `INTERNET` permission, even if a library adds one. `cloud` declares `INTERNET` (for the cloud copies still to come) and shows "KeyNexa (cloud)" as its app name; nothing else changes yet. Both share `applicationId`, `versionCode`, `versionName` and signing.
+
+### Changed
+
+- APK paths now carry the flavor: `app-android/build/outputs/apk/<flavor>/<type>/app-android-<flavor>-<type>.apk`. The release workflow builds and checks both flavors but publishes only the `offline` one.
+- Dependency locking covers the flavor runtime configurations (`offlineReleaseRuntimeClasspath`, `cloudReleaseRuntimeClasspath`), so the lock files were regenerated.
+
 ## [0.15.0] - 2026-10-14
 
 ### Added

@@ -31,7 +31,10 @@ Ejecuta estos comandos desde la raíz del repositorio. En Windows usa `gradlew.b
 | `./gradlew check` | Ejecuta las comprobaciones de calidad (pruebas unitarias, Android Lint, detekt, ktlint) |
 | `./gradlew test` | Ejecuta las pruebas unitarias de todos los módulos |
 | `./gradlew :core-kdbx:test` | Ejecuta las pruebas del motor KDBX contra el corpus de bóvedas de `testdata/` |
-| `./gradlew :app-android:assembleDebug` | Genera el APK de depuración en `app-android/build/outputs/apk/debug/app-android-debug.apk` |
+| `./gradlew :app-android:assembleOfflineDebug` | Genera el APK de depuración offline en `app-android/build/outputs/apk/offline/debug/app-android-offline-debug.apk` |
+| `./gradlew :app-android:assembleCloudDebug` | Genera el APK de depuración cloud en `app-android/build/outputs/apk/cloud/debug/app-android-cloud-debug.apk` |
+
+La aplicación tiene dos sabores de la dimensión `distribution`: `offline` (sin `INTERNET`, el que se publica) y `cloud` (declara `INTERNET` para las copias en la nube que aún están por llegar). El manifiesto fusionado de offline se comprueba en `check` (`:app-android:verifyOfflineHasNoInternet`) y el de cloud a la inversa. Instalar un sabor sobre el otro no está verificado.
 
 Estos comandos se verificaron en local, en Windows, con JDK 17 (Temurin) y el SDK de Android 36.
 
@@ -103,7 +106,7 @@ bash scripts/check-docs-i18n.sh
 
 ### Bloqueo de dependencias
 
-El bloqueo de dependencias está activo solo para las configuraciones de runtime que se distribuyen con la aplicación (`runtimeClasspath` en los módulos JVM y `releaseRuntimeClasspath` en los Android) y en modo `STRICT`, de modo que los archivos `gradle.lockfile` de cada módulo contienen únicamente dependencias distribuidas. `./gradlew build check` falla si un lockfile está desactualizado. Tras cambiar una dependencia de runtime, regenera los lockfiles, revisa el diff y confírmalo junto a `gradle/verification-metadata.xml`:
+El bloqueo de dependencias está activo solo para las configuraciones de runtime que se distribuyen con la aplicación (`runtimeClasspath` en los módulos JVM; `releaseRuntimeClasspath` en las bibliotecas Android; y `offlineReleaseRuntimeClasspath` y `cloudReleaseRuntimeClasspath` en `app-android`, cuyo nombre lleva el sabor) y en modo `STRICT`, de modo que los archivos `gradle.lockfile` de cada módulo contienen únicamente dependencias distribuidas. `./gradlew build check` falla si un lockfile está desactualizado. Tras cambiar una dependencia de runtime, regenera los lockfiles, revisa el diff y confírmalo junto a `gradle/verification-metadata.xml`:
 
 ```sh
 ./gradlew build --write-locks
@@ -116,7 +119,7 @@ El bloqueo de dependencias está activo solo para las configuraciones de runtime
 
 ## Publicaciones
 
-[`release.yml`](../../.github/workflows/release.yml) se ejecuta al subir una etiqueta `vX.Y.Z`. Se detiene si la etiqueta no es `v` + el contenido de `VERSION` o si `CHANGELOG.md` no tiene entrada para esa versión. Después ejecuta `./gradlew build check :app-android:assembleRelease`, alinea el APK con `zipalign`, lo firma con `apksigner` usando los secretos del repositorio, verifica la firma y publica una release de GitHub con el APK, su archivo SHA-256 y la entrada del registro de cambios como notas. Las versiones `0.y.z` se publican como preliminares. El keystore se decodifica en el directorio temporal del ejecutor y se elimina al final del trabajo; las contraseñas llegan a `apksigner` por variables de entorno, nunca en la línea de órdenes.
+[`release.yml`](../../.github/workflows/release.yml) se ejecuta al subir una etiqueta `vX.Y.Z`. Se detiene si la etiqueta no es `v` + el contenido de `VERSION` o si `CHANGELOG.md` no tiene entrada para esa versión. Después ejecuta `./gradlew build check :app-android:assembleOfflineRelease :app-android:assembleCloudRelease`, alinea el APK offline (`app-android/build/outputs/apk/offline/release/app-android-offline-release-unsigned.apk`) con `zipalign`, lo firma con `apksigner` usando los secretos del repositorio, verifica la firma y publica una release de GitHub con el APK, su archivo SHA-256 y la entrada del registro de cambios como notas. El sabor cloud se compila y se comprueba, pero no se publica hasta que tenga funciones de nube. Las versiones `0.y.z` se publican como preliminares. El keystore se decodifica en el directorio temporal del ejecutor y se elimina al final del trabajo; las contraseñas llegan a `apksigner` por variables de entorno, nunca en la línea de órdenes.
 
 Para publicar: sube `VERSION` y `CHANGELOG.md`, haz commit y crea y sube la etiqueta (`git tag vX.Y.Z && git push origin vX.Y.Z`). Tanto el push como la etiqueta necesitan la aprobación del responsable.
 

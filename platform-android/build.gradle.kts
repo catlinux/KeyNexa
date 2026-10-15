@@ -11,6 +11,13 @@ android {
         minSdk = 26
     }
 
+    // Same dimension as the app so the offline/cloud variants match; the library code is identical in both.
+    flavorDimensions += "distribution"
+    productFlavors {
+        create("offline") { dimension = "distribution" }
+        create("cloud") { dimension = "distribution" }
+    }
+
     lint {
         lintConfig = rootProject.file("config/lint/lint.xml")
         warningsAsErrors = true

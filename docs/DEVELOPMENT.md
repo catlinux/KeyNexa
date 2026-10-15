@@ -31,7 +31,10 @@ Run these from the repository root. On Windows use `gradlew.bat` instead of `./g
 | `./gradlew check` | Runs the quality checks (unit tests, Android Lint, detekt, ktlint) |
 | `./gradlew test` | Runs the unit tests of every module |
 | `./gradlew :core-kdbx:test` | Runs the KDBX engine tests against the vault corpus in `testdata/` |
-| `./gradlew :app-android:assembleDebug` | Builds the debug APK at `app-android/build/outputs/apk/debug/app-android-debug.apk` |
+| `./gradlew :app-android:assembleOfflineDebug` | Builds the offline debug APK at `app-android/build/outputs/apk/offline/debug/app-android-offline-debug.apk` |
+| `./gradlew :app-android:assembleCloudDebug` | Builds the cloud debug APK at `app-android/build/outputs/apk/cloud/debug/app-android-cloud-debug.apk` |
+
+The app has two `distribution` flavors: `offline` (no `INTERNET`, the one published) and `cloud` (declares `INTERNET` for the cloud copies still to come). The merged offline manifest is checked on `check` (`:app-android:verifyOfflineHasNoInternet`), and the cloud one is checked the other way round. Installing one flavor over the other is not verified.
 
 These commands were verified locally on Windows with JDK 17 (Temurin) and Android SDK 36.
 
@@ -103,7 +106,7 @@ bash scripts/check-docs-i18n.sh
 
 ### Dependency locking
 
-Dependency locking is active only for the runtime configurations that ship with the app (`runtimeClasspath` in the JVM modules and `releaseRuntimeClasspath` in the Android ones) and in `STRICT` mode, so the `gradle.lockfile` files under each module contain only distributed dependencies. `./gradlew build check` fails if a lock file is out of date. After changing a runtime dependency, regenerate the locks, review the diff and commit it together with `gradle/verification-metadata.xml`:
+Dependency locking is active only for the runtime configurations that ship with the app (`runtimeClasspath` in the JVM modules; `releaseRuntimeClasspath` in the Android libraries; and `offlineReleaseRuntimeClasspath` and `cloudReleaseRuntimeClasspath` in `app-android`, whose name carries the flavor) and in `STRICT` mode, so the `gradle.lockfile` files under each module contain only distributed dependencies. `./gradlew build check` fails if a lock file is out of date. After changing a runtime dependency, regenerate the locks, review the diff and commit it together with `gradle/verification-metadata.xml`:
 
 ```sh
 ./gradlew build --write-locks
@@ -116,7 +119,7 @@ Dependency locking is active only for the runtime configurations that ship with 
 
 ## Releases
 
-[`release.yml`](../.github/workflows/release.yml) runs when a tag `vX.Y.Z` is pushed. It stops unless the tag equals `v` + the contents of `VERSION` and `CHANGELOG.md` has an entry for that version. Then it runs `./gradlew build check :app-android:assembleRelease`, aligns the APK with `zipalign`, signs it with `apksigner` using the repository secrets, verifies the signature, and publishes a GitHub release with the APK, its SHA-256 file and the changelog entry as notes. Versions `0.y.z` are published as pre-releases. The keystore is decoded to the runner's temporary directory and removed at the end of the job; the passwords reach `apksigner` through environment variables, never on the command line.
+[`release.yml`](../.github/workflows/release.yml) runs when a tag `vX.Y.Z` is pushed. It stops unless the tag equals `v` + the contents of `VERSION` and `CHANGELOG.md` has an entry for that version. Then it runs `./gradlew build check :app-android:assembleOfflineRelease :app-android:assembleCloudRelease`, aligns the offline APK (`app-android/build/outputs/apk/offline/release/app-android-offline-release-unsigned.apk`) with `zipalign`, signs it with `apksigner` using the repository secrets, verifies the signature, and publishes a GitHub release with the APK, its SHA-256 file and the changelog entry as notes. The cloud flavor is built and checked but not published until it has cloud features. Versions `0.y.z` are published as pre-releases. The keystore is decoded to the runner's temporary directory and removed at the end of the job; the passwords reach `apksigner` through environment variables, never on the command line.
 
 To publish: bump `VERSION` and `CHANGELOG.md`, commit, then create and push the tag (`git tag vX.Y.Z && git push origin vX.Y.Z`). Both the push and the tag need the maintainer's approval.
 

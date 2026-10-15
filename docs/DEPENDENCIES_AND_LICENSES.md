@@ -39,7 +39,7 @@ KeyNexa's own code is licensed under **GPL-3.0-only** with the additional terms 
 
 ## Runtime dependencies in the Android APK
 
-The entries below are the external modules locked for `releaseRuntimeClasspath` in [app-android/gradle.lockfile](../app-android/gradle.lockfile), grouped by project. Test-only and build-only dependencies are excluded. The vendored `:kotpass` source module is included in the app but is not an external lockfile coordinate; its bundled source licenses are listed below. BOM entries in the lockfile provide version alignment and are not packaged in the APK.
+The entries below are the external modules locked for the app's release flavors (`offlineReleaseRuntimeClasspath` and `cloudReleaseRuntimeClasspath`) in [app-android/gradle.lockfile](../app-android/gradle.lockfile), grouped by project. Test-only and build-only dependencies are excluded. The vendored `:kotpass` source module is included in the app but is not an external lockfile coordinate; its bundled source licenses are listed below. BOM entries in the lockfile provide version alignment and are not packaged in the APK.
 
 | Project | Locked modules and versions | License |
 | --- | --- | --- |
@@ -54,7 +54,7 @@ The entries below are the external modules locked for `releaseRuntimeClasspath` 
 | JetBrains | `annotations` 23.0.0 | To verify |
 | JSpecify | `jspecify` 1.0.0 | To verify |
 
-JUnit 4 is test-only and does not appear in `releaseRuntimeClasspath`. Build tools are listed separately below. The lockfile also contains androidx.compose:compose-bom 2025.09.00, kotlinx-coroutines-bom 1.9.0 and kotlinx-serialization-bom 1.7.3; these are alignment metadata, not APK payloads.
+JUnit 4 is test-only and does not appear in the release configurations. Build tools are listed separately below. The lockfile also contains androidx.compose:compose-bom 2025.09.00, kotlinx-coroutines-bom 1.9.0 and kotlinx-serialization-bom 1.7.3; these are alignment metadata, not APK payloads.
 
 ### Explicitly avoided
 

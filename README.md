@@ -42,17 +42,18 @@ sha256sum -c keynexa-0.10.2.apk.sha256
 apksigner verify --print-certs keynexa-0.10.2.apk
 ```
 
-Compare the SHA-256 certificate fingerprint reported by `apksigner` with `51:ca:da:3c:d0:8c:35:5f:13:67:90:b1:be:83:09:00:8b:b9:a3:1e:e9:44:b4:e6:e3:74:7e:6a:e9:d0:44:9b`. KeyNexa does not request the Internet permission.
+Compare the SHA-256 certificate fingerprint reported by `apksigner` with `51:ca:da:3c:d0:8c:35:5f:13:67:90:b1:be:83:09:00:8b:b9:a3:1e:e9:44:b4:e6:e3:74:7e:6a:e9:d0:44:9b`. The published `offline` build does not request the Internet permission; the `cloud` build declares it for the optional cloud copies when they arrive.
 
-To build from source instead, you need JDK 17 and Android SDK 36 (see [Development](docs/DEVELOPMENT.md) for how to point Gradle at the SDK). From the repository root:
+To build from source instead, you need JDK 17 and Android SDK 36 (see [Development](docs/DEVELOPMENT.md) for how to point Gradle at the SDK). KeyNexa ships two variants: `offline` (no network access) and `cloud` (declares `INTERNET`; the cloud features are still to come). From the repository root:
 
 ```sh
 ./gradlew build
 ./gradlew test
-./gradlew :app-android:assembleDebug
+./gradlew :app-android:assembleOfflineDebug
+./gradlew :app-android:assembleCloudDebug
 ```
 
-On Windows use `gradlew.bat` instead of `./gradlew`. The debug APK is written to `app-android/build/outputs/apk/debug/app-android-debug.apk` and can be installed on a phone for testing (use fictitious vaults only). To try synchronisation, put the vault in a folder shared with Syncthing and add it to KeyNexa with *Open existing vault*, choosing the folder (not a single file: Android revokes the permission on a single file when Syncthing replaces it).
+On Windows use `gradlew.bat` instead of `./gradlew`. The debug APKs are written to `app-android/build/outputs/apk/offline/debug/app-android-offline-debug.apk` and `app-android/build/outputs/apk/cloud/debug/app-android-cloud-debug.apk`, and can be installed on a phone for testing (use fictitious vaults only). Installing one variant over the other is not verified. To try synchronisation, put the vault in a folder shared with Syncthing and add it to KeyNexa with *Open existing vault*, choosing the folder (not a single file: Android revokes the permission on a single file when Syncthing replaces it).
 
 ## Credits and license
 

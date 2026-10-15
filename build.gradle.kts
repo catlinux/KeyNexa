@@ -24,8 +24,16 @@ licenseReport {
 }
 
 subprojects {
+    val lockedConfigurations =
+        setOf(
+            "runtimeClasspath",
+            "releaseRuntimeClasspath",
+            "offlineReleaseRuntimeClasspath",
+            "cloudReleaseRuntimeClasspath",
+        )
     configurations.configureEach {
-        if (name == "runtimeClasspath" || name == "releaseRuntimeClasspath") {
+        // The app ships two release flavors, so its released configuration names carry the flavor.
+        if (name in lockedConfigurations) {
             resolutionStrategy.activateDependencyLocking()
         }
     }
@@ -36,9 +44,13 @@ subprojects {
 
     val resolveLockedConfigurations = tasks.register("resolveLockedConfigurations") {
         group = "verification"
-        description = "Resolves the locked JVM 'runtimeClasspath' so its lock state is written and checked."
+        description = "Resolves the locked runtime configurations so their lock state is written and checked."
         doLast {
-            configurations.findByName("runtimeClasspath")?.resolve()
+            configurations
+                .filter { it.name in lockedConfigurations }
+                // Resolve dependencies without choosing artifacts: a plain resolve() cannot tell the artifact
+                // variants of a flavored Android library apart, but dependency locking only needs the graph.
+                .forEach { it.incoming.resolutionResult.allComponents }
         }
     }
 

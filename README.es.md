@@ -42,17 +42,18 @@ sha256sum -c keynexa-0.10.2.apk.sha256
 apksigner verify --print-certs keynexa-0.10.2.apk
 ```
 
-Compara la huella SHA-256 del certificado que muestra `apksigner` con `51:ca:da:3c:d0:8c:35:5f:13:67:90:b1:be:83:09:00:8b:b9:a3:1e:e9:44:b4:e6:e3:74:7e:6a:e9:d0:44:9b`. KeyNexa no solicita el permiso de Internet.
+Compara la huella SHA-256 del certificado que muestra `apksigner` con `51:ca:da:3c:d0:8c:35:5f:13:67:90:b1:be:83:09:00:8b:b9:a3:1e:e9:44:b4:e6:e3:74:7e:6a:e9:d0:44:9b`. La compilación `offline` publicada no solicita el permiso de Internet; la `cloud` lo declara para las copias en la nube opcionales cuando lleguen.
 
-Como alternativa, puedes compilar desde el código fuente. Necesitas JDK 17 y Android SDK 36 (consulta [Desarrollo](docs/es/DEVELOPMENT.md) para indicar a Gradle dónde está el SDK). Desde la raíz del repositorio:
+Como alternativa, puedes compilar desde el código fuente. Necesitas JDK 17 y Android SDK 36 (consulta [Desarrollo](docs/es/DEVELOPMENT.md) para indicar a Gradle dónde está el SDK). KeyNexa se distribuye en dos variantes: `offline` (sin acceso a la red) y `cloud` (declara `INTERNET`; las funciones de nube aún están por llegar). Desde la raíz del repositorio:
 
 ```sh
 ./gradlew build
 ./gradlew test
-./gradlew :app-android:assembleDebug
+./gradlew :app-android:assembleOfflineDebug
+./gradlew :app-android:assembleCloudDebug
 ```
 
-En Windows usa `gradlew.bat` en lugar de `./gradlew`. El APK de depuración se genera en `app-android/build/outputs/apk/debug/app-android-debug.apk` y se puede instalar en un móvil para probar (usa solo bóvedas ficticias). Para probar la sincronización, deja la bóveda en una carpeta compartida con Syncthing y añádela a KeyNexa con *Abrir una bóveda existente*, eligiendo la carpeta (no un archivo suelto: Android revoca el permiso sobre un archivo suelto cuando Syncthing lo sustituye).
+En Windows usa `gradlew.bat` en lugar de `./gradlew`. Los APK de depuración se generan en `app-android/build/outputs/apk/offline/debug/app-android-offline-debug.apk` y `app-android/build/outputs/apk/cloud/debug/app-android-cloud-debug.apk`, y se pueden instalar en un móvil para probar (usa solo bóvedas ficticias). Instalar una variante sobre la otra no está verificado. Para probar la sincronización, deja la bóveda en una carpeta compartida con Syncthing y añádela a KeyNexa con *Abrir una bóveda existente*, eligiendo la carpeta (no un archivo suelto: Android revoca el permiso sobre un archivo suelto cuando Syncthing lo sustituye).
 
 ## Créditos y licencia
 
