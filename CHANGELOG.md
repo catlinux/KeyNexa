@@ -10,6 +10,12 @@ All notable changes to this project are documented in this file. The format is b
 
 - ADR-0008 (proposed) and the plan for optional cloud copies of the vault with an assistant: an `offline` build with no network access and a `cloud` build, S3 first and then Dropbox, OneDrive and Google Drive.
 
+## [0.18.0] - 2026-10-15
+
+### Added
+
+- An S3-compatible cloud client in the new `platform-cloud` module, still unused from the app (ADR-0008): `HttpTransport` (with a `UrlConnectionTransport` over the JDK's `HttpsURLConnection`), `S3Signer` (AWS Signature Version 4 by the `Authorization` header, pure and deterministic, checked against the four official AWS test vectors) and `S3Backend` (put, get, delete and paginated `ListObjectsV2` over a configurable endpoint, path-style or virtual-hosted). It adds no dependency, never logs or puts URLs, headers, keys or bodies in messages, and only allows HTTPS outside tests.
+
 ## [0.17.0] - 2026-10-15
 
 ### Added

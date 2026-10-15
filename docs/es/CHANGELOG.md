@@ -10,6 +10,12 @@ Todos los cambios notables de este proyecto se documentan en este archivo. El fo
 
 - ADR-0008 (propuesta) y el plan de las copias opcionales de la bóveda en la nube con un asistente: una compilación `offline` sin acceso a la red y una `cloud`, primero S3 y después Dropbox, OneDrive y Google Drive.
 
+## [0.18.0] - 2026-10-15
+
+### Añadido
+
+- Un cliente de nube compatible con S3 en el nuevo módulo `platform-cloud`, todavía sin usar desde la aplicación (ADR-0008): `HttpTransport` (con un `UrlConnectionTransport` sobre `HttpsURLConnection` del JDK), `S3Signer` (AWS Signature Version 4 por la cabecera `Authorization`, puro y determinista, comprobado con los cuatro vectores oficiales de AWS) y `S3Backend` (put, get, delete y `ListObjectsV2` paginado sobre un endpoint configurable, path-style o virtual-hosted). No añade ninguna dependencia, nunca registra ni incluye en los mensajes URLs, cabeceras, claves ni cuerpos, y solo permite HTTPS fuera de las pruebas.
+
 ## [0.17.0] - 2026-10-15
 
 ### Añadido

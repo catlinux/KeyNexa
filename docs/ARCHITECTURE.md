@@ -33,6 +33,7 @@ Dependencies point downwards only. Core modules are pure Kotlin/JVM, with no And
 app-android          Compose UI, navigation, Android services (autofill, biometric, clipboard)
   │
 platform-android     SAF storage adapter, Keystore, lifecycle-based auto-lock
+platform-cloud       S3-compatible cloud client (SigV4), JDK HTTP client only
   │
 core-sync            change detection, merge, safe-save pipeline (uses StoragePort)
   │
@@ -45,6 +46,7 @@ core-kdbx            adapter implementing KdbxEngine on top of kotpass (the only
 - **`core-kdbx`** is the only module that depends on kotpass. Replacing or forking the engine affects only this module.
 - **`core-sync`** contains the logic that protects data: content fingerprints, external-change detection, the merge and the safe-save pipeline. It is deliberately independent of Android so it can be tested exhaustively with fake storage.
 - **`platform-android`** implements `StoragePort` with SAF and wraps the Android Keystore.
+- **`platform-cloud`** is the network client of the `cloud` variant: an S3-compatible backend signed with AWS SigV4, over the JDK HTTP client and with no external dependency. The `offline` variant never includes it.
 - **`app-android`** is the UI and the Android services.
 
 A future `app-desktop` would reuse `core-*` and add a `platform-desktop` with a plain-file `StoragePort` and OS-specific secret storage.
