@@ -101,6 +101,7 @@
     <string name="group_search">Buscar</string>
     <string name="group_more">Más opciones</string>
     <string name="group_recycle_bin">Papelera</string>
+    <string name="group_settings">Ajustes</string>
     <string name="group_lock">Bloquear</string>
     <string name="group_sync_status_menu">Estado de sincronización</string>
     <string name="group_sync_status_title">Estado de sincronización</string>

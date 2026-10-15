@@ -99,6 +99,7 @@ fun OpenVaultScreens(
                 onSearch = { navigator.push(Screen.Search(group.id.takeUnless { isRoot })) },
                 onOpenRecycleBin = { navigator.push(Screen.RecycleBin) },
                 onLock = lock,
+                onOpenSettings = { navigator.push(Screen.Settings) },
                 onBack = if (isRoot) lock else back,
                 onRetrySave = session::retrySave,
                 onReconnect = onReconnect,

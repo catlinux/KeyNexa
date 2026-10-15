@@ -73,6 +73,7 @@ private class GroupCommands(
     val onSearch: () -> Unit,
     val onRecycleBin: () -> Unit,
     val onLock: () -> Unit,
+    val onSettings: () -> Unit,
 )
 
 /**
@@ -111,6 +112,7 @@ fun GroupScreen(
     recovered: RecoveryOutcome? = null,
     onRestoreUnsaved: () -> Unit = {},
     onDiscardUnsaved: () -> Unit = {},
+    onOpenSettings: () -> Unit = {},
 ) {
     val navigation = GroupNavigation(onOpenGroup = onOpenGroup, onOpenEntry = onOpenEntry, onBack = onBack)
     val commands =
@@ -120,6 +122,7 @@ fun GroupScreen(
             onSearch = onSearch,
             onRecycleBin = onOpenRecycleBin,
             onLock = onLock,
+            onSettings = onOpenSettings,
         )
     val emptyMessage = stringResource(if (isRoot) R.string.group_empty_root else R.string.group_empty)
     var askingForName by remember { mutableStateOf(false) }
@@ -297,6 +300,13 @@ private fun GroupMenu(
                 onClick = {
                     open = false
                     commands.onRecycleBin()
+                },
+            )
+            DropdownMenuItem(
+                text = { Text(text = stringResource(R.string.group_settings)) },
+                onClick = {
+                    open = false
+                    commands.onSettings()
                 },
             )
             DropdownMenuItem(
