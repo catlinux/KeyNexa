@@ -75,6 +75,7 @@ fun OpenVaultScreens(
             GroupScreen(
                 group = group,
                 isRoot = isRoot,
+                rootTitle = open.vault.name,
                 hiddenGroupId = vault.meta.recycleBinGroup,
                 status = SaveStatus(open.saving, open.saveProblem, open.hasUnsavedChanges),
                 recovered = open.recovered,

@@ -10,6 +10,12 @@ Todos los cambios notables de este proyecto se documentan en este archivo. El fo
 
 - ADR-0008 (propuesta) y el plan de las copias opcionales de la bóveda en la nube con un asistente: una compilación `offline` sin acceso a la red y una `cloud`, primero S3 y después Dropbox, OneDrive y Google Drive.
 
+## [0.23.2] - 2026-10-15
+
+### Cambiado
+
+- La pantalla del grupo raíz muestra ahora como título el nombre de la bóveda (el de la lista de bóvedas), en vez del nombre del grupo raíz del archivo («Root» por defecto en KeePassXC). Los subgrupos siguen mostrando su propio nombre, y nada dentro del KDBX cambia.
+
 ## [0.23.1] - 2026-10-15
 
 ### Cambiado

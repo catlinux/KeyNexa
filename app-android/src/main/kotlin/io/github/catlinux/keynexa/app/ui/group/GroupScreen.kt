@@ -1,3 +1,5 @@
+@file:Suppress("TooManyFunctions")
+
 package io.github.catlinux.keynexa.app.ui.group
 
 import android.text.format.DateUtils
@@ -77,6 +79,16 @@ private class GroupCommands(
 )
 
 /**
+ * The title of the group screen: the vault name at the root (the file's root group is usually just "Root"), the
+ * group's own name elsewhere.
+ */
+internal fun groupScreenTitle(
+    groupName: String,
+    isRoot: Boolean,
+    rootTitle: String?,
+): String = if (isRoot && rootTitle != null) rootTitle else groupName
+
+/**
  * One group of the open vault: its subgroups, its entries, and the ways to search, add, lock or leave.
  *
  * A stateless screen: it shows the data it is given and reports what the user chose. It never reads storage, never
@@ -108,6 +120,7 @@ fun GroupScreen(
     onMergeOtherPassword: (String) -> Unit,
     onDismissConflicts: () -> Unit,
     modifier: Modifier = Modifier,
+    rootTitle: String? = null,
     onReconnect: () -> Unit = {},
     recovered: RecoveryOutcome? = null,
     onRestoreUnsaved: () -> Unit = {},
@@ -134,7 +147,7 @@ fun GroupScreen(
             verticalArrangement = Arrangement.spacedBy(ItemGap),
         ) {
             GroupTopBar(
-                name = group.name,
+                name = groupScreenTitle(group.name, isRoot, rootTitle),
                 navigation = navigation,
                 commands = commands,
                 onSyncStatus = { showSyncStatus = true },
