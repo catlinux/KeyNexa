@@ -10,6 +10,12 @@ Todos los cambios notables de este proyecto se documentan en este archivo. El fo
 
 - ADR-0008 (propuesta) y el plan de las copias opcionales de la bóveda en la nube con un asistente: una compilación `offline` sin acceso a la red y una `cloud`, primero S3 y después Dropbox, OneDrive y Google Drive.
 
+## [0.23.5] - 2026-10-15
+
+### Cambiado
+
+- Herramientas de compilación: Gradle 8.14.6 y plugin de Android para Gradle 8.13.2 (actualizaciones de parche dentro de las líneas actuales), con los metadatos de verificación de dependencias regenerados y revisados.
+
 ## [0.23.4] - 2026-10-15
 
 ### Añadido
