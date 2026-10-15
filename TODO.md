@@ -21,6 +21,14 @@ Detailed steps: see the [roadmap](docs/ROADMAP.md).
 - [ ] Fully reliable clipboard clearing (Android only lets the app in front change the clipboard).
 - [ ] Ask for inclusion in F-Droid and IzzyOnDroid (E2.4): the draft metadata and the steps are in `.agents/plans/store-inclusion/`; the requests are filed by hand (Izzy's form asks about AI use and needs honest answers).
 
+## Open follow-ups and checks (2026-10-15)
+
+- [ ] **Try on the phone what is only covered by tests:** the sync status dialog and the "file has not changed" notice (0.12.0), restoring unsaved changes after the app is killed mid-save (0.13.0), locking in the background (0.10.3), clearing an entry's history (0.15.0), and the cloud assistant with a real S3 account (H6).
+- [ ] **Cloud copies** ([ADR-0008](docs/decisions/0008-cloud-backup.md), still *Proposed*: it needs the owner's acceptance): polish the assistant (H5c), real test with Backblaze B2 or Cloudflare R2 (H6), then Dropbox, OneDrive and Google Drive once the app is registered with each; the user guide `docs/CLOUD_SETUP.md` is not verified with a real account yet. Plan: `.agents/plans/cloud-backup/`.
+- [ ] **kotpass pull requests #43 to #46** ([keemobile/kotpass](https://github.com/keemobile/kotpass/pulls)): the CI check ("Check all modules") fails on all four and the cause is not known yet (the log needs a GitHub login); the maintainer asked on #46 what the unknown elements are. Notes and a draft answer: `.agents/plans/kotpass-upstream/`.
+- [ ] **Check the release workflow with the build variants:** `release.yml` now signs the `offline` APK from its new path and has not run since; the first tag after 0.10.3 will prove it. Nothing after 0.10.3 has been released.
+- [ ] Remove the stale vault entries left in the phone's list (two "demo" vaults and the "prova-ac4" duplicates).
+
 ## Low priority (later)
 
 - [ ] Update the Android Gradle plugin, Gradle and Kotlin (stable releases only) to clear the findings of the informational build-tooling scan in CI (104 on 2026-10-14, all in build tools, none in the APK).

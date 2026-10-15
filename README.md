@@ -6,7 +6,7 @@
 
 A security-first, cross-platform password manager built around established cryptographic libraries, local vaults, and seamless Syncthing synchronization.
 
-> **Project status: early development (0.10.x; v0.10.2 pre-release published).** Android only, for testing. You can already create or open a KDBX vault, browse, search, add and edit entries (with attached files you can save to disk, and clearing an entry's previous versions), use the recycle bin and generate passwords; saves go through a safe-save pipeline and changes made elsewhere (for example with KeePassXC through Syncthing) are merged. **Also working:** auto-lock (including in the background), screen protection, a settings screen, changes made elsewhere being picked up within seconds, and Syncthing conflict copies being merged when the vault is opened, with deletion offered after consent. **Also:** biometric unlock, and the sync status of the vault file with an optional warning after days without changes. **Not done yet:** fully reliable clipboard clearing and the Windows and Linux clients. Do not store real passwords in KeyNexa until a full release says otherwise.
+> **Project status: early development (0.21.x in development; latest pre-release published: v0.10.3).** Android only, for testing. You can already create or open a KDBX vault, browse, search, add and edit entries (with attached files you can save to disk, and clearing an entry's previous versions), use the recycle bin and generate passwords; saves go through a safe-save pipeline and changes made elsewhere (for example with KeePassXC through Syncthing) are merged. **Also working:** auto-lock (including in the background), screen protection, a settings screen, changes made elsewhere being picked up within seconds, and Syncthing conflict copies being merged when the vault is opened, with deletion offered after consent. **Also:** biometric unlock, and the sync status of the vault file with an optional warning after days without changes. **Not done yet:** fully reliable clipboard clearing and the Windows and Linux clients. Do not store real passwords in KeyNexa until a full release says otherwise.
 
 ## What KeyNexa will be
 
@@ -36,11 +36,11 @@ See the [roadmap](docs/ROADMAP.md) for what is planned in each phase.
 
 ## Requirements, installation and usage
 
-A pre-release is available from [GitHub Releases](https://github.com/catlinux/KeyNexa/releases). Download `keynexa-0.10.2.apk` and `keynexa-0.10.2.apk.sha256`. In the directory containing both files, verify the APK checksum and signer:
+A pre-release is available from [GitHub Releases](https://github.com/catlinux/KeyNexa/releases). Download `keynexa-0.10.3.apk` and `keynexa-0.10.3.apk.sha256`. In the directory containing both files, verify the APK checksum and signer:
 
 ```sh
-sha256sum -c keynexa-0.10.2.apk.sha256
-apksigner verify --print-certs keynexa-0.10.2.apk
+sha256sum -c keynexa-0.10.3.apk.sha256
+apksigner verify --print-certs keynexa-0.10.3.apk
 ```
 
 Compare the SHA-256 certificate fingerprint reported by `apksigner` with `51:ca:da:3c:d0:8c:35:5f:13:67:90:b1:be:83:09:00:8b:b9:a3:1e:e9:44:b4:e6:e3:74:7e:6a:e9:d0:44:9b`. The published `offline` build does not request the Internet permission; the `cloud` build declares it for the optional cloud copies when they arrive.

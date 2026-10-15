@@ -6,7 +6,7 @@
 
 Un gestor de contraseñas multiplataforma que prioriza la seguridad, construido sobre bibliotecas criptográficas consolidadas, bóvedas locales y sincronización fluida con Syncthing.
 
-> **Estado del proyecto: desarrollo temprano (0.10.x; versión preliminar v0.10.2 publicada).** Solo Android, para pruebas. Ya se puede crear o abrir una bóveda KDBX, explorarla, buscar, añadir y editar entradas (con archivos adjuntos que se pueden guardar en disco y borrar las versiones anteriores de una entrada), usar la papelera y generar contraseñas; el guardado pasa por un flujo seguro y los cambios hechos en otro sitio (por ejemplo con KeePassXC a través de Syncthing) se fusionan. **También funciona:** bloqueo automático (incluso en segundo plano), protección de pantalla, una pantalla de ajustes, detección en segundos de los cambios hechos en otro sitio y fusión de las copias de conflicto de Syncthing al abrir la bóveda, con opción de borrarlas tras dar consentimiento. **También:** desbloqueo biométrico y el estado de sincronización del archivo de la bóveda con un aviso opcional tras días sin cambios. **Todavía no está hecho:** borrado del portapapeles totalmente fiable y los clientes de Windows y Linux. No guardes contraseñas reales en KeyNexa hasta que se publique una versión final.
+> **Estado del proyecto: desarrollo temprano (0.21.x en desarrollo; última versión preliminar publicada: v0.10.3).** Solo Android, para pruebas. Ya se puede crear o abrir una bóveda KDBX, explorarla, buscar, añadir y editar entradas (con archivos adjuntos que se pueden guardar en disco y borrar las versiones anteriores de una entrada), usar la papelera y generar contraseñas; el guardado pasa por un flujo seguro y los cambios hechos en otro sitio (por ejemplo con KeePassXC a través de Syncthing) se fusionan. **También funciona:** bloqueo automático (incluso en segundo plano), protección de pantalla, una pantalla de ajustes, detección en segundos de los cambios hechos en otro sitio y fusión de las copias de conflicto de Syncthing al abrir la bóveda, con opción de borrarlas tras dar consentimiento. **También:** desbloqueo biométrico y el estado de sincronización del archivo de la bóveda con un aviso opcional tras días sin cambios. **Todavía no está hecho:** borrado del portapapeles totalmente fiable y los clientes de Windows y Linux. No guardes contraseñas reales en KeyNexa hasta que se publique una versión final.
 
 ## Qué será KeyNexa
 
@@ -36,11 +36,11 @@ Consulta la [hoja de ruta](docs/es/ROADMAP.md) para ver qué está planificado e
 
 ## Requisitos, instalación y uso
 
-Hay una versión preliminar en [GitHub Releases](https://github.com/catlinux/KeyNexa/releases). Descarga `keynexa-0.10.2.apk` y `keynexa-0.10.2.apk.sha256`. En la carpeta donde estén ambos archivos, comprueba la suma del APK y su firma:
+Hay una versión preliminar en [GitHub Releases](https://github.com/catlinux/KeyNexa/releases). Descarga `keynexa-0.10.3.apk` y `keynexa-0.10.3.apk.sha256`. En la carpeta donde estén ambos archivos, comprueba la suma del APK y su firma:
 
 ```sh
-sha256sum -c keynexa-0.10.2.apk.sha256
-apksigner verify --print-certs keynexa-0.10.2.apk
+sha256sum -c keynexa-0.10.3.apk.sha256
+apksigner verify --print-certs keynexa-0.10.3.apk
 ```
 
 Compara la huella SHA-256 del certificado que muestra `apksigner` con `51:ca:da:3c:d0:8c:35:5f:13:67:90:b1:be:83:09:00:8b:b9:a3:1e:e9:44:b4:e6:e3:74:7e:6a:e9:d0:44:9b`. La compilación `offline` publicada no solicita el permiso de Internet; la `cloud` lo declara para las copias en la nube opcionales cuando lleguen.

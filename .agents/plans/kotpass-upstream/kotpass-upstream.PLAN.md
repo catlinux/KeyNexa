@@ -1,6 +1,16 @@
 # Aportar los cambios de kotpass al proyecto original
 
-Estado (2026-10-14): **cuatro ramas subidas al fork `catlinux/kotpass`; solicitudes de cambio (PR) sin abrir.** No hay `gh` ni token en el PC: las PR se abren desde la web con los enlaces de abajo (un clic cada una, con el texto ya preparado).
+Estado (2026-10-15): **las cuatro PR están abiertas** (abiertas por el usuario a mano el 2026-10-14): #43 `omit-absent-modification-time`, #44 `add-public-readheader`, #45 `fix-damaged-file-reported-as-wrong-key`, #46 `keep-unknown-xml-elements`, todas en https://github.com/keemobile/kotpass/pull/<número>. No hay `gh` ni token en el PC: se consultan por la API pública con `curl`.
+
+## Qué ha pasado desde que se abrieron (2026-10-15)
+
+- **CI en rojo en las cuatro:** el flujo «Build, Test and Lint», trabajo `check`, falla en el paso **«Check all modules»** (los pasos de configuración pasan). Ejemplo: https://github.com/keemobile/kotpass/actions/runs/38490083373. La causa no se conoce: el registro del trabajo exige iniciar sesión en GitHub y no se puede leer por la API pública. Que falle también la PR #43 (la más pequeña) sugiere algo común: el estilo (ktlint o detekt de kotpass), una prueba que falla en Linux o que `develop` ya estuviera en rojo (no hay ejecuciones recientes en `develop` para comparar). Aquí, en Windows, fallan 5 pruebas «Serialize XML» con y sin los cambios.
+- **El mantenedor (Anvell) ha preguntado en la #46:** qué se quiere decir con «elementos hijos que no reconocía… lo que versiones nuevas de KeePass o KeePassXC hubieran añadido»; qué se podría añadir ahí. Está **sin responder**.
+- **Qué hacer, por orden:** (1) el usuario abre el registro del trabajo fallido (enlace de arriba, con sesión) y pega aquí el error; (2) reproducirlo en la copia de trabajo (`%TEMP%\kp\kotpass`, remoto `fork`) con `./gradlew check` (idealmente en Linux/Debian) y corregir en la rama de cada PR, con `git push` al fork (cada push vuelve a lanzar el CI); (3) responder en la #46 (borrador abajo).
+
+### Borrador de respuesta para la #46 (en inglés, para que lo publique el usuario con su estilo; ajustarlo a lo que se compruebe)
+
+> Thanks for asking. The concrete case is any XML element that kotpass's model does not know: elements added by newer KDBX revisions, by other password managers or by plugins. Today kotpass reads the database, ignores those elements and, when the database is saved again, they are gone, so opening and saving a file with kotpass silently deletes data written by another client. The PR keeps the elements it does not recognise inside `Meta`, `Group`, `Entry` and `Root` (in a new public `unknownElements` list) and writes them back in place. `UnknownElementsSpec` builds a file with such elements and fails on the current `develop`. I can reduce the scope (for example only `Entry` and `Group`) or split it if you prefer smaller changes.
 
 ## Qué hay
 
