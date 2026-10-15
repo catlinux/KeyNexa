@@ -1,3 +1,5 @@
+> 2026-10-15: la primera petición a IzzyOnDroid (GitLab) fue rechazada por no cumplir el protocolo/plantilla de la petición. Aparcado; al retomarlo, leer la plantilla actual y rellenarla campo a campo (la parte de IA la redacta el usuario).
+
 # Inclusión en F-Droid e IzzyOnDroid (E2.4, a mano por el usuario)
 
 Requisitos leídos el 2026-10-14. Ninguna acción se hace desde la sesión (sin login).
