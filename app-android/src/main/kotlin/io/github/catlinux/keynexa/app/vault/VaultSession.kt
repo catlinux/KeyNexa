@@ -135,6 +135,7 @@ class VaultSession(
     private val vaultMerger: VaultMerger,
     private val executor: Executor,
     private val conflicts: ConflictMerger? = null,
+    private val afterSave: (KnownVault) -> Unit = {},
     private val now: () -> Long = { System.currentTimeMillis() },
 ) {
     private val mutableState = MutableStateFlow<SessionState>(SessionState.Closed)
@@ -339,6 +340,7 @@ class VaultSession(
                 state
             }
         }
+        notifySaved(outcome, target.vault)
     }
 
     @Suppress("CyclomaticComplexMethod", "ReturnCount")
@@ -389,6 +391,7 @@ class VaultSession(
                 state
             }
         }
+        notifySaved(outcome, toSave.vault)
     }
 
     private fun discardRecoveredNow() {
@@ -450,6 +453,21 @@ class VaultSession(
         val outcome = saver.save(open.loaded, open.current, secrets)
         mutableState.update { state ->
             if (state is SessionState.Open) state.after(outcome) else state
+        }
+        notifySaved(outcome, open.vault)
+    }
+
+    // Tells the after-save hook about a completed save, and never lets it break the save itself.
+    @Suppress("TooGenericExceptionCaught", "SwallowedException")
+    private fun notifySaved(
+        outcome: SaveOutcome,
+        vault: KnownVault,
+    ) {
+        if (outcome !is SaveOutcome.Saved) return
+        try {
+            afterSave(vault)
+        } catch (failure: Throwable) {
+            // The hook is best effort: a failure there must never reach the save.
         }
     }
 
@@ -591,6 +609,7 @@ class VaultSession(
         if (!claimed) return
         val outcome = saver.save(open.loaded, merged, secrets)
         mutableState.update { state -> if (state is SessionState.Open) state.after(outcome) else state }
+        notifySaved(outcome, open.vault)
         // Not recorded when the save did not finish, so the copies are not offered for deletion yet: the save-problem
         // notice says what happened, and the next open merges them again.
         val saved = outcome is SaveOutcome.Saved

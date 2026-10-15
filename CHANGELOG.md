@@ -10,6 +10,12 @@ All notable changes to this project are documented in this file. The format is b
 
 - ADR-0008 (proposed) and the plan for optional cloud copies of the vault with an assistant: an `offline` build with no network access and a `cloud` build, S3 first and then Dropbox, OneDrive and Google Drive.
 
+## [0.20.0] - 2026-10-15
+
+### Added
+
+- The engine of the cloud copies in the `cloud` variant (ADR-0008), still without a setup screen: `S3Setup` (storable configuration with a redacted `toString`), `FileBackupState` (last success and error per vault, keyed by the SHA-256 of its location, atomic and tolerant of a corrupt file), `testConnection` (lists, uploads a test object and deletes it) and `CloudBackupRunner` in `platform-cloud`; a `VaultSession.afterSave` hook that runs once after every successful save and never lets the hook break the save; and `CloudBackupService` in the cloud flavor, a one-thread queue that uploads the encrypted file after a save (`backupIfDue`), can be forced, coalesces per vault and exposes a `StateFlow` status. The `offline` variant keeps empty hooks with the same signature.
+
 ## [0.19.0] - 2026-10-15
 
 ### Added

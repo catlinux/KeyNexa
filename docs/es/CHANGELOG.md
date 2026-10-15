@@ -10,6 +10,12 @@ Todos los cambios notables de este proyecto se documentan en este archivo. El fo
 
 - ADR-0008 (propuesta) y el plan de las copias opcionales de la bóveda en la nube con un asistente: una compilación `offline` sin acceso a la red y una `cloud`, primero S3 y después Dropbox, OneDrive y Google Drive.
 
+## [0.20.0] - 2026-10-15
+
+### Añadido
+
+- El motor de las copias en la nube en la variante `cloud` (ADR-0008), todavía sin pantalla de configuración: `S3Setup` (configuración guardable con `toString` redactado), `FileBackupState` (último éxito y último error por bóveda, con clave = SHA-256 de su ubicación, atómico y tolerante con un archivo corrupto), `testConnection` (lista, sube un objeto de prueba y lo borra) y `CloudBackupRunner` en `platform-cloud`; un gancho `VaultSession.afterSave` que se ejecuta una vez tras cada guardado correcto y nunca deja que el gancho rompa el guardado; y `CloudBackupService` en el sabor cloud, una cola de un solo hilo que sube el archivo cifrado tras un guardado (`backupIfDue`), se puede forzar, coalesce por bóveda y expone un estado `StateFlow`. La variante `offline` mantiene huecos vacíos con la misma firma.
+
 ## [0.19.0] - 2026-10-15
 
 ### Añadido

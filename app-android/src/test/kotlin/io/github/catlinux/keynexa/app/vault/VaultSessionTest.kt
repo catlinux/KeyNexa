@@ -84,7 +84,10 @@ class VaultSessionTest {
     private val backups by lazy { FileBackupStore(folder.newFolder()) }
     private val journal by lazy { FileSaveJournal(folder.newFolder()) }
 
-    private fun session(conflicts: ConflictMerger? = null): VaultSession =
+    private fun session(
+        conflicts: ConflictMerger? = null,
+        afterSave: (KnownVault) -> Unit = {},
+    ): VaultSession =
         VaultSession(
             storage = storage,
             engine = engine,
@@ -95,6 +98,7 @@ class VaultSessionTest {
             vaultMerger = KeePassMerger(),
             executor = direct,
             conflicts = conflicts,
+            afterSave = afterSave,
         )
 
     /** A session with conflict merging on, over [ledger]. */
@@ -560,5 +564,44 @@ class VaultSessionTest {
         assertNull(open.recovered)
         assertEquals(emptyList<String>(), titlesOf(files[location]))
         assertTrue(backups.list(location).none { it.kind == BackupKind.UnsavedChanges })
+    }
+
+    @Test
+    fun theAfterSaveHookRunsOnceForASuccessfulSave() {
+        val saved = mutableListOf<KnownVault>()
+        val session = session(afterSave = { saved += it })
+        createVault(session)
+        val root = (session.state.value as SessionState.Open).current.root.id
+
+        session.apply { VaultEditor().addEntry(it, root, "Mail") }
+
+        assertEquals(listOf(known), saved)
+    }
+
+    @Test
+    fun theAfterSaveHookDoesNotRunWhenTheSaveFails() {
+        val saved = mutableListOf<KnownVault>()
+        val session = session(afterSave = { saved += it })
+        createVault(session)
+        val root = (session.state.value as SessionState.Open).current.root.id
+
+        unreadable = true
+        session.apply { VaultEditor().addEntry(it, root, "Mail") }
+        unreadable = false
+
+        assertTrue(saved.isEmpty())
+    }
+
+    @Test
+    fun anExceptionInTheAfterSaveHookDoesNotBreakTheSave() {
+        val session = session(afterSave = { throw IllegalStateException("hook") })
+        createVault(session)
+        val root = (session.state.value as SessionState.Open).current.root.id
+
+        assertTrue(session.apply { VaultEditor().addEntry(it, root, "Mail") })
+
+        val open = session.state.value as SessionState.Open
+        assertNull(open.saveProblem)
+        assertFalse(open.hasUnsavedChanges)
     }
 }

@@ -67,6 +67,9 @@ interface BackupState {
 
     fun lastError(vaultId: String): BackupError?
 
+    /** When the last error of [vaultId] happened, or null when there is none. */
+    fun lastErrorAt(vaultId: String): Instant?
+
     fun recordError(
         vaultId: String,
         error: BackupError,
@@ -93,6 +96,8 @@ class InMemoryBackupState : BackupState {
 
     override fun lastError(vaultId: String): BackupError? = errors[vaultId]
 
+    override fun lastErrorAt(vaultId: String): Instant? = errorTimes[vaultId]
+
     override fun recordError(
         vaultId: String,
         error: BackupError,
@@ -106,9 +111,6 @@ class InMemoryBackupState : BackupState {
         errors.remove(vaultId)
         errorTimes.remove(vaultId)
     }
-
-    /** When the last error of [vaultId] happened, for callers that want to show it. */
-    fun lastErrorAt(vaultId: String): Instant? = errorTimes[vaultId]
 }
 
 /**

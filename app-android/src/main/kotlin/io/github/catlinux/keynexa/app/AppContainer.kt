@@ -7,6 +7,7 @@ import android.os.SystemClock
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import io.github.catlinux.keynexa.app.cloud.CloudBackupHook
 import io.github.catlinux.keynexa.app.nav.Navigator
 import io.github.catlinux.keynexa.app.security.AutoLock
 import io.github.catlinux.keynexa.app.security.BiometricKeys
@@ -107,6 +108,7 @@ class AppContainer(
                 backups = backups,
                 vaultMerger = keeper,
                 conflicts = ConflictMerger(storage, engine, keeper, mergedCopies),
+                afterSave = { CloudBackupHook.onSaved(appContext, it) { storage.read(it.location) } },
                 executor = worker,
                 now = System::currentTimeMillis,
             )
