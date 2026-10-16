@@ -16,6 +16,7 @@ Detailed steps: see the [roadmap](docs/ROADMAP.md).
 ## Medium priority (phase D — secure MVP)
 
 - [ ] Cloud as an always-on hub: let a vault live in WebDAV or S3-compatible storage through a remote `StoragePort` with conditional writes (ETag / If-Match), so the same read-merge-write pipeline works for devices that are never on at the same time. Needs an ADR.
+- [ ] Sign-in provider on entries ("Sign in with Google" sites): an optional "Sign in with" field (Google, Apple, GitHub…) that links to the entry of the account used, so the entry needs no empty password; the linked account's entry lists the sites that depend on it. Stored as custom fields, so the vault stays standard KDBX. Decision of 2026-10-16: KeyNexa itself never offers "Sign in with Google" (the vault key must come only from what the user holds).
 - [ ] Cheaper look for outside changes: look less often after minutes without activity. Measure the battery cost on a real phone before and after.
 - [ ] Fully reliable clipboard clearing (Android only lets the app in front change the clipboard).
 - [ ] Ask for inclusion in F-Droid and IzzyOnDroid (E2.4; parked on 2026-10-15: the first IzzyOnDroid request on GitLab was rejected for not following the request template, so it has to be redone by hand with the template): the draft metadata and the steps are in `.agents/plans/store-inclusion/`; the requests are filed by hand (Izzy's form asks about AI use and needs honest answers).
