@@ -30,3 +30,6 @@ local.properties
 
 # Kotlin compiler session data
 .kotlin/
+
+# Rust build output of the differential-test tool
+tools/kdbx-dump-rs/target/

@@ -75,6 +75,7 @@ Solo se ejecutan durante la compilación y no se distribuyen con la aplicación.
 | detekt | Apache-2.0 | [detekt/detekt](https://github.com/detekt/detekt) | Análisis estático de Kotlin |
 | Gradle License Report | Apache-2.0 (`LICENSE.txt`) | [jk1/Gradle-License-Report](https://github.com/jk1/Gradle-License-Report) | 3.1.4; la tarea `generateLicenseReport` |
 | Jazzer | Apache-2.0 | [CodeIntelligenceTesting/jazzer](https://github.com/CodeIntelligenceTesting/jazzer) | 0.30.0; fuzzing guiado por cobertura del decodificador KDBX en el workflow `fuzz`, descargado como CLI con una suma SHA-256 fija; no es una dependencia de Gradle ni se distribuye con la aplicación |
+| keepass-rs y la herramienta Rust | keepass 0.15.2 MIT; serde, serde_json y sha2 MIT OR Apache-2.0 | [sseemayer/keepass-rs](https://github.com/sseemayer/keepass-rs), [serde-rs/serde](https://github.com/serde-rs/serde), [RustCrypto/hashes](https://github.com/RustCrypto/hashes) | La herramienta `tools/kdbx-dump-rs` del trabajo `differential` de la CI; sus dependencias Rust (keepass-rs y las suyas) están fijadas en `tools/kdbx-dump-rs/Cargo.lock`, y ni la herramienta ni ellas se distribuyen con la aplicación |
 
 ## Proceso para añadir una dependencia
 

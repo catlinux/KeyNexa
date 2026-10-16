@@ -8,7 +8,6 @@ Pasos detallados: consulta la [hoja de ruta](ROADMAP.md).
 
 - [ ] Desbloqueo biométrico: la matriz del ADR-0006 está comprobada en un Pixel 10 Pro (activar, desbloquear, una huella nueva lo invalida, contraseña exigida tras los días elegidos, contraseña cambiada en otro dispositivo). Sigue abierto: móviles sin StrongBox y API 26-29.
 
-- [ ] Prueba diferencial de las bóvedas escritas por KeyNexa contra keepass-rs (ADR-0005; el fuzzing por mutación, el fuzzing guiado por cobertura y la comparación con keepassxc-cli ya se ejecutan).
 - [ ] Medir Argon2 de kotpass en un móvil real cuando la app abra una bóveda; decidir sobre argon2kt (consulta `docs/es/BENCHMARKS.md`).
 - [ ] Aprobar el resto de la identidad propuesta en `docs/DESIGN.md` (paleta, fuente); la marca ya está decidida.
 

@@ -10,6 +10,12 @@ All notable changes to this project are documented in this file. The format is b
 
 - ADR-0008 (proposed) and the plan for optional cloud copies of the vault with an assistant: an `offline` build with no network access and a `cloud` build, S3 first and then Dropbox, OneDrive and Google Drive.
 
+## [0.25.2] - 2026-10-16
+
+### Added
+
+- Differential test against keepass-rs (ADR-0005): a small Rust tool in `tools/kdbx-dump-rs` (`keepass = "=0.15.2"`) dumps a vault as canonical JSON, and `KeepassRsDifferentialTest` compares, for every corpus vault, what keepass-rs sees on the original file and on the file KeyNexa rewrote, and the KeyNexa model itself. The test is skipped without `KEEPASS_RS_DUMP` and runs in a new `differential` CI job with Rust 1.99.0; a known-differences list fails if an unlisted difference appears or a listed one stops happening (it is empty: the libraries agree).
+
 ## [0.25.1] - 2026-10-16
 
 ### Changed

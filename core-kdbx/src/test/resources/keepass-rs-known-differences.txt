@@ -1,0 +1,5 @@
+# Differences between keepass-rs and KeyNexa accepted by the differential test.
+#
+# One line per difference: vault file | comparison (a==c or d==a) | reason | issue link (optional).
+# A difference that is not listed here fails the test, and a listed difference that no longer happens also fails it,
+# so the list cannot go stale. It starts empty on purpose: the two libraries are expected to see the same vault.

@@ -8,7 +8,6 @@ Detailed steps: see the [roadmap](docs/ROADMAP.md).
 
 - [ ] Biometric unlock: the ADR-0006 matrix is checked on a Pixel 10 Pro (enable, unlock, new fingerprint invalidates, password due after the chosen days, password changed on another device). Still open: phones without StrongBox and API 26-29.
 
-- [ ] Differential test of KeyNexa-written vaults against keepass-rs (ADR-0005; the mutation and coverage-guided fuzzing and the keepassxc-cli comparison already run).
 - [ ] Measure kotpass Argon2 on a real phone once the app opens a vault; decide on argon2kt (see `docs/BENCHMARKS.md`).
 - [ ] Approve the rest of the identity proposed in `docs/DESIGN.md` (palette, font); the mark is decided.
 

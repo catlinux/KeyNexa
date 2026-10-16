@@ -10,6 +10,12 @@ Todos los cambios notables de este proyecto se documentan en este archivo. El fo
 
 - ADR-0008 (propuesta) y el plan de las copias opcionales de la bóveda en la nube con un asistente: una compilación `offline` sin acceso a la red y una `cloud`, primero S3 y después Dropbox, OneDrive y Google Drive.
 
+## [0.25.2] - 2026-10-16
+
+### Añadido
+
+- Prueba diferencial contra keepass-rs (ADR-0005): una pequeña herramienta en Rust en `tools/kdbx-dump-rs` (`keepass = "=0.15.2"`) vuelca una bóveda a JSON canónico, y `KeepassRsDifferentialTest` compara, para cada bóveda del corpus, lo que ve keepass-rs en el archivo original y en el archivo reescrito por KeyNexa, y el propio modelo de KeyNexa. La prueba se omite sin `KEEPASS_RS_DUMP` y se ejecuta en un trabajo nuevo `differential` de la CI con Rust 1.99.0; una lista de diferencias conocidas falla si aparece una diferencia no listada o si una listada deja de ocurrir (está vacía: las dos bibliotecas coinciden).
+
 ## [0.25.1] - 2026-10-16
 
 ### Cambiado

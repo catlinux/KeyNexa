@@ -49,6 +49,38 @@ jobs:
             **/build/test-results
           if-no-files-found: ignore
 
+  differential:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: gradle/actions/setup-gradle@v6
+      - name: Android SDK packages
+        run: |
+          sdkmanager="$(find "$ANDROID_HOME/cmdline-tools" -name sdkmanager -type f | head -n 1)"
+          test -n "$sdkmanager" || { echo 'sdkmanager not found under ANDROID_HOME' >&2; exit 1; }
+          yes | "$sdkmanager" --licenses > /dev/null || true
+          "$sdkmanager" 'platforms;android-36' 'build-tools;36.0.0'
+      - name: Install Rust
+        run: rustup toolchain install 1.99.0 --profile minimal --no-self-update
+      - name: Cache Cargo
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            tools/kdbx-dump-rs/target
+          key: ${{ runner.os }}-cargo-${{ hashFiles('tools/kdbx-dump-rs/Cargo.lock') }}
+      - name: Build the keepass-rs dump tool
+        working-directory: tools/kdbx-dump-rs
+        run: cargo +1.99.0 build --release --locked
+      - name: Differential test against keepass-rs
+        # Absolute path: Gradle runs the test from the module folder.
+        run: KEEPASS_RS_DUMP="$GITHUB_WORKSPACE/tools/kdbx-dump-rs/target/release/kdbx-dump" ./gradlew :core-kdbx:test --tests '*KeepassRsDifferential*'
+
   docs-i18n:
     runs-on: ubuntu-latest
     steps:
