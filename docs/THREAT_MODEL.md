@@ -51,6 +51,7 @@
 | T19 | Theft of the local cloud credentials | Stored encrypted with a non-exportable AES-256-GCM key from the Android Keystore, in app-private storage excluded from Android backup; never logged and never shown; "Disconnect and delete" removes them. |
 | T20 | Exposure of file metadata (name, size, times) | The service sees only the object name (the vault name sanitised to letters, digits, `-` and `_`), its size and its times, never its content; the user can choose a vault name that does not identify it. |
 | T21 | Interception of the connection | HTTPS only in production, with the system's TLS validation; redirects are not followed, so a signed request is never re-sent to another host; URLs, headers, keys and bodies are never logged. |
+| T22 | Keylogger or malware on the device captures the master password or the revealed secrets | **Not preventable by the app** (a compromised OS is out of scope), so the design limits the damage: an optional key file kept apart from the vault means the typed password alone does not open a stolen `.kdbx`; biometric unlock and "copy sensitive" avoid typing and showing secrets; 2FA on important accounts keeps a stolen password from being enough. Planned hardening is listed in [TODO](../TODO.md) (key-file recommendation, warning when an accessibility service is active, overlay filtering, an in-app input for the master password). |
 
 ## Residual risks (accepted, documented to users)
 
@@ -59,3 +60,4 @@
 - Third-party keyboards see typed passwords.
 - Syncthing on Android is a third-party app; its behaviour (for example how it replaces files) can change, and recent Android security patches (September 2026) revoke file-level URI permissions when a synced file is replaced. KeyNexa mitigates this with folder grants and a "reconnect file" flow, but cannot control it.
 - KDBX security depends on the strength of the master password.
+- A keylogger or screen-reading malware on the device can capture the master password when it is typed; protect yourself with a key file stored apart from the vault and with 2FA on important accounts (T22).

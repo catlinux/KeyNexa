@@ -10,6 +10,12 @@ All notable changes to this project are documented in this file. The format is b
 
 - ADR-0008 (proposed) and the plan for optional cloud copies of the vault with an assistant: an `offline` build with no network access and a `cloud` build, S3 first and then Dropbox, OneDrive and Google Drive.
 
+## [0.30.2] - 2026-10-16
+
+### Changed
+
+- Threat model: new threat T22 (keylogger or malware capturing the master password) with its mitigations and a residual-risk note; the planned hardening is in the TODO.
+
 ## [0.30.1] - 2026-10-16
 
 ### Changed

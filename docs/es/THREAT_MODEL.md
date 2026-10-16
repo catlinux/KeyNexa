@@ -51,6 +51,7 @@
 | T19 | Robo de las credenciales locales de la nube | Se guardan cifradas con una clave AES-256-GCM no exportable del Android Keystore, en almacenamiento privado excluido de la copia de seguridad de Android; nunca se registran ni se muestran; «Desconectar y borrar» las elimina. |
 | T20 | Exposición de los metadatos del archivo (nombre, tamaño, fechas) | El servicio solo ve el nombre del objeto (el nombre de la bóveda saneado a letras, dígitos, `-` y `_`), su tamaño y sus fechas, nunca su contenido; el usuario puede elegir un nombre de bóveda que no lo identifique. |
 | T21 | Interceptación de la conexión | Solo HTTPS en producción, con la validación TLS del sistema; no se siguen redirecciones, así que una petición firmada nunca se reenvía a otro host; las URLs, las cabeceras, las claves y los cuerpos nunca se registran. |
+| T22 | Un keylogger o malware en el dispositivo captura la contraseña maestra o los secretos mostrados | **La app no puede impedirlo** (un SO comprometido queda fuera del alcance), así que el diseño limita el daño: un archivo de clave opcional guardado aparte hace que la contraseña tecleada no baste para abrir un `.kdbx` robado; el desbloqueo biométrico y «copiar sensible» evitan teclear y mostrar secretos; el 2FA en las cuentas importantes evita que una contraseña robada sea suficiente. El refuerzo previsto está en el [TODO](TODO.md) (recomendar archivo de clave, aviso si hay un servicio de accesibilidad activo, filtrado de superposiciones, una entrada propia de la app para la contraseña maestra). |
 
 ## Riesgos residuales (aceptados, documentados para los usuarios)
 
@@ -59,3 +60,4 @@
 - Los teclados de terceros ven las contraseñas escritas.
 - Syncthing en Android es una aplicación de terceros; su comportamiento (por ejemplo, cómo sustituye los archivos) puede cambiar, y los parches de seguridad recientes de Android (septiembre de 2026) revocan los permisos de URI a nivel de archivo cuando se sustituye un archivo sincronizado. KeyNexa lo mitiga con concesiones de carpeta y un flujo de «reconectar archivo», pero no puede controlarlo.
 - La seguridad de KDBX depende de la fortaleza de la contraseña maestra.
+- Un keylogger o un malware que lee la pantalla puede capturar la contraseña maestra al teclearla; protégete con un archivo de clave guardado aparte de la bóveda y con 2FA en las cuentas importantes (T22).
