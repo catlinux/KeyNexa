@@ -13,7 +13,7 @@ Legend: ✅ done · 🔄 in progress · ⏳ planned. Nothing is "done" until its
 | C — Project foundation | Gradle multi-module skeleton, CI, lint/format, i18n, design system, release workflow | 0.2.0 – 0.4.0 | ✅ |
 | D — Secure MVP | Open/lock/edit vaults, safe save, external changes and merge. Done: safe save, merge, Android storage, screens, auto-lock and screen protection (0.5.0 – 0.8.x). Biometric unlock written (0.9.0, pending device test). Conflict copies merged when the vault is opened and offered for deletion (0.10.0, checked on a real phone). Pending: fully reliable clipboard clearing | 0.5.0 – 0.10.0 | 🔄 |
 | E — Review | Dependency and security review, interoperability tests, docs, first pre-release | 0.9.0 | ⏳ |
-| Later | Autofill, credential provider, TOTP, Windows and Linux clients (once the Android app is functional) | 1.0.0+ | ⏳ |
+| Later | Autofill, credential provider, TOTP setup (showing existing codes read-only already works), Windows and Linux clients (once the Android app is functional) | 1.0.0+ | ⏳ |
 
 ## MVP (Android)
 
@@ -28,7 +28,7 @@ Legend: ✅ done · 🔄 in progress · ⏳ planned. Nothing is "done" until its
 7. Optional biometric unlock (Keystore-wrapped master key).
 8. English and Spanish UI, light and dark themes, accessible (TalkBack labels, scalable text).
 
-**Out of scope for the MVP:** autofill and passkeys, TOTP generation, cloud providers, desktop clients, KDB (KeePass 1.x) files.
+**Out of scope for the MVP:** autofill and passkeys, configuring TOTP from the app (existing codes are shown read-only), cloud providers, desktop clients, KDB (KeePass 1.x) files.
 
 ## MVP acceptance criteria
 

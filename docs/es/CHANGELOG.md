@@ -10,6 +10,12 @@ Todos los cambios notables de este proyecto se documentan en este archivo. El fo
 
 - ADR-0008 (propuesta) y el plan de las copias opcionales de la bóveda en la nube con un asistente: una compilación `offline` sin acceso a la red y una `cloud`, primero S3 y después Dropbox, OneDrive y Google Drive.
 
+## [0.25.0] - 2026-10-16
+
+### Añadido
+
+- La pantalla de detalle de una entrada muestra ahora el código de un solo uso (TOTP) cuando la entrada tiene una configuración válida: una fila «Código de un solo uso», oculta por defecto y revelada con el Mostrar/Ocultar habitual, un Copiar sensible y una barra de progreso con los segundos que le quedan (en el color de error cuando quedan cinco segundos o menos). El código se refresca cada segundo sin recomponer la pantalla entera, y nunca se escribe en una descripción, un log ni un aviso.
+
 ## [0.24.4] - 2026-10-16
 
 ### Añadido

@@ -10,6 +10,12 @@ All notable changes to this project are documented in this file. The format is b
 
 - ADR-0008 (proposed) and the plan for optional cloud copies of the vault with an assistant: an `offline` build with no network access and a `cloud` build, S3 first and then Dropbox, OneDrive and Google Drive.
 
+## [0.25.0] - 2026-10-16
+
+### Added
+
+- The entry detail screen now shows the one-time (TOTP) code of an entry that has a valid configuration: a "One-time code" row, hidden by default and revealed with the usual Show/Hide, a sensitive Copy, and a progress bar with the seconds it still has (in the error colour when five seconds or fewer remain). The code refreshes every second without recomposing the whole screen, and it is never written to a description, a log or a toast.
+
 ## [0.24.4] - 2026-10-16
 
 ### Added

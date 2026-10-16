@@ -23,6 +23,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Surface
@@ -49,6 +50,8 @@ import io.github.catlinux.keynexa.vault.Attachment
 import io.github.catlinux.keynexa.vault.Binary
 import io.github.catlinux.keynexa.vault.BinaryId
 import io.github.catlinux.keynexa.vault.Entry
+import io.github.catlinux.keynexa.vault.TotpConfig
+import io.github.catlinux.keynexa.vault.totp
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -75,6 +78,12 @@ private const val MAX_DOTS = 12
 
 /** The mark that stands for every hidden character. */
 private const val SECRET_DOT = '•'
+
+/** One second, for the clock that keeps a one-time code current. */
+private const val SECOND_MILLIS = 1_000L
+
+/** From this many seconds left, the one-time code is shown as running out. */
+private const val URGENT_SECONDS = 5
 
 /** The fields this screen shows in its own way; the rest are custom fields. */
 private val STANDARD_FIELDS = setOf(Entry.TITLE, Entry.USER_NAME, Entry.PASSWORD, Entry.URL, Entry.NOTES)
@@ -242,6 +251,7 @@ private fun EntryHeader(
 }
 
 /** The standard fields and the custom ones, with the actions each of them allows. */
+@Suppress("LongMethod")
 @Composable
 private fun DetailFields(
     entry: Entry,
@@ -268,6 +278,16 @@ private fun DetailFields(
                 revealed = revealed == passwordLabel,
                 onReveal = { shown -> onReveal(if (shown) passwordLabel else null) },
                 onCopy = { onCopy(passwordLabel, field.value, true) },
+            )
+        }
+        val totpLabel = stringResource(R.string.entry_detail_totp)
+        remember(entry) { entry.totp() }?.let { config ->
+            TotpRow(
+                label = totpLabel,
+                config = config,
+                revealed = revealed == totpLabel,
+                onReveal = { shown -> onReveal(if (shown) totpLabel else null) },
+                onCopy = { code -> onCopy(totpLabel, code, true) },
             )
         }
         val urlLabel = stringResource(R.string.entry_detail_url)
@@ -344,6 +364,69 @@ private fun SecretRow(
             Text(text = stringResource(if (revealed) R.string.entry_detail_hide else R.string.entry_detail_show))
         }
         CopyButton(label = label, onCopy = onCopy)
+    }
+}
+
+/**
+ * A one-time code: hidden by default, refreshed every second, with the seconds it still has. The code never goes
+ * into a description, a log or a toast; copying it marks the clip as sensitive like any other secret.
+ */
+@Composable
+private fun TotpRow(
+    label: String,
+    config: TotpConfig,
+    revealed: Boolean,
+    onReveal: (Boolean) -> Unit,
+    onCopy: (String) -> Unit,
+) {
+    var now by remember { mutableStateOf(System.currentTimeMillis()) }
+    LaunchedEffect(config) {
+        while (true) {
+            now = System.currentTimeMillis()
+            delay(SECOND_MILLIS - now % SECOND_MILLIS)
+        }
+    }
+    val totp = config.codeAt(Instant.ofEpochMilli(now))
+    val displayed =
+        if (revealed) {
+            formatTotpCode(totp.code)
+        } else {
+            formatTotpCode(SECRET_DOT.toString().repeat(totp.code.length))
+        }
+    val urgent = totp.secondsRemaining <= URGENT_SECONDS
+    val expiresDescription =
+        pluralStringResource(
+            R.plurals.entry_detail_totp_expires_description,
+            totp.secondsRemaining,
+            totp.secondsRemaining,
+        )
+    Column(
+        modifier = Modifier.fillMaxWidth().padding(vertical = ItemGap),
+        verticalArrangement = Arrangement.spacedBy(ItemGap),
+    ) {
+        Text(text = label, style = MaterialTheme.typography.titleMedium)
+        Text(text = displayed, style = MaterialTheme.typography.bodyLarge)
+        Row(horizontalArrangement = Arrangement.spacedBy(ItemGap)) {
+            TextButton(onClick = { onReveal(!revealed) }) {
+                Text(text = stringResource(if (revealed) R.string.entry_detail_hide else R.string.entry_detail_show))
+            }
+            CopyButton(label = label, onCopy = { onCopy(totp.code) })
+        }
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(ItemGap),
+        ) {
+            LinearProgressIndicator(
+                progress = { totp.secondsRemaining.toFloat() / totp.period },
+                modifier = Modifier.weight(1f).semantics { contentDescription = expiresDescription },
+                color = if (urgent) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary,
+            )
+            Text(
+                text = stringResource(R.string.entry_detail_totp_expires, totp.secondsRemaining),
+                style = MaterialTheme.typography.bodySmall,
+                color = if (urgent) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+        }
     }
 }
 

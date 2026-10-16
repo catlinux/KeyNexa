@@ -13,7 +13,7 @@ Leyenda: ✅ hecho · 🔄 en curso · ⏳ planificado. Nada está «hecho» has
 | C — Base del proyecto | Esqueleto multimódulo de Gradle, CI, lint/formato, i18n, sistema de diseño, flujo de publicación | 0.2.0 – 0.4.0 | ✅ |
 | D — MVP seguro | Abrir/bloquear/editar bóvedas, guardado seguro, cambios externos y fusión. Hecho: guardado seguro, fusión, almacenamiento Android, pantallas, bloqueo automático y protección de pantalla (0.5.0 – 0.8.x). Desbloqueo biométrico escrito (0.9.0, pendiente de probar en dispositivo). Copias de conflicto fusionadas al abrir la bóveda y ofrecidas para borrar (0.10.0, comprobado en un móvil real). Pendiente: borrado del portapapeles totalmente fiable | 0.5.0 – 0.10.0 | 🔄 |
 | E — Revisión | Revisión de dependencias y de seguridad, pruebas de interoperabilidad, documentación, primera versión preliminar | 0.9.0 | ⏳ |
-| Más adelante | Autorrelleno, proveedor de credenciales, TOTP, clientes de Windows y Linux (cuando la app de Android sea funcional) | 1.0.0+ | ⏳ |
+| Más adelante | Autorrelleno, proveedor de credenciales, configurar TOTP (mostrar los códigos existentes en solo lectura ya funciona), clientes de Windows y Linux (cuando la app de Android sea funcional) | 1.0.0+ | ⏳ |
 
 ## MVP (Android)
 
@@ -28,7 +28,7 @@ Leyenda: ✅ hecho · 🔄 en curso · ⏳ planificado. Nada está «hecho» has
 7. Desbloqueo biométrico opcional (clave maestra envuelta con el Keystore).
 8. Interfaz en inglés y español, temas claro y oscuro, accesible (etiquetas de TalkBack, texto escalable).
 
-**Fuera del alcance del MVP:** autorrelleno y passkeys, generación de TOTP, proveedores en la nube, clientes de escritorio, archivos KDB (KeePass 1.x).
+**Fuera del alcance del MVP:** autorrelleno y passkeys, configurar TOTP desde la app (los códigos existentes se muestran en solo lectura), proveedores en la nube, clientes de escritorio, archivos KDB (KeePass 1.x).
 
 ## Criterios de aceptación del MVP
 

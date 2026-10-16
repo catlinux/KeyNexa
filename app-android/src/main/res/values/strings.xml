@@ -147,6 +147,12 @@
     <string name="entry_detail_password">Password</string>
     <string name="entry_detail_url">URL</string>
     <string name="entry_detail_notes">Notes</string>
+    <string name="entry_detail_totp">One-time code</string>
+    <string name="entry_detail_totp_expires">Expires in %1$d s</string>
+    <plurals name="entry_detail_totp_expires_description">
+        <item quantity="one">Code expires in %1$d second</item>
+        <item quantity="other">Code expires in %1$d seconds</item>
+    </plurals>
     <string name="entry_detail_show">Show</string>
     <string name="entry_detail_hide">Hide</string>
     <string name="entry_detail_copy">Copy</string>

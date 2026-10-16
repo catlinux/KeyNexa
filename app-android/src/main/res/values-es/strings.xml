@@ -151,6 +151,13 @@
     <string name="entry_detail_password">Contraseña</string>
     <string name="entry_detail_url">URL</string>
     <string name="entry_detail_notes">Notas</string>
+    <string name="entry_detail_totp">Código de un solo uso</string>
+    <string name="entry_detail_totp_expires">Caduca en %1$d s</string>
+    <plurals name="entry_detail_totp_expires_description">
+        <item quantity="one">El código caduca en %1$d segundo</item>
+        <item quantity="other">El código caduca en %1$d segundos</item>
+        <item quantity="many">El código caduca en %1$d segundos</item>
+    </plurals>
     <string name="entry_detail_show">Mostrar</string>
     <string name="entry_detail_hide">Ocultar</string>
     <string name="entry_detail_copy">Copiar</string>
