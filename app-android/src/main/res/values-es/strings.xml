@@ -164,6 +164,7 @@
     <string name="entry_detail_notes">Notas</string>
     <string name="entry_detail_totp">Código de un solo uso</string>
     <string name="entry_detail_totp_expires">Caduca en %1$d s</string>
+    <string name="entry_detail_totp_urgent">Caduca pronto</string>
     <plurals name="entry_detail_totp_expires_description">
         <item quantity="one">El código caduca en %1$d segundo</item>
         <item quantity="other">El código caduca en %1$d segundos</item>
@@ -171,11 +172,12 @@
     </plurals>
     <string name="entry_detail_show">Mostrar</string>
     <string name="entry_detail_hide">Ocultar</string>
-    <string name="entry_detail_copy">Copiar</string>
+    <string name="entry_detail_show_field">Mostrar %1$s</string>
+    <string name="entry_detail_hide_field">Ocultar %1$s</string>
     <string name="entry_detail_copy_field">Copiar %1$s</string>
-    <string name="entry_detail_open">Abrir</string>
     <string name="entry_detail_open_field">Abrir %1$s</string>
     <string name="entry_detail_attachments">Adjuntos</string>
+    <string name="entry_detail_modified">Modificada %1$s</string>
     <string name="entry_detail_last_modified">Última modificación: %1$s</string>
     <string name="entry_detail_history">Versiones anteriores: %1$d</string>
     <string name="entry_detail_clear_history">Borrar versiones anteriores</string>

@@ -10,6 +10,12 @@ All notable changes to this project are documented in this file. The format is b
 
 - ADR-0008 (proposed) and the plan for optional cloud copies of the vault with an assistant: an `offline` build with no network access and a `cloud` build, S3 first and then Dropbox, OneDrive and Google Drive.
 
+## [0.29.0] - 2026-10-16
+
+### Changed
+
+- Redesigned the entry screen with the chosen visual direction A: a compact top bar with the way back and the group path, a header with the entry's hexagon avatar, title and last-changed line, one card for the fields (a small uppercase label above each value, with 44–48 dp copy/reveal/open icon buttons and the one-time code in a large monospaced figure with its seconds bar), notes, attachments and dates in their own cards, and a fixed bottom bar with a full-width "Edit" button and a square, outlined "Delete" button. Behaviour is unchanged: secrets stay hidden until revealed, and no secret reaches a description, a log or a toast.
+
 ## [0.28.0] - 2026-10-16
 
 ### Changed

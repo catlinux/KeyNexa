@@ -71,7 +71,9 @@ Text must scale with the system font size up to 200 % without clipping.
 | **Band search** | A field inside the header band that is not a text field: tapping it opens the search screen. It shows *Search in <name>* and reads as a button. |
 | **Unlock form** | Password field with show/hide, key file picker, an *Unlock* button disabled while working, and a progress indicator for long key derivation. After a wrong password the field keeps focus and the message appears below it. |
 | **Entry row** | Title, user name, and an icon; a favicon or the entry icon at the start. Never shows the password. |
-| **Field row** | Label above value. A secret shows as dots with *Reveal* and *Copy* actions; revealing hides again after 10 seconds or when the screen turns off. |
+| **Field row** | A small uppercase label above the value, and 44–48 dp icon buttons at the end: *copy*, and *reveal* on a secret (each description names the field, never the value). A secret shows as dots; revealing hides again automatically or when the screen turns off. |
+| **Field card** | The fields of one entry (user name, password, one-time code, URL and any custom field) in a single card, radius 18 dp, with a thin separator between rows. Notes, attachments and the entry's dates live in cards of their own. |
+| **Action bar** | The fixed bar at the bottom of the entry: a full-width *Edit* button and a square, outlined *Delete* button in the error colour with its own description. |
 | **Password generator** | Length slider, character classes, a live strength bar with a text label, *Use* and *Regenerate*. |
 | **Search bar** | Searches title, user name, URL and tags in the open vault only; never sends anything anywhere. |
 | **Primary action** | A floating *New entry* button, bottom end. Destructive actions use the error colour and a confirmation. |

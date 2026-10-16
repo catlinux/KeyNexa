@@ -71,7 +71,9 @@ El texto debe escalar con el tamaño de fuente del sistema hasta el 200 % sin re
 | **Búsqueda en la banda** | Un campo dentro de la banda de cabecera que no es un campo de texto: al tocarlo se abre la pantalla de búsqueda. Muestra *Buscar en <nombre>* y se lee como un botón. |
 | **Formulario de desbloqueo** | Campo de contraseña con mostrar/ocultar, selector de archivo de clave, un botón *Desbloquear* desactivado mientras trabaja y un indicador de progreso para derivaciones de clave largas. Tras una contraseña incorrecta el campo conserva el foco y el mensaje aparece debajo. |
 | **Fila de entrada** | Título, usuario e icono; el favicon o el icono de la entrada al principio. Nunca muestra la contraseña. |
-| **Fila de campo** | Etiqueta encima del valor. Un secreto aparece como puntos con acciones *Mostrar* y *Copiar*; al mostrarlo se vuelve a ocultar a los 10 segundos o al apagar la pantalla. |
+| **Fila de campo** | Una etiqueta pequeña en mayúsculas encima del valor y botones de icono de 44–48 dp al final: *copiar* y *mostrar* en un secreto (cada descripción nombra el campo, nunca el valor). Un secreto aparece como puntos; al mostrarlo se vuelve a ocultar solo o al apagar la pantalla. |
+| **Tarjeta de campos** | Los campos de una entrada (usuario, contraseña, código de un solo uso, URL y cualquier campo personalizado) en una sola tarjeta, radio 18 dp, con un separador fino entre filas. Las notas, los adjuntos y las fechas de la entrada van en tarjetas propias. |
+| **Barra de acciones** | La barra fija inferior de la entrada: un botón *Editar* a todo el ancho y un botón cuadrado y contorneado *Eliminar* en el color de error con su propia descripción. |
 | **Generador de contraseñas** | Control de longitud, clases de caracteres, barra de fortaleza con etiqueta de texto, *Usar* y *Regenerar*. |
 | **Barra de búsqueda** | Busca en título, usuario, URL y etiquetas solo en la bóveda abierta; no envía nada a ningún sitio. |
 | **Acción principal** | Un botón flotante *Nueva entrada*, abajo a la derecha. Las acciones destructivas usan el color de error y una confirmación. |

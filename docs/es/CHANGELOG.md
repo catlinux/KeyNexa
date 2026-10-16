@@ -10,6 +10,12 @@ Todos los cambios notables de este proyecto se documentan en este archivo. El fo
 
 - ADR-0008 (propuesta) y el plan de las copias opcionales de la bóveda en la nube con un asistente: una compilación `offline` sin acceso a la red y una `cloud`, primero S3 y después Dropbox, OneDrive y Google Drive.
 
+## [0.29.0] - 2026-10-16
+
+### Cambiado
+
+- Rediseño de la pantalla de entrada con la dirección visual A elegida: una barra superior compacta con la vuelta y la ruta del grupo, una cabecera con el avatar hexagonal de la entrada, el título y la línea de última modificación, una tarjeta para los campos (una etiqueta pequeña en mayúsculas encima de cada valor, con botones de icono de copiar/mostrar/abrir de 44–48 dp y el código de un solo uso en una cifra monoespaciada grande con su barra de segundos), las notas, los adjuntos y las fechas en tarjetas propias, y una barra inferior fija con un botón «Editar» a todo el ancho y un botón cuadrado y contorneado «Eliminar». El comportamiento no cambia: los secretos siguen ocultos hasta mostrarlos y ningún secreto llega a una descripción, un registro ni un aviso.
+
 ## [0.28.0] - 2026-10-16
 
 ### Cambiado

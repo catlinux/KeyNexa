@@ -159,17 +159,19 @@
     <string name="entry_detail_notes">Notes</string>
     <string name="entry_detail_totp">One-time code</string>
     <string name="entry_detail_totp_expires">Expires in %1$d s</string>
+    <string name="entry_detail_totp_urgent">Expires soon</string>
     <plurals name="entry_detail_totp_expires_description">
         <item quantity="one">Code expires in %1$d second</item>
         <item quantity="other">Code expires in %1$d seconds</item>
     </plurals>
     <string name="entry_detail_show">Show</string>
     <string name="entry_detail_hide">Hide</string>
-    <string name="entry_detail_copy">Copy</string>
+    <string name="entry_detail_show_field">Show %1$s</string>
+    <string name="entry_detail_hide_field">Hide %1$s</string>
     <string name="entry_detail_copy_field">Copy %1$s</string>
-    <string name="entry_detail_open">Open</string>
     <string name="entry_detail_open_field">Open %1$s</string>
     <string name="entry_detail_attachments">Attachments</string>
+    <string name="entry_detail_modified">Modified %1$s</string>
     <string name="entry_detail_last_modified">Last modified: %1$s</string>
     <string name="entry_detail_history">Previous versions: %1$d</string>
     <string name="entry_detail_clear_history">Clear previous versions</string>
