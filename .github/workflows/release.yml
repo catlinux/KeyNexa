@@ -46,8 +46,8 @@ jobs:
         if: failure()
         run: bash scripts/ci-gradle-error.sh gradle.log
 
-      # Only the offline flavor is published: the cloud flavor asks for the Internet permission and has no cloud
-      # features yet, so it is built and checked but not released (ADR-0008).
+      # Only the offline flavor is published: the cloud flavor asks for the Internet permission, so it is built and
+      # checked but not released until the project decides to publish it (ADR-0008).
       - name: Sign the APK
         env:
           KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
