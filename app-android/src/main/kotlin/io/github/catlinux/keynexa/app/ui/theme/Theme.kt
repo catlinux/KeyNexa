@@ -6,8 +6,16 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.graphics.Color
 import io.github.catlinux.keynexa.app.settings.ThemeMode
+
+/**
+ * Whether the app is painting the dark theme. Screens use it to pick a container colour (for example the primary
+ * band in light, the primary container in dark) without asking the system again.
+ */
+val LocalDarkTheme = staticCompositionLocalOf { false }
 
 /**
  * Whether the app paints dark: the chosen mode, or what the device says when the mode follows the system.
@@ -80,5 +88,7 @@ fun KeyNexaTheme(
     content: @Composable () -> Unit,
 ) {
     val colors = if (darkTheme) DarkPalette.toDarkScheme() else LightPalette.toLightScheme()
-    MaterialTheme(colorScheme = colors, typography = KeyNexaTypography, content = content)
+    CompositionLocalProvider(LocalDarkTheme provides darkTheme) {
+        MaterialTheme(colorScheme = colors, typography = KeyNexaTypography, content = content)
+    }
 }

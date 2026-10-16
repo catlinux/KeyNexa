@@ -1,25 +1,31 @@
+@file:Suppress("TooManyFunctions")
+
 package io.github.catlinux.keynexa.app.ui.unlock
 
 import android.content.Context
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Face
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -29,7 +35,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -47,12 +52,16 @@ import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import io.github.catlinux.keynexa.app.R
+import io.github.catlinux.keynexa.app.ui.common.BrandMark
+import io.github.catlinux.keynexa.app.ui.common.HexBadge
 import io.github.catlinux.keynexa.app.vault.KnownVault
 import io.github.catlinux.keynexa.app.vault.SessionState
 import io.github.catlinux.keynexa.app.vault.UnlockError
@@ -60,11 +69,18 @@ import io.github.catlinux.keynexa.vault.Credentials
 import java.io.IOException
 
 /** Spacing and touch targets of the design grid (docs/DESIGN.md). */
-private val ScreenPadding = 16.dp
+private val ScreenPadding = 24.dp
 private val ItemGap = 8.dp
+private val BlockGap = 18.dp
 private val PanelPadding = 12.dp
 private val TouchTarget = 48.dp
+private val PrimaryHeight = 56.dp
+private val SecondaryHeight = 52.dp
 private val ProgressSize = 40.dp
+private val MarkSize = 96.dp
+private val BadgeSize = 40.dp
+private val CardShape = RoundedCornerShape(16.dp)
+private val FieldShape = RoundedCornerShape(14.dp)
 
 /** A key file can be any file the user can reach. */
 private val KeyFileTypes = arrayOf("*/*")
@@ -112,9 +128,10 @@ private val KEY_FILE_FILL = 0.toByte()
  * take seconds), and a plain-language message when the file cannot be opened.
  *
  * A stateless screen: it builds the [Credentials] and hands them, with their ownership, to [onUnlock]. Passwords
- * and key file bytes are never logged, and no secret goes into state that outlives the screen.
+ * and key file bytes are never logged, and no secret goes into state that outlives the screen. The layout follows
+ * design direction A: the brand on top and the vault, the form and the actions in the lower half.
  */
-@Suppress("LongParameterList")
+@Suppress("LongMethod", "LongParameterList")
 @Composable
 fun UnlockScreen(
     vault: KnownVault,
@@ -147,28 +164,161 @@ fun UnlockScreen(
     Surface(modifier = modifier.fillMaxSize()) {
         Column(
             modifier = Modifier.fillMaxSize().padding(ScreenPadding),
-            verticalArrangement = Arrangement.spacedBy(ItemGap),
+            horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            UnlockHeader(vault = vault, onBack = onBack)
-            Box(modifier = Modifier.fillMaxWidth().weight(1f)) {
-                Column(modifier = Modifier.fillMaxSize().verticalScroll(rememberScrollState())) {
+            BrandHeader()
+            Column(
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .weight(1f)
+                        .verticalScroll(rememberScrollState()),
+                verticalArrangement = Arrangement.Bottom,
+            ) {
+                Column(verticalArrangement = Arrangement.spacedBy(BlockGap)) {
+                    VaultCard(vault = vault, onBack = onBack)
                     if (loading) ProgressPanel()
-                    PasswordSection(form = form, enabled = !loading, onSubmit = submit)
+                    PasswordField(form = form, enabled = !loading, onSubmit = submit)
                     if (biometric.notice != null) NoticePanel(text = stringResource(biometric.notice))
                     if (failure != null) ErrorPanel(error = failure, onReconnect = onReconnect)
                     KeyFilePicker(form = form, enabled = !loading)
+                    Button(
+                        onClick = submit,
+                        enabled = enabled,
+                        shape = FieldShape,
+                        modifier = Modifier.fillMaxWidth().height(PrimaryHeight),
+                    ) {
+                        Text(text = stringResource(R.string.unlock_action))
+                    }
+                    BiometricButtons(biometric = biometric, loading = loading)
                 }
             }
-            Button(
-                onClick = submit,
-                enabled = enabled,
-                modifier = Modifier.fillMaxWidth().heightIn(min = TouchTarget),
-            ) {
-                Text(text = stringResource(R.string.unlock_action))
-            }
-            BiometricButtons(biometric = biometric, loading = loading)
         }
     }
+}
+
+/** The brand at the top: the mark and the name. */
+@Composable
+private fun BrandHeader(modifier: Modifier = Modifier) {
+    Column(
+        modifier = modifier.fillMaxWidth().padding(top = 40.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(14.dp),
+    ) {
+        BrandMark(size = MarkSize)
+        Text(
+            text = stringResource(R.string.app_name),
+            style = MaterialTheme.typography.headlineSmall,
+            fontWeight = FontWeight.ExtraBold,
+        )
+    }
+}
+
+/** The vault being opened: its avatar, its name, the file when it is known, and the way to choose another. */
+@Composable
+private fun VaultCard(
+    vault: KnownVault,
+    onBack: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    val fileName = remember(vault.location) { fileNameOf(vault) }
+    Surface(
+        modifier = modifier.fillMaxWidth(),
+        shape = CardShape,
+        color = MaterialTheme.colorScheme.surface,
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline.copy(alpha = 0.4f)),
+    ) {
+        Row(
+            modifier = Modifier.padding(16.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(14.dp),
+        ) {
+            HexBadge(
+                text = initialOf(vault.name),
+                containerColor = MaterialTheme.colorScheme.primaryContainer,
+                contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                size = BadgeSize,
+            )
+            Column(
+                modifier = Modifier.weight(1f),
+                verticalArrangement = Arrangement.spacedBy(2.dp),
+            ) {
+                Text(
+                    text = vault.name,
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                )
+                if (fileName != null) {
+                    Text(
+                        text = fileName,
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                    )
+                }
+            }
+            TextButton(onClick = onBack) {
+                Text(text = stringResource(R.string.unlock_change))
+            }
+        }
+    }
+}
+
+/** The initial shown on the vault's hexagon avatar. */
+private fun initialOf(name: String): String {
+    val trimmed = name.trim()
+    return if (trimmed.isEmpty()) "?" else trimmed.take(1).uppercase()
+}
+
+/** The file part of the vault location, when it looks like a file name. */
+private fun fileNameOf(vault: KnownVault): String? {
+    val candidate = vault.location.value.substringAfterLast('/')
+    return candidate.takeIf { it.isNotBlank() && it != vault.location.value && '.' in it }
+}
+
+/** The master password, with the button that reveals it, and the keyboard action that submits the form. */
+@Composable
+private fun PasswordField(
+    form: UnlockForm,
+    enabled: Boolean,
+    onSubmit: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    val description = stringResource(R.string.unlock_show_password)
+    OutlinedTextField(
+        value = form.password,
+        onValueChange = { form.password = it },
+        label = { Text(text = stringResource(R.string.unlock_password_label)) },
+        singleLine = true,
+        enabled = enabled,
+        shape = FieldShape,
+        visualTransformation = if (form.revealed) VisualTransformation.None else PasswordVisualTransformation(),
+        keyboardOptions =
+            KeyboardOptions(
+                keyboardType = KeyboardType.Password,
+                autoCorrectEnabled = false,
+                imeAction = ImeAction.Done,
+            ),
+        keyboardActions = KeyboardActions(onDone = { onSubmit() }),
+        trailingIcon = {
+            TextButton(
+                onClick = { form.revealed = !form.revealed },
+                enabled = enabled,
+                modifier = Modifier.semantics { contentDescription = description },
+            ) {
+                Text(
+                    text =
+                        stringResource(
+                            if (form.revealed) R.string.entry_detail_hide else R.string.entry_detail_show,
+                        ),
+                )
+            }
+        },
+        modifier = modifier.fillMaxWidth(),
+    )
 }
 
 /** Unlock with biometrics, and the way to stop using it for this vault. */
@@ -181,8 +331,15 @@ private fun BiometricButtons(
         OutlinedButton(
             onClick = biometric.onUnlock,
             enabled = !loading,
-            modifier = Modifier.fillMaxWidth().heightIn(min = TouchTarget),
+            shape = FieldShape,
+            modifier = Modifier.fillMaxWidth().height(SecondaryHeight),
         ) {
+            Icon(
+                imageVector = Icons.Filled.Face,
+                contentDescription = null,
+                modifier = Modifier.size(22.dp),
+            )
+            Spacer(modifier = Modifier.width(10.dp))
             Text(text = stringResource(R.string.biometric_unlock_action))
         }
     }
@@ -216,8 +373,8 @@ private fun NoticePanel(
     modifier: Modifier = Modifier,
 ) {
     Surface(
-        modifier = modifier.fillMaxWidth().padding(vertical = ItemGap).semantics { liveRegion = LiveRegionMode.Polite },
-        shape = MaterialTheme.shapes.medium,
+        modifier = modifier.fillMaxWidth().semantics { liveRegion = LiveRegionMode.Polite },
+        shape = CardShape,
         color = MaterialTheme.colorScheme.secondaryContainer,
     ) {
         Text(
@@ -226,77 +383,6 @@ private fun NoticePanel(
             color = MaterialTheme.colorScheme.onSecondaryContainer,
             modifier = Modifier.padding(PanelPadding),
         )
-    }
-}
-
-/** The vault being opened and the way back. */
-@Composable
-private fun UnlockHeader(
-    vault: KnownVault,
-    onBack: () -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    Row(modifier = modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
-        IconButton(onClick = onBack) {
-            Icon(
-                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                contentDescription = stringResource(R.string.unlock_back),
-            )
-        }
-        Text(
-            text = vault.name,
-            style = MaterialTheme.typography.headlineMedium,
-            modifier = Modifier.padding(start = ItemGap),
-        )
-    }
-}
-
-/** The master password, the switch that reveals it, and the keyboard action that submits the form. */
-@Composable
-private fun PasswordSection(
-    form: UnlockForm,
-    enabled: Boolean,
-    onSubmit: () -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    val description = stringResource(R.string.unlock_show_password)
-    Column(
-        modifier = modifier.fillMaxWidth(),
-        verticalArrangement = Arrangement.spacedBy(ItemGap),
-    ) {
-        OutlinedTextField(
-            value = form.password,
-            onValueChange = { form.password = it },
-            label = { Text(text = stringResource(R.string.unlock_password_label)) },
-            singleLine = true,
-            enabled = enabled,
-            visualTransformation = if (form.revealed) VisualTransformation.None else PasswordVisualTransformation(),
-            keyboardOptions =
-                KeyboardOptions(
-                    keyboardType = KeyboardType.Password,
-                    autoCorrectEnabled = false,
-                    imeAction = ImeAction.Done,
-                ),
-            keyboardActions = KeyboardActions(onDone = { onSubmit() }),
-            modifier = Modifier.fillMaxWidth(),
-        )
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(ItemGap),
-        ) {
-            Text(
-                text = description,
-                style = MaterialTheme.typography.bodyMedium,
-                modifier = Modifier.weight(1f),
-            )
-            Switch(
-                checked = form.revealed,
-                onCheckedChange = { form.revealed = it },
-                enabled = enabled,
-                modifier = Modifier.semantics { contentDescription = description },
-            )
-        }
     }
 }
 
@@ -335,7 +421,7 @@ private fun ErrorPanel(
             modifier
                 .fillMaxWidth()
                 .semantics { liveRegion = LiveRegionMode.Assertive },
-        shape = MaterialTheme.shapes.medium,
+        shape = CardShape,
         color = MaterialTheme.colorScheme.errorContainer,
     ) {
         Column(
@@ -400,12 +486,14 @@ private fun KeyFilePicker(
     ) {
         Text(
             text = stringResource(R.string.unlock_key_file_label),
-            style = MaterialTheme.typography.titleMedium,
+            style = MaterialTheme.typography.titleSmall,
+            fontWeight = FontWeight.Bold,
         )
         if (form.keyFileName == null) {
             OutlinedButton(
                 onClick = { chooser.launch(KeyFileTypes) },
                 enabled = enabled,
+                shape = FieldShape,
                 modifier = Modifier.fillMaxWidth().heightIn(min = TouchTarget),
             ) {
                 Text(text = stringResource(R.string.unlock_key_file_choose))

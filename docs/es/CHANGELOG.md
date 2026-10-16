@@ -10,6 +10,12 @@ Todos los cambios notables de este proyecto se documentan en este archivo. El fo
 
 - ADR-0008 (propuesta) y el plan de las copias opcionales de la bóveda en la nube con un asistente: una compilación `offline` sin acceso a la red y una `cloud`, primero S3 y después Dropbox, OneDrive y Google Drive.
 
+## [0.27.0] - 2026-10-16
+
+### Cambiado
+
+- Rediseño de la pantalla de desbloqueo con la dirección visual A elegida: la marca de KeyNexa y su nombre arriba, y en la mitad inferior la tarjeta de la bóveda (con su avatar hexagonal, su nombre y la acción «Cambiar»), el campo de contraseña maestra con mostrar/ocultar, el selector de archivo de clave, el botón «Desbloquear» y el botón secundario «Usar huella». El comportamiento no cambia. Nuevas piezas compartidas: `HexagonShape`/`HexBadge`, `BrandMark` y `LocalDarkTheme`.
+
 ## [0.26.0] - 2026-10-16
 
 ### Añadido

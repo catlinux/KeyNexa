@@ -33,6 +33,8 @@
     <string name="create_action">Crear bóveda</string>
 
     <!-- Desbloqueo: abrir una bóveda. -->
+    <string name="brand_mark_description">Marca de KeyNexa</string>
+    <string name="unlock_change">Cambiar</string>
     <string name="unlock_password_label">Contraseña maestra</string>
     <string name="unlock_show_password">Mostrar la contraseña</string>
     <string name="unlock_key_file_label">Archivo de clave (opcional)</string>
@@ -41,7 +43,6 @@
     <string name="unlock_key_file_chosen">Archivo de clave: %1$s</string>
     <string name="unlock_key_file_remove">Quitar el archivo de clave</string>
     <string name="unlock_action">Desbloquear</string>
-    <string name="unlock_back">Volver</string>
     <string name="unlock_opening">Abriendo… puede tardar unos segundos.</string>
     <string name="unlock_reconnect">Reconectar archivo</string>
     <string name="unlock_error_wrong_credentials">Esa contraseña o ese archivo de clave no abren esta bóveda. Compruébalos e inténtalo de nuevo.</string>

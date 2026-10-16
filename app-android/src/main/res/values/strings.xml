@@ -33,6 +33,8 @@
     <string name="create_action">Create vault</string>
 
     <!-- Unlock: opening one vault. -->
+    <string name="brand_mark_description">KeyNexa logo</string>
+    <string name="unlock_change">Change</string>
     <string name="unlock_password_label">Master password</string>
     <string name="unlock_show_password">Show the password</string>
     <string name="unlock_key_file_label">Key file (optional)</string>
@@ -41,7 +43,6 @@
     <string name="unlock_key_file_chosen">Key file: %1$s</string>
     <string name="unlock_key_file_remove">Remove the key file</string>
     <string name="unlock_action">Unlock</string>
-    <string name="unlock_back">Back</string>
     <string name="unlock_opening">Opening… this can take a few seconds.</string>
     <string name="unlock_reconnect">Reconnect file</string>
     <string name="unlock_error_wrong_credentials">That password or key file does not open this vault. Check them and try again.</string>

@@ -63,6 +63,9 @@ Text must scale with the system font size up to 200 % without clipping.
 | Component | Behaviour |
 | --- | --- |
 | **Vault card** | Name, location (folder or provider) and last opened. Tap to open; long press for options (remove from list, never delete the file). |
+| **Hex badge** | A small point-up hexagon with the initials of a vault, a group or an entry. Decorative: the row's own text already names it. |
+| **Brand mark** | The KeyNexa hexagon (two blues, inner ring, shield with keyhole and a small node) with the name below it on the unlock screen. Decorative but labelled for screen readers. |
+| **Header band** | The top band of the vault screens: `primary` in light and `primaryContainer` in dark (screens read `LocalDarkTheme`), carrying the title, the status and the main actions. |
 | **Unlock form** | Password field with show/hide, key file picker, an *Unlock* button disabled while working, and a progress indicator for long key derivation. After a wrong password the field keeps focus and the message appears below it. |
 | **Entry row** | Title, user name, and an icon; a favicon or the entry icon at the start. Never shows the password. |
 | **Field row** | Label above value. A secret shows as dots with *Reveal* and *Copy* actions; revealing hides again after 10 seconds or when the screen turns off. |

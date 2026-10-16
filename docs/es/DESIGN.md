@@ -63,6 +63,9 @@ El texto debe escalar con el tamaño de fuente del sistema hasta el 200 % sin re
 | Componente | Comportamiento |
 | --- | --- |
 | **Tarjeta de bóveda** | Nombre, ubicación (carpeta o proveedor) y última apertura. Tocar para abrir; pulsación larga para opciones (quitar de la lista, nunca borrar el archivo). |
+| **Distintivo hexagonal** | Un pequeño hexágono con punta arriba con las iniciales de una bóveda, un grupo o una entrada. Es decorativo: el texto de la fila ya lo nombra. |
+| **Marca** | El hexágono de KeyNexa (dos azules, anillo interior, escudo con cerradura y un nodo pequeño) con el nombre debajo en la pantalla de desbloqueo. Es decorativa pero lleva etiqueta para los lectores de pantalla. |
+| **Banda de cabecera** | La banda superior de las pantallas de bóveda: `primary` en claro y `primaryContainer` en oscuro (las pantallas leen `LocalDarkTheme`), con el título, el estado y las acciones principales. |
 | **Formulario de desbloqueo** | Campo de contraseña con mostrar/ocultar, selector de archivo de clave, un botón *Desbloquear* desactivado mientras trabaja y un indicador de progreso para derivaciones de clave largas. Tras una contraseña incorrecta el campo conserva el foco y el mensaje aparece debajo. |
 | **Fila de entrada** | Título, usuario e icono; el favicon o el icono de la entrada al principio. Nunca muestra la contraseña. |
 | **Fila de campo** | Etiqueta encima del valor. Un secreto aparece como puntos con acciones *Mostrar* y *Copiar*; al mostrarlo se vuelve a ocultar a los 10 segundos o al apagar la pantalla. |

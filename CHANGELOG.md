@@ -10,6 +10,12 @@ All notable changes to this project are documented in this file. The format is b
 
 - ADR-0008 (proposed) and the plan for optional cloud copies of the vault with an assistant: an `offline` build with no network access and a `cloud` build, S3 first and then Dropbox, OneDrive and Google Drive.
 
+## [0.27.0] - 2026-10-16
+
+### Changed
+
+- Redesigned the unlock screen with the chosen visual direction A: the KeyNexa brand mark and name on top, and the vault card (with its hexagon avatar, its name and the "Change" action), the master password field with show/hide, the key file picker, the "Unlock" button and the "Use fingerprint" secondary button in the lower half. Behaviour is unchanged. New shared pieces: `HexagonShape`/`HexBadge`, `BrandMark` and `LocalDarkTheme`.
+
 ## [0.26.0] - 2026-10-16
 
 ### Added
