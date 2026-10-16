@@ -1,0 +1,38 @@
+# Hacia la 1.0: lo que queda de la APK (2026-10-16)
+
+Hoja de ruta de lo implementable **sin el móvil**. Las pruebas en el móvil se hacen en casa, conectado por adb, al final de cada bloque. Cada paso: archivos, criterio de terminado, ejecutor, versión. El ejecutor sigue el plan, marca cada paso hecho y, ante un imprevisto de diseño, **para y lo anota aquí** en lugar de improvisar.
+
+Reglas fijas (AGENTS.md): documentación bilingüe en el mismo commit, `VERSION` + CHANGELOG en/es, nada de E/S en la composición, sin dependencias sin registrar su licencia en `docs/DEPENDENCIES_AND_LICENSES.md`, `CREDITS.md` y sus traducciones, sin secretos, sin push ni tag sin permiso. Ejecutor por defecto: AgentRelay con `opencode-go/deepseek-v4.1-flash` (JSON fuera del repo, árbol limpio al lanzar; revisar SIEMPRE el diff).
+
+## Bloque A: pulidos pequeños (delegable, esfuerzo bajo)
+
+- [ ] **A1. Región que se rellena sola** · 0.23.6 (parche) · DeepSeek, esfuerzo bajo. En el formulario S3 (`app-android/src/cloud/.../CloudSettingsEntry.kt`), al cambiar el endpoint, si el campo Región está vacío o contiene el valor deducido antes, escribir en él `regionFromEndpoint(endpoint)`; el usuario puede editarlo y, si lo edita a mano, no se vuelve a pisar. Terminado: con `https://s3.eu-central-003.backblazeb2.com` el campo muestra `eu-central-003` sin tocarlo; prueba JVM de la lógica de relleno (extraerla a una función pura en `platform-cloud`).
+- [ ] **A2. Interruptor de tema claro / oscuro / automático** · 0.24.0 (menor) · DeepSeek, esfuerzo medio. Ajuste nuevo en `SettingsScreen` (tres opciones, por defecto automático) guardado con los demás ajustes (`container.settings`), aplicado en el tema de `app-android/.../ui/theme/`. Textos en/es, `docs/DESIGN.md` y `docs/es/DESIGN.md` actualizados. Terminado: cambia el tema al momento, persiste, `check` verde con prueba de la lógica de ajuste.
+
+## Bloque B: seguridad y calidad (antes de la 1.0)
+
+- [ ] **B1. Fuzzing con Jazzer** (ADR-0005, punto 3) · 0.25.0 (menor, solo pruebas) · DeepSeek, esfuerzo alto + revisión mía. Objetivo de fuzzing del decodificador KDBX en `core-kdbx` (solo pruebas), ejecutado en el CI con límite de tiempo (p. ej. 5 minutos) y corpus en `testdata/`. Licencia Apache-2.0 de Jazzer registrada en los 4 documentos. Terminado: el objetivo corre en CI, solo admite `VaultException` como fallo esperado y cualquier otra excepción o cuelgue falla el trabajo.
+- [ ] **B2. Prueba diferencial contra keepass-rs** (ADR-0005, punto 2) · 0.25.x · primero decide **la propia sesión potente** el diseño (herramienta mínima en Rust que vuelca el contenido de una bóveda a JSON, compilada en un job de CI; comparación con el volcado de KeyNexa por UUID, campos y adjuntos) y lo anota aquí; luego DeepSeek lo implementa. Terminado: job de CI que compara todas las bóvedas de `testdata/` y falla si difieren; diferencias conocidas de keepass-rs documentadas, no ocultas.
+- [ ] **B3. Revisión de seguridad documentada** · 1.0 la exige · sesión con modelo potente (Opus) usando la Skill `security-review` sobre el código completo, más una pasada con `/code-review`. Resultado: `docs/SECURITY_REVIEW.md` (+ `docs/es/`) con alcance, hallazgos, qué se corrigió y qué queda aceptado, y `THREAT_MODEL` al día con la nube (ADR-0008) y la sincronización (ADR-0009 cuando se acepte). Terminado: ningún hallazgo alto abierto.
+- [ ] **B4. Argon2 y memoria en móviles modestos** · 0.25.x · DeepSeek, esfuerzo medio. Comprobar que un `OutOfMemoryError` al abrir una bóveda con Argon2 grande se captura y se explica al usuario («tu dispositivo no tiene memoria suficiente para esta bóveda: reduce su memoria Argon2»), sin caída y sin dejar datos a medias; prueba que lo simule. La medición real en un móvil modesto y la decisión sobre argon2kt quedan para las pruebas en casa.
+- [ ] **B5. Biometría sin StrongBox y API 26–29** · revisión de código por mí; la prueba, en casa. Revisar que no hay APIs de nivel superior sin protección y que cae bien a clave por hardware sin StrongBox; arreglos si hacen falta (parche).
+- [ ] **B6. Revisión del flujo de publicación** · yo. Leer `release.yml` con las variantes `offline`/`cloud` y asegurar que firma solo `offline`, comprueba el manifiesto sin `INTERNET`, y publica sumas. Terminado: lista de diferencias y arreglos propuestos; el primer tag lo prueba de verdad.
+
+## Bloque C: aspecto visual (bloqueado por una decisión del usuario)
+
+- [ ] **C1. Direcciones visuales** · sesión con Opus + Artifact (maquetas HTML privadas): 2–3 direcciones de las pantallas lista de bóvedas, desbloqueo, grupo y entrada, partiendo de `docs/DESIGN.md` (marca del icono, azul marino y celeste) y de las referencias que dé el usuario. **El usuario elige una.** Sin esto no se pasa a C2.
+- [ ] **C2. Implementación** · tras elegir, dividir por pantallas (una tarea de DeepSeek cada una, 3–4 archivos): fuente propia (Inter o Manrope, SIL OFL 1.1, licencia registrada), tema, desbloqueo con marca, listas y tarjetas, estados vacíos, iconos de grupo y entrada. `docs/DESIGN.md` (en/es) y capturas de `fastlane/` al día. Versión menor por bloque.
+
+## Bloque D: nube (cuando el usuario pueda registrar y probar)
+
+- [ ] **D1.** Pruebas reales de Cloudflare R2 y Amazon S3 con cuentas del usuario; guías verificadas.
+- [ ] **D2.** Dropbox primero, luego OneDrive (Google Drive descartado); registrar la app, comprobar redirect y escritura condicional (ver `../cloud-backup/oauth-providers.RESEARCH.md`).
+- [ ] **D3.** Aceptar el ADR-0009 y el paso de reconciliación sobre `CloudBackend` con un servicio falso para carreras.
+
+## Pruebas en el móvil (en casa, con adb)
+
+Instalar 0.23.x+; región autorrellenada, aviso tras copiar, desconectar; estado de sincronización y aviso por días; restaurar tras matar la app; bloqueo en segundo plano; borrar historial; instalar una variante sobre otra; biometría; Argon2 en un móvil modesto; tema claro/oscuro.
+
+## Cómo seguir en barato
+
+`/clear` → `/model sonnet` → «ejecuta el paso A1 de hacia-1-0.PLAN.md». Los pasos B2, B3 y C1 piden un modelo potente (`/model opus`).
