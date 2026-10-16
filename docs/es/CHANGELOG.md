@@ -10,6 +10,12 @@ Todos los cambios notables de este proyecto se documentan en este archivo. El fo
 
 - ADR-0008 (propuesta) y el plan de las copias opcionales de la bóveda en la nube con un asistente: una compilación `offline` sin acceso a la red y una `cloud`, primero S3 y después Dropbox, OneDrive y Google Drive.
 
+## [0.24.4] - 2026-10-16
+
+### Añadido
+
+- El núcleo de TOTP en `core-vault` (todavía sin interfaz): `Entry.totp()` lee el campo `otp` de KeePassXC (una URI `otpauth://totp/...`) o los campos `TOTP Seed`/`TOTP Settings` de KeeTrayTOTP, y `TotpConfig.codeAt(instant)` deriva el código de 6-8 dígitos según el RFC 6238 (SHA1/SHA256/SHA512, HMAC de `javax.crypto` y truncado dinámico del RFC 4226, con un decodificador Base32 mínimo del RFC 4648). Las configuraciones inválidas devuelven null y nunca lanzan, y no se imprime nunca ningún secreto ni código.
+
 ## [0.24.3] - 2026-10-16
 
 ### Cambiado

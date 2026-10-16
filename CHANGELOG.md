@@ -10,6 +10,12 @@ All notable changes to this project are documented in this file. The format is b
 
 - ADR-0008 (proposed) and the plan for optional cloud copies of the vault with an assistant: an `offline` build with no network access and a `cloud` build, S3 first and then Dropbox, OneDrive and Google Drive.
 
+## [0.24.4] - 2026-10-16
+
+### Added
+
+- The TOTP core in `core-vault` (still without an interface): `Entry.totp()` reads the KeePassXC `otp` field (an `otpauth://totp/...` URI) or the KeeTrayTOTP `TOTP Seed`/`TOTP Settings` fields, and `TotpConfig.codeAt(instant)` derives the 6-8 digit code per RFC 6238 (SHA1/SHA256/SHA512, HMAC from `javax.crypto` and RFC 4226 dynamic truncation, with a minimal RFC 4648 Base32 decoder). Invalid configurations answer null and never throw, and no secret or code is ever printed.
+
 ## [0.24.3] - 2026-10-16
 
 ### Changed
