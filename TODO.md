@@ -17,7 +17,7 @@ Detailed steps: see the [roadmap](docs/ROADMAP.md).
 ## Medium priority (phase D — secure MVP)
 
 - [ ] Cloud as an always-on hub: let a vault live in WebDAV or S3-compatible storage through a remote `StoragePort` with conditional writes (ETag / If-Match), so the same read-merge-write pipeline works for devices that are never on at the same time. Needs an ADR.
-- [ ] Cheaper look for outside changes: compare size and modification time first and read the whole file only when they differ; look less often after minutes without activity. Measure the battery cost on a real phone before and after.
+- [ ] Cheaper look for outside changes: look less often after minutes without activity. Measure the battery cost on a real phone before and after.
 - [ ] Fully reliable clipboard clearing (Android only lets the app in front change the clipboard).
 - [ ] Ask for inclusion in F-Droid and IzzyOnDroid (E2.4; parked on 2026-10-15: the first IzzyOnDroid request on GitLab was rejected for not following the request template, so it has to be redone by hand with the template): the draft metadata and the steps are in `.agents/plans/store-inclusion/`; the requests are filed by hand (Izzy's form asks about AI use and needs honest answers).
 

@@ -17,6 +17,7 @@ import io.github.catlinux.keynexa.sync.SaveRecovery
 import io.github.catlinux.keynexa.sync.VaultMerger
 import io.github.catlinux.keynexa.sync.VaultReader
 import io.github.catlinux.keynexa.vault.Credentials
+import io.github.catlinux.keynexa.vault.FileMetadata
 import io.github.catlinux.keynexa.vault.KdbxEngine
 import io.github.catlinux.keynexa.vault.SiblingFile
 import io.github.catlinux.keynexa.vault.StoragePort
@@ -146,6 +147,9 @@ class VaultSession(
 
     @Volatile
     private var credentials: Credentials? = null
+
+    /** When the last full read of the vault file happened, so a full check runs at least once a minute. */
+    private var lastFullCheckMillis = 0L
 
     /**
      * The open vault's credentials in pre-hashed form, for enabling biometric unlock; the caller wipes them. Null
@@ -323,7 +327,8 @@ class VaultSession(
                 val next =
                     state.copy(
                         vault = state.vault.copy(location = newLocation),
-                        loaded = state.loaded.copy(location = newLocation),
+                        // The metadata belonged to the old file: the next look starts with a full read.
+                        loaded = state.loaded.copy(location = newLocation, metadata = null),
                         saving = true,
                         saveProblem = null,
                         conflicts = null,
@@ -432,6 +437,7 @@ class VaultSession(
             prepare()
             val loaded = readers.patient.open(vault.location, secrets)
             credentials = secrets
+            lastFullCheckMillis = now()
             mutableState.value =
                 SessionState.Open(
                     vault = vault,
@@ -489,6 +495,22 @@ class VaultSession(
                 copy(saving = false, saveProblem = outcome.reason, unsavedCopy = outcome.unsavedCopy)
         }
 
+    // After a save or a reconnect the loaded vault has no metadata; once a full look finds the file unchanged, the
+    // metadata taken before that look is kept so the next looks can be cheap again.
+    private fun rememberMetadata(
+        open: SessionState.Open,
+        metadata: FileMetadata?,
+    ) {
+        if (metadata == null) return
+        mutableState.update { state ->
+            if (state is SessionState.Open && state.loaded == open.loaded) {
+                state.copy(loaded = state.loaded.copy(metadata = metadata))
+            } else {
+                state
+            }
+        }
+    }
+
     // Loads the file again if another program changed it, and folds in the conflict copies that came with it. A
     // transfer in progress or a storage hiccup is not an error: the next look will see it again.
     private fun reloadIfChanged(
@@ -497,7 +519,24 @@ class VaultSession(
         secrets: Credentials,
     ) {
         try {
-            if (!reader.hasChanged(open.vault.location, open.loaded.fingerprint)) return
+            // The cheap comparison (size and time) is enough most times; a full read runs at least once a minute,
+            // so a file system with an inexact date cannot hide a change.
+            val forceFull = now() - lastFullCheckMillis >= FULL_CHECK_INTERVAL_MILLIS
+            // Taken before any read, so it can only be older than the content it will describe.
+            val metadataBeforeLook =
+                if (open.loaded.metadata == null) reader.readMetadata(open.vault.location) else null
+            val changed =
+                reader.hasChanged(
+                    location = open.vault.location,
+                    known = open.loaded.fingerprint,
+                    knownMetadata = open.loaded.metadata,
+                    forceFull = forceFull,
+                )
+            if (forceFull || changed) lastFullCheckMillis = now()
+            if (!changed) {
+                rememberMetadata(open, metadataBeforeLook)
+                return
+            }
             val loaded = reader.open(open.vault.location, secrets, credentialsKnownGood = true)
             mutableState.update { state ->
                 if (state is SessionState.Open && state.isIdle && state.loaded == open.loaded) {
@@ -663,6 +702,9 @@ class VaultSession(
         }
     }
 }
+
+/** How often the cheap metadata comparison is backed by a full read of the vault file. */
+private const val FULL_CHECK_INTERVAL_MILLIS = 60_000L
 
 private fun VaultException.toUnlockError(): UnlockError =
     when (this) {

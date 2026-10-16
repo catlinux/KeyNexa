@@ -1,6 +1,7 @@
 package io.github.catlinux.keynexa.sync
 
 import io.github.catlinux.keynexa.vault.Credentials
+import io.github.catlinux.keynexa.vault.FileMetadata
 import io.github.catlinux.keynexa.vault.VaultException
 import io.github.catlinux.keynexa.vault.VaultLocation
 import org.junit.Assert.assertEquals
@@ -9,11 +10,13 @@ import org.junit.Assert.assertSame
 import org.junit.Assert.assertThrows
 import org.junit.Assert.assertTrue
 import org.junit.Test
+import java.time.Instant
 
 /** Reads tolerate a file that is still being written: integrity failures are retried, others are not. */
 class VaultReaderTest {
     private val location = VaultLocation("vault.kdbx")
     private val credentials = Credentials.of(password = "correct horse battery".toCharArray())
+    private val at: Instant = Instant.parse("2026-10-16T10:00:00Z")
 
     @Test
     fun aCorrectFileIsOpenedOnTheFirstAttemptWithoutWaiting() {
@@ -138,6 +141,84 @@ class VaultReaderTest {
 
         assertTrue(reader.hasChanged(location, Fingerprint.of(bytes)))
     }
+
+    @Test
+    fun equalMetadataAvoidsReadingTheFile() {
+        val storage = storageWithMetadata()
+        val reader = VaultReader(storage, FakeKdbxEngine(), RecordingSleeper())
+        val metadata = storage.metadata(location)
+        val readsBefore = readsOf(storage)
+
+        val changed = reader.hasChanged(location, Fingerprint.of(storage.files.getValue(location)), metadata)
+
+        assertFalse(changed)
+        assertEquals(readsBefore, readsOf(storage))
+    }
+
+    @Test
+    fun aDifferentSizeReadsTheFile() {
+        val storage = storageWithMetadata()
+        val reader = VaultReader(storage, FakeKdbxEngine(), RecordingSleeper())
+        val known = Fingerprint.of(storage.files.getValue(location))
+        val metadata = storage.metadata(location)
+        storage.files[location] = storage.files.getValue(location) + byteArrayOf(7)
+        val readsBefore = readsOf(storage)
+
+        assertTrue(reader.hasChanged(location, known, metadata))
+        assertTrue(readsOf(storage) > readsBefore)
+    }
+
+    @Test
+    fun aDifferentModificationTimeReadsTheFile() {
+        val storage = storageWithMetadata()
+        val reader = VaultReader(storage, FakeKdbxEngine(), RecordingSleeper())
+        val known = Fingerprint.of(storage.files.getValue(location))
+        val metadata = storage.metadata(location)
+        storage.metadataLastModified = at.plusSeconds(5)
+        val readsBefore = readsOf(storage)
+
+        // The content is the same here, so the full read answers "unchanged", but it did happen.
+        assertFalse(reader.hasChanged(location, known, metadata))
+        assertTrue(readsOf(storage) > readsBefore)
+    }
+
+    @Test
+    fun missingMetadataFallsBackToTheFullRead() {
+        val storage = storageWithMetadata()
+        val reader = VaultReader(storage, FakeKdbxEngine(), RecordingSleeper())
+        val known = Fingerprint.of(storage.files.getValue(location))
+        val readsBefore = readsOf(storage)
+
+        assertFalse(reader.hasChanged(location, known, FileMetadata(sizeBytes = null, lastModified = at)))
+        assertTrue(readsOf(storage) > readsBefore)
+    }
+
+    @Test
+    fun aForcedCheckReadsEvenWhenTheMetadataMatches() {
+        val storage = storageWithMetadata()
+        val reader = VaultReader(storage, FakeKdbxEngine(), RecordingSleeper())
+        val metadata = storage.metadata(location)
+        val readsBefore = readsOf(storage)
+
+        val changed =
+            reader.hasChanged(
+                location,
+                Fingerprint.of(storage.files.getValue(location)),
+                metadata,
+                forceFull = true,
+            )
+
+        assertFalse(changed)
+        assertTrue(readsOf(storage) > readsBefore)
+    }
+
+    private fun storageWithMetadata(): FakeStorage {
+        val engine = FakeKdbxEngine()
+        val bytes = engine.encode(testVault("v"), credentials)
+        return FakeStorage(mapOf(location to bytes)).apply { metadataLastModified = at }
+    }
+
+    private fun readsOf(storage: FakeStorage): Int = storage.operations.count { it.startsWith("read#") }
 
     /** Breaks the trailing CRC so that the file reads as damaged. */
     private fun damaged(bytes: ByteArray): ByteArray = bytes.also { it[it.size - 1] = (it[it.size - 1] + 1).toByte() }

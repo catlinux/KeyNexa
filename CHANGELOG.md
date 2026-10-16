@@ -10,6 +10,12 @@ All notable changes to this project are documented in this file. The format is b
 
 - ADR-0008 (proposed) and the plan for optional cloud copies of the vault with an assistant: an `offline` build with no network access and a `cloud` build, S3 first and then Dropbox, OneDrive and Google Drive.
 
+## [0.25.1] - 2026-10-16
+
+### Changed
+
+- Looking for outside changes is cheaper: `VaultReader` compares the file's size and modification time (recorded just before the bytes were read) and only reads and hashes the whole file when they differ, on any doubt or on a forced check at least once a minute. The safe-save pipeline still checks the full fingerprint just before writing, so no change is ever missed.
+
 ## [0.25.0] - 2026-10-16
 
 ### Added

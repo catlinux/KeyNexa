@@ -305,7 +305,11 @@ internal class FakeStorage(
     /** Modification time reported for every existing file; tests set it to make the sync status deterministic. */
     var lastModifiedMillis: Long? = null
 
-    override fun metadata(location: VaultLocation): FileMetadata = FileMetadata(files[location]?.size?.toLong(), null)
+    /** Modification time reported by [metadata]; null (the default) means the storage does not know it. */
+    var metadataLastModified: Instant? = null
+
+    override fun metadata(location: VaultLocation): FileMetadata =
+        FileMetadata(files[location]?.size?.toLong(), metadataLastModified)
 
     override fun lastModified(location: VaultLocation): Long? =
         if (files.containsKey(location)) lastModifiedMillis else null

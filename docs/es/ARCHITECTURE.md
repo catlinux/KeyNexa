@@ -58,6 +58,8 @@ Un futuro `app-desktop` reutilizaría `core-*` y añadiría un `platform-desktop
 3. `KdbxEngine` descifra con la clave compuesta. Se rechaza un archivo cuya cabecera o bloques HMAC no se verifican (puede ser una transferencia parcial de Syncthing): KeyNexa reintenta tras una breve espera y nunca escribe encima.
 4. Al guardar, se ejecuta el flujo de guardado seguro (más abajo).
 
+**Buscar cambios externos con poco coste.** Mientras la app está delante, `VaultSession` pregunta a `VaultReader` cada pocos segundos si el archivo ha cambiado. Primero compara el tamaño y la fecha de modificación anotados justo antes de leer los bytes; cuando ambos coinciden, se salta la lectura del archivo. Ante cualquier duda (metadatos que faltan o difieren) y, como mínimo una vez por minuto, se hace igualmente la comprobación completa leyendo y calculando la huella, y el flujo de guardado seguro comprueba siempre la huella completa justo antes de escribir.
+
 ### Flujo de guardado seguro
 
 Implementado en `core-sync` (`SafeSaver`, `VerifiedWriter`, `SaveRecovery`, `VaultReader`).

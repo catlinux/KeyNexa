@@ -50,14 +50,21 @@ class VaultSessionTest {
     private var unreadable = false
     private var unwritable = false
 
+    /** How many times the file was actually read, to check the cheap comparison. */
+    private var reads = 0
+
+    /** The modification time [metadata] reports; null means the storage does not know it. */
+    private var metadataTime: Instant? = null
+
     private val storage =
         object : StoragePort {
             override fun read(location: VaultLocation): ByteArray {
                 if (unreadable) throw IOException("injected")
+                reads++
                 return files[location]?.copyOf() ?: throw IOException("missing")
             }
 
-            override fun metadata(location: VaultLocation) = FileMetadata(files[location]?.size?.toLong(), null)
+            override fun metadata(location: VaultLocation) = FileMetadata(files[location]?.size?.toLong(), metadataTime)
 
             override fun lastModified(location: VaultLocation): Long? = null
 
@@ -91,6 +98,7 @@ class VaultSessionTest {
         conflicts: ConflictMerger? = null,
         afterSave: (KnownVault) -> Unit = {},
         overrideEngine: KdbxEngine? = null,
+        now: () -> Long = { System.currentTimeMillis() },
     ): VaultSession {
         val engineToUse = overrideEngine ?: engine
         return VaultSession(
@@ -104,6 +112,7 @@ class VaultSessionTest {
             executor = direct,
             conflicts = conflicts,
             afterSave = afterSave,
+            now = now,
         )
     }
 
@@ -295,6 +304,63 @@ class VaultSessionTest {
                 .map { it.title },
         )
         assertTrue(state.hasUnsavedChanges)
+    }
+
+    @Test
+    fun aRefreshWithEqualMetadataDoesNotReadTheFile() {
+        metadataTime = Instant.parse("2026-10-16T10:00:00Z")
+        val session = session(now = { 0L })
+        createVault(session)
+        val readsBefore = reads
+
+        session.refreshIfChanged()
+
+        assertEquals(readsBefore, reads)
+    }
+
+    @Test
+    fun afterASaveTheCheapLookComesBackAfterOneFullLook() {
+        metadataTime = Instant.parse("2026-10-16T10:00:00Z")
+        val session = session(now = { 0L })
+        createVault(session)
+        val root = (session.state.value as SessionState.Open).current.root.id
+        assertTrue(session.apply { VaultEditor().addEntry(it, root, "Mail") })
+
+        val readsBeforeFirstLook = reads
+        session.refreshIfChanged()
+        val readsAfterFirstLook = reads
+        session.refreshIfChanged()
+
+        // The loaded vault of a save has no metadata, so the first look reads the file; the second one is cheap.
+        assertTrue(readsAfterFirstLook > readsBeforeFirstLook)
+        assertEquals(readsAfterFirstLook, reads)
+    }
+
+    @Test
+    fun aChangedModificationTimeReadsTheFileAgain() {
+        metadataTime = Instant.parse("2026-10-16T10:00:00Z")
+        val session = session(now = { 0L })
+        createVault(session)
+        val readsBefore = reads
+        metadataTime = Instant.parse("2026-10-16T10:00:05Z")
+
+        session.refreshIfChanged()
+
+        assertTrue(reads > readsBefore)
+    }
+
+    @Test
+    fun theFullCheckRunsAtLeastOnceAMinute() {
+        metadataTime = Instant.parse("2026-10-16T10:00:00Z")
+        var clock = 0L
+        val session = session(now = { clock })
+        createVault(session)
+        clock = 60_000L
+        val readsBefore = reads
+
+        session.refreshIfChanged()
+
+        assertTrue(reads > readsBefore)
     }
 
     @Test

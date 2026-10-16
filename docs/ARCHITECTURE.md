@@ -58,6 +58,8 @@ A future `app-desktop` would reuse `core-*` and add a `platform-desktop` with a 
 3. `KdbxEngine` decrypts with the composite key. A file whose header or HMAC blocks do not verify is rejected (it may be a partial Syncthing transfer): KeyNexa retries after a short delay and never writes over it.
 4. On save, the safe-save pipeline (below) runs.
 
+**Looking for outside changes cheaply.** While the app is in front, `VaultSession` asks `VaultReader` every few seconds whether the file changed. It first compares the size and modification time recorded just before the bytes were read; when both agree, it skips reading the file. Any doubt (missing or different metadata) and, at least once a minute, a full read-and-hash check runs anyway, and the safe-save pipeline always checks the full fingerprint just before writing.
+
 ### Safe-save pipeline
 
 Implemented in `core-sync` (`SafeSaver`, `VerifiedWriter`, `SaveRecovery`, `VaultReader`).

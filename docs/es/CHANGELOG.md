@@ -10,6 +10,12 @@ Todos los cambios notables de este proyecto se documentan en este archivo. El fo
 
 - ADR-0008 (propuesta) y el plan de las copias opcionales de la bóveda en la nube con un asistente: una compilación `offline` sin acceso a la red y una `cloud`, primero S3 y después Dropbox, OneDrive y Google Drive.
 
+## [0.25.1] - 2026-10-16
+
+### Cambiado
+
+- Buscar cambios externos es más barato: `VaultReader` compara el tamaño y la fecha de modificación del archivo (anotados justo antes de leer los bytes) y solo lee y calcula la huella del archivo entero cuando difieren, ante cualquier duda o en una comprobación forzada como mínimo una vez por minuto. El flujo de guardado seguro sigue comprobando la huella completa justo antes de escribir, así que nunca se pierde un cambio.
+
 ## [0.25.0] - 2026-10-16
 
 ### Añadido

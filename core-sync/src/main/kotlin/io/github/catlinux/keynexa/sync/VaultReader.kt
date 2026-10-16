@@ -1,6 +1,7 @@
 package io.github.catlinux.keynexa.sync
 
 import io.github.catlinux.keynexa.vault.Credentials
+import io.github.catlinux.keynexa.vault.FileMetadata
 import io.github.catlinux.keynexa.vault.KdbxEngine
 import io.github.catlinux.keynexa.vault.StoragePort
 import io.github.catlinux.keynexa.vault.Vault
@@ -8,11 +9,16 @@ import io.github.catlinux.keynexa.vault.VaultException
 import io.github.catlinux.keynexa.vault.VaultLocation
 import java.io.IOException
 
-/** A vault as read from storage, with the fingerprint of the exact bytes it came from. */
+/**
+ * A vault as read from storage, with the fingerprint of the exact bytes it came from and the [metadata] read just
+ * before those bytes. The metadata can be older than the content, never newer, so comparing it later can only ask for
+ * an extra full read, never miss a change.
+ */
 data class LoadedVault(
     val location: VaultLocation,
     val vault: Vault,
     val fingerprint: Fingerprint,
+    val metadata: FileMetadata? = null,
 )
 
 /** Waits between attempts; replaced in tests so they do not sleep. */
@@ -59,9 +65,12 @@ class VaultReader(
         credentialsKnownGood: Boolean,
     ): Any =
         try {
+            // The metadata is read before the bytes: if the file changes in between, the stored metadata is older
+            // than the content and the next comparison asks for a full read again.
+            val metadata = readMetadata(location)
             val bytes = storage.read(location)
             try {
-                LoadedVault(location, engine.decode(bytes, credentials), Fingerprint.of(bytes))
+                LoadedVault(location, engine.decode(bytes, credentials), Fingerprint.of(bytes), metadata)
             } catch (wrong: VaultException.WrongCredentials) {
                 // In KDBX 4 the header HMAC proves the key, so a wrong key there is real (the password may have
                 // been changed on another device). Only the ambiguous 3.x case is retried as possible damage.
@@ -77,7 +86,38 @@ class VaultReader(
     fun hasChanged(
         location: VaultLocation,
         known: Fingerprint,
-    ): Boolean = Fingerprint.of(storage.read(location)) != known
+    ): Boolean = hasChanged(location, known, knownMetadata = null, forceFull = false)
+
+    /**
+     * Whether the file changed, avoiding the full read when [knownMetadata] and the current metadata agree on both
+     * size and modification time. Any doubt (missing metadata, a different value or [forceFull]) falls back to
+     * reading and hashing the whole file, so a change is never missed.
+     */
+    fun hasChanged(
+        location: VaultLocation,
+        known: Fingerprint,
+        knownMetadata: FileMetadata?,
+        forceFull: Boolean = false,
+    ): Boolean {
+        if (!forceFull && knownMetadata != null) {
+            val knownSize = knownMetadata.sizeBytes
+            val knownTime = knownMetadata.lastModified
+            if (knownSize != null && knownTime != null) {
+                val current = readMetadata(location)
+                if (current?.sizeBytes == knownSize && current.lastModified == knownTime) return false
+            }
+        }
+        return Fingerprint.of(storage.read(location)) != known
+    }
+
+    /** The size and time the storage reports now, or null when it cannot say. Take it BEFORE reading the bytes. */
+    @Suppress("SwallowedException")
+    fun readMetadata(location: VaultLocation): FileMetadata? =
+        try {
+            storage.metadata(location)
+        } catch (unavailable: IOException) {
+            null
+        }
 
     private fun isKdbx3(bytes: ByteArray): Boolean =
         runCatching { engine.inspect(bytes).version.major == KDBX_3 }.getOrDefault(false)
