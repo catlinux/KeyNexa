@@ -17,6 +17,7 @@ El esqueleto del proyecto incluye los componentes siguientes, cada uno bajo su p
 - **Biblioteca estándar de Kotlin y plugins de Gradle** — JetBrains, Apache-2.0.
 - **AndroidX Core, AndroidX Activity, AndroidX Biometric (y sus dependencias AndroidX), Jetpack Compose (IU y Material 3)** — The Android Open Source Project, Apache-2.0.
 - **JUnit 4** — Equipo de JUnit, EPL-1.0 (solo pruebas unitarias; no se distribuye con la aplicación).
+- **Jazzer 0.30.0** — Code Intelligence GmbH y los colaboradores de Jazzer, Apache-2.0. Origen: https://github.com/CodeIntelligenceTesting/jazzer. Fuzzing guiado por cobertura del decodificador KDBX en el workflow de CI `fuzz`; se descarga como CLI con una suma SHA-256 fija, no es una dependencia de Gradle ni se distribuye con la aplicación.
 - **kotpass 0.13.0** — Denis T. (copyright 2021), MIT. Origen: https://github.com/keemobile/kotpass, commit `4e0bd6b6b13e59d48ebe0bd9c06de3f918de6945`. Archivos: `third_party/kotpass/` (se conserva su `LICENSE.txt`; los cambios locales están en su README). Motor KDBX.
 - **Okio 3.15.0** — Square, Inc., Apache-2.0. Origen: https://github.com/square/okio. Dependencia de ejecución de kotpass, no incluida en el código.
 - **Kotlin XML Builder** — Jason Blackwell y colaboradores, Apache-2.0. Origen: https://github.com/redundent/kotlin-xml-builder. Incluido dentro de kotpass: `third_party/kotpass/src/main/kotlin/org/redundent/kotlin/xml/` (con su `LICENSE.txt`).

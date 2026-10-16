@@ -10,6 +10,12 @@ Todos los cambios notables de este proyecto se documentan en este archivo. El fo
 
 - ADR-0008 (propuesta) y el plan de las copias opcionales de la bóveda en la nube con un asistente: una compilación `offline` sin acceso a la red y una `cloud`, primero S3 y después Dropbox, OneDrive y Google Drive.
 
+## [0.24.2] - 2026-10-16
+
+### Añadido
+
+- Fuzzing guiado por cobertura del decodificador KDBX con la CLI de Jazzer (0.30.0), sin añadir ninguna dependencia de Gradle: un punto de entrada `DecoderFuzzTarget` y una prueba JUnit que lo ejecuta con las bóvedas rápidas del corpus dentro de `check`, una tarea Gradle `writeFuzzClasspath` y un workflow de CI `fuzz` semanal y manual que comprueba la suma SHA-256 de la descarga de Jazzer antes de ejecutarla. La licencia de Jazzer queda registrada en los documentos de dependencias, créditos y desarrollo.
+
 ## [0.24.1] - 2026-10-16
 
 ### Corregido

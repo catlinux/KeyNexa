@@ -74,6 +74,7 @@ Solo se ejecutan durante la compilación y no se distribuyen con la aplicación.
 | ktlint | MIT | [pinterest/ktlint](https://github.com/pinterest/ktlint) | Formato y estilo de Kotlin, mediante el plugin ktlint-gradle |
 | detekt | Apache-2.0 | [detekt/detekt](https://github.com/detekt/detekt) | Análisis estático de Kotlin |
 | Gradle License Report | Apache-2.0 (`LICENSE.txt`) | [jk1/Gradle-License-Report](https://github.com/jk1/Gradle-License-Report) | 3.1.4; la tarea `generateLicenseReport` |
+| Jazzer | Apache-2.0 | [CodeIntelligenceTesting/jazzer](https://github.com/CodeIntelligenceTesting/jazzer) | 0.30.0; fuzzing guiado por cobertura del decodificador KDBX en el workflow `fuzz`, descargado como CLI con una suma SHA-256 fija; no es una dependencia de Gradle ni se distribuye con la aplicación |
 
 ## Proceso para añadir una dependencia
 

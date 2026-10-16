@@ -8,7 +8,7 @@ Pasos detallados: consulta la [hoja de ruta](ROADMAP.md).
 
 - [ ] Desbloqueo biométrico: la matriz del ADR-0006 está comprobada en un Pixel 10 Pro (activar, desbloquear, una huella nueva lo invalida, contraseña exigida tras los días elegidos, contraseña cambiada en otro dispositivo). Sigue abierto: móviles sin StrongBox y API 26-29.
 
-- [ ] Prueba diferencial de las bóvedas escritas por KeyNexa contra keepass-rs, y fuzzing con Jazzer (ADR-0005; el fuzzing por mutación y la comparación con keepassxc-cli ya se ejecutan).
+- [ ] Prueba diferencial de las bóvedas escritas por KeyNexa contra keepass-rs (ADR-0005; el fuzzing por mutación, el fuzzing guiado por cobertura y la comparación con keepassxc-cli ya se ejecutan).
 - [ ] Medir Argon2 de kotpass en un móvil real cuando la app abra una bóveda; decidir sobre argon2kt (consulta `docs/es/BENCHMARKS.md`).
 - [ ] Aprobar el resto de la identidad propuesta en `docs/DESIGN.md` (paleta, fuente); la marca ya está decidida.
 
@@ -45,7 +45,7 @@ Pasos detallados: consulta la [hoja de ruta](ROADMAP.md).
 - Syncthing como plugin opcional en todas las plataformas, nunca obligatorio: un solo dispositivo no necesita sincronización (la bóveda es local; las copias de seguridad en la nube son una opción aparte y recomendada). Motivo: cuando la sincronización es una app aparte es fácil olvidarse de arrancarla y entonces no se sincroniza nada; con el plugin, abrir KeyNexa la arranca, muestra el estado («sincronizado hace unos segundos») y evita errores de configuración como compartir la carpeta equivocada. Se ofrece al añadir un segundo dispositivo, emparejado con un código QR. Modos: integrado (recomendado) / usar un Syncthing externo / ninguno. En Android necesita un servicio en primer plano que siga vivo hasta terminar la subida pendiente al salir de la app. Llevar Syncthing (MPL-2.0, compatible con GPL-3.0) gestionado por su API REST (solo local, con clave aleatoria). Necesita un ADR (tamaño por arquitectura, reglas de procesos en segundo plano, política de actualizaciones, convivencia con Syncthing-Fork). Paso intermedio barato que hay que comprobar: pedir a un Syncthing-Fork instalado que arranque cuando se abre KeyNexa.
 - Configurar un dispositivo nuevo con una frase semilla: un paquete cifrado con los ajustes y el emparejamiento de la sincronización (nunca la contraseña maestra), protegido con una clave derivada de la frase, guardado en la carpeta sincronizada o mostrado como código QR. Necesita un ADR.
 - Copias de seguridad en la nube: primero a cualquier carpeta que el sistema exponga (Drive, Dropbox, Mega y otros a través de sus propias apps, sin SDK extra), después WebDAV y almacenamiento compatible con S3; sin SDK propietarios con telemetría. La app debe recomendarlo encarecidamente (aviso en el primer uso y recordatorio persistente hasta que exista una copia, sin imponerlo): perder o romper el móvil sin copia es perder todas las contraseñas. Necesita un ADR. Ahora propuesto en el [ADR-0008](decisions/0008-cloud-backup.md); el plan por pasos está en `.agents/plans/cloud-backup/`.
-- Mantener kotpass fuerte: ofrecerse a ayudar a mantenerlo en el proyecto original, añadir fuzzing con Jazzer y la comparación con keepass-rs (ya listados arriba) y reevaluar las alternativas cada año (ADR-0005).
+- Mantener kotpass fuerte: ofrecerse a ayudar a mantenerlo en el proyecto original, añadir allí fuzzing guiado por cobertura y la comparación con keepass-rs (ya listados arriba) y reevaluar las alternativas cada año (ADR-0005).
 
 ## Descartado
 

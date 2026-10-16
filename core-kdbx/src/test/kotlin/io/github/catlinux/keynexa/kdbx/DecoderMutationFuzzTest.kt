@@ -163,8 +163,8 @@ class DecoderMutationFuzzTest {
         const val BITS_PER_BYTE = 8
         const val ARGON2_TEST_MEMORY_BYTES = 8L * 1024 * 1024
         const val ARGON2_VERSION = 0x13
-
-        // Vaults with a cheap key derivation, so hundreds of attempts stay fast.
-        val FAST_VAULTS = listOf("rich-aes-aeskdf.kdbx", "rich-chacha20-aeskdf.kdbx", "rich-kdbx31-aes-aeskdf.kdbx")
     }
 }
+
+/** Vaults with a cheap key derivation, so hundreds of attempts (and the fuzz target) stay fast. */
+internal val FAST_VAULTS = listOf("rich-aes-aeskdf.kdbx", "rich-chacha20-aeskdf.kdbx", "rich-kdbx31-aes-aeskdf.kdbx")

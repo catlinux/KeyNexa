@@ -1,0 +1,67 @@
+name: Fuzz
+
+on:
+  schedule:
+    # Every Monday at 03:00 UTC.
+    - cron: '0 3 * * 1'
+  workflow_dispatch:
+    inputs:
+      seconds:
+        description: 'Seconds to fuzz'
+        required: false
+        default: '300'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: fuzz-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  fuzz:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: gradle/actions/setup-gradle@v6
+
+      # core-kdbx is pure JVM: no Android SDK is needed here.
+      - name: Build the test classpath
+        run: ./gradlew :core-kdbx:writeFuzzClasspath
+
+      - name: Download the Jazzer CLI and check its checksum
+        run: |
+          set -euo pipefail
+          curl -fsSL -o jazzer-linux-x86-64.tar.gz \
+            https://github.com/CodeIntelligenceTesting/jazzer/releases/download/v0.30.0/jazzer-linux-x86-64.tar.gz
+          echo "6eeaf0026d75599b07527d93b576593ce847cfca8b337a579971a5a9cdf792d0  jazzer-linux-x86-64.tar.gz" | sha256sum -c -
+          tar -xzf jazzer-linux-x86-64.tar.gz
+
+      - name: Build a corpus from the fast vaults
+        run: |
+          mkdir -p corpus
+          cp testdata/rich-aes-aeskdf.kdbx testdata/rich-chacha20-aeskdf.kdbx testdata/rich-kdbx31-aes-aeskdf.kdbx corpus/
+
+      - name: Fuzz the decoder
+        env:
+          FUZZ_SECONDS: ${{ inputs.seconds || '300' }}
+        run: |
+          case "$FUZZ_SECONDS" in ''|*[!0-9]*) echo 'seconds must be a number' >&2; exit 1 ;; esac
+          ./jazzer --cp="$(cat core-kdbx/build/fuzz-classpath.txt)" \
+            --target_class=io.github.catlinux.keynexa.kdbx.DecoderFuzzTarget \
+            -max_total_time="$FUZZ_SECONDS" -timeout=20 -rss_limit_mb=3072 corpus
+
+      - name: Upload any finding
+        if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: fuzz-findings
+          path: |
+            crash-*
+            oom-*
+            timeout-*
+          if-no-files-found: ignore

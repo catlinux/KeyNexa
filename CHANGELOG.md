@@ -10,6 +10,12 @@ All notable changes to this project are documented in this file. The format is b
 
 - ADR-0008 (proposed) and the plan for optional cloud copies of the vault with an assistant: an `offline` build with no network access and a `cloud` build, S3 first and then Dropbox, OneDrive and Google Drive.
 
+## [0.24.2] - 2026-10-16
+
+### Added
+
+- Coverage-guided fuzzing of the KDBX decoder with the Jazzer CLI (0.30.0), without adding a Gradle dependency: a `DecoderFuzzTarget` entry point and a JUnit test that runs it on the fast corpus vaults inside `check`, a `writeFuzzClasspath` Gradle task, and a weekly/manual `fuzz` CI workflow that verifies the Jazzer download's SHA-256 before running it. Jazzer's license is recorded in the dependency, credits and development documents.
+
 ## [0.24.1] - 2026-10-16
 
 ### Fixed
