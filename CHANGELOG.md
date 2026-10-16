@@ -10,6 +10,13 @@ All notable changes to this project are documented in this file. The format is b
 
 - ADR-0008 (proposed) and the plan for optional cloud copies of the vault with an assistant: an `offline` build with no network access and a `cloud` build, S3 first and then Dropbox, OneDrive and Google Drive.
 
+## [0.26.0] - 2026-10-16
+
+### Added
+
+- Visual direction "A, light and sober", chosen by the maintainer, with its dark version; the mockups are in `design/mockups/`.
+- The Manrope font (SIL OFL 1.1) as the interface font, bundled as one variable font, with its license in `third_party/manrope/` and in the credits.
+
 ## [0.25.2] - 2026-10-16
 
 ### Added

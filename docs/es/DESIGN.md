@@ -2,7 +2,7 @@
 
 [English](../DESIGN.md) | [Español](DESIGN.md)
 
-> **Estado:** la marca es la del responsable (2026-10-13). El resto es una propuesta pendiente de aprobación (detalles de la paleta, fuente). Los tokens de abajo están implementados en `app-android`; cambiar un valor es editar una línea, y la prueba de contraste mantiene la paleta accesible.
+> **Estado:** la marca es la del responsable (2026-10-13). La dirección visual «A, clara y sobria» (construida sobre esta paleta, con su tema oscuro a juego) y la fuente Manrope las eligió el responsable el 2026-10-16; las maquetas se guardan en `design/mockups/`. Los tokens de abajo están implementados en `app-android`; cambiar un valor es editar una línea, y la prueba de contraste mantiene la paleta accesible.
 
 ## Principios
 
@@ -38,7 +38,7 @@ Los tokens están en `app-android/.../ui/theme/Palette.kt` y se corresponden uno
 
 ## Tipografía
 
-La interfaz usa la escala tipográfica de Material 3 con la fuente sans-serif de la plataforma. Incluir una fuente propia es opcional y no está decidido: Inter o Manrope (ambas SIL OFL 1.1, compatibles con GPL-3.0) son las candidatas, y solo se añadirían, con su licencia en `CREDITS.md`, si el responsable las quiere.
+La interfaz usa la escala tipográfica de Material 3 con **Manrope**, incluida como una sola fuente variable (`res/font/manrope.ttf`, SIL OFL 1.1, ver [Créditos](CREDITS.md)); las contraseñas y los códigos mantienen la fuente monoespaciada de la plataforma.
 
 | Uso | Estilo | Tamaño / peso |
 | --- | --- | --- |
@@ -112,5 +112,4 @@ Claro y oscuro se eligen en Ajustes (Automático sigue al sistema; Claro u Oscur
 
 ## Decisiones abiertas para el responsable
 
-1. Aprobar la paleta derivada del icono.
-2. Incluir Inter o Manrope, o mantener la fuente del sistema.
+1. Paleta y fuente: decididas el 2026-10-16 (dirección A, Manrope).

@@ -2,7 +2,7 @@
 
 [English](DESIGN.md) | [Español](es/DESIGN.md)
 
-> **Status:** the mark is the maintainer's own (2026-10-13). The rest is a proposal pending approval (palette details, font). The tokens below are implemented in `app-android`; changing a value is a one-line edit, and the contrast test keeps the palette accessible.
+> **Status:** the mark is the maintainer's own (2026-10-13). The visual direction "A, light and sober" (built on this palette, with a matching dark theme) and the Manrope font were chosen by the maintainer on 2026-10-16; the mockups are kept in `design/mockups/`. The tokens below are implemented in `app-android`; changing a value is a one-line edit, and the contrast test keeps the palette accessible.
 
 ## Principles
 
@@ -38,7 +38,7 @@ Tokens live in `app-android/.../ui/theme/Palette.kt` and map one to one onto Mat
 
 ## Typography
 
-The interface uses the Material 3 type scale with the platform sans-serif font. A bundled font is optional and not decided: Inter or Manrope (both SIL OFL 1.1, compatible with GPL-3.0) are the candidates, to be added with their licence in `CREDITS.md` only if the maintainer wants them.
+The interface uses the Material 3 type scale with **Manrope**, bundled as one variable font (`res/font/manrope.ttf`, SIL OFL 1.1, see [CREDITS](../CREDITS.md)); passwords and codes keep the platform monospace font.
 
 | Use | Style | Size / weight |
 | --- | --- | --- |
@@ -112,5 +112,4 @@ Light and dark are chosen in Settings (Automatic follows the system; Light or Da
 
 ## Open decisions for the maintainer
 
-1. Approve the palette derived from the icon.
-2. Bundle Inter or Manrope, or keep the system font.
+1. Palette and font: decided on 2026-10-16 (direction A, Manrope).

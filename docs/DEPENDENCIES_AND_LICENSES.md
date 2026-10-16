@@ -53,6 +53,7 @@ The entries below are the external modules locked for the app's release flavors 
 | Guava | `listenablefuture` 1.0 | To verify |
 | JetBrains | `annotations` 23.0.0 | To verify |
 | JSpecify | `jspecify` 1.0.0 | To verify |
+| Manrope (bundled font, not a Gradle module) | `app-android/src/main/res/font/manrope.ttf`, variable font from google/fonts commit `b31870a` | SIL OFL 1.1 (verified in the upstream `OFL.txt`, kept in `third_party/manrope/`; compatible with distribution inside a GPL-3.0 app) |
 
 JUnit 4 is test-only and does not appear in the release configurations. Build tools are listed separately below. The lockfile also contains androidx.compose:compose-bom 2025.09.00, kotlinx-coroutines-bom 1.9.0 and kotlinx-serialization-bom 1.7.3; these are alignment metadata, not APK payloads.
 

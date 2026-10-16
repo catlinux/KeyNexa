@@ -80,5 +80,5 @@ fun KeyNexaTheme(
     content: @Composable () -> Unit,
 ) {
     val colors = if (darkTheme) DarkPalette.toDarkScheme() else LightPalette.toLightScheme()
-    MaterialTheme(colorScheme = colors, content = content)
+    MaterialTheme(colorScheme = colors, typography = KeyNexaTypography, content = content)
 }

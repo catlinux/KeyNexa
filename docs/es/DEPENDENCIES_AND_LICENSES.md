@@ -53,6 +53,7 @@ Las entradas siguientes son los módulos externos fijados para los sabores de re
 | Guava | `listenablefuture` 1.0 | Por verificar |
 | JetBrains | `annotations` 23.0.0 | Por verificar |
 | JSpecify | `jspecify` 1.0.0 | Por verificar |
+| Manrope (fuente incluida, no es un módulo de Gradle) | `app-android/src/main/res/font/manrope.ttf`, fuente variable de google/fonts, commit `b31870a` | SIL OFL 1.1 (verificada en el `OFL.txt` original, conservado en `third_party/manrope/`; compatible con distribuirla dentro de una app GPL-3.0) |
 
 JUnit 4 solo se usa en las pruebas y no aparece en las configuraciones de release. Las herramientas de compilación se enumeran por separado más abajo. El lockfile también contiene androidx.compose:compose-bom 2025.09.00, kotlinx-coroutines-bom 1.9.0 y kotlinx-serialization-bom 1.7.3; son metadatos para alinear versiones, no contenido del APK.
 

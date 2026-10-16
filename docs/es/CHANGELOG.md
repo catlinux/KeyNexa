@@ -10,6 +10,13 @@ Todos los cambios notables de este proyecto se documentan en este archivo. El fo
 
 - ADR-0008 (propuesta) y el plan de las copias opcionales de la bóveda en la nube con un asistente: una compilación `offline` sin acceso a la red y una `cloud`, primero S3 y después Dropbox, OneDrive y Google Drive.
 
+## [0.26.0] - 2026-10-16
+
+### Añadido
+
+- Dirección visual «A, clara y sobria», elegida por el responsable, con su versión oscura; las maquetas están en `design/mockups/`.
+- La fuente Manrope (SIL OFL 1.1) como fuente de la interfaz, incluida como una sola fuente variable, con su licencia en `third_party/manrope/` y en los créditos.
+
 ## [0.25.2] - 2026-10-16
 
 ### Añadido
