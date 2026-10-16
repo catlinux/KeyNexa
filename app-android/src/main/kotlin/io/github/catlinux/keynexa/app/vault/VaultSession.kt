@@ -42,6 +42,9 @@ enum class UnlockError {
 
     /** The file cannot be read: permission revoked, file moved or provider failure. Offer to reconnect it. */
     Unreachable,
+
+    /** The key derivation asks for more memory than the device can give. */
+    NotEnoughMemory,
 }
 
 sealed interface SessionState {
@@ -668,4 +671,5 @@ private fun VaultException.toUnlockError(): UnlockError =
         is VaultException.NotAVault -> UnlockError.NotAVault
         is VaultException.UnsupportedFormat -> UnlockError.UnsupportedFormat
         is VaultException.Corrupted -> UnlockError.Damaged
+        is VaultException.NotEnoughMemory -> UnlockError.NotEnoughMemory
     }

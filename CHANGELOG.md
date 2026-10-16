@@ -10,6 +10,12 @@ All notable changes to this project are documented in this file. The format is b
 
 - ADR-0008 (proposed) and the plan for optional cloud copies of the vault with an assistant: an `offline` build with no network access and a `cloud` build, S3 first and then Dropbox, OneDrive and Google Drive.
 
+## [0.24.1] - 2026-10-16
+
+### Fixed
+
+- Opening or saving a vault whose Argon2 key derivation asks for more memory than the device can give no longer crashes the app with an `OutOfMemoryError`: the KDBX engine turns it into `VaultException.NotEnoughMemory`, and the unlock screen explains it and suggests lowering the vault's Argon2 memory in another program.
+
 ## [0.24.0] - 2026-10-16
 
 ### Added

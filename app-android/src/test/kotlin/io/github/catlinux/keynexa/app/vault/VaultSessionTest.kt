@@ -18,12 +18,15 @@ import io.github.catlinux.keynexa.sync.VaultReader
 import io.github.catlinux.keynexa.vault.Argon2Variant
 import io.github.catlinux.keynexa.vault.Credentials
 import io.github.catlinux.keynexa.vault.FileMetadata
+import io.github.catlinux.keynexa.vault.KdbxEngine
 import io.github.catlinux.keynexa.vault.Kdf
 import io.github.catlinux.keynexa.vault.NewVault
 import io.github.catlinux.keynexa.vault.SiblingFile
 import io.github.catlinux.keynexa.vault.StoragePort
 import io.github.catlinux.keynexa.vault.Vault
 import io.github.catlinux.keynexa.vault.VaultEditor
+import io.github.catlinux.keynexa.vault.VaultException
+import io.github.catlinux.keynexa.vault.VaultFormat
 import io.github.catlinux.keynexa.vault.VaultLocation
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
@@ -87,19 +90,22 @@ class VaultSessionTest {
     private fun session(
         conflicts: ConflictMerger? = null,
         afterSave: (KnownVault) -> Unit = {},
-    ): VaultSession =
-        VaultSession(
+        overrideEngine: KdbxEngine? = null,
+    ): VaultSession {
+        val engineToUse = overrideEngine ?: engine
+        return VaultSession(
             storage = storage,
-            engine = engine,
-            readers = VaultReaders(VaultReader(storage, engine, retryDelaysMillis = emptyList())),
-            recovery = SaveRecovery(storage, engine, backups, journal),
-            saver = SafeSaver(storage, engine, backups, journal, merger = KeePassMerger()),
+            engine = engineToUse,
+            readers = VaultReaders(VaultReader(storage, engineToUse, retryDelaysMillis = emptyList())),
+            recovery = SaveRecovery(storage, engineToUse, backups, journal),
+            saver = SafeSaver(storage, engineToUse, backups, journal, merger = KeePassMerger()),
             backups = backups,
             vaultMerger = KeePassMerger(),
             executor = direct,
             conflicts = conflicts,
             afterSave = afterSave,
         )
+    }
 
     /** A session with conflict merging on, over [ledger]. */
     private fun conflictSession(ledger: FileMergedCopies): VaultSession =
@@ -181,6 +187,32 @@ class VaultSessionTest {
 
         session.unlock(known, credentials())
         assertEquals(SessionState.Failed(known, UnlockError.Unreachable), session.state.value)
+    }
+
+    @Test
+    fun notEnoughMemoryWhileOpeningEndsInAFailedStateNotAStuckUnlocking() {
+        val failingEngine =
+            object : KdbxEngine {
+                override fun inspect(data: ByteArray): VaultFormat = engine.inspect(data)
+
+                override fun decode(
+                    data: ByteArray,
+                    credentials: Credentials,
+                ): Vault = throw VaultException.NotEnoughMemory("injected")
+
+                override fun hashedForm(credentials: Credentials): Credentials = engine.hashedForm(credentials)
+
+                override fun encode(
+                    vault: Vault,
+                    credentials: Credentials,
+                ): ByteArray = engine.encode(vault, credentials)
+            }
+        files[location] = engine.encode(NewVault().create("Test", cheapKdf), credentials())
+        val session = session(overrideEngine = failingEngine)
+
+        session.unlock(known, credentials())
+
+        assertEquals(SessionState.Failed(known, UnlockError.NotEnoughMemory), session.state.value)
     }
 
     @Test

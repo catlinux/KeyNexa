@@ -10,6 +10,12 @@ Todos los cambios notables de este proyecto se documentan en este archivo. El fo
 
 - ADR-0008 (propuesta) y el plan de las copias opcionales de la bóveda en la nube con un asistente: una compilación `offline` sin acceso a la red y una `cloud`, primero S3 y después Dropbox, OneDrive y Google Drive.
 
+## [0.24.1] - 2026-10-16
+
+### Corregido
+
+- Abrir o guardar una bóveda cuya derivación de clave Argon2 pide más memoria de la que el dispositivo puede dar ya no cae con un `OutOfMemoryError`: el motor KDBX lo convierte en `VaultException.NotEnoughMemory`, y la pantalla de desbloqueo lo explica y sugiere reducir la memoria de Argon2 de la bóveda desde otro programa.
+
 ## [0.24.0] - 2026-10-16
 
 ### Añadido

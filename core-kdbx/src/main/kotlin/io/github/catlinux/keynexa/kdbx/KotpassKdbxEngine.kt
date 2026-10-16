@@ -31,6 +31,7 @@ private const val SEED_SIZE = 32
 private const val SIGNATURE_SIZE = 8
 private const val MESSAGE_NOT_A_VAULT = "The data is not a KDBX file."
 private const val MESSAGE_UNSUPPORTED_FORMAT = "This vault format cannot be written."
+private const val MESSAGE_NOT_ENOUGH_MEMORY = "There is not enough memory to read or write this vault."
 
 // First two little-endian words of every KDBX file.
 private const val SIGNATURE_BASE = 0x9AA2D903L
@@ -43,7 +44,12 @@ private const val SECONDARY_OFFSET = 4
  *
  * Twofish is always offered on top of the library defaults: files written by KeePassXC with it must still open.
  */
-class KotpassKdbxEngine : KdbxEngine {
+class KotpassKdbxEngine internal constructor(
+    /** Test seam: runs inside the guarded block of [decode] and [encode], so a test can make it fail (an OOM). */
+    private val probe: () -> Unit,
+) : KdbxEngine {
+    constructor() : this({})
+
     override fun inspect(data: ByteArray): VaultFormat =
         translateFailures {
             requireKdbxSignature(data)
@@ -55,6 +61,7 @@ class KotpassKdbxEngine : KdbxEngine {
         credentials: Credentials,
     ): Vault =
         translateFailures {
+            probe()
             requireKdbxSignature(data)
             inspect(data).requireAcceptableKdfCost()
             val kotpassCredentials = credentials.toKotpass()
@@ -75,6 +82,7 @@ class KotpassKdbxEngine : KdbxEngine {
         credentials: Credentials,
     ): ByteArray =
         translateFailures {
+            probe()
             val kotpassCredentials = credentials.toKotpass()
             val database = vault.toKeePassDatabase(kotpassCredentials)
 
@@ -103,6 +111,8 @@ private fun requireKdbxSignature(data: ByteArray) {
 private inline fun <T> translateFailures(block: () -> T): T =
     try {
         block()
+    } catch (memory: OutOfMemoryError) {
+        throw VaultException.NotEnoughMemory(MESSAGE_NOT_ENOUGH_MEMORY, memory)
     } catch (expected: Exception) {
         throw expected.toVaultException()
     }

@@ -369,6 +369,7 @@ private fun errorMessage(error: UnlockError): Int =
         UnlockError.UnsupportedFormat -> R.string.unlock_error_unsupported_format
         UnlockError.Damaged -> R.string.unlock_error_damaged
         UnlockError.Unreachable -> R.string.unlock_error_unreachable
+        UnlockError.NotEnoughMemory -> R.string.unlock_error_not_enough_memory
     }
 
 /**
