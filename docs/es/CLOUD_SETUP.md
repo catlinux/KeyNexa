@@ -2,7 +2,7 @@
 
 [English](../CLOUD_SETUP.md) | [Español](CLOUD_SETUP.md)
 
-> **Verificada con una cuenta real solo para Backblaze B2** (2026-10-15). Los pasos de Cloudflare R2 y MinIO siguen la documentación de cada servicio y aún no se han probado. Los planes gratuitos, los precios y los límites cambian con el tiempo y aquí no se prometen. Solo se enlazan las páginas oficiales.
+> **Verificada con una cuenta real para Backblaze B2 (2026-10-15) y Cloudflare R2 (2026-10-16).** Los pasos de Amazon S3 y MinIO siguen la documentación de cada servicio y aún no se han probado. Los planes gratuitos, los precios y los límites cambian con el tiempo y aquí no se prometen. Solo se enlazan las páginas oficiales.
 
 KeyNexa solo envía **el archivo `.kdbx` cifrado** al servicio que tú elijas, y solo después de que aceptes la pantalla de consentimiento. La contraseña maestra, las claves y el contenido descifrado nunca salen del dispositivo. Consulta [Privacidad](PRIVACY.md).
 
@@ -19,10 +19,13 @@ Abre **Ajustes → Copias en la nube** y sigue el asistente. Tiene cinco pasos: 
 
 ## Cloudflare R2
 
-1. Crea una cuenta de Cloudflare y abre R2 en <https://developers.cloudflare.com/r2/>.
-2. Crea un cubo (privado por defecto).
-3. Crea un token de API con permiso de lectura y escritura sobre ese cubo y copia el Access Key ID y el Secret Access Key.
-4. Para el endpoint, usa `https://<ID de cuenta>.r2.cloudflarestorage.com`. La región es opcional: el asistente rellena `auto`. Deja activado «usar rutas con el cubo en la ruta».
+Verificado con una cuenta real el 2026-10-16. El panel se puede pasar a español en los ajustes de la cuenta; los nombres de abajo son los ingleses (en español: «Almacenamiento y bases de datos → Almacenamiento de objetos»).
+
+1. Crea una cuenta en <https://dash.cloudflare.com/sign-up> con un correo, una contraseña y la verificación humana, y confirma el correo.
+2. Abre **Storage & databases → R2 object storage** y añade la suscripción de R2 a la cuenta. Pide una tarjeta aunque R2 incluye un uso mensual gratuito; consulta los precios actuales en las páginas de Cloudflare. Se aceptó una tarjeta prepago.
+3. Crea un cubo (privado por defecto). Vale la ubicación **Automático** y la clase de almacenamiento **Estándar**.
+4. Crea el token: **R2 object storage → Overview → Account Details → API Tokens → Manage → Create Account API token**, con el permiso **Object Read & Write**. Si el formulario no deja limitarlo al cubo, el token sirve para todos los cubos de la cuenta: revócalo si más adelante creas otros cubos. Copia el Access Key ID y el Secret Access Key (el secreto se muestra una sola vez) en tu gestor de contraseñas.
+5. En el asistente, usa el endpoint `https://<ID de cuenta>.r2.cloudflarestorage.com` (el ID de cuenta está en la página de resumen de R2). La región es opcional: el asistente rellena `auto`. Deja activado «usar el cubo en la ruta». Un cubo creado en una jurisdicción (UE, EE. UU.) necesita su propio endpoint, como `https://<ID de cuenta>.eu.r2.cloudflarestorage.com`.
 
 ## Amazon S3
 

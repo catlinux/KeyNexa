@@ -2,7 +2,7 @@
 
 [English](CLOUD_SETUP.md) | [Español](es/CLOUD_SETUP.md)
 
-> **Verified with a real account only for Backblaze B2** (2026-10-15). The Cloudflare R2 and MinIO steps follow each service's documentation and have not been tried yet. Free plans, prices and limits change over time and are not promised here. Only the official pages are linked.
+> **Verified with a real account for Backblaze B2 (2026-10-15) and Cloudflare R2 (2026-10-16).** The Amazon S3 and MinIO steps follow each service's documentation and have not been tried yet. Free plans, prices and limits change over time and are not promised here. Only the official pages are linked.
 
 KeyNexa only ever sends **the encrypted `.kdbx` file** to the service you choose, and only after you accept the consent screen. The master password, the keys and the decrypted content never leave the device. See [Privacy](PRIVACY.md).
 
@@ -19,10 +19,13 @@ Open **Settings → Copies in the cloud** and follow the assistant. It has five 
 
 ## Cloudflare R2
 
-1. Create a Cloudflare account and open R2 at <https://developers.cloudflare.com/r2/>.
-2. Create a bucket (private by default).
-3. Create an API token with read and write permission over that bucket, and copy the Access Key ID and the Secret Access Key.
-4. For the endpoint, use `https://<account id>.r2.cloudflarestorage.com`. The region is optional: the assistant fills in `auto`. Leave "use the bucket in the path" on.
+Verified with a real account on 2026-10-16. The dashboard can be switched to Spanish in the account settings; the names below are the English ones.
+
+1. Create an account at <https://dash.cloudflare.com/sign-up> with an email, a password and the human check, then confirm the email.
+2. Open **Storage & databases → R2 object storage** and add the R2 subscription to the account. It asks for a payment card even though R2 includes free monthly usage; check the current prices on Cloudflare's own pages. A prepaid card was accepted.
+3. Create a bucket (private by default). Location **Automatic** and storage class **Standard** are fine.
+4. Create the token: **R2 object storage → Overview → Account Details → API Tokens → Manage → Create Account API token**, with the **Object Read & Write** permission. If the form does not let you limit it to the bucket, the token works for every bucket of the account: revoke it if you later create other buckets. Copy the Access Key ID and the Secret Access Key (the secret is shown only once) into your password manager.
+5. In the assistant, use the endpoint `https://<account id>.r2.cloudflarestorage.com` (the account ID is on the R2 overview page). The region is optional: the assistant fills in `auto`. Leave "use the bucket in the path" on. A bucket created in a jurisdiction (EU, US) needs its own endpoint, such as `https://<account id>.eu.r2.cloudflarestorage.com`.
 
 ## Amazon S3
 

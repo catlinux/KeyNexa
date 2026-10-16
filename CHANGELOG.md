@@ -10,6 +10,12 @@ All notable changes to this project are documented in this file. The format is b
 
 - ADR-0008 (proposed) and the plan for optional cloud copies of the vault with an assistant: an `offline` build with no network access and a `cloud` build, S3 first and then Dropbox, OneDrive and Google Drive.
 
+## [0.30.1] - 2026-10-16
+
+### Changed
+
+- The cloud setup guide now covers Cloudflare R2 step by step, verified with a real account (connection test and copy uploaded).
+
 ## [0.30.0] - 2026-10-16
 
 ### Changed
