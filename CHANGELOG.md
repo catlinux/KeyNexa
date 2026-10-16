@@ -10,6 +10,12 @@ All notable changes to this project are documented in this file. The format is b
 
 - ADR-0008 (proposed) and the plan for optional cloud copies of the vault with an assistant: an `offline` build with no network access and a `cloud` build, S3 first and then Dropbox, OneDrive and Google Drive.
 
+## [0.24.0] - 2026-10-16
+
+### Added
+
+- A theme setting (Settings → Appearance) with three choices: Automatic (follow the system, the default), Light and Dark. The choice is saved with the other settings, applied at once (the activity is recreated, without locking the vault) and kept after a restart; an unknown stored value falls back to Automatic.
+
 ## [0.23.6] - 2026-10-16
 
 ### Changed

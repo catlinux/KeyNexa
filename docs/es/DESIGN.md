@@ -2,7 +2,7 @@
 
 [English](../DESIGN.md) | [Español](DESIGN.md)
 
-> **Estado:** la marca es la del responsable (2026-10-13). El resto es una propuesta pendiente de aprobación (detalles de la paleta, fuente, interruptor manual de tema). Los tokens de abajo están implementados en `app-android`; cambiar un valor es editar una línea, y la prueba de contraste mantiene la paleta accesible.
+> **Estado:** la marca es la del responsable (2026-10-13). El resto es una propuesta pendiente de aprobación (detalles de la paleta, fuente). Los tokens de abajo están implementados en `app-android`; cambiar un valor es editar una línea, y la prueba de contraste mantiene la paleta accesible.
 
 ## Principios
 
@@ -100,7 +100,7 @@ Son las situaciones exactas que la interfaz debe nombrar. Los textos finales viv
 
 ## Temas
 
-Claro y oscuro siguen el ajuste del sistema; en las primeras versiones no hay un interruptor propio en la app. Las dos paletas se definen y se prueban juntas. Las superficies del tema oscuro son azul negruzco, no negro puro, para que se vean los bordes.
+Claro y oscuro se eligen en Ajustes (Automático sigue al sistema; Claro u Oscuro fuerzan uno de ellos). Las dos paletas se definen y se prueban juntas. Las superficies del tema oscuro son azul negruzco, no negro puro, para que se vean los bordes.
 
 ## Lista de accesibilidad
 
@@ -114,4 +114,3 @@ Claro y oscuro siguen el ajuste del sistema; en las primeras versiones no hay un
 
 1. Aprobar la paleta derivada del icono.
 2. Incluir Inter o Manrope, o mantener la fuente del sistema.
-3. Si se ofrece un interruptor manual claro/oscuro.

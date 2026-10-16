@@ -3,6 +3,7 @@ package io.github.catlinux.keynexa.app
 import android.os.Bundle
 import android.view.WindowManager
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.safeDrawingPadding
@@ -11,6 +12,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.fragment.app.FragmentActivity
 import io.github.catlinux.keynexa.app.ui.theme.KeyNexaTheme
+import io.github.catlinux.keynexa.app.ui.theme.resolveDarkTheme
 
 class MainActivity : FragmentActivity() {
     private val container: AppContainer get() = (application as KeyNexaApplication).container
@@ -21,7 +23,8 @@ class MainActivity : FragmentActivity() {
         setContent {
             val allowScreenshots = container.settings.values.allowScreenshots
             LaunchedEffect(allowScreenshots) { applyScreenProtection(allowScreenshots) }
-            KeyNexaTheme {
+            val dark = resolveDarkTheme(container.settings.values.themeMode, isSystemInDarkTheme())
+            KeyNexaTheme(darkTheme = dark) {
                 // The app draws edge to edge; the padding keeps content out from under the system bars and the
                 // keyboard, while the surface still paints the background behind them.
                 Surface(modifier = Modifier.fillMaxSize()) {

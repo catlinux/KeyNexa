@@ -2,7 +2,7 @@
 
 [English](DESIGN.md) | [Español](es/DESIGN.md)
 
-> **Status:** the mark is the maintainer's own (2026-10-13). The rest is a proposal pending approval (palette details, font, manual theme switch). The tokens below are implemented in `app-android`; changing a value is a one-line edit, and the contrast test keeps the palette accessible.
+> **Status:** the mark is the maintainer's own (2026-10-13). The rest is a proposal pending approval (palette details, font). The tokens below are implemented in `app-android`; changing a value is a one-line edit, and the contrast test keeps the palette accessible.
 
 ## Principles
 
@@ -100,7 +100,7 @@ These are the exact situations the interface must name. Final texts live in `str
 
 ## Themes
 
-Light and dark follow the system setting; there is no separate in-app switch in the first versions. Both palettes are defined together and tested together. Surfaces in dark theme are blue-black, not pure black, to keep edges visible.
+Light and dark are chosen in Settings (Automatic follows the system; Light or Dark force one of them). Both palettes are defined together and tested together. Surfaces in dark theme are blue-black, not pure black, to keep edges visible.
 
 ## Accessibility checklist
 
@@ -114,4 +114,3 @@ Light and dark follow the system setting; there is no separate in-app switch in 
 
 1. Approve the palette derived from the icon.
 2. Bundle Inter or Manrope, or keep the system font.
-3. Whether to offer a manual light/dark switch.

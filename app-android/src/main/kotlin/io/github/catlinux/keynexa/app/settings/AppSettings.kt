@@ -6,6 +6,19 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.core.content.edit
 
+/** The light/dark choice: follow the system, or force one of the two. */
+enum class ThemeMode {
+    System,
+    Light,
+    Dark,
+    ;
+
+    companion object {
+        /** Reads a stored name; a missing or unknown value falls back to [System]. */
+        fun fromStored(value: String?): ThemeMode = entries.firstOrNull { it.name == value } ?: System
+    }
+}
+
 /** What the user can change about protection. The defaults are the safe ones. */
 data class SettingsValues(
     /** Seconds in the background before the vault locks; [LOCK_IMMEDIATELY] locks as soon as the app is left. */
@@ -18,6 +31,8 @@ data class SettingsValues(
     /** Days after which the master password is asked again even if biometric unlock is on (ADR-0006). */
     val biometricPasswordDays: Int = DEFAULT_BIOMETRIC_PASSWORD_DAYS,
     val syncWarnDays: Int = DEFAULT_SYNC_WARN_DAYS,
+    /** Light or dark: [ThemeMode.System] follows the device by default. */
+    val themeMode: ThemeMode = ThemeMode.System,
 ) {
     companion object {
         const val LOCK_IMMEDIATELY = 0
@@ -58,6 +73,7 @@ class AppSettings(
             putInt(CLIPBOARD, new.clipboardSeconds)
             putInt(BIOMETRIC_DAYS, new.biometricPasswordDays)
             putInt(SYNC_WARN, new.syncWarnDays)
+            putString(THEME, new.themeMode.name)
         }
         values = new
     }
@@ -71,6 +87,7 @@ class AppSettings(
             clipboardSeconds = preferences.getInt(CLIPBOARD, defaults.clipboardSeconds),
             biometricPasswordDays = preferences.getInt(BIOMETRIC_DAYS, defaults.biometricPasswordDays),
             syncWarnDays = preferences.getInt(SYNC_WARN, defaults.syncWarnDays),
+            themeMode = ThemeMode.fromStored(preferences.getString(THEME, null)),
         )
     }
 
@@ -82,5 +99,6 @@ class AppSettings(
         const val CLIPBOARD = "clipboard_seconds"
         const val BIOMETRIC_DAYS = "biometric_password_days"
         const val SYNC_WARN = "sync_warn_days"
+        const val THEME = "theme_mode"
     }
 }

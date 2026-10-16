@@ -7,6 +7,20 @@ import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
+import io.github.catlinux.keynexa.app.settings.ThemeMode
+
+/**
+ * Whether the app paints dark: the chosen mode, or what the device says when the mode follows the system.
+ */
+fun resolveDarkTheme(
+    mode: ThemeMode,
+    systemDark: Boolean,
+): Boolean =
+    when (mode) {
+        ThemeMode.System -> systemDark
+        ThemeMode.Light -> false
+        ThemeMode.Dark -> true
+    }
 
 private fun Long.toColor() = Color(this)
 

@@ -33,6 +33,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import io.github.catlinux.keynexa.app.R
 import io.github.catlinux.keynexa.app.settings.SettingsValues
+import io.github.catlinux.keynexa.app.settings.ThemeMode
 import io.github.catlinux.keynexa.app.vault.CloudBackupSource
 
 /** Spacing and touch targets of the design grid (docs/DESIGN.md). */
@@ -129,6 +130,15 @@ fun SettingsScreen(
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
+            SectionTitle(text = stringResource(R.string.settings_section_appearance))
+            Text(text = stringResource(R.string.settings_theme), style = MaterialTheme.typography.bodyLarge)
+            ThemeMode.entries.forEach { mode ->
+                OptionRow(
+                    label = themeLabel(mode),
+                    selected = values.themeMode == mode,
+                    onSelect = { onChange(values.copy(themeMode = mode)) },
+                )
+            }
             CloudSettingsEntry(cloudSource)
         }
     }
@@ -275,6 +285,17 @@ private fun clipboardLabel(seconds: Int): String =
     } else {
         pluralStringResource(R.plurals.settings_seconds, seconds, seconds)
     }
+
+/** The word each theme choice is shown with. */
+@Composable
+private fun themeLabel(mode: ThemeMode): String =
+    stringResource(
+        when (mode) {
+            ThemeMode.System -> R.string.settings_theme_system
+            ThemeMode.Light -> R.string.settings_theme_light
+            ThemeMode.Dark -> R.string.settings_theme_dark
+        },
+    )
 
 /** Says out loud what leaving the vault open indefinitely means. */
 @Composable

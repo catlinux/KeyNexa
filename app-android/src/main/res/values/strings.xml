@@ -246,6 +246,11 @@
     <string name="settings_section_sync">Synchronization</string>
     <string name="settings_sync_warn">Warn when the vault file has not changed</string>
     <string name="settings_sync_warn_note">KeyNexa cannot know what Syncthing has uploaded. This warning is a heuristic: it only notices when the vault file has not changed for several days.</string>
+    <string name="settings_section_appearance">Appearance</string>
+    <string name="settings_theme">Theme</string>
+    <string name="settings_theme_system">Automatic (follow the system)</string>
+    <string name="settings_theme_light">Light</string>
+    <string name="settings_theme_dark">Dark</string>
     <plurals name="settings_seconds">
         <item quantity="one">%1$d second</item>
         <item quantity="other">%1$d seconds</item>

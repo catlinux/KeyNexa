@@ -251,6 +251,11 @@
     <string name="settings_section_sync">Sincronización</string>
     <string name="settings_sync_warn">Avisar si el archivo de la bóveda no cambia</string>
     <string name="settings_sync_warn_note">KeyNexa no sabe qué ha subido Syncthing. Este aviso es una heurística: solo nota cuando el archivo de la bóveda no cambia desde hace varios días.</string>
+    <string name="settings_section_appearance">Aspecto</string>
+    <string name="settings_theme">Tema</string>
+    <string name="settings_theme_system">Automático (el del sistema)</string>
+    <string name="settings_theme_light">Claro</string>
+    <string name="settings_theme_dark">Oscuro</string>
     <plurals name="settings_seconds">
         <item quantity="one">%1$d segundo</item>
         <item quantity="many">%1$d segundos</item>
