@@ -10,6 +10,12 @@ All notable changes to this project are documented in this file. The format is b
 
 - ADR-0008 (proposed) and the plan for optional cloud copies of the vault with an assistant: an `offline` build with no network access and a `cloud` build, S3 first and then Dropbox, OneDrive and Google Drive.
 
+## [0.30.0] - 2026-10-16
+
+### Changed
+
+- Aligned the remaining screens with the chosen visual direction A: the home screen (a brand header with the settings action, the known vaults in a card of rows with a hexagon avatar and where each one lives, a "Your vaults" section label, an empty state with the brand, and the "Open existing vault" and "Create new vault" buttons in the thumb zone), the settings screen (a header band, one card per section with a title in capitals and rows of the same height separated by a line, and the cloud-copies row fitted into its own card in the cloud build) and the entry editor (the fields in cards with 14 dp corners and a fixed bottom bar with "Cancel" and "Save"). Behaviour is unchanged.
+
 ## [0.29.0] - 2026-10-16
 
 ### Changed

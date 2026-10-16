@@ -2,7 +2,7 @@
 
 [English](../DESIGN.md) | [Español](DESIGN.md)
 
-> **Estado:** la marca es la del responsable (2026-10-13). La dirección visual «A, clara y sobria» (construida sobre esta paleta, con su tema oscuro a juego) y la fuente Manrope las eligió el responsable el 2026-10-16; las maquetas se guardan en `design/mockups/`. Los tokens de abajo están implementados en `app-android`; cambiar un valor es editar una línea, y la prueba de contraste mantiene la paleta accesible.
+> **Estado:** la marca es la del responsable (2026-10-13). La dirección visual «A, clara y sobria» (construida sobre esta paleta, con su tema oscuro a juego) y la fuente Manrope las eligió el responsable el 2026-10-16; las maquetas se guardan en `design/mockups/`. Los tokens de abajo están implementados en `app-android`; cambiar un valor es editar una línea, y la prueba de contraste mantiene la paleta accesible. **La dirección A ya cubre todas las pantallas** (desbloqueo, lista de bóvedas, grupo, entrada, editor de entrada y ajustes); las capturas de `fastlane/` siguen pendientes de rehacer en el móvil.
 
 ## Principios
 
@@ -42,7 +42,7 @@ La interfaz usa la escala tipográfica de Material 3 con **Manrope**, incluida c
 
 | Uso | Estilo | Tamaño / peso |
 | --- | --- | --- |
-| Título de pantalla | `headlineMedium` | 28 sp / regular |
+| Título de pantalla | `headlineSmall` | 24 sp / extra negrita |
 | Título de sección | `titleMedium` | 16 sp / medio |
 | Cuerpo, valores de campo | `bodyLarge` | 16 sp / regular |
 | Texto secundario | `bodyMedium` | 14 sp / regular |
@@ -55,7 +55,7 @@ El texto debe escalar con el tamaño de fuente del sistema hasta el 200 % sin re
 
 - **Retícula:** 4 dp. Pasos habituales: 4, 8, 12, 16, 24, 32, 48. Margen lateral de pantalla de 16 dp (24 dp en tabletas).
 - **Zonas táctiles:** al menos 48 x 48 dp, con al menos 8 dp entre ellas.
-- **Forma:** valores por defecto de Material 3: 12 dp en tarjetas y campos, totalmente redondeada en botones y chips, 28 dp en diálogos.
+- **Forma:** tarjetas de 16–18 dp con borde de 1 dp, campos de 14 dp, botones principales de 54–56 dp con esquinas de 14 dp, la banda de cabecera 24 dp en las esquinas inferiores, chips totalmente redondeados, diálogos de 28 dp.
 - **Elevación:** plana. El tono y los bordes separan las capas; las sombras solo en menús y diálogos.
 
 ## Componentes
@@ -74,6 +74,8 @@ El texto debe escalar con el tamaño de fuente del sistema hasta el 200 % sin re
 | **Fila de campo** | Una etiqueta pequeña en mayúsculas encima del valor y botones de icono de 44–48 dp al final: *copiar* y *mostrar* en un secreto (cada descripción nombra el campo, nunca el valor). Un secreto aparece como puntos; al mostrarlo se vuelve a ocultar solo o al apagar la pantalla. |
 | **Tarjeta de campos** | Los campos de una entrada (usuario, contraseña, código de un solo uso, URL y cualquier campo personalizado) en una sola tarjeta, radio 18 dp, con un separador fino entre filas. Las notas, los adjuntos y las fechas de la entrada van en tarjetas propias. |
 | **Barra de acciones** | La barra fija inferior de la entrada: un botón *Editar* a todo el ancho y un botón cuadrado y contorneado *Eliminar* en el color de error con su propia descripción. |
+| **Tarjeta de sección** | Una tarjeta (superficie, borde de 1 dp, radio de 16 dp) con un título en mayúsculas sobre filas de la misma altura separadas por una línea fina: las secciones de la pantalla de ajustes y los grupos de campos del editor de entrada. |
+| **Fila de bóveda** | Una bóveda en la lista de inicio: un avatar hexagonal con su inicial, el nombre en negrita, dónde vive y la acción para quitarla de la lista. |
 | **Generador de contraseñas** | Control de longitud, clases de caracteres, barra de fortaleza con etiqueta de texto, *Usar* y *Regenerar*. |
 | **Barra de búsqueda** | Busca en título, usuario, URL y etiquetas solo en la bóveda abierta; no envía nada a ningún sitio. |
 | **Acción principal** | Un botón flotante *Nueva entrada*, abajo a la derecha. Las acciones destructivas usan el color de error y una confirmación. |

@@ -193,6 +193,7 @@
     <string name="edit_title_new">New entry</string>
     <string name="edit_title_edit">Edit entry</string>
     <string name="edit_back">Back</string>
+    <string name="edit_basic_title">Main data</string>
     <string name="edit_title_label">Title</string>
     <string name="edit_title_required">An entry needs a title.</string>
     <string name="edit_user_name_label">User name</string>

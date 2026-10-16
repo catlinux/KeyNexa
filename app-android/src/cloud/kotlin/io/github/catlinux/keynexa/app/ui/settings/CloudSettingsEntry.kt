@@ -6,6 +6,7 @@ import android.content.Context
 import android.content.Intent
 import android.text.format.DateUtils
 import androidx.annotation.StringRes
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -15,6 +16,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -74,6 +76,13 @@ import java.time.Instant
 private val CloudPadding = 16.dp
 private val CloudGap = 8.dp
 private val CloudTouchTarget = 48.dp
+
+/** The cloud row fits inside a settings card like the other sections. */
+private val CloudCardCorner = 16.dp
+private const val CLOUD_CARD_BORDER_ALPHA = 0.4f
+private val CloudRowPaddingStart = 16.dp
+private val CloudRowPaddingEnd = 8.dp
+private val CloudRowPaddingVertical = 12.dp
 
 private const val HTTPS_PREFIX = "https://"
 private const val KEEP_SMALL = 5
@@ -160,31 +169,43 @@ fun CloudSettingsEntry(source: CloudBackupSource?) {
         }
     }
 
-    Row(
-        modifier =
-            Modifier
-                .fillMaxWidth()
-                .heightIn(min = CloudTouchTarget)
-                .clickable { showing = true }
-                .padding(vertical = CloudGap),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(CloudGap),
+    Surface(
+        modifier = Modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(CloudCardCorner),
+        color = MaterialTheme.colorScheme.surface,
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline.copy(alpha = CLOUD_CARD_BORDER_ALPHA)),
     ) {
-        Column(
-            modifier = Modifier.weight(1f),
-            verticalArrangement = Arrangement.spacedBy(CloudGap),
+        Row(
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .heightIn(min = CloudTouchTarget)
+                    .clickable { showing = true }
+                    .padding(
+                        start = CloudRowPaddingStart,
+                        end = CloudRowPaddingEnd,
+                        top = CloudRowPaddingVertical,
+                        bottom = CloudRowPaddingVertical,
+                    ),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(CloudGap),
         ) {
-            Text(text = stringResource(R.string.cloud_settings_entry), style = MaterialTheme.typography.bodyLarge)
-            Text(
-                text = rowStatusText(rowStatus),
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            Column(
+                modifier = Modifier.weight(1f),
+                verticalArrangement = Arrangement.spacedBy(CloudGap),
+            ) {
+                Text(text = stringResource(R.string.cloud_settings_entry), style = MaterialTheme.typography.bodyLarge)
+                Text(
+                    text = rowStatusText(rowStatus),
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
+            Icon(
+                imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
+                contentDescription = null,
             )
         }
-        Icon(
-            imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
-            contentDescription = null,
-        )
     }
 
     if (showing) {

@@ -1,7 +1,12 @@
+@file:Suppress("TooManyFunctions")
+
 package io.github.catlinux.keynexa.app.ui.settings
 
+import androidx.annotation.StringRes
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -9,10 +14,12 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.selection.toggleable
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Warning
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -29,19 +36,41 @@ import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import io.github.catlinux.keynexa.app.R
 import io.github.catlinux.keynexa.app.settings.SettingsValues
 import io.github.catlinux.keynexa.app.settings.ThemeMode
+import io.github.catlinux.keynexa.app.ui.theme.LocalDarkTheme
 import io.github.catlinux.keynexa.app.vault.CloudBackupSource
 
 /** Spacing and touch targets of the design grid (docs/DESIGN.md). */
-private val ScreenPadding = 16.dp
+private val ScreenPadding = 20.dp
 private val ItemGap = 8.dp
-private val BlockGap = 16.dp
 private val PanelPadding = 12.dp
 private val TouchTarget = 48.dp
+
+/** The band at the top, as on the group screen. */
+private val BandCorner = 24.dp
+private val BandPaddingStart = 12.dp
+private val BandPaddingEnd = 20.dp
+private val BandPaddingTop = 20.dp
+private val BandPaddingBottom = 24.dp
+
+/** One card per section, with a title in capitals and rows of the same height. */
+private val CardGap = 12.dp
+private val CardCorner = 16.dp
+private val CardBorderWidth = 1.dp
+private const val CARD_BORDER_ALPHA = 0.4f
+private const val DIVIDER_ALPHA = 0.2f
+private val CardPaddingHorizontal = 16.dp
+private val CardTitlePaddingTop = 14.dp
+private val CardTitlePaddingBottom = 4.dp
+private val RowPaddingVertical = 12.dp
+private val LabelPaddingTop = 12.dp
+private val LabelPaddingBottom = 4.dp
+private val NotePaddingBottom = 12.dp
 
 private const val SECONDS_PER_MINUTE = 60
 
@@ -65,121 +94,234 @@ fun SettingsScreen(
     modifier: Modifier = Modifier,
     cloudSource: CloudBackupSource? = null,
 ) {
-    Surface(modifier = modifier.fillMaxSize()) {
-        Column(
-            modifier =
-                Modifier
-                    .fillMaxSize()
-                    .verticalScroll(rememberScrollState())
-                    .padding(ScreenPadding),
-            verticalArrangement = Arrangement.spacedBy(ItemGap),
-        ) {
+    Surface(modifier = modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
+        Column(modifier = Modifier.fillMaxSize()) {
             SettingsHeader(onBack = onBack)
-            SectionTitle(text = stringResource(R.string.settings_section_lock))
-            Text(text = stringResource(R.string.settings_auto_lock), style = MaterialTheme.typography.bodyLarge)
-            SettingsValues.AUTO_LOCK_CHOICES.forEach { seconds ->
-                OptionRow(
-                    label = autoLockLabel(seconds),
-                    selected = values.autoLockSeconds == seconds,
-                    onSelect = { onChange(values.copy(autoLockSeconds = seconds)) },
-                )
+            Column(
+                modifier =
+                    Modifier
+                        .fillMaxSize()
+                        .verticalScroll(rememberScrollState())
+                        .padding(start = ScreenPadding, end = ScreenPadding, top = CardGap, bottom = CardGap),
+                verticalArrangement = Arrangement.spacedBy(CardGap),
+            ) {
+                SettingsCard(titleRes = R.string.settings_section_lock) {
+                    SettingsLabel(textRes = R.string.settings_auto_lock)
+                    SettingsValues.AUTO_LOCK_CHOICES.forEachIndexed { index, seconds ->
+                        if (index > 0) SettingsDivider()
+                        OptionRow(
+                            label = autoLockLabel(seconds),
+                            selected = values.autoLockSeconds == seconds,
+                            onSelect = { onChange(values.copy(autoLockSeconds = seconds)) },
+                        )
+                    }
+                    if (values.autoLockSeconds == SettingsValues.NEVER_LOCK) {
+                        NeverLockWarning(
+                            modifier =
+                                Modifier.padding(
+                                    start = CardPaddingHorizontal,
+                                    end = CardPaddingHorizontal,
+                                    top = RowPaddingVertical,
+                                    bottom = RowPaddingVertical,
+                                ),
+                        )
+                    }
+                    SettingsDivider()
+                    SwitchSetting(
+                        label = stringResource(R.string.settings_lock_on_screen_off),
+                        checked = values.lockOnScreenOff,
+                        onCheckedChange = { onChange(values.copy(lockOnScreenOff = it)) },
+                    )
+                }
+                SettingsCard(titleRes = R.string.settings_section_privacy) {
+                    SwitchSetting(
+                        label = stringResource(R.string.settings_allow_screenshots),
+                        checked = values.allowScreenshots,
+                        onCheckedChange = { onChange(values.copy(allowScreenshots = it)) },
+                        description = stringResource(R.string.settings_allow_screenshots_help),
+                    )
+                    SettingsDivider()
+                    SettingsLabel(textRes = R.string.settings_clipboard_delay)
+                    SettingsValues.CLIPBOARD_CHOICES.forEachIndexed { index, seconds ->
+                        if (index > 0) SettingsDivider()
+                        OptionRow(
+                            label = clipboardLabel(seconds),
+                            selected = values.clipboardSeconds == seconds,
+                            onSelect = { onChange(values.copy(clipboardSeconds = seconds)) },
+                        )
+                    }
+                    SettingsNote(textRes = R.string.settings_clipboard_note)
+                }
+                SettingsCard(titleRes = R.string.settings_section_biometric) {
+                    SettingsLabel(textRes = R.string.settings_biometric_days)
+                    SettingsValues.BIOMETRIC_DAYS_CHOICES.forEachIndexed { index, days ->
+                        if (index > 0) SettingsDivider()
+                        OptionRow(
+                            label = pluralStringResource(R.plurals.settings_days, days, days),
+                            selected = values.biometricPasswordDays == days,
+                            onSelect = { onChange(values.copy(biometricPasswordDays = days)) },
+                        )
+                    }
+                    SettingsNote(textRes = R.string.settings_biometric_note)
+                }
+                SettingsCard(titleRes = R.string.settings_section_sync) {
+                    SettingsLabel(textRes = R.string.settings_sync_warn)
+                    SettingsValues.SYNC_WARN_CHOICES.forEachIndexed { index, days ->
+                        if (index > 0) SettingsDivider()
+                        OptionRow(
+                            label =
+                                if (days == 0) {
+                                    stringResource(R.string.settings_never)
+                                } else {
+                                    pluralStringResource(R.plurals.settings_days, days, days)
+                                },
+                            selected = values.syncWarnDays == days,
+                            onSelect = { onChange(values.copy(syncWarnDays = days)) },
+                        )
+                    }
+                    SettingsNote(textRes = R.string.settings_sync_warn_note)
+                }
+                SettingsCard(titleRes = R.string.settings_section_appearance) {
+                    SettingsLabel(textRes = R.string.settings_theme)
+                    ThemeMode.entries.forEachIndexed { index, mode ->
+                        if (index > 0) SettingsDivider()
+                        OptionRow(
+                            label = themeLabel(mode),
+                            selected = values.themeMode == mode,
+                            onSelect = { onChange(values.copy(themeMode = mode)) },
+                        )
+                    }
+                }
+                CloudSettingsEntry(cloudSource)
             }
-            if (values.autoLockSeconds == SettingsValues.NEVER_LOCK) NeverLockWarning()
-            SwitchSetting(
-                label = stringResource(R.string.settings_lock_on_screen_off),
-                checked = values.lockOnScreenOff,
-                onCheckedChange = { onChange(values.copy(lockOnScreenOff = it)) },
-            )
-            SectionTitle(text = stringResource(R.string.settings_section_privacy))
-            SwitchSetting(
-                label = stringResource(R.string.settings_allow_screenshots),
-                checked = values.allowScreenshots,
-                onCheckedChange = { onChange(values.copy(allowScreenshots = it)) },
-                description = stringResource(R.string.settings_allow_screenshots_help),
-            )
-            Text(text = stringResource(R.string.settings_clipboard_delay), style = MaterialTheme.typography.bodyLarge)
-            SettingsValues.CLIPBOARD_CHOICES.forEach { seconds ->
-                OptionRow(
-                    label = clipboardLabel(seconds),
-                    selected = values.clipboardSeconds == seconds,
-                    onSelect = { onChange(values.copy(clipboardSeconds = seconds)) },
-                )
-            }
-            Text(
-                text = stringResource(R.string.settings_clipboard_note),
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
-            BiometricSettings(values = values, onChange = onChange)
-            SectionTitle(text = stringResource(R.string.settings_section_sync))
-            Text(text = stringResource(R.string.settings_sync_warn), style = MaterialTheme.typography.bodyLarge)
-            SettingsValues.SYNC_WARN_CHOICES.forEach { days ->
-                OptionRow(
-                    label =
-                        if (days == 0) {
-                            stringResource(R.string.settings_never)
-                        } else {
-                            pluralStringResource(R.plurals.settings_days, days, days)
-                        },
-                    selected = values.syncWarnDays == days,
-                    onSelect = { onChange(values.copy(syncWarnDays = days)) },
-                )
-            }
-            Text(
-                text = stringResource(R.string.settings_sync_warn_note),
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
-            SectionTitle(text = stringResource(R.string.settings_section_appearance))
-            Text(text = stringResource(R.string.settings_theme), style = MaterialTheme.typography.bodyLarge)
-            ThemeMode.entries.forEach { mode ->
-                OptionRow(
-                    label = themeLabel(mode),
-                    selected = values.themeMode == mode,
-                    onSelect = { onChange(values.copy(themeMode = mode)) },
-                )
-            }
-            CloudSettingsEntry(cloudSource)
         }
     }
 }
 
-/** The title of the screen and the way back. */
+/** The coloured band with the title and the way back. */
 @Composable
 private fun SettingsHeader(
     onBack: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Row(
+    val dark = LocalDarkTheme.current
+    val container = if (dark) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.primary
+    val content = if (dark) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onPrimary
+    Surface(
         modifier = modifier.fillMaxWidth(),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(ItemGap),
+        color = container,
+        contentColor = content,
+        shape = RoundedCornerShape(bottomStart = BandCorner, bottomEnd = BandCorner),
     ) {
-        IconButton(onClick = onBack) {
-            Icon(
-                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                contentDescription = stringResource(R.string.settings_back),
+        Row(
+            modifier =
+                Modifier.padding(
+                    start = BandPaddingStart,
+                    end = BandPaddingEnd,
+                    top = BandPaddingTop,
+                    bottom = BandPaddingBottom,
+                ),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(ItemGap),
+        ) {
+            IconButton(onClick = onBack) {
+                Icon(
+                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                    contentDescription = stringResource(R.string.settings_back),
+                )
+            }
+            Text(
+                text = stringResource(R.string.settings_title),
+                style = MaterialTheme.typography.headlineSmall,
+                fontWeight = FontWeight.ExtraBold,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                modifier = Modifier.weight(1f),
             )
         }
-        Text(
-            text = stringResource(R.string.settings_title),
-            style = MaterialTheme.typography.headlineSmall,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
-            modifier = Modifier.weight(1f),
-        )
     }
 }
 
+/** A section of the settings: a card with a title in capitals and the rows inside it. */
 @Composable
-private fun SectionTitle(
-    text: String,
+private fun SettingsCard(
+    @StringRes titleRes: Int,
+    modifier: Modifier = Modifier,
+    content: @Composable ColumnScope.() -> Unit,
+) {
+    Surface(
+        modifier = modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(CardCorner),
+        color = MaterialTheme.colorScheme.surface,
+        border = BorderStroke(CardBorderWidth, MaterialTheme.colorScheme.outline.copy(alpha = CARD_BORDER_ALPHA)),
+    ) {
+        Column {
+            Text(
+                text = stringResource(titleRes).uppercase(),
+                style = MaterialTheme.typography.labelLarge,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier =
+                    Modifier.padding(
+                        start = CardPaddingHorizontal,
+                        end = CardPaddingHorizontal,
+                        top = CardTitlePaddingTop,
+                        bottom = CardTitlePaddingBottom,
+                    ),
+            )
+            content()
+        }
+    }
+}
+
+/** The question a group of options answers. */
+@Composable
+private fun SettingsLabel(
+    @StringRes textRes: Int,
     modifier: Modifier = Modifier,
 ) {
     Text(
-        text = text,
-        style = MaterialTheme.typography.titleMedium,
-        modifier = modifier.fillMaxWidth().padding(top = BlockGap),
+        text = stringResource(textRes),
+        style = MaterialTheme.typography.bodyLarge,
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .padding(
+                    start = CardPaddingHorizontal,
+                    end = CardPaddingHorizontal,
+                    top = LabelPaddingTop,
+                    bottom = LabelPaddingBottom,
+                ),
+    )
+}
+
+/** A quiet explanation under a group of options. */
+@Composable
+private fun SettingsNote(
+    @StringRes textRes: Int,
+    modifier: Modifier = Modifier,
+) {
+    Text(
+        text = stringResource(textRes),
+        style = MaterialTheme.typography.bodyMedium,
+        color = MaterialTheme.colorScheme.onSurfaceVariant,
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .padding(
+                    start = CardPaddingHorizontal,
+                    end = CardPaddingHorizontal,
+                    top = ItemGap,
+                    bottom = NotePaddingBottom,
+                ),
+    )
+}
+
+/** The thin line between two rows of a card. */
+@Composable
+private fun SettingsDivider(modifier: Modifier = Modifier) {
+    HorizontalDivider(
+        modifier = modifier,
+        color = MaterialTheme.colorScheme.outline.copy(alpha = DIVIDER_ALPHA),
     )
 }
 
@@ -197,7 +339,7 @@ private fun OptionRow(
                 .fillMaxWidth()
                 .heightIn(min = TouchTarget)
                 .toggleable(value = selected, role = Role.RadioButton, onValueChange = { onSelect() })
-                .padding(vertical = ItemGap),
+                .padding(horizontal = CardPaddingHorizontal, vertical = RowPaddingVertical),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(ItemGap),
     ) {
@@ -221,7 +363,7 @@ private fun SwitchSetting(
                 .fillMaxWidth()
                 .heightIn(min = TouchTarget)
                 .toggleable(value = checked, role = Role.Switch, onValueChange = onCheckedChange)
-                .padding(vertical = ItemGap),
+                .padding(horizontal = CardPaddingHorizontal, vertical = RowPaddingVertical),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(ItemGap),
     ) {
@@ -240,28 +382,6 @@ private fun SwitchSetting(
         }
         Switch(checked = checked, onCheckedChange = null)
     }
-}
-
-/** How long biometric unlock may go without the master password. */
-@Composable
-private fun BiometricSettings(
-    values: SettingsValues,
-    onChange: (SettingsValues) -> Unit,
-) {
-    SectionTitle(text = stringResource(R.string.settings_section_biometric))
-    Text(text = stringResource(R.string.settings_biometric_days), style = MaterialTheme.typography.bodyLarge)
-    SettingsValues.BIOMETRIC_DAYS_CHOICES.forEach { days ->
-        OptionRow(
-            label = pluralStringResource(R.plurals.settings_days, days, days),
-            selected = values.biometricPasswordDays == days,
-            onSelect = { onChange(values.copy(biometricPasswordDays = days)) },
-        )
-    }
-    Text(
-        text = stringResource(R.string.settings_biometric_note),
-        style = MaterialTheme.typography.bodyMedium,
-        color = MaterialTheme.colorScheme.onSurfaceVariant,
-    )
 }
 
 /** The word the auto-lock delay is shown with: seconds, minutes, "immediately" or "never". */

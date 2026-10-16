@@ -10,6 +10,12 @@ Todos los cambios notables de este proyecto se documentan en este archivo. El fo
 
 - ADR-0008 (propuesta) y el plan de las copias opcionales de la bóveda en la nube con un asistente: una compilación `offline` sin acceso a la red y una `cloud`, primero S3 y después Dropbox, OneDrive y Google Drive.
 
+## [0.30.0] - 2026-10-16
+
+### Cambiado
+
+- Alineación con la dirección visual A elegida de las pantallas que faltaban: el inicio (una cabecera con la marca y la acción de ajustes, las bóvedas conocidas en una tarjeta de filas con avatar hexagonal y dónde vive cada una, la etiqueta de sección «Tus bóvedas», un estado vacío con la marca y los botones «Abrir una bóveda existente» y «Crear una bóveda nueva» en la zona del pulgar), los ajustes (una banda de cabecera, una tarjeta por sección con título en mayúsculas y filas de la misma altura separadas por una línea, y la fila de copias en la nube encajada en su propia tarjeta en la compilación cloud) y el editor de entrada (los campos en tarjetas con esquinas de 14 dp y una barra inferior fija con «Cancelar» y «Guardar»). El comportamiento no cambia.
+
 ## [0.29.0] - 2026-10-16
 
 ### Cambiado

@@ -1,5 +1,8 @@
 package io.github.catlinux.keynexa.app.ui.home
 
+import android.net.Uri
+import androidx.annotation.StringRes
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -7,9 +10,11 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
@@ -17,6 +22,7 @@ import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -33,15 +39,38 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import io.github.catlinux.keynexa.app.R
+import io.github.catlinux.keynexa.app.ui.common.BrandMark
+import io.github.catlinux.keynexa.app.ui.common.HexBadge
 import io.github.catlinux.keynexa.app.vault.KnownVault
 
 /** Spacing and touch targets of the design grid (docs/DESIGN.md): 4 dp steps, targets of at least 48 dp. */
-private val ScreenPadding = 16.dp
+private val ScreenPadding = 20.dp
 private val BlockGap = 16.dp
 private val ItemGap = 8.dp
 private val TouchTarget = 48.dp
+private val HeaderMarkSize = 40.dp
+private val EmptyMarkSize = 72.dp
+
+/** The card that holds the vaults, and the rows inside it. */
+private val CardCorner = 16.dp
+private val CardBorderWidth = 1.dp
+private const val CARD_BORDER_ALPHA = 0.4f
+private const val DIVIDER_ALPHA = 0.2f
+private val RowPaddingStart = 16.dp
+private val RowPaddingEnd = 8.dp
+private val RowPaddingVertical = 12.dp
+private val RowGap = 12.dp
+private val TextGap = 2.dp
+private val BadgeSize = 40.dp
+
+/** The two actions in the thumb zone. */
+private val ActionHeight = 54.dp
+private val ActionCorner = 14.dp
 
 /**
  * The vaults this app knows about.
@@ -63,21 +92,27 @@ fun HomeScreen(
     modifier: Modifier = Modifier,
 ) {
     var askedToRemove by remember { mutableStateOf<KnownVault?>(null) }
-    Surface(modifier = modifier.fillMaxSize()) {
+    Surface(modifier = modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
         Column(
-            modifier = Modifier.fillMaxSize().padding(ScreenPadding),
-            verticalArrangement = Arrangement.spacedBy(BlockGap),
+            modifier = Modifier.fillMaxSize().padding(horizontal = ScreenPadding),
+            verticalArrangement = Arrangement.spacedBy(ItemGap),
         ) {
             HomeHeader(onOpenSettings = onOpenSettings)
             Box(modifier = Modifier.fillMaxWidth().weight(1f)) {
                 if (vaults.isEmpty()) {
                     EmptyVaults()
                 } else {
-                    VaultList(
-                        vaults = vaults,
-                        onSelect = onSelect,
-                        onRemove = { askedToRemove = it },
-                    )
+                    Column(
+                        modifier = Modifier.fillMaxSize().verticalScroll(rememberScrollState()),
+                        verticalArrangement = Arrangement.spacedBy(ItemGap),
+                    ) {
+                        SectionLabel(textRes = R.string.home_title)
+                        VaultCard(
+                            vaults = vaults,
+                            onSelect = onSelect,
+                            onRemove = { askedToRemove = it },
+                        )
+                    }
                 }
             }
             CloudReminder(onOpenSettings = onOpenSettings)
@@ -96,20 +131,25 @@ fun HomeScreen(
     }
 }
 
-/** The title and the way to the settings. */
+/** The brand and the way to the settings. */
 @Composable
 private fun HomeHeader(
     onOpenSettings: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Row(
-        modifier = modifier.fillMaxWidth(),
+        modifier = modifier.fillMaxWidth().padding(top = BlockGap, bottom = ItemGap),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceBetween,
+        horizontalArrangement = Arrangement.spacedBy(RowGap),
     ) {
+        BrandMark(size = HeaderMarkSize)
         Text(
-            text = stringResource(R.string.home_title),
-            style = MaterialTheme.typography.headlineMedium,
+            text = stringResource(R.string.app_name),
+            style = MaterialTheme.typography.headlineSmall,
+            fontWeight = FontWeight.ExtraBold,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+            modifier = Modifier.weight(1f),
         )
         IconButton(onClick = onOpenSettings) {
             Icon(
@@ -120,24 +160,45 @@ private fun HomeHeader(
     }
 }
 
-/** The known vaults, in a list that scrolls when it grows past the screen. */
+/** The word above the list of vaults. */
 @Composable
-private fun VaultList(
+private fun SectionLabel(
+    @StringRes textRes: Int,
+    modifier: Modifier = Modifier,
+) {
+    Text(
+        text = stringResource(textRes).uppercase(),
+        style = MaterialTheme.typography.labelLarge,
+        color = MaterialTheme.colorScheme.onSurfaceVariant,
+        modifier = modifier.fillMaxWidth().padding(vertical = ItemGap),
+    )
+}
+
+/** The known vaults in one card, with a separator between rows. */
+@Composable
+private fun VaultCard(
     vaults: List<KnownVault>,
     onSelect: (KnownVault) -> Unit,
     onRemove: (KnownVault) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Column(
-        modifier = modifier.fillMaxSize().verticalScroll(rememberScrollState()),
-        verticalArrangement = Arrangement.spacedBy(ItemGap),
+    Surface(
+        modifier = modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(CardCorner),
+        color = MaterialTheme.colorScheme.surface,
+        border = BorderStroke(CardBorderWidth, MaterialTheme.colorScheme.outline.copy(alpha = CARD_BORDER_ALPHA)),
     ) {
-        vaults.forEach { vault ->
-            VaultRow(
-                vault = vault,
-                onSelect = { onSelect(vault) },
-                onRemove = { onRemove(vault) },
-            )
+        Column {
+            vaults.forEachIndexed { index, vault ->
+                if (index > 0) {
+                    HorizontalDivider(color = MaterialTheme.colorScheme.outline.copy(alpha = DIVIDER_ALPHA))
+                }
+                VaultRow(
+                    vault = vault,
+                    onSelect = { onSelect(vault) },
+                    onRemove = { onRemove(vault) },
+                )
+            }
         }
     }
 }
@@ -155,14 +216,41 @@ private fun VaultRow(
             modifier
                 .fillMaxWidth()
                 .heightIn(min = TouchTarget)
-                .clickable(role = Role.Button, onClick = onSelect),
+                .clickable(role = Role.Button, onClick = onSelect)
+                .padding(
+                    start = RowPaddingStart,
+                    end = RowPaddingEnd,
+                    top = RowPaddingVertical,
+                    bottom = RowPaddingVertical,
+                ),
         verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(RowGap),
     ) {
-        Text(
-            text = vault.name,
-            style = MaterialTheme.typography.bodyLarge,
-            modifier = Modifier.weight(1f),
+        HexBadge(
+            text = initialOf(vault.name),
+            containerColor = MaterialTheme.colorScheme.primaryContainer,
+            contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+            size = BadgeSize,
         )
+        Column(
+            modifier = Modifier.weight(1f),
+            verticalArrangement = Arrangement.spacedBy(TextGap),
+        ) {
+            Text(
+                text = vault.name,
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.Bold,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+            )
+            Text(
+                text = locationLabel(vault),
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+            )
+        }
         IconButton(onClick = onRemove) {
             Icon(
                 imageVector = Icons.Default.Delete,
@@ -180,9 +268,12 @@ private fun EmptyVaults(modifier: Modifier = Modifier) {
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
+        BrandMark(size = EmptyMarkSize)
         Text(
             text = stringResource(R.string.home_empty_message),
             style = MaterialTheme.typography.bodyLarge,
+            textAlign = TextAlign.Center,
+            modifier = Modifier.padding(top = BlockGap),
         )
     }
 }
@@ -195,18 +286,20 @@ private fun HomeActions(
     modifier: Modifier = Modifier,
 ) {
     Column(
-        modifier = modifier.fillMaxWidth(),
+        modifier = modifier.fillMaxWidth().padding(top = BlockGap, bottom = BlockGap),
         verticalArrangement = Arrangement.spacedBy(ItemGap),
     ) {
-        OutlinedButton(
+        Button(
             onClick = onOpenExisting,
-            modifier = Modifier.fillMaxWidth().heightIn(min = TouchTarget),
+            shape = RoundedCornerShape(ActionCorner),
+            modifier = Modifier.fillMaxWidth().height(ActionHeight),
         ) {
             Text(text = stringResource(R.string.home_open_existing))
         }
-        Button(
+        OutlinedButton(
             onClick = onCreateNew,
-            modifier = Modifier.fillMaxWidth().heightIn(min = TouchTarget),
+            shape = RoundedCornerShape(ActionCorner),
+            modifier = Modifier.fillMaxWidth().height(ActionHeight),
         ) {
             Text(text = stringResource(R.string.home_create_new))
         }
@@ -243,4 +336,16 @@ private fun RemoveVaultDialog(
             }
         },
     )
+}
+
+/** The initial shown on a vault's hexagon avatar. */
+private fun initialOf(name: String): String {
+    val trimmed = name.trim()
+    return if (trimmed.isEmpty()) "?" else trimmed.substring(0, 1).uppercase()
+}
+
+/** Where a vault lives, said with the last part of its location. */
+private fun locationLabel(vault: KnownVault): String {
+    val decoded = Uri.decode(vault.location.value.substringAfterLast('/'))
+    return decoded.ifBlank { vault.name }
 }

@@ -2,7 +2,7 @@
 
 [English](DESIGN.md) | [Español](es/DESIGN.md)
 
-> **Status:** the mark is the maintainer's own (2026-10-13). The visual direction "A, light and sober" (built on this palette, with a matching dark theme) and the Manrope font were chosen by the maintainer on 2026-10-16; the mockups are kept in `design/mockups/`. The tokens below are implemented in `app-android`; changing a value is a one-line edit, and the contrast test keeps the palette accessible.
+> **Status:** the mark is the maintainer's own (2026-10-13). The visual direction "A, light and sober" (built on this palette, with a matching dark theme) and the Manrope font were chosen by the maintainer on 2026-10-16; the mockups are kept in `design/mockups/`. The tokens below are implemented in `app-android`; changing a value is a one-line edit, and the contrast test keeps the palette accessible. **Direction A now covers every screen** (unlock, vault list, group, entry, entry editor and settings); the `fastlane/` screenshots still have to be taken again on a phone.
 
 ## Principles
 
@@ -42,7 +42,7 @@ The interface uses the Material 3 type scale with **Manrope**, bundled as one va
 
 | Use | Style | Size / weight |
 | --- | --- | --- |
-| Screen title | `headlineMedium` | 28 sp / regular |
+| Screen title | `headlineSmall` | 24 sp / extra bold |
 | Section title | `titleMedium` | 16 sp / medium |
 | Body, field values | `bodyLarge` | 16 sp / regular |
 | Secondary text | `bodyMedium` | 14 sp / regular |
@@ -55,7 +55,7 @@ Text must scale with the system font size up to 200 % without clipping.
 
 - **Grid:** 4 dp. Common steps: 4, 8, 12, 16, 24, 32, 48. Screen side padding 16 dp (24 dp on tablets).
 - **Touch targets:** at least 48 x 48 dp, with at least 8 dp between them.
-- **Shape:** Material 3 defaults: 12 dp for cards and fields, fully rounded for buttons and chips, 28 dp for dialogs.
+- **Shape:** cards 16–18 dp with a 1 dp border, fields 14 dp, main buttons 54–56 dp with 14 dp corners, the header band 24 dp on its bottom corners, chips fully rounded, dialogs 28 dp.
 - **Elevation:** flat. Tone and borders separate layers; shadows only for menus and dialogs.
 
 ## Components
@@ -74,6 +74,8 @@ Text must scale with the system font size up to 200 % without clipping.
 | **Field row** | A small uppercase label above the value, and 44–48 dp icon buttons at the end: *copy*, and *reveal* on a secret (each description names the field, never the value). A secret shows as dots; revealing hides again automatically or when the screen turns off. |
 | **Field card** | The fields of one entry (user name, password, one-time code, URL and any custom field) in a single card, radius 18 dp, with a thin separator between rows. Notes, attachments and the entry's dates live in cards of their own. |
 | **Action bar** | The fixed bar at the bottom of the entry: a full-width *Edit* button and a square, outlined *Delete* button in the error colour with its own description. |
+| **Section card** | A card (surface, 1 dp border, 16 dp radius) with a title in capitals over rows of the same height separated by a thin line: the sections of the settings screen and the groups of fields of the entry editor. |
+| **Vault row** | A vault in the home list: a hexagon avatar with its initial, the name in bold, where it lives, and the action to take it off the list. |
 | **Password generator** | Length slider, character classes, a live strength bar with a text label, *Use* and *Regenerate*. |
 | **Search bar** | Searches title, user name, URL and tags in the open vault only; never sends anything anywhere. |
 | **Primary action** | A floating *New entry* button, bottom end. Destructive actions use the error colour and a confirmation. |

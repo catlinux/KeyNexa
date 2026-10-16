@@ -200,6 +200,7 @@
     <string name="edit_title_new">Entrada nueva</string>
     <string name="edit_title_edit">Editar entrada</string>
     <string name="edit_back">Volver</string>
+    <string name="edit_basic_title">Datos principales</string>
     <string name="edit_title_label">Título</string>
     <string name="edit_title_required">Una entrada necesita un título.</string>
     <string name="edit_user_name_label">Usuario</string>

@@ -8,15 +8,19 @@ import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.StringRes
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -48,6 +52,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
@@ -70,9 +75,32 @@ import java.io.IOException
 import kotlin.math.roundToInt
 
 /** Spacing and touch targets of the design grid (docs/DESIGN.md). */
-private val ScreenPadding = 16.dp
+private val ScreenPadding = 20.dp
 private val ItemGap = 8.dp
 private val TouchTarget = 48.dp
+
+/** The compact bar at the very top. */
+private val HeaderPaddingStart = 12.dp
+private val HeaderPaddingTop = 20.dp
+private val HeaderPaddingBottom = 8.dp
+
+/** One card per group of fields, with a title in capitals. */
+private val CardGap = 12.dp
+private val FieldGap = 10.dp
+private val CardCorner = 16.dp
+private val FieldCorner = 14.dp
+private val CardBorderWidth = 1.dp
+private const val CARD_BORDER_ALPHA = 0.4f
+private val CardPaddingHorizontal = 16.dp
+private val CardTitlePaddingTop = 14.dp
+private val CardTitlePaddingBottom = 4.dp
+private val CardPaddingBottom = 14.dp
+
+/** The fixed bar at the bottom. */
+private val ActionPaddingTop = 16.dp
+private val ActionPaddingBottom = 24.dp
+private val ActionHeight = 54.dp
+private val ActionCorner = 14.dp
 
 /** The length the generator dialog offers. */
 private const val MIN_GENERATED_LENGTH = Options.MIN_LENGTH
@@ -193,10 +221,6 @@ private fun AttachmentsSection(
         modifier = modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(ItemGap),
     ) {
-        Text(
-            text = stringResource(R.string.edit_attachments_title),
-            style = MaterialTheme.typography.titleMedium,
-        )
         attachments.forEach { attachment ->
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -365,24 +389,34 @@ fun EntryEditScreen(
                 }
             }
         }
-    Surface(modifier = modifier.fillMaxSize()) {
-        Column(
-            modifier = Modifier.fillMaxSize().padding(ScreenPadding),
-            verticalArrangement = Arrangement.spacedBy(ItemGap),
-        ) {
+    Surface(modifier = modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
+        Column(modifier = Modifier.fillMaxSize()) {
             EditHeader(isNew = isNew, onBack = requestCancel)
             Box(modifier = Modifier.fillMaxWidth().weight(1f)) {
-                Column(modifier = Modifier.fillMaxSize().verticalScroll(rememberScrollState())) {
-                    BasicSection(form = form, onGenerate = { generating = true })
-                    CustomSection(form = form)
-                    AttachmentsSection(
-                        attachments = attachments,
-                        onRemove = { attachment ->
-                            attachments -= attachment
-                            attachmentsChanged = true
-                        },
-                        onAdd = { filePicker.launch(arrayOf("*/*")) },
-                    )
+                Column(
+                    modifier =
+                        Modifier
+                            .fillMaxSize()
+                            .verticalScroll(rememberScrollState())
+                            .padding(horizontal = ScreenPadding, vertical = CardGap),
+                    verticalArrangement = Arrangement.spacedBy(CardGap),
+                ) {
+                    EditCard(titleRes = R.string.edit_basic_title) {
+                        BasicSection(form = form, onGenerate = { generating = true })
+                    }
+                    EditCard(titleRes = R.string.edit_custom_title) {
+                        CustomSection(form = form)
+                    }
+                    EditCard(titleRes = R.string.edit_attachments_title) {
+                        AttachmentsSection(
+                            attachments = attachments,
+                            onRemove = { attachment ->
+                                attachments -= attachment
+                                attachmentsChanged = true
+                            },
+                            onAdd = { filePicker.launch(arrayOf("*/*")) },
+                        )
+                    }
                 }
             }
             EditActions(
@@ -421,7 +455,15 @@ private fun EditHeader(
     modifier: Modifier = Modifier,
 ) {
     Row(
-        modifier = modifier.fillMaxWidth(),
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .padding(
+                    start = HeaderPaddingStart,
+                    end = ScreenPadding,
+                    top = HeaderPaddingTop,
+                    bottom = HeaderPaddingBottom,
+                ),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(ItemGap),
     ) {
@@ -437,10 +479,52 @@ private fun EditHeader(
                     if (isNew) R.string.edit_title_new else R.string.edit_title_edit,
                 ),
             style = MaterialTheme.typography.headlineSmall,
+            fontWeight = FontWeight.ExtraBold,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
             modifier = Modifier.weight(1f),
         )
+    }
+}
+
+/** A group of fields in a card with a title in capitals. */
+@Composable
+private fun EditCard(
+    @StringRes titleRes: Int,
+    modifier: Modifier = Modifier,
+    content: @Composable ColumnScope.() -> Unit,
+) {
+    Surface(
+        modifier = modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(CardCorner),
+        color = MaterialTheme.colorScheme.surface,
+        border = BorderStroke(CardBorderWidth, MaterialTheme.colorScheme.outline.copy(alpha = CARD_BORDER_ALPHA)),
+    ) {
+        Column {
+            Text(
+                text = stringResource(titleRes).uppercase(),
+                style = MaterialTheme.typography.labelLarge,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier =
+                    Modifier.padding(
+                        start = CardPaddingHorizontal,
+                        end = CardPaddingHorizontal,
+                        top = CardTitlePaddingTop,
+                        bottom = CardTitlePaddingBottom,
+                    ),
+            )
+            Column(
+                modifier =
+                    Modifier.padding(
+                        start = CardPaddingHorizontal,
+                        end = CardPaddingHorizontal,
+                        bottom = CardPaddingBottom,
+                    ),
+                verticalArrangement = Arrangement.spacedBy(FieldGap),
+            ) {
+                content()
+            }
+        }
     }
 }
 
@@ -509,6 +593,7 @@ private fun EditTextField(
         onValueChange = onValueChange,
         label = { Text(text = label) },
         singleLine = singleLine,
+        shape = RoundedCornerShape(FieldCorner),
         modifier = modifier.fillMaxWidth(),
     )
 }
@@ -528,6 +613,7 @@ private fun SecretField(
             onValueChange = { form.password = it },
             label = { Text(text = stringResource(R.string.edit_password_label)) },
             singleLine = true,
+            shape = RoundedCornerShape(FieldCorner),
             visualTransformation = if (form.revealed) VisualTransformation.None else PasswordVisualTransformation(),
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password, autoCorrectEnabled = false),
             modifier = Modifier.fillMaxWidth(),
@@ -546,10 +632,6 @@ private fun CustomSection(
         modifier = modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(ItemGap),
     ) {
-        Text(
-            text = stringResource(R.string.edit_custom_title),
-            style = MaterialTheme.typography.titleMedium,
-        )
         form.custom.forEachIndexed { index, field ->
             EditTextField(
                 label = stringResource(R.string.edit_custom_name),
@@ -738,22 +820,33 @@ private fun EditActions(
     onCancel: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Column(
-        modifier = modifier.fillMaxWidth(),
-        verticalArrangement = Arrangement.spacedBy(ItemGap),
+    Row(
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .padding(
+                    start = ScreenPadding,
+                    end = ScreenPadding,
+                    top = ActionPaddingTop,
+                    bottom = ActionPaddingBottom,
+                ),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(ItemGap),
     ) {
+        OutlinedButton(
+            onClick = onCancel,
+            shape = RoundedCornerShape(ActionCorner),
+            modifier = Modifier.weight(1f).height(ActionHeight),
+        ) {
+            Text(text = stringResource(R.string.edit_cancel))
+        }
         Button(
             onClick = onSave,
             enabled = saveEnabled,
-            modifier = Modifier.fillMaxWidth().heightIn(min = TouchTarget),
+            shape = RoundedCornerShape(ActionCorner),
+            modifier = Modifier.weight(1f).height(ActionHeight),
         ) {
             Text(text = stringResource(R.string.edit_save))
-        }
-        OutlinedButton(
-            onClick = onCancel,
-            modifier = Modifier.fillMaxWidth().heightIn(min = TouchTarget),
-        ) {
-            Text(text = stringResource(R.string.edit_cancel))
         }
     }
 }
