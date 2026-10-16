@@ -51,6 +51,8 @@ Detailed steps: see the [roadmap](docs/ROADMAP.md).
 
 - Automatic updates (idea from the owner, 2026-10-16): how users receive new versions. The `offline` build has no network access, so it cannot check for updates by itself; F-Droid and IzzyOnDroid update the apps they carry, and GitHub releases are manual. To evaluate: rely on the stores (and tools that follow GitHub releases) for the `offline` build; an optional update check that the user turns on, in the `cloud` build only, that reads the public GitHub releases, shows a notice with a link and verifies the published SHA-256 and the signature, without installing anything by itself. Needs an ADR (privacy: what is sent and to whom; signature verification; what the stores allow).
 
+- Application authentication and an own identity provider (idea from the owner, 2026-10-16; to study whether to include them, the exact scope still to be confirmed): (a) KeyNexa as an authenticator app, extending the read-only TOTP already shown to create, scan (QR) and edit codes, and to approve sign-ins; (b) KeyNexa acting as an identity provider of its own ("Sign in with KeyNexa", OpenID Connect/passkeys). (b) would need a server and an account system, which contradicts the local-first design (see the decision on "Sign in with Google" above), so it needs an ADR and a threat model before any work.
+
 ## Discarded
 
 - Rust core with UniFFI: KDBX writing in keepass-rs is experimental and UniFFI adds an NDK toolchain; re-evaluated before 1.0 ([ARCHITECTURE](docs/ARCHITECTURE.md#multiplatform-strategy)).

@@ -51,6 +51,8 @@ Pasos detallados: consulta la [hoja de ruta](ROADMAP.md).
 
 - Actualizaciones automáticas (idea del propietario, 2026-10-16): cómo reciben los usuarios las versiones nuevas. La variante `offline` no tiene acceso a la red, así que no puede buscar actualizaciones por sí misma; F-Droid e IzzyOnDroid actualizan las apps que distribuyen y las publicaciones de GitHub son manuales. A evaluar: apoyarse en las tiendas (y en herramientas que siguen las publicaciones de GitHub) para la variante `offline`; una comprobación de actualizaciones opcional, que el usuario activa, solo en la variante `cloud`, que lea las publicaciones públicas de GitHub, muestre un aviso con un enlace y verifique la suma SHA-256 y la firma publicadas, sin instalar nada por sí sola. Necesita un ADR (privacidad: qué se envía y a quién; verificación de la firma; lo que permitan las tiendas).
 
+- Autenticación de aplicaciones y proveedor de identidad propio (idea del titular, 2026-10-16; estudiar si se incorporan, alcance exacto por confirmar): (a) KeyNexa como app autenticadora, ampliando el TOTP de solo lectura que ya se muestra para crear, escanear (QR) y editar códigos, y aprobar inicios de sesión; (b) KeyNexa como proveedor de identidad propio («Iniciar sesión con KeyNexa», OpenID Connect/passkeys). (b) exigiría un servidor y un sistema de cuentas, lo que contradice el diseño local primero (véase la decisión sobre «Iniciar sesión con Google» más arriba), así que necesita un ADR y un modelo de amenazas antes de cualquier trabajo.
+
 ## Descartado
 
 - Núcleo en Rust con UniFFI: la escritura de KDBX en keepass-rs es experimental y UniFFI añade una cadena de herramientas NDK; se reevaluará antes de 1.0 ([ARCHITECTURE](ARCHITECTURE.md#estrategia-multiplataforma)).
