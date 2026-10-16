@@ -10,6 +10,12 @@ All notable changes to this project are documented in this file. The format is b
 
 - ADR-0008 (proposed) and the plan for optional cloud copies of the vault with an assistant: an `offline` build with no network access and a `cloud` build, S3 first and then Dropbox, OneDrive and Google Drive.
 
+## [0.28.0] - 2026-10-16
+
+### Changed
+
+- Redesigned the group screen with the chosen visual direction A: a rounded header band (the vault or group name, a saved/saving/unsaved line, the lock button and the menu), a search field inside the band that opens the search screen, the subgroups as a two-column grid of cards with a hexagon badge and the entry count, the entries in a single card with separators, a hexagon avatar, an expiry word and a "2FA" tag when the entry has a one-time code, and a floating "New entry" button. Behaviour is unchanged.
+
 ## [0.27.0] - 2026-10-16
 
 ### Changed

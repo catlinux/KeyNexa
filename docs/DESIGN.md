@@ -66,6 +66,9 @@ Text must scale with the system font size up to 200 % without clipping.
 | **Hex badge** | A small point-up hexagon with the initials of a vault, a group or an entry. Decorative: the row's own text already names it. |
 | **Brand mark** | The KeyNexa hexagon (two blues, inner ring, shield with keyhole and a small node) with the name below it on the unlock screen. Decorative but labelled for screen readers. |
 | **Header band** | The top band of the vault screens: `primary` in light and `primaryContainer` in dark (screens read `LocalDarkTheme`), carrying the title, the status and the main actions. |
+| **Group grid** | The subgroups of a group as a two-column grid of cards: a hexagon badge with the group's initial (its colours chosen from the name), the name in bold and *N entries*. |
+| **Entries card** | The entries of a group in a single card with separators: a hexagon badge with up to two initials, the title in bold, the user name, a word when the entry has expired and a **2FA** tag when it holds a one-time code. |
+| **Band search** | A field inside the header band that is not a text field: tapping it opens the search screen. It shows *Search in <name>* and reads as a button. |
 | **Unlock form** | Password field with show/hide, key file picker, an *Unlock* button disabled while working, and a progress indicator for long key derivation. After a wrong password the field keeps focus and the message appears below it. |
 | **Entry row** | Title, user name, and an icon; a favicon or the entry icon at the start. Never shows the password. |
 | **Field row** | Label above value. A secret shows as dots with *Reveal* and *Copy* actions; revealing hides again after 10 seconds or when the screen turns off. |

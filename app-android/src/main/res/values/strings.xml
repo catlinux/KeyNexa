@@ -98,7 +98,6 @@
 
     <!-- Group: browsing the entries and subgroups of one group. -->
     <string name="group_back">Back</string>
-    <string name="group_search">Search</string>
     <string name="group_more">More options</string>
     <string name="group_recycle_bin">Recycle bin</string>
     <string name="group_settings">Settings</string>
@@ -132,6 +131,16 @@
     <plurals name="group_row_group">
         <item quantity="one">Group: %1$s, %2$d item</item>
         <item quantity="other">Group: %1$s, %2$d items</item>
+    </plurals>
+    <string name="group_status_saved">Saved</string>
+    <string name="group_status_unsaved">Unsaved changes</string>
+    <string name="group_search_in">Search in %1$s</string>
+    <string name="group_section_groups">Groups</string>
+    <string name="group_section_entries">Entries</string>
+    <string name="group_chip_2fa">2FA</string>
+    <plurals name="group_entries_count">
+        <item quantity="one">%1$d entry</item>
+        <item quantity="other">%1$d entries</item>
     </plurals>
 
     <!-- Search: looking through the open vault. -->

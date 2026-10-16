@@ -10,6 +10,12 @@ Todos los cambios notables de este proyecto se documentan en este archivo. El fo
 
 - ADR-0008 (propuesta) y el plan de las copias opcionales de la bóveda en la nube con un asistente: una compilación `offline` sin acceso a la red y una `cloud`, primero S3 y después Dropbox, OneDrive y Google Drive.
 
+## [0.28.0] - 2026-10-16
+
+### Cambiado
+
+- Rediseño de la pantalla de grupo con la dirección visual A elegida: una banda de cabecera redondeada (el nombre de la bóveda o del grupo, una línea de guardado/guardando/sin guardar, el botón de bloquear y el menú), un campo de búsqueda dentro de la banda que abre la pantalla de búsqueda, los subgrupos como una rejilla de dos columnas de tarjetas con un distintivo hexagonal y el número de entradas, las entradas en una sola tarjeta con separadores, avatar hexagonal, la palabra de caducada y una etiqueta «2FA» cuando la entrada tiene un código de un solo uso, y un botón flotante «Nueva entrada». El comportamiento no cambia.
+
 ## [0.27.0] - 2026-10-16
 
 ### Cambiado

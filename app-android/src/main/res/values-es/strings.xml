@@ -100,7 +100,6 @@
 
     <!-- Grupo: recorrer las entradas y los subgrupos de un grupo. -->
     <string name="group_back">Volver</string>
-    <string name="group_search">Buscar</string>
     <string name="group_more">Más opciones</string>
     <string name="group_recycle_bin">Papelera</string>
     <string name="group_settings">Ajustes</string>
@@ -136,6 +135,17 @@
         <item quantity="one">Grupo: %1$s, %2$d elemento</item>
         <item quantity="many">Grupo: %1$s, %2$d elementos</item>
         <item quantity="other">Grupo: %1$s, %2$d elementos</item>
+    </plurals>
+    <string name="group_status_saved">Guardado</string>
+    <string name="group_status_unsaved">Cambios sin guardar</string>
+    <string name="group_search_in">Buscar en %1$s</string>
+    <string name="group_section_groups">Grupos</string>
+    <string name="group_section_entries">Entradas</string>
+    <string name="group_chip_2fa">2FA</string>
+    <plurals name="group_entries_count">
+        <item quantity="one">%1$d entrada</item>
+        <item quantity="many">%1$d entradas</item>
+        <item quantity="other">%1$d entradas</item>
     </plurals>
 
     <!-- Búsqueda: recorrer la bóveda abierta. -->
