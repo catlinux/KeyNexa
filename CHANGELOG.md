@@ -10,6 +10,12 @@ All notable changes to this project are documented in this file. The format is b
 
 - ADR-0008 (proposed) and the plan for optional cloud copies of the vault with an assistant: an `offline` build with no network access and a `cloud` build, S3 first and then Dropbox, OneDrive and Google Drive.
 
+## [0.23.6] - 2026-10-16
+
+### Changed
+
+- The S3 assistant fills the region field in as the endpoint is typed: when the endpoint changes, the region shows what it can be deduced from (Backblaze, Amazon, Cloudflare R2) unless the user typed it themselves, in which case it is never overwritten. The decision lives in the pure `regionAfterEndpointChange` in `platform-cloud`.
+
 ## [0.23.5] - 2026-10-15
 
 ### Changed

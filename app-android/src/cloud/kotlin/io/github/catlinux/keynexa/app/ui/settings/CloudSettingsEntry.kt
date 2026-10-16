@@ -60,6 +60,7 @@ import io.github.catlinux.keynexa.app.cloud.CloudStores
 import io.github.catlinux.keynexa.app.vault.CloudBackupSource
 import io.github.catlinux.keynexa.cloud.ConnectionResult
 import io.github.catlinux.keynexa.cloud.S3Setup
+import io.github.catlinux.keynexa.cloud.regionAfterEndpointChange
 import io.github.catlinux.keynexa.cloud.regionFromEndpoint
 import io.github.catlinux.keynexa.cloud.testConnection
 import io.github.catlinux.keynexa.cloud.vaultIdOf
@@ -315,6 +316,20 @@ private class SetupForm {
     var testing by mutableStateOf(false)
     var testedOk by mutableStateOf(false)
 
+    /** The last region the assistant filled in by itself, so it never overwrites what the user typed. */
+    var lastAutoRegion by mutableStateOf<String?>(null)
+
+    fun onEndpointChange(value: String) {
+        endpoint = value
+        val result = regionAfterEndpointChange(value, region, lastAutoRegion)
+        region = result.region
+        lastAutoRegion = result.lastAutoRegion
+    }
+
+    fun onRegionChange(value: String) {
+        region = value
+    }
+
     fun reset() {
         endpoint = ""
         region = ""
@@ -328,6 +343,7 @@ private class SetupForm {
         testResult = null
         testing = false
         testedOk = false
+        lastAutoRegion = null
     }
 
     fun toSetup(): S3Setup {
@@ -607,14 +623,14 @@ private fun SetupFormBody(
     FormField(
         label = stringResource(R.string.cloud_form_endpoint),
         value = form.endpoint,
-        onValueChange = { form.endpoint = it },
+        onValueChange = { form.onEndpointChange(it) },
         help = stringResource(R.string.cloud_form_endpoint_help),
         error = if (form.errors.endpoint) stringResource(R.string.cloud_error_endpoint) else null,
     )
     FormField(
         label = stringResource(R.string.cloud_form_region),
         value = form.region,
-        onValueChange = { form.region = it },
+        onValueChange = { form.onRegionChange(it) },
         help = stringResource(R.string.cloud_form_region_help),
         error = if (form.errors.region) stringResource(R.string.cloud_error_region) else null,
     )

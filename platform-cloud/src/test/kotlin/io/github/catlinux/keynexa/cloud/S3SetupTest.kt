@@ -77,6 +77,71 @@ class S3SetupTest {
         assertNull(regionFromEndpoint("s3.us-west-004.backblazeb2.com"))
     }
 
+    @Test
+    fun anEmptyRegionIsFilledFromTheEndpoint() {
+        val result =
+            regionAfterEndpointChange(
+                endpoint = "https://s3.eu-central-003.backblazeb2.com",
+                currentRegion = "",
+                lastAutoRegion = null,
+            )
+
+        assertEquals("eu-central-003", result.region)
+        assertEquals("eu-central-003", result.lastAutoRegion)
+    }
+
+    @Test
+    fun aRegionTheUserTypedIsNotOverwritten() {
+        val result =
+            regionAfterEndpointChange(
+                endpoint = "https://s3.us-east-1.amazonaws.com",
+                currentRegion = "my-region",
+                lastAutoRegion = null,
+            )
+
+        assertEquals("my-region", result.region)
+        assertNull(result.lastAutoRegion)
+    }
+
+    @Test
+    fun changingTheEndpointUpdatesTheAutomaticRegion() {
+        val result =
+            regionAfterEndpointChange(
+                endpoint = "https://s3.us-east-1.amazonaws.com",
+                currentRegion = "eu-central-003",
+                lastAutoRegion = "eu-central-003",
+            )
+
+        assertEquals("us-east-1", result.region)
+        assertEquals("us-east-1", result.lastAutoRegion)
+    }
+
+    @Test
+    fun anUnknownEndpointClearsTheAutomaticRegion() {
+        val result =
+            regionAfterEndpointChange(
+                endpoint = "https://s3.example.com",
+                currentRegion = "us-east-1",
+                lastAutoRegion = "us-east-1",
+            )
+
+        assertEquals("", result.region)
+        assertNull(result.lastAutoRegion)
+    }
+
+    @Test
+    fun anEditedRegionSurvivesAnEndpointChange() {
+        val result =
+            regionAfterEndpointChange(
+                endpoint = "https://s3.us-east-1.amazonaws.com",
+                currentRegion = "my-region",
+                lastAutoRegion = "eu-central-003",
+            )
+
+        assertEquals("my-region", result.region)
+        assertEquals("eu-central-003", result.lastAutoRegion)
+    }
+
     private fun setup(): S3Setup =
         S3Setup(
             endpoint = "https://s3.example.com",

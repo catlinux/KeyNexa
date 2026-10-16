@@ -10,6 +10,12 @@ Todos los cambios notables de este proyecto se documentan en este archivo. El fo
 
 - ADR-0008 (propuesta) y el plan de las copias opcionales de la bóveda en la nube con un asistente: una compilación `offline` sin acceso a la red y una `cloud`, primero S3 y después Dropbox, OneDrive y Google Drive.
 
+## [0.23.6] - 2026-10-16
+
+### Cambiado
+
+- El asistente de S3 rellena el campo de la región mientras se escribe el endpoint: al cambiar el endpoint, la región muestra lo que se puede deducir de él (Backblaze, Amazon, Cloudflare R2) salvo que la haya escrito el usuario, en cuyo caso nunca se pisa. La decisión vive en la función pura `regionAfterEndpointChange` de `platform-cloud`.
+
 ## [0.23.5] - 2026-10-15
 
 ### Cambiado

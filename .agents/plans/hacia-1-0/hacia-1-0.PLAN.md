@@ -6,7 +6,7 @@ Reglas fijas (AGENTS.md): documentación bilingüe en el mismo commit, `VERSION`
 
 ## Bloque A: pulidos pequeños (delegable, esfuerzo bajo)
 
-- [ ] **A1. Región que se rellena sola** · 0.23.6 (parche) · DeepSeek, esfuerzo bajo. En el formulario S3 (`app-android/src/cloud/.../CloudSettingsEntry.kt`), al cambiar el endpoint, si el campo Región está vacío o contiene el valor deducido antes, escribir en él `regionFromEndpoint(endpoint)`; el usuario puede editarlo y, si lo edita a mano, no se vuelve a pisar. Terminado: con `https://s3.eu-central-003.backblazeb2.com` el campo muestra `eu-central-003` sin tocarlo; prueba JVM de la lógica de relleno (extraerla a una función pura en `platform-cloud`).
+- [x] **A1. Región que se rellena sola** (hecho 2026-10-16, 0.23.6) · 0.23.6 (parche) · DeepSeek, esfuerzo bajo. En el formulario S3 (`app-android/src/cloud/.../CloudSettingsEntry.kt`), al cambiar el endpoint, si el campo Región está vacío o contiene el valor deducido antes, escribir en él `regionFromEndpoint(endpoint)`; el usuario puede editarlo y, si lo edita a mano, no se vuelve a pisar. Terminado: con `https://s3.eu-central-003.backblazeb2.com` el campo muestra `eu-central-003` sin tocarlo; prueba JVM de la lógica de relleno (extraerla a una función pura en `platform-cloud`).
 - [ ] **A2. Interruptor de tema claro / oscuro / automático** · 0.24.0 (menor) · DeepSeek, esfuerzo medio. Ajuste nuevo en `SettingsScreen` (tres opciones, por defecto automático) guardado con los demás ajustes (`container.settings`), aplicado en el tema de `app-android/.../ui/theme/`. Textos en/es, `docs/DESIGN.md` y `docs/es/DESIGN.md` actualizados. Terminado: cambia el tema al momento, persiste, `check` verde con prueba de la lógica de ajuste.
 
 ## Bloque B: seguridad y calidad (antes de la 1.0)
@@ -28,6 +28,10 @@ Reglas fijas (AGENTS.md): documentación bilingüe en el mismo commit, `VERSION`
 - [ ] **D1.** Pruebas reales de Cloudflare R2 y Amazon S3 con cuentas del usuario; guías verificadas.
 - [ ] **D2.** Dropbox primero, luego OneDrive (Google Drive descartado); registrar la app, comprobar redirect y escritura condicional (ver `../cloud-backup/oauth-providers.RESEARCH.md`).
 - [ ] **D3.** Aceptar el ADR-0009 y el paso de reconciliación sobre `CloudBackend` con un servicio falso para carreras.
+
+## Paso final: auditoría completa con Opus y depuración (decidido por el usuario, en unos días)
+
+- [ ] **Z. Auditoría de seguridad y funcionamiento** · cuando todo lo anterior esté terminado: el usuario cambia a Opus (`/model opus`) y conecta el móvil por depuración inalámbrica (pasar `192.168.1.140:<puerto>`). La sesión recorre el código completo (Skill `security-review` y `/code-review`), prueba en el móvil real cada función (variantes `offline` y `cloud`, la lista de «Pruebas en el móvil» de abajo) y entrega `docs/SECURITY_REVIEW.md` (+ `docs/es/`) con alcance, hallazgos, correcciones y riesgos aceptados. Esto cubre B3 y las pruebas de B4 y B5; los hallazgos se corrigen con el flujo normal (tarea, diff revisado, versión, CHANGELOG). Nunca bóvedas reales (`Claus.kdbx` intocable) ni claves en el informe.
 
 ## Pruebas en el móvil (en casa, con adb)
 
