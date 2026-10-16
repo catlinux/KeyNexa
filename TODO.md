@@ -47,6 +47,8 @@ Detailed steps: see the [roadmap](docs/ROADMAP.md).
 - Backup copies to the cloud: first to any folder the system exposes (Drive, Dropbox, Mega and others through their own apps, with no extra SDK), later WebDAV and S3-compatible storage; no proprietary SDKs with telemetry. The app must strongly recommend it (first-run prompt and a persistent reminder until a copy exists, never forced): a lost or broken phone with no copy means losing every password. Needs an ADR. Now proposed in [ADR-0008](docs/decisions/0008-cloud-backup.md); the step plan is in `.agents/plans/cloud-backup/`.
 - Keep kotpass strong: offer to help maintain it upstream, add coverage-guided fuzzing there and the keepass-rs comparison (already listed above), and re-evaluate alternatives yearly (ADR-0005).
 
+- Automatic updates (idea from the owner, 2026-10-16): how users receive new versions. The `offline` build has no network access, so it cannot check for updates by itself; F-Droid and IzzyOnDroid update the apps they carry, and GitHub releases are manual. To evaluate: rely on the stores (and tools that follow GitHub releases) for the `offline` build; an optional update check that the user turns on, in the `cloud` build only, that reads the public GitHub releases, shows a notice with a link and verifies the published SHA-256 and the signature, without installing anything by itself. Needs an ADR (privacy: what is sent and to whom; signature verification; what the stores allow).
+
 ## Discarded
 
 - Rust core with UniFFI: KDBX writing in keepass-rs is experimental and UniFFI adds an NDK toolchain; re-evaluated before 1.0 ([ARCHITECTURE](docs/ARCHITECTURE.md#multiplatform-strategy)).
