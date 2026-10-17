@@ -10,6 +10,12 @@ Todos los cambios notables de este proyecto se documentan en este archivo. El fo
 
 - ADR-0008 (propuesta) y el plan de las copias opcionales de la bóveda en la nube con un asistente: una compilación `offline` sin acceso a la red y una `cloud`, primero S3 y después Dropbox, OneDrive y Google Drive.
 
+## [0.30.3] - 2026-10-17
+
+### Añadido
+
+- `docs/es/VAULT_CONVENTIONS.md`: consejos de nombre y ubicación para una bóveda real y los nombres de campos personalizados (`key_id`, `secret_key`, `token`, `endpoint`…) para credenciales de API, que coincidirán con el futuro tipo de entrada «API / token». Solo documentación (parche).
+
 ## [0.30.2] - 2026-10-16
 
 ### Cambiado

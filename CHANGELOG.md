@@ -10,6 +10,12 @@ All notable changes to this project are documented in this file. The format is b
 
 - ADR-0008 (proposed) and the plan for optional cloud copies of the vault with an assistant: an `offline` build with no network access and a `cloud` build, S3 first and then Dropbox, OneDrive and Google Drive.
 
+## [0.30.3] - 2026-10-17
+
+### Added
+
+- `docs/VAULT_CONVENTIONS.md`: file name and location advice for a real vault, and the custom field names (`key_id`, `secret_key`, `token`, `endpoint`…) to use for API credentials, so they will match the planned "API / token" entry type. Documentation only (patch).
+
 ## [0.30.2] - 2026-10-16
 
 ### Changed
