@@ -10,6 +10,12 @@ Todos los cambios notables de este proyecto se documentan en este archivo. El fo
 
 - ADR-0008 (propuesta) y el plan de las copias opcionales de la bóveda en la nube con un asistente: una compilación `offline` sin acceso a la red y una `cloud`, primero S3 y después Dropbox, OneDrive y Google Drive.
 
+## [0.31.1] - 2026-10-18
+
+### Añadido
+
+- ADR-0010 (propuesta): un teclado opcional dibujado por KeyNexa para la contraseña maestra, para que el teclado del sistema no la vea nunca (amenaza T22). Solo documentación (parche).
+
 ## [0.31.0] - 2026-10-18
 
 ### Añadido
