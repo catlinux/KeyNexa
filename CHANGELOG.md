@@ -10,6 +10,12 @@ All notable changes to this project are documented in this file. The format is b
 
 - ADR-0008 (proposed) and the plan for optional cloud copies of the vault with an assistant: an `offline` build with no network access and a `cloud` build, S3 first and then Dropbox, OneDrive and Google Drive.
 
+## [0.33.4] - 2026-10-18
+
+### Fixed
+
+- Cloud copies of two vaults with the same name shared one folder and one "copies to keep" count, so uploads of one could rotate away every copy of the other. Each vault now has its own folder, `KeyNexa/<name>-<8 characters of its id>/`. Copies made before stay where they are and are never rotated or deleted by the app (delete them by hand when they are no longer wanted). Found in the final audit. Patch.
+
 ## [0.33.3] - 2026-10-18
 
 ### Security

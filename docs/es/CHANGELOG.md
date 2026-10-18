@@ -10,6 +10,12 @@ Todos los cambios notables de este proyecto se documentan en este archivo. El fo
 
 - ADR-0008 (propuesta) y el plan de las copias opcionales de la bóveda en la nube con un asistente: una compilación `offline` sin acceso a la red y una `cloud`, primero S3 y después Dropbox, OneDrive y Google Drive.
 
+## [0.33.4] - 2026-10-18
+
+### Corregido
+
+- Las copias en la nube de dos bóvedas con el mismo nombre compartían carpeta y número de «copias a conservar», así que las subidas de una podían borrar por rotación todas las copias de la otra. Cada bóveda tiene ahora su carpeta, `KeyNexa/<nombre>-<8 caracteres de su id>/`. Las copias anteriores se quedan donde están y la app nunca las rota ni las borra (bórralas a mano cuando ya no las quieras). Encontrado en la auditoría final. Parche.
+
 ## [0.33.3] - 2026-10-18
 
 ### Seguridad

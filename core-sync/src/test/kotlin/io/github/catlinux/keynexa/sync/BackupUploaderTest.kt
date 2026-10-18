@@ -18,7 +18,7 @@ class BackupUploaderTest {
 
         val result = uploader(backend).backupNow(VAULT_ID, "My Vault", BYTES)
 
-        assertEquals(BackupResult.Uploaded("KeyNexa/My_Vault/My_Vault-20261015T102030Z.kdbx", 0), result)
+        assertEquals(BackupResult.Uploaded("KeyNexa/My_Vault-vault-1/My_Vault-20261015T102030Z.kdbx", 0), result)
     }
 
     @Test
@@ -27,7 +27,7 @@ class BackupUploaderTest {
 
         val result = uploader(backend).backupNow(VAULT_ID, "a b/c*d", BYTES)
 
-        assertEquals(BackupResult.Uploaded("KeyNexa/a_b_c_d/a_b_c_d-20261015T102030Z.kdbx", 0), result)
+        assertEquals(BackupResult.Uploaded("KeyNexa/a_b_c_d-vault-1/a_b_c_d-20261015T102030Z.kdbx", 0), result)
     }
 
     @Test
@@ -36,7 +36,7 @@ class BackupUploaderTest {
 
         val result = uploader(backend).backupNow(VAULT_ID, "", BYTES)
 
-        assertEquals(BackupResult.Uploaded("KeyNexa/vault/vault-20261015T102030Z.kdbx", 0), result)
+        assertEquals(BackupResult.Uploaded("KeyNexa/vault-vault-1/vault-20261015T102030Z.kdbx", 0), result)
     }
 
     @Test
@@ -46,7 +46,7 @@ class BackupUploaderTest {
 
         uploader(backend).backupNow(VAULT_ID, "My Vault", content)
 
-        assertEquals(content.toList(), backend.stored("KeyNexa/My_Vault/My_Vault-20261015T102030Z.kdbx")?.toList())
+        assertEquals(content.toList(), backend.stored("KeyNexa/My_Vault-vault-1/My_Vault-20261015T102030Z.kdbx")?.toList())
     }
 
     @Test
@@ -99,7 +99,7 @@ class BackupUploaderTest {
 
         val result = uploader(backend, options = BackupOptions(keep = 2)).backupNow(VAULT_ID, "My Vault", BYTES)
 
-        assertEquals(BackupResult.Uploaded("KeyNexa/My_Vault/My_Vault-20261015T102030Z.kdbx", 2), result)
+        assertEquals(BackupResult.Uploaded("KeyNexa/My_Vault-vault-1/My_Vault-20261015T102030Z.kdbx", 2), result)
         assertNull(backend.stored(copy("20260101T000000Z")))
         assertNull(backend.stored(copy("20260102T000000Z")))
         assertNotNull(backend.stored(copy("20260103T000000Z")))
@@ -124,20 +124,25 @@ class BackupUploaderTest {
     fun rotationNeverTouchesForeignObjectsOrOtherVaults() {
         val backend = InMemoryCloudBackend()
         backend.objects[copy("20260101T000000Z")] = byteArrayOf(1)
-        backend.objects["KeyNexa/My_Vault/notes.txt"] = byteArrayOf(2)
-        backend.objects["KeyNexa/My_Vault/My_Vault-20260101T000000Z.kdbx.bak"] = byteArrayOf(3)
-        backend.objects["KeyNexa/My_Vault/My_Vault-2026-01-01T000000Z.kdbx"] = byteArrayOf(4)
+        backend.objects["KeyNexa/My_Vault-vault-1/notes.txt"] = byteArrayOf(2)
+        backend.objects["KeyNexa/My_Vault-vault-1/My_Vault-20260101T000000Z.kdbx.bak"] = byteArrayOf(3)
+        backend.objects["KeyNexa/My_Vault-vault-1/My_Vault-2026-01-01T000000Z.kdbx"] = byteArrayOf(4)
         backend.objects["KeyNexa/Other/Other-20260101T000000Z.kdbx"] = byteArrayOf(5)
         backend.objects["Other/My_Vault/My_Vault-20260101T000000Z.kdbx"] = byteArrayOf(6)
+        // A copy made before the folder carried the vault's id, and one of another vault with the same name.
+        backend.objects["KeyNexa/My_Vault/My_Vault-20260101T000000Z.kdbx"] = byteArrayOf(7)
+        backend.objects["KeyNexa/My_Vault-vault-2/My_Vault-20260101T000000Z.kdbx"] = byteArrayOf(8)
 
         uploader(backend, options = BackupOptions(keep = 1)).backupNow(VAULT_ID, "My Vault", BYTES)
 
         assertNull(backend.stored(copy("20260101T000000Z")))
-        assertNotNull(backend.stored("KeyNexa/My_Vault/notes.txt"))
-        assertNotNull(backend.stored("KeyNexa/My_Vault/My_Vault-20260101T000000Z.kdbx.bak"))
-        assertNotNull(backend.stored("KeyNexa/My_Vault/My_Vault-2026-01-01T000000Z.kdbx"))
+        assertNotNull(backend.stored("KeyNexa/My_Vault-vault-1/notes.txt"))
+        assertNotNull(backend.stored("KeyNexa/My_Vault-vault-1/My_Vault-20260101T000000Z.kdbx.bak"))
+        assertNotNull(backend.stored("KeyNexa/My_Vault-vault-1/My_Vault-2026-01-01T000000Z.kdbx"))
         assertNotNull(backend.stored("KeyNexa/Other/Other-20260101T000000Z.kdbx"))
         assertNotNull(backend.stored("Other/My_Vault/My_Vault-20260101T000000Z.kdbx"))
+        assertNotNull(backend.stored("KeyNexa/My_Vault/My_Vault-20260101T000000Z.kdbx"))
+        assertNotNull(backend.stored("KeyNexa/My_Vault-vault-2/My_Vault-20260101T000000Z.kdbx"))
     }
 
     @Test
@@ -148,8 +153,8 @@ class BackupUploaderTest {
 
         val result = uploader(backend, options = BackupOptions(keep = 0)).backupNow(VAULT_ID, "My Vault", BYTES)
 
-        assertEquals(BackupResult.Uploaded("KeyNexa/My_Vault/My_Vault-20261015T102030Z.kdbx", 2), result)
-        assertEquals(listOf("KeyNexa/My_Vault/My_Vault-20261015T102030Z.kdbx"), ourCopies(backend))
+        assertEquals(BackupResult.Uploaded("KeyNexa/My_Vault-vault-1/My_Vault-20261015T102030Z.kdbx", 2), result)
+        assertEquals(listOf("KeyNexa/My_Vault-vault-1/My_Vault-20261015T102030Z.kdbx"), ourCopies(backend))
     }
 
     @Test
@@ -186,7 +191,7 @@ class BackupUploaderTest {
 
         val result = uploader(backend, state, options = BackupOptions(keep = 1)).backupNow(VAULT_ID, "My Vault", BYTES)
 
-        assertEquals(BackupResult.Uploaded("KeyNexa/My_Vault/My_Vault-20261015T102030Z.kdbx", 0), result)
+        assertEquals(BackupResult.Uploaded("KeyNexa/My_Vault-vault-1/My_Vault-20261015T102030Z.kdbx", 0), result)
         assertNull(state.lastError(VAULT_ID))
         assertNotNull(backend.stored(copy("20260101T000000Z")))
     }
@@ -211,12 +216,12 @@ class BackupUploaderTest {
         clock: Clock = FixedClock(START),
     ): BackupUploader = BackupUploader(backend, state, options, clock)
 
-    private fun copy(timestamp: String): String = "KeyNexa/My_Vault/My_Vault-$timestamp.kdbx"
+    private fun copy(timestamp: String): String = "KeyNexa/My_Vault-vault-1/My_Vault-$timestamp.kdbx"
 
     private fun ourCopies(backend: InMemoryCloudBackend): List<String> {
         val ours =
             backend.objects.keys.filter {
-                it.startsWith("KeyNexa/My_Vault/My_Vault-") && it.endsWith(".kdbx")
+                it.startsWith("KeyNexa/My_Vault-vault-1/My_Vault-") && it.endsWith(".kdbx")
             }
         return ours.sorted()
     }

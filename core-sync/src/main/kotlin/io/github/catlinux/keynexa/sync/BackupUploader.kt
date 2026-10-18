@@ -154,12 +154,13 @@ class BackupUploader(
         at: Instant,
     ): BackupResult {
         val safeName = sanitize(vaultName)
-        val name = objectName(safeName, at)
+        val folder = folderOf(vaultId, safeName)
+        val name = "$folder$safeName-${TIMESTAMP.format(at)}.kdbx"
         return try {
             backend.put(name, encryptedBytes)
             state.recordSuccess(vaultId, at)
             state.clearError(vaultId)
-            BackupResult.Uploaded(name, rotate(safeName))
+            BackupResult.Uploaded(name, rotate(folder, safeName))
         } catch (unauthorized: CloudAuthException) {
             state.recordError(vaultId, BackupError.NotAuthorized, at)
             BackupResult.Failed(BackupError.NotAuthorized)
@@ -171,8 +172,10 @@ class BackupUploader(
 
     // Deletes the oldest copies this uploader itself created, and only those: anything whose name does not match the
     // exact pattern is left alone, so another vault or a file the user put there is never touched.
-    private fun rotate(safeName: String): Int {
-        val folder = "${options.prefix}$safeName/"
+    private fun rotate(
+        folder: String,
+        safeName: String,
+    ): Int {
         val pattern = Regex("^${Regex.escape(folder)}${Regex.escape(safeName)}-$TIMESTAMP_PATTERN\\.kdbx$")
         val ours =
             try {
@@ -193,15 +196,19 @@ class BackupUploader(
         return rotated
     }
 
-    private fun objectName(
+    // The vault's id is part of the folder: two vaults with the same name must never rotate each other's copies away.
+    private fun folderOf(
+        vaultId: String,
         safeName: String,
-        at: Instant,
-    ): String = "${options.prefix}$safeName/$safeName-${TIMESTAMP.format(at)}.kdbx"
+    ): String = "${options.prefix}$safeName-${sanitize(vaultId).take(FOLDER_ID_LENGTH)}/"
 
     private companion object {
         /** The UTC timestamp of a copy's name; it also sorts the names chronologically. */
         val TIMESTAMP: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyyMMdd'T'HHmmss'Z'").withZone(ZoneOffset.UTC)
         const val TIMESTAMP_PATTERN = "\\d{8}T\\d{6}Z"
+
+        /** Enough of the vault's id to tell vaults apart without making the folder name long. */
+        const val FOLDER_ID_LENGTH = 8
     }
 }
 
