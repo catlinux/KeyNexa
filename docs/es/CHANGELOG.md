@@ -6,6 +6,14 @@ Todos los cambios notables de este proyecto se documentan en este archivo. El fo
 
 ## [Sin publicar]
 
+## [1.0.9] - 2026-10-18
+
+Interno; la app de Android no cambia.
+
+### Corregido
+
+- CI: el informe de licencias fallaba con archivos POM de las dependencias de escritorio de `ui/shared` que no tenían suma verificada; se añaden sus SHA-256 (solo altas en `gradle/verification-metadata.xml`).
+
 ## [1.0.8] - 2026-10-18
 
 Interno; la app de Android no cambia.

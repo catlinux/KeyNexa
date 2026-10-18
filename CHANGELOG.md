@@ -6,6 +6,14 @@ All notable changes to this project are documented in this file. The format is b
 
 ## [Unreleased]
 
+## [1.0.9] - 2026-10-18
+
+Internal; the Android app does not change.
+
+### Fixed
+
+- CI: the license report failed on POM files of the desktop dependencies of `ui/shared` that had no verified checksum; their SHA-256 sums are added (only additions to `gradle/verification-metadata.xml`).
+
 ## [1.0.8] - 2026-10-18
 
 Internal; the Android app does not change.
