@@ -10,6 +10,12 @@ All notable changes to this project are documented in this file. The format is b
 
 - ADR-0008 (proposed) and the plan for optional cloud copies of the vault with an assistant: an `offline` build with no network access and a `cloud` build, S3 first and then Dropbox, OneDrive and Google Drive.
 
+## [0.33.13] - 2026-10-18
+
+### Changed
+
+- The "other password" dialog of conflict copies was checked on the phone, so every phone check of the security review is done except the two the owner postponed. The roadmap marks phases D and E as done and the Android 1.0 as ready, pending its tag. Documentation only (patch).
+
 ## [0.33.12] - 2026-10-18
 
 ### Changed

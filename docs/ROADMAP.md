@@ -11,8 +11,8 @@ Legend: ✅ done · 🔄 in progress · ⏳ planned. Nothing is "done" until its
 | A — Research | Environment, KDBX libraries, licenses, Android constraints | 0.1.0 | ✅ |
 | B — Architecture and security | Architecture, threat model, MVP, license decision | 0.1.0 | ✅ |
 | C — Project foundation | Gradle multi-module skeleton, CI, lint/format, i18n, design system, release workflow | 0.2.0 – 0.4.0 | ✅ |
-| D — Secure MVP | Open/lock/edit vaults, safe save, external changes and merge. Done: safe save, merge, Android storage, screens, auto-lock and screen protection (0.5.0 – 0.8.x). Biometric unlock written (0.9.0, pending device test). Conflict copies merged when the vault is opened and offered for deletion (0.10.0, checked on a real phone). Pending: fully reliable clipboard clearing | 0.5.0 – 0.10.0 | 🔄 |
-| E — Review | Dependency and security review, interoperability tests, docs, first pre-release | 0.9.0 | ⏳ |
+| D — Secure MVP | Open/lock/edit vaults, safe save, external changes and merge, conflict copies, biometric unlock, auto-lock and screen protection, optional cloud copies, the KeyNexa keypad for master passwords | 0.5.0 – 0.33.x | ✅ |
+| E — Review | Dependency and security review, interoperability tests, docs, first pre-release (0.10.2); final review in [SECURITY_REVIEW](SECURITY_REVIEW.md) (2026-10-18) | 0.10.2 – 0.33.x | ✅ |
 | Later | Autofill, credential provider, TOTP setup (showing existing codes read-only already works), Windows and Linux clients (once the Android app is functional) | 1.0.0+ | ⏳ |
 
 ## MVP (Android)
@@ -49,6 +49,7 @@ Legend: ✅ done · 🔄 in progress · ⏳ planned. Nothing is "done" until its
 - [Semantic Versioning](https://semver.org/): `MAJOR.MINOR.PATCH`, stored in the `VERSION` file (the Android build will read it).
 - During `0.y.z` the format, settings and APIs may change between minor versions; a `0.y` release is **not** production-ready, even if it compiles and passes tests.
 - `1.0.0` requires: MVP acceptance criteria met, an external security review or at least a documented independent review, and no known data-loss bugs.
+- **Android 1.0 status (2026-10-18):** the owner declared it ready. The documented review is [SECURITY_REVIEW](SECURITY_REVIEW.md) (an AI review, not an independent one) and no data-loss bug is known. Biometrics on phones without StrongBox or on API 26–29 and Argon2 on a modest phone are postponed and do not block 1.0. Publishing it needs the `v1.0.0` tag, which also proves the new release workflow. Next: the desktop client.
 - Every finished change bumps the version and adds a [CHANGELOG](../CHANGELOG.md) entry in the same commit.
 
 ## Release criteria (every published build)

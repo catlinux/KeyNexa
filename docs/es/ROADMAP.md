@@ -11,8 +11,8 @@ Leyenda: ✅ hecho · 🔄 en curso · ⏳ planificado. Nada está «hecho» has
 | A — Investigación | Entorno, bibliotecas KDBX, licencias, restricciones de Android | 0.1.0 | ✅ |
 | B — Arquitectura y seguridad | Arquitectura, modelo de amenazas, MVP, decisión de licencia | 0.1.0 | ✅ |
 | C — Base del proyecto | Esqueleto multimódulo de Gradle, CI, lint/formato, i18n, sistema de diseño, flujo de publicación | 0.2.0 – 0.4.0 | ✅ |
-| D — MVP seguro | Abrir/bloquear/editar bóvedas, guardado seguro, cambios externos y fusión. Hecho: guardado seguro, fusión, almacenamiento Android, pantallas, bloqueo automático y protección de pantalla (0.5.0 – 0.8.x). Desbloqueo biométrico escrito (0.9.0, pendiente de probar en dispositivo). Copias de conflicto fusionadas al abrir la bóveda y ofrecidas para borrar (0.10.0, comprobado en un móvil real). Pendiente: borrado del portapapeles totalmente fiable | 0.5.0 – 0.10.0 | 🔄 |
-| E — Revisión | Revisión de dependencias y de seguridad, pruebas de interoperabilidad, documentación, primera versión preliminar | 0.9.0 | ⏳ |
+| D — MVP seguro | Abrir/bloquear/editar bóvedas, guardado seguro, cambios externos y fusión, copias de conflicto, desbloqueo biométrico, bloqueo automático y protección de pantalla, copias opcionales en la nube, el teclado de KeyNexa para las contraseñas maestras | 0.5.0 – 0.33.x | ✅ |
+| E — Revisión | Revisión de dependencias y de seguridad, pruebas de interoperabilidad, documentación, primera pre-release (0.10.2); revisión final en [SECURITY_REVIEW](SECURITY_REVIEW.md) (2026-10-18) | 0.10.2 – 0.33.x | ✅ |
 | Más adelante | Autorrelleno, proveedor de credenciales, configurar TOTP (mostrar los códigos existentes en solo lectura ya funciona), clientes de Windows y Linux (cuando la app de Android sea funcional) | 1.0.0+ | ⏳ |
 
 ## MVP (Android)
@@ -49,6 +49,7 @@ Leyenda: ✅ hecho · 🔄 en curso · ⏳ planificado. Nada está «hecho» has
 - [Versionado Semántico](https://semver.org/lang/es/): `MAJOR.MINOR.PATCH`, almacenado en el archivo `VERSION` (la compilación de Android lo leerá).
 - Durante `0.y.z` el formato, los ajustes y las API pueden cambiar entre versiones menores; una versión `0.y` **no** está lista para producción, aunque compile y pase las pruebas.
 - La `1.0.0` requiere: criterios de aceptación del MVP cumplidos, una revisión de seguridad externa o al menos una revisión independiente documentada, y ningún error conocido de pérdida de datos.
+- **Estado de la 1.0 de Android (2026-10-18):** el titular la declaró lista. La revisión documentada es [SECURITY_REVIEW](SECURITY_REVIEW.md) (una revisión hecha por IA, no independiente) y no se conoce ningún error de pérdida de datos. La biometría en móviles sin StrongBox o con API 26–29 y Argon2 en un móvil modesto quedan aplazados y no bloquean la 1.0. Publicarla requiere la etiqueta `v1.0.0`, que además pone a prueba el nuevo flujo de publicación. Siguiente: el cliente de escritorio.
 - Todo cambio terminado sube la versión y añade una entrada en el [CHANGELOG](CHANGELOG.md) en el mismo commit.
 
 ## Criterios de publicación (toda compilación publicada)

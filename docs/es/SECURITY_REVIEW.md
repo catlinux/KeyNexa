@@ -50,10 +50,9 @@ Hechas el 2026-10-18 al volver la conexión (versión 0.33.11):
 - **Borrar el historial de una entrada:** de 10 versiones anteriores a 0, y siguen en 0 tras bloquear y volver a abrir.
 - **Lector de pantalla:** con TalkBack activo, la pantalla de desbloqueo ofrece el teclado del sistema y no el teclado propio. TalkBack se desactivó de nuevo y se restauraron los ajustes de accesibilidad.
 
-Pendiente (cubierto por pruebas unitarias):
+- **El diálogo de «otra contraseña» de una copia de conflicto:** una copia de `prova-nube` recifrada con otra contraseña y con una entrada más (hecha con `keepassxc-cli`). El diálogo se abre con el teclado de KeyNexa y sin el del sistema; una contraseña incorrecta se rechaza con un mensaje claro; la correcta fusiona la copia (aparece la entrada nueva y la bóveda se guarda), y *Borrar las copias* elimina el archivo.
 
-- El teclado propio en el diálogo de «otra contraseña» de una copia de conflicto (necesita una copia falsa en la carpeta sincronizada, que llegaría a los otros equipos del titular).
-- Desbloqueo biométrico en un móvil sin StrongBox y con API 26–29; Argon2 en un móvil modesto (aplazado por el titular).
+Aplazado por el titular, sin bloquear la 1.0: desbloqueo biométrico en un móvil sin StrongBox y con API 26–29, y Argon2 en un móvil modesto.
 
 ## Veredicto
 

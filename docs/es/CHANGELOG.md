@@ -10,6 +10,12 @@ Todos los cambios notables de este proyecto se documentan en este archivo. El fo
 
 - ADR-0008 (propuesta) y el plan de las copias opcionales de la bóveda en la nube con un asistente: una compilación `offline` sin acceso a la red y una `cloud`, primero S3 y después Dropbox, OneDrive y Google Drive.
 
+## [0.33.13] - 2026-10-18
+
+### Cambiado
+
+- El diálogo de «otra contraseña» de las copias de conflicto se comprobó en el móvil, así que están hechas todas las comprobaciones en el móvil de la revisión de seguridad salvo las dos que aplazó el titular. La hoja de ruta marca las fases D y E como hechas y la 1.0 de Android como lista, pendiente de su etiqueta. Solo documentación (parche).
+
 ## [0.33.12] - 2026-10-18
 
 ### Cambiado

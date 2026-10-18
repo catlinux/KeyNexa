@@ -50,10 +50,9 @@ Done on 2026-10-18 after the connection came back (version 0.33.11):
 - **Clearing an entry's history:** 10 previous versions to 0, still 0 after locking and opening again.
 - **Screen reader:** with TalkBack on, the unlock screen offers the system keyboard and no keypad. TalkBack was turned off again and the accessibility settings restored.
 
-Still to do (each covered by unit tests):
+- **The "other password" dialog of a conflict copy:** a copy of `prova-nube` re-encrypted with another password and one more entry (made with `keepassxc-cli`). The dialog opens with the KeyNexa keypad and no system keyboard; a wrong password is refused with a clear message; the right one merges the copy (the new entry appears and the vault saves), and *Delete the copies* removes the file.
 
-- The keypad in the "other password" dialog of a conflict copy (it needs a fake copy in the synchronised folder, which would reach the owner's other devices).
-- Biometric unlock on a phone without StrongBox and on API 26–29; Argon2 on a modest phone (postponed by the owner).
+Postponed by the owner, not blocking 1.0: biometric unlock on a phone without StrongBox and on API 26–29, and Argon2 on a modest phone.
 
 ## Verdict
 
