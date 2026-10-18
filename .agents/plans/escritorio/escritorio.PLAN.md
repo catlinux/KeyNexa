@@ -69,6 +69,8 @@ Reglas fijas (AGENTS.md): docs bilingües en el mismo commit (`bash scripts/chec
   - Licencias: CMP 1.8.2 (Apache-2.0) entra en el objetivo de escritorio; Skiko (Apache-2.0) llegará con `apps/desktop`. Se registran con la Skill `licencias`.
   - **Comprobación clave:** las líneas `androidx.*` de `apps/android/gradle.lockfile` no cambian de versión.
 
+- [x] **Prueba del bloque 2 en el móvil** (hecho 2026-10-18, 1.0.7): app de pruebas aparte (`.debug`), versión anterior (`bae4d52`) frente a 1.0.6 con una copia de `testdata` en carpeta nueva; desbloquear con el teclado propio, editar y guardar correctos; capturas idénticas píxel a píxel en claro y oscuro salvo la entrada editada. Móvil limpio al acabar. Falta el CI tras el push (pedir permiso).
+
 ## Bloque 3: la app de escritorio (Windows)
 
 - [ ] **3. `platform/desktop` y `platform/windows`:** en `platform/desktop` (común a los sistemas de escritorio) `FileStoragePort` sobre `java.nio` (escritura en temporal **cifrado** en la misma carpeta y `ATOMIC_MOVE`; si falla, el camino de `VerifiedWriter`), interfaz del almacén de secretos y de la carpeta de datos; en `platform/windows` la carpeta `%LOCALAPPDATA%\KeyNexa` (copias, diario, libro de copias de conflicto) y `DpapiSecretStore` con JNA. El empaquetado de Windows va en `apps/desktop/packaging/windows`. Pruebas JVM (las de DPAPI solo en Windows). · 1.1.0 (menor) · AgentRelay, esfuerzo medio, en dos tareas (almacenamiento; DPAPI).

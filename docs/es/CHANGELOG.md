@@ -6,6 +6,15 @@ Todos los cambios notables de este proyecto se documentan en este archivo. El fo
 
 ## [Sin publicar]
 
+## [1.0.7] - 2026-10-18
+
+Interno; la app de Android publicada no cambia.
+
+### Cambiado
+
+- Las compilaciones de depuración son una app aparte, *KeyNexa Debug* (`io.github.catlinux.keynexa.debug`), para que se instalen junto a un KeyNexa publicado en lugar de fallar por su firma, y el móvil conserve sus bóvedas y ajustes reales mientras se prueba una compilación.
+- Comprobado en un móvil: la reorganización de 1.0.2–1.0.6 desbloquea con el teclado de KeyNexa, edita y guarda una bóveda de prueba, y las pantallas de desbloqueo, inicio, grupo, entrada y ajustes son idénticas píxel a píxel a la compilación anterior en claro y oscuro (solo cambia la entrada editada).
+
 ## [1.0.6] - 2026-10-18
 
 Interno; la app de Android debería verse y comportarse igual (pendiente de confirmar en un móvil).

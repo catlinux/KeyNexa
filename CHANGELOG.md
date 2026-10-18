@@ -6,6 +6,15 @@ All notable changes to this project are documented in this file. The format is b
 
 ## [Unreleased]
 
+## [1.0.7] - 2026-10-18
+
+Internal; the published Android app does not change.
+
+### Changed
+
+- Debug builds are a separate app, *KeyNexa Debug* (`io.github.catlinux.keynexa.debug`), so they install next to a published KeyNexa instead of failing on its signature, and a phone keeps its real vaults and settings while a build is tested.
+- Checked on a phone: the reorganisation of 1.0.2–1.0.6 unlocks with the KeyNexa keypad, edits and saves a test vault, and the unlock, home, group, entry and settings screens are pixel-identical to the previous build in light and dark (only the edited entry differs).
+
 ## [1.0.6] - 2026-10-18
 
 Internal; the Android app should look and behave the same (to be confirmed on a phone).

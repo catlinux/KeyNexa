@@ -36,6 +36,14 @@ android {
         create("cloud") { dimension = "distribution" }
     }
 
+    // A debug build installs next to the signed release instead of failing on the signature, so a phone keeps its
+    // real KeyNexa (vaults, settings, biometric keys) while a build is being tested.
+    buildTypes {
+        getByName("debug") {
+            applicationIdSuffix = ".debug"
+        }
+    }
+
     dependenciesInfo {
         includeInApk = false
         includeInBundle = false
