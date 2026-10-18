@@ -36,6 +36,7 @@ import io.github.catlinux.keynexa.desktop.app.generated.resources.entry_detail_p
 import io.github.catlinux.keynexa.desktop.app.generated.resources.entry_detail_user_name
 import io.github.catlinux.keynexa.desktop.app.generated.resources.home_open_existing
 import io.github.catlinux.keynexa.desktop.app.generated.resources.instance_already_open
+import io.github.catlinux.keynexa.session.CloudBackupSource
 import io.github.catlinux.keynexa.session.KnownVault
 import io.github.catlinux.keynexa.session.KnownVaults
 import io.github.catlinux.keynexa.session.SessionState
@@ -43,7 +44,9 @@ import io.github.catlinux.keynexa.session.VaultSession
 import io.github.catlinux.keynexa.ui.theme.KeyNexaTheme
 import io.github.catlinux.keynexa.vault.NewVault
 import io.github.catlinux.keynexa.vault.VaultLocation
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.withContext
 import org.jetbrains.compose.resources.stringResource
 import java.awt.Dimension
 import java.awt.FileDialog
@@ -92,10 +95,24 @@ private fun ApplicationScope.KeyNexaWindow(
     val idle = remember { IdleTimer() }
     var selected by remember { mutableStateOf<KnownVault?>(null) }
     var settingsOpen by remember { mutableStateOf(false) }
+    var cloudOpen by remember { mutableStateOf(false) }
+    var cloudConfigured by remember { mutableStateOf(false) }
     val view = remember { DesktopVaultState(container.clipboard, session) }
     val openState = state as? SessionState.Open
     val openVault = openState?.vault
+    val cloudSource =
+        openState?.let { open ->
+            CloudBackupSource(open.vault) { container.readVault(open.vault.location) }
+        }
     val windowFocused = LocalWindowInfo.current.isWindowFocused
+    // The cloud is configured when its credentials load and its consent is accepted; refreshed when the dialog closes.
+    LaunchedEffect(cloudOpen) {
+        cloudConfigured =
+            withContext(Dispatchers.IO) {
+                val stores = container.cloud.stores
+                stores.consent.accepted() && stores.credentials.load() != null
+            }
+    }
     LaunchedEffect(windowFocused, openVault) {
         if (!windowFocused || openState == null) return@LaunchedEffect
         session.refreshIfChanged()
@@ -192,6 +209,8 @@ private fun ApplicationScope.KeyNexaWindow(
                         settings = settings,
                         onUpdate = container::updateSettings,
                         onBack = { settingsOpen = false },
+                        cloudConfigured = cloudConfigured,
+                        onOpenCloud = { cloudOpen = true },
                     )
                 } else {
                     KeyNexaScreen(
@@ -208,6 +227,13 @@ private fun ApplicationScope.KeyNexaWindow(
                     )
                 }
             }
+        }
+        if (cloudOpen) {
+            DesktopCloudDialog(
+                cloud = container.cloud,
+                source = cloudSource,
+                onDismiss = { cloudOpen = false },
+            )
         }
     }
 }

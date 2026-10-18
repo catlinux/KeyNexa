@@ -6,6 +6,14 @@ All notable changes to this project are documented in this file. The format is b
 
 ## [Unreleased]
 
+## [1.5.3] - 2026-10-18
+
+The Android app does not change. Step 8c, first part of the desktop plan.
+
+### Added
+
+- Desktop: cloud copies assistant (Settings > Copies in the cloud), same steps as on Android: consent, S3 service (Backblaze B2, Cloudflare R2), what you need, form with connection test, state with "Copy now", number of copies to keep and "Disconnect and delete". The credentials are stored sealed with DPAPI.
+
 ## [1.5.2] - 2026-10-18
 
 The Android app does not change. Step 8b of the desktop plan.

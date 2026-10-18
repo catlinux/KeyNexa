@@ -6,6 +6,14 @@ Todos los cambios notables de este proyecto se documentan en este archivo. El fo
 
 ## [Sin publicar]
 
+## [1.5.3] - 2026-10-18
+
+La app de Android no cambia. Paso 8c, primera parte del plan de escritorio.
+
+### Añadido
+
+- Escritorio: asistente de copias en la nube (Ajustes > Copias en la nube), con los mismos pasos que en Android: consentimiento, servicio S3 (Backblaze B2, Cloudflare R2), qué necesitas, formulario con prueba de conexión, estado con «Copiar ahora», número de copias a conservar y «Desconectar y borrar». Las credenciales se guardan selladas con DPAPI.
+
 ## [1.5.2] - 2026-10-18
 
 La app de Android no cambia. Paso 8b del plan de escritorio.

@@ -31,7 +31,8 @@ data class CloudBackupStatus(
  * of it is ever logged.
  */
 class DesktopCloudBackup(
-    private val stores: DesktopCloudStores,
+    /** Where the cloud keeps the credentials, the consent and the state; the settings dialog reaches them here. */
+    val stores: DesktopCloudStores,
     private val backendFactory: (S3Setup) -> CloudBackend = { it.backend() },
     private val clock: Clock = Clock.systemUTC(),
 ) {

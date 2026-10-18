@@ -21,6 +21,7 @@ import io.github.catlinux.keynexa.sync.KeePassMerger
 import io.github.catlinux.keynexa.sync.SafeSaver
 import io.github.catlinux.keynexa.sync.SaveRecovery
 import io.github.catlinux.keynexa.sync.VaultReader
+import io.github.catlinux.keynexa.vault.VaultLocation
 import io.github.catlinux.keynexa.windows.DpapiSecretBox
 import io.github.catlinux.keynexa.windows.WindowsCaptureGuard
 import io.github.catlinux.keynexa.windows.WindowsClipboard
@@ -70,6 +71,9 @@ class DesktopContainer {
         settingsStore.save(updated)
         settings = updated
     }
+
+    /** Reads a vault's encrypted bytes, for the cloud copy the settings ask for. */
+    fun readVault(location: VaultLocation): ByteArray = storage.read(location)
 
     init {
         Files.createDirectories(dirs.data)
