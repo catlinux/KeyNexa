@@ -10,6 +10,19 @@ Todos los cambios notables de este proyecto se documentan en este archivo. El fo
 
 - ADR-0008 (propuesta) y el plan de las copias opcionales de la bóveda en la nube con un asistente: una compilación `offline` sin acceso a la red y una `cloud`, primero S3 y después Dropbox, OneDrive y Google Drive.
 
+## [0.31.0] - 2026-10-18
+
+### Añadido
+
+- La pantalla de desbloqueo indica en voz baja, con un texto gris pequeño, cuando el teclado en uso o un servicio de accesibilidad activo viene de una app instalada y no del sistema (amenaza T22). No nombra ninguna app ni bloquea nada.
+
+### Corregido
+
+- Los cambios sin guardar ya no quedan perdidos tras un guardado que falla limpiamente y después se cierra la app: al abrir de nuevo se ofrece la copia privada (Restaurar / Descartar) si todavía aporta algo, y se borra sin avisar si no aporta nada. Restaurar la fusiona y solo la borra una vez guardada.
+- La copia privada de un guardado fallido se borra cuando un guardado posterior sale bien, en lugar de quedarse para siempre en el almacenamiento de la app.
+
+Menor: comportamiento nuevo y compatible.
+
 ## [0.30.6] - 2026-10-18
 
 ### Cambiado

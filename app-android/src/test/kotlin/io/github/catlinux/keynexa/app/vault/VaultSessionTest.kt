@@ -664,6 +664,76 @@ class VaultSessionTest {
         assertTrue(backups.list(location).none { it.kind == BackupKind.UnsavedChanges })
     }
 
+    // Leaves what a save that failed cleanly leaves behind after the app is closed: only the private copy, no journal.
+    private fun reopenAfterCleanFailure(edit: (Vault) -> Vault): VaultSession {
+        val session = session()
+        createVault(session)
+        val open = session.state.value as SessionState.Open
+        backups.put(
+            location,
+            BackupKind.UnsavedChanges,
+            engine.encode(edit(open.current), credentials()),
+            Instant.parse("2026-10-16T12:00:00Z"),
+        )
+        session.lock()
+        session.unlock(known, credentials())
+        return session
+    }
+
+    @Test
+    fun aCopyLeftByACleanFailureIsOfferedAndRestored() {
+        val session = reopenAfterCleanFailure { VaultEditor().addEntry(it, it.root.id, "Kept") }
+        val open = session.state.value as SessionState.Open
+        assertTrue(open.recovered is RecoveryOutcome.UnsavedCopyKept)
+        assertEquals(emptyList<String>(), titlesOf(files[location]))
+
+        session.restoreUnsaved()
+
+        assertNull((session.state.value as SessionState.Open).recovered)
+        assertEquals(listOf("Kept"), titlesOf(files[location]))
+        assertTrue(backups.list(location).none { it.kind == BackupKind.UnsavedChanges })
+    }
+
+    @Test
+    fun aCopyThatAddsNothingIsDeletedWithoutAsking() {
+        val session = reopenAfterCleanFailure { it }
+
+        assertNull((session.state.value as SessionState.Open).recovered)
+        assertTrue(backups.list(location).none { it.kind == BackupKind.UnsavedChanges })
+    }
+
+    @Test
+    fun aCopyWithOtherCredentialsIsKeptAndNotOffered() {
+        val session = session()
+        createVault(session)
+        val open = session.state.value as SessionState.Open
+        val other = VaultEditor().addEntry(open.current, open.current.root.id, "Other")
+        backups.put(location, BackupKind.UnsavedChanges, engine.encode(other, credentials("other")), Instant.now())
+        session.lock()
+
+        session.unlock(known, credentials())
+
+        assertNull((session.state.value as SessionState.Open).recovered)
+        assertTrue(backups.list(location).any { it.kind == BackupKind.UnsavedChanges })
+    }
+
+    @Test
+    fun aSuccessfulRetryDeletesTheCopyOfTheFailedSave() {
+        val session = session()
+        createVault(session)
+        val root = (session.state.value as SessionState.Open).current.root.id
+
+        unreadable = true
+        session.apply { VaultEditor().addEntry(it, root, "Bank") }
+        unreadable = false
+        assertTrue(backups.list(location).any { it.kind == BackupKind.UnsavedChanges })
+
+        session.retrySave()
+
+        assertTrue(backups.list(location).none { it.kind == BackupKind.UnsavedChanges })
+        assertEquals(listOf("Bank"), titlesOf(files[location]))
+    }
+
     @Test
     fun theAfterSaveHookRunsOnceForASuccessfulSave() {
         val saved = mutableListOf<KnownVault>()

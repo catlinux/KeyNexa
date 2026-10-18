@@ -1,5 +1,6 @@
 package io.github.catlinux.keynexa.app.vault
 
+import io.github.catlinux.keynexa.sync.BackupKind
 import io.github.catlinux.keynexa.sync.BackupRef
 import io.github.catlinux.keynexa.sync.BackupStore
 import io.github.catlinux.keynexa.sync.ConflictCopy
@@ -348,6 +349,7 @@ class VaultSession(
                 state
             }
         }
+        dropEarlierUnsavedCopy(outcome, target.unsavedCopy)
         notifySaved(outcome, target.vault)
     }
 
@@ -423,8 +425,64 @@ class VaultSession(
             is RecoveryOutcome.SaveHadNotStarted -> recovered.unsavedCopy
             is RecoveryOutcome.ChangedElsewhere -> recovered.unsavedCopy
             is RecoveryOutcome.Restored -> recovered.unsavedCopy
+            is RecoveryOutcome.UnsavedCopyKept -> recovered.unsavedCopy
             else -> null
         }
+
+    /**
+     * The newest private copy of changes that an earlier save could not write and that would still add something to
+     * [current]. On the way, copies that add nothing are deleted; copies that do not open with [secrets] or cannot be
+     * merged are left untouched, never offered and never deleted. Each copy costs a key derivation, but copies only
+     * exist after a failed save and go away once restored, discarded or found to add nothing.
+     */
+    private fun leftoverUnsavedCopy(
+        location: VaultLocation,
+        current: Vault,
+        secrets: Credentials,
+    ): BackupRef? {
+        val copies =
+            try {
+                backups.list(location).filter { it.kind == BackupKind.UnsavedChanges }
+            } catch (_: IOException) {
+                return null
+            }
+        for (ref in copies) {
+            when (addsSomething(ref, current, secrets)) {
+                true -> return ref
+                false -> runCatching { backups.delete(ref) }
+                null -> Unit
+            }
+        }
+        return null
+    }
+
+    /** Whether the copy [ref] adds something to [current]; null when that cannot be told (unreadable, unmergeable). */
+    private fun addsSomething(
+        ref: BackupRef,
+        current: Vault,
+        secrets: Credentials,
+    ): Boolean? {
+        val copy =
+            try {
+                engine.decode(backups.read(ref), secrets)
+            } catch (_: IOException) {
+                return null
+            } catch (_: VaultException) {
+                return null
+            }
+        return when (val result = vaultMerger.merge(current, copy)) {
+            is MergeResult.Merged -> result.vault != current
+            is MergeResult.Unmergeable -> null
+        }
+    }
+
+    // A successful save holds everything the copy of an earlier failed attempt held, so that copy can go.
+    private fun dropEarlierUnsavedCopy(
+        outcome: SaveOutcome,
+        earlier: BackupRef?,
+    ) {
+        if (outcome is SaveOutcome.Saved && earlier != null) runCatching { backups.delete(earlier) }
+    }
 
     private fun openAfter(
         vault: KnownVault,
@@ -438,12 +496,19 @@ class VaultSession(
             val loaded = readers.patient.open(vault.location, secrets)
             credentials = secrets
             lastFullCheckMillis = now()
+            val offered =
+                if (created || unsavedCopyOf(recovered) != null) {
+                    recovered
+                } else {
+                    leftoverUnsavedCopy(vault.location, loaded.vault, secrets)
+                        ?.let { RecoveryOutcome.UnsavedCopyKept(it) } ?: recovered
+                }
             mutableState.value =
                 SessionState.Open(
                     vault = vault,
                     loaded = loaded,
                     current = loaded.vault,
-                    recovered = recovered,
+                    recovered = offered,
                     lastKeyNexaSaveMillis = if (created) now() else null,
                 )
             foldConflicts()
@@ -463,6 +528,7 @@ class VaultSession(
         mutableState.update { state ->
             if (state is SessionState.Open) state.after(outcome) else state
         }
+        dropEarlierUnsavedCopy(outcome, open.unsavedCopy)
         notifySaved(outcome, open.vault)
     }
 

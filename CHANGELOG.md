@@ -10,6 +10,19 @@ All notable changes to this project are documented in this file. The format is b
 
 - ADR-0008 (proposed) and the plan for optional cloud copies of the vault with an assistant: an `offline` build with no network access and a `cloud` build, S3 first and then Dropbox, OneDrive and Google Drive.
 
+## [0.31.0] - 2026-10-18
+
+### Added
+
+- The unlock screen says quietly, in small grey text, when the keyboard in use or an enabled accessibility service comes from an installed app rather than the system (threat T22). No app is named and nothing is blocked.
+
+### Fixed
+
+- Unsaved changes are no longer stranded after a save that failed cleanly and the app was then closed: on the next open the private copy is offered (Restore / Discard) when it still adds something, and deleted silently when it adds nothing. Restoring merges it and deletes it only once saved.
+- The private copy of a failed save is deleted once a later save succeeds, instead of staying in app storage forever.
+
+Minor: new, compatible behaviour.
+
 ## [0.30.6] - 2026-10-18
 
 ### Changed

@@ -44,6 +44,7 @@
     <string name="unlock_key_file_chosen">Archivo de clave: %1$s</string>
     <string name="unlock_key_file_remove">Quitar el archivo de clave</string>
     <string name="unlock_action">Desbloquear</string>
+    <string name="unlock_third_party_input">Hay activo un teclado o un servicio de accesibilidad de otra app. Suele ser normal; si no lo reconoces, revísalo en los ajustes del sistema.</string>
     <string name="unlock_opening">Abriendo… puede tardar unos segundos.</string>
     <string name="unlock_reconnect">Reconectar archivo</string>
     <string name="unlock_error_wrong_credentials">Esa contraseña o ese archivo de clave no abren esta bóveda. Compruébalos e inténtalo de nuevo.</string>

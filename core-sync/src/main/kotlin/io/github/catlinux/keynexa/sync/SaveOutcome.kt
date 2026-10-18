@@ -94,4 +94,12 @@ sealed interface RecoveryOutcome {
 
     /** The storage could not be read; the pending save is kept for a later attempt. */
     data object StorageUnavailable : RecoveryOutcome
+
+    /**
+     * No save was interrupted, but [unsavedCopy] keeps changes that an earlier save could not write and that the
+     * file still lacks. [SaveRecovery] never reports it: only the open session can decrypt the copy to know.
+     */
+    data class UnsavedCopyKept(
+        val unsavedCopy: BackupRef,
+    ) : RecoveryOutcome
 }

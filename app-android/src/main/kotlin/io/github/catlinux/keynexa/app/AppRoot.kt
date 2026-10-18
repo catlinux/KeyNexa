@@ -15,6 +15,7 @@ import androidx.fragment.app.FragmentActivity
 import io.github.catlinux.keynexa.app.nav.Screen
 import io.github.catlinux.keynexa.app.security.BiometricProblem
 import io.github.catlinux.keynexa.app.security.BiometricTexts
+import io.github.catlinux.keynexa.app.security.ThirdPartyInput
 import io.github.catlinux.keynexa.app.ui.home.CreateVaultScreen
 import io.github.catlinux.keynexa.app.ui.home.HomeNoticeDialog
 import io.github.catlinux.keynexa.app.ui.home.HomeScreen
@@ -410,6 +411,7 @@ private fun AppScreens(
                 state = state,
                 onUnlock = { biometric.passwordUnlock(screen.vault, it) },
                 biometric = biometric.uiFor(screen.vault, context as? FragmentActivity, context),
+                thirdPartyInput = remember(screen.vault) { ThirdPartyInput.isActive(context) },
                 onReconnect = {
                     actions.beginReconnect(screen.vault)
                     onOpenFolder()

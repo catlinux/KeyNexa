@@ -141,6 +141,7 @@ fun UnlockScreen(
     onBack: () -> Unit,
     modifier: Modifier = Modifier,
     biometric: BiometricUi = BiometricUi(),
+    thirdPartyInput: Boolean = false,
 ) {
     val form = remember { UnlockForm() }
     LaunchedEffect(vault.location) {
@@ -179,6 +180,13 @@ fun UnlockScreen(
                     VaultCard(vault = vault, onBack = onBack)
                     if (loading) ProgressPanel()
                     PasswordField(form = form, enabled = !loading, onSubmit = submit)
+                    if (thirdPartyInput) {
+                        Text(
+                            text = stringResource(R.string.unlock_third_party_input),
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        )
+                    }
                     if (biometric.notice != null) NoticePanel(text = stringResource(biometric.notice))
                     if (failure != null) ErrorPanel(error = failure, onReconnect = onReconnect)
                     KeyFilePicker(form = form, enabled = !loading)

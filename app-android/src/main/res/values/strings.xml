@@ -44,6 +44,7 @@
     <string name="unlock_key_file_chosen">Key file: %1$s</string>
     <string name="unlock_key_file_remove">Remove the key file</string>
     <string name="unlock_action">Unlock</string>
+    <string name="unlock_third_party_input">A keyboard or accessibility service from another app is on. That is usually fine; if you do not recognise it, check your system settings.</string>
     <string name="unlock_opening">Opening… this can take a few seconds.</string>
     <string name="unlock_reconnect">Reconnect file</string>
     <string name="unlock_error_wrong_credentials">That password or key file does not open this vault. Check them and try again.</string>

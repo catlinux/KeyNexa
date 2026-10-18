@@ -204,7 +204,8 @@ fun GroupScreen(
     val hasRecoveredUnsaved =
         recovered is RecoveryOutcome.SaveHadNotStarted ||
             recovered is RecoveryOutcome.ChangedElsewhere ||
-            recovered is RecoveryOutcome.Restored
+            recovered is RecoveryOutcome.Restored ||
+            recovered is RecoveryOutcome.UnsavedCopyKept
     val warningDays =
         if (isRoot && syncWarnDays > 0 && !syncWarningDismissed) {
             syncWarning(fileLastModifiedMillis, System.currentTimeMillis(), syncWarnDays)
