@@ -10,6 +10,12 @@ Todos los cambios notables de este proyecto se documentan en este archivo. El fo
 
 - ADR-0008 (propuesta) y el plan de las copias opcionales de la bóveda en la nube con un asistente: una compilación `offline` sin acceso a la red y una `cloud`, primero S3 y después Dropbox, OneDrive y Google Drive.
 
+## [0.33.5] - 2026-10-18
+
+### Seguridad
+
+- Una copia de conflicto de Syncthing cuya cabecera sin cifrar pide más de 16 veces el trabajo de derivación de clave de la bóveda abierta ya no se descifra (se indica como dañada), así que una copia hostil o rota no puede tener ocupado durante horas, en cada apertura, el hilo que también guarda la bóveda. Los límites absolutos del motor siguen aplicándose a todo. Encontrado en la auditoría final. Parche.
+
 ## [0.33.4] - 2026-10-18
 
 ### Corregido

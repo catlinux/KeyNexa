@@ -3,8 +3,11 @@ package io.github.catlinux.keynexa.sync
 import io.github.catlinux.keynexa.vault.Credentials
 import io.github.catlinux.keynexa.vault.Entry
 import io.github.catlinux.keynexa.vault.FileMetadata
+import io.github.catlinux.keynexa.vault.KdbxEngine
+import io.github.catlinux.keynexa.vault.Kdf
 import io.github.catlinux.keynexa.vault.SiblingFile
 import io.github.catlinux.keynexa.vault.Vault
+import io.github.catlinux.keynexa.vault.VaultFormat
 import io.github.catlinux.keynexa.vault.VaultLocation
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
@@ -44,6 +47,31 @@ class ConflictMergerTest {
         assertEquals(listOf(copyName()), scan.absorbed.map { it.file.name })
         assertEquals(Fingerprint.of(storage.read(copyLocation())), scan.absorbed.single().fingerprint)
         assertTrue(scan.failed.isEmpty())
+    }
+
+    @Test
+    fun aCopyAskingForFarMoreKeyDerivationIsNotDecrypted() {
+        val base = sharedVault()
+        val other = base.addEntry(internet, newEntry("added-by-the-other-device", at(20)))
+        val storage = storageWith(engine.encode(base, credentials), engine.encode(other, credentials))
+        engine.resetCounters()
+
+        val scan = scanWithCopyCost(storage, base, factor = 100)
+
+        assertNull(scan.merged)
+        assertEquals(listOf(CopyProblem.Damaged), scan.failed.map { it.second })
+        assertEquals(0, engine.decodes)
+    }
+
+    @Test
+    fun aCopyWithASomewhatStrongerKeyDerivationIsStillFoldedIn() {
+        val base = sharedVault()
+        val other = base.addEntry(internet, newEntry("added-by-the-other-device", at(20)))
+        val storage = storageWith(engine.encode(base, credentials), engine.encode(other, credentials))
+
+        val scan = scanWithCopyCost(storage, base, factor = 4)
+
+        assertNotNull(requireNotNull(scan.merged).findEntry(uuid("added-by-the-other-device")))
     }
 
     @Test
@@ -290,6 +318,24 @@ class ConflictMergerTest {
         current: Vault,
         merger: VaultMerger = KeePassMerger(),
     ): ConflictScan = merger(storage, merger).scan(location, current, credentials)
+
+    /** A scan whose copies' headers ask for [factor] times the key derivation work of [current]. */
+    private fun scanWithCopyCost(
+        storage: FakeStorage,
+        current: Vault,
+        factor: Long,
+    ): ConflictScan {
+        val costly =
+            when (val kdf = current.format.kdf) {
+                is Kdf.Argon2 -> kdf.copy(iterations = kdf.iterations * factor)
+                is Kdf.AesKdf -> kdf.copy(rounds = kdf.rounds * factor)
+            }
+        val greedy =
+            object : KdbxEngine by engine {
+                override fun inspect(data: ByteArray): VaultFormat = engine.inspect(data).copy(kdf = costly)
+            }
+        return ConflictMerger(storage, greedy, KeePassMerger(), ledger).scan(location, current, credentials)
+    }
 
     /** The file of the only copy a plain scan reported, as the app hands it back to [ConflictMerger.scanWith]. */
     private fun reportedCopy(

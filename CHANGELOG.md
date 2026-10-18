@@ -10,6 +10,12 @@ All notable changes to this project are documented in this file. The format is b
 
 - ADR-0008 (proposed) and the plan for optional cloud copies of the vault with an assistant: an `offline` build with no network access and a `cloud` build, S3 first and then Dropbox, OneDrive and Google Drive.
 
+## [0.33.5] - 2026-10-18
+
+### Security
+
+- A Syncthing conflict copy whose unencrypted header asks for more than 16 times the key derivation work of the open vault is no longer decrypted (it is reported as damaged), so a hostile or broken copy cannot keep the thread that also saves the vault busy for hours on every open. The engine's absolute limits still apply to everything. Found in the final audit. Patch.
+
 ## [0.33.4] - 2026-10-18
 
 ### Fixed

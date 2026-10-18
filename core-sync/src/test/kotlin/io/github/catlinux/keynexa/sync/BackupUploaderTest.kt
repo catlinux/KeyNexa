@@ -46,7 +46,8 @@ class BackupUploaderTest {
 
         uploader(backend).backupNow(VAULT_ID, "My Vault", content)
 
-        assertEquals(content.toList(), backend.stored("KeyNexa/My_Vault-vault-1/My_Vault-20261015T102030Z.kdbx")?.toList())
+        val stored = backend.stored("KeyNexa/My_Vault-vault-1/My_Vault-20261015T102030Z.kdbx")
+        assertEquals(content.toList(), stored?.toList())
     }
 
     @Test
