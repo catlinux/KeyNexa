@@ -149,6 +149,7 @@ jobs:
             --lockfile=core/sync/gradle.lockfile
             --lockfile=core/session/gradle.lockfile
             --lockfile=platform/jvm/gradle.lockfile
+            --lockfile=platform/desktop/gradle.lockfile
             --lockfile=platform/android/gradle.lockfile
             --lockfile=ui/shared/gradle.lockfile
             --lockfile=apps/android/gradle.lockfile

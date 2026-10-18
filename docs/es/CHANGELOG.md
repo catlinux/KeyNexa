@@ -6,6 +6,18 @@ Todos los cambios notables de este proyecto se documentan en este archivo. El fo
 
 ## [Sin publicar]
 
+## [1.0.8] - 2026-10-18
+
+Interno; la app de Android no cambia.
+
+### Añadido
+
+- Módulo nuevo `platform/desktop` (`:platform:desktop`), común a todos los sistemas de escritorio: `FileStoragePort` escribe la bóveda en un temporal en la misma carpeta y la mueve a su sitio de forma atómica (escribe directamente cuando el sistema u otro programa impiden el movimiento, igualmente protegido por las copias y la relectura del guardado seguro), los almacenes privados en una carpeta de datos por usuario y la lista de bóvedas conocidas en un archivo.
+
+### Cambiado
+
+- La interfaz `SecretBox` pasa de `platform/cloud` a `platform/jvm`, para que la usen el almacén de secretos del escritorio y la futura clave del dispositivo.
+
 ## [1.0.7] - 2026-10-18
 
 Interno; la app de Android publicada no cambia.

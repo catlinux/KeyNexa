@@ -1,5 +1,6 @@
 package io.github.catlinux.keynexa.cloud
 
+import io.github.catlinux.keynexa.platform.SecretBox
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNull

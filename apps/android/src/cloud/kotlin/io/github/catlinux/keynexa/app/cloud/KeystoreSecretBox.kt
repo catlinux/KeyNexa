@@ -3,7 +3,7 @@ package io.github.catlinux.keynexa.app.cloud
 import android.security.keystore.KeyGenParameterSpec
 import android.security.keystore.KeyProperties
 import io.github.catlinux.keynexa.cloud.AesGcmSecretBox
-import io.github.catlinux.keynexa.cloud.SecretBox
+import io.github.catlinux.keynexa.platform.SecretBox
 import java.io.IOException
 import java.security.GeneralSecurityException
 import java.security.KeyStore

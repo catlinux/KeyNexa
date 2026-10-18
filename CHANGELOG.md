@@ -6,6 +6,18 @@ All notable changes to this project are documented in this file. The format is b
 
 ## [Unreleased]
 
+## [1.0.8] - 2026-10-18
+
+Internal; the Android app does not change.
+
+### Added
+
+- New module `platform/desktop` (`:platform:desktop`), shared by every desktop system: `FileStoragePort` writes the vault to a temporary file in the same folder and moves it into place atomically (writing in place when the system or another program prevents the move, still guarded by the safe-save copies and read-back), the private stores under a per-user data folder, and the list of known vaults in a file.
+
+### Changed
+
+- The `SecretBox` interface moves from `platform/cloud` to `platform/jvm`, so the desktop secret store and the future device key can use it.
+
 ## [1.0.7] - 2026-10-18
 
 Internal; the published Android app does not change.

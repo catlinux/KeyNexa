@@ -91,7 +91,7 @@ internal fun locationKey(location: VaultLocation): String =
 private const val KEY_BYTES = 12
 
 /** Writes to a temporary file in the same folder and renames it, so a crash never leaves a half-written file. */
-internal fun writeAtomically(
+fun writeAtomically(
     target: File,
     bytes: ByteArray,
 ) {

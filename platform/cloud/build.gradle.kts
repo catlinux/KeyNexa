@@ -7,6 +7,7 @@ kotlin {
 }
 
 dependencies {
+    api(project(":platform:jvm"))
     implementation(project(":core:sync"))
 
     testImplementation(libs.junit)
