@@ -6,6 +6,18 @@ Todos los cambios notables de este proyecto se documentan en este archivo. El fo
 
 ## [Sin publicar]
 
+## [1.5.1] - 2026-10-18
+
+La app de Android no cambia. Paso 8a del plan de escritorio: la base de la nube para el escritorio, aún sin pantalla (parche: interno).
+
+### Añadido
+
+- Escritorio: la cola de copias en la nube (credenciales selladas con DPAPI, consentimiento, recordatorio y estado en la carpeta de datos privada), conectada a cada guardado correcto. No hace nada hasta que la nube esté configurada y aceptada.
+
+### Cambiado
+
+- El tiempo de borrado del portapapeles se lee en cada copia, así que puede cambiar mientras la app funciona.
+
 ## [1.5.0] - 2026-10-18
 
 La app de Android no cambia. Paso 7 del plan de escritorio: las protecciones del escritorio a la altura de Android.

@@ -21,7 +21,7 @@ class ClipboardTimerTest {
     fun schedulesTheClearOfASensitiveCopy() {
         val clipboard = FakeClipboard()
         val scheduler = RecordingScheduler()
-        val timer = ClipboardTimer(clipboard, clearAfterMillis = DELAY_MILLIS, scheduler = scheduler)
+        val timer = ClipboardTimer(clipboard, clearAfterMillis = { DELAY_MILLIS }, scheduler = scheduler)
 
         timer.copy("a secret".toCharArray(), sensitive = true)
 
@@ -36,7 +36,7 @@ class ClipboardTimerTest {
     fun schedulesNothingForAPlainCopy() {
         val clipboard = FakeClipboard()
         val scheduler = RecordingScheduler()
-        val timer = ClipboardTimer(clipboard, clearAfterMillis = DELAY_MILLIS, scheduler = scheduler)
+        val timer = ClipboardTimer(clipboard, clearAfterMillis = { DELAY_MILLIS }, scheduler = scheduler)
 
         timer.copy("a note".toCharArray(), sensitive = false)
 
@@ -50,7 +50,7 @@ class ClipboardTimerTest {
     fun aSecondCopyReplacesThePendingClear() {
         val clipboard = FakeClipboard()
         val scheduler = RecordingScheduler()
-        val timer = ClipboardTimer(clipboard, clearAfterMillis = DELAY_MILLIS, scheduler = scheduler)
+        val timer = ClipboardTimer(clipboard, clearAfterMillis = { DELAY_MILLIS }, scheduler = scheduler)
 
         timer.copy("a secret".toCharArray(), sensitive = true)
         timer.copy("a note".toCharArray(), sensitive = false)
@@ -64,7 +64,7 @@ class ClipboardTimerTest {
     fun clearsAtOnceAndForgetsThePendingClear() {
         val clipboard = FakeClipboard()
         val scheduler = RecordingScheduler()
-        val timer = ClipboardTimer(clipboard, clearAfterMillis = DELAY_MILLIS, scheduler = scheduler)
+        val timer = ClipboardTimer(clipboard, clearAfterMillis = { DELAY_MILLIS }, scheduler = scheduler)
 
         timer.copy("a secret".toCharArray(), sensitive = true)
         timer.clearNow()
@@ -87,10 +87,25 @@ class ClipboardTimerTest {
     }
 
     @Test
+    fun readsTheDelayAgainOnEveryCopy() {
+        val clipboard = FakeClipboard()
+        val scheduler = RecordingScheduler()
+        var delay = DELAY_MILLIS
+        val timer = ClipboardTimer(clipboard, clearAfterMillis = { delay }, scheduler = scheduler)
+
+        timer.copy("a secret".toCharArray(), sensitive = true)
+        delay = DELAY_MILLIS * 2
+        timer.copy("a secret".toCharArray(), sensitive = true)
+
+        assertEquals(listOf(DELAY_MILLIS, DELAY_MILLIS * 2), scheduler.delays)
+        timer.close()
+    }
+
+    @Test
     fun closeStopsTheScheduler() {
         val clipboard = FakeClipboard()
         val scheduler = RecordingScheduler()
-        val timer = ClipboardTimer(clipboard, clearAfterMillis = DELAY_MILLIS, scheduler = scheduler)
+        val timer = ClipboardTimer(clipboard, clearAfterMillis = { DELAY_MILLIS }, scheduler = scheduler)
 
         timer.close()
 

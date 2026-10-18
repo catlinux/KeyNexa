@@ -4,6 +4,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import io.github.catlinux.keynexa.desktop.ClipboardTimer
+import io.github.catlinux.keynexa.desktop.DesktopCloudBackup
+import io.github.catlinux.keynexa.desktop.DesktopCloudStores
 import io.github.catlinux.keynexa.desktop.DesktopDirs
 import io.github.catlinux.keynexa.desktop.DesktopSettings
 import io.github.catlinux.keynexa.desktop.DesktopSettingsStore
@@ -19,6 +21,7 @@ import io.github.catlinux.keynexa.sync.KeePassMerger
 import io.github.catlinux.keynexa.sync.SafeSaver
 import io.github.catlinux.keynexa.sync.SaveRecovery
 import io.github.catlinux.keynexa.sync.VaultReader
+import io.github.catlinux.keynexa.windows.DpapiSecretBox
 import io.github.catlinux.keynexa.windows.WindowsCaptureGuard
 import io.github.catlinux.keynexa.windows.WindowsClipboard
 import io.github.catlinux.keynexa.windows.WindowsDirs
@@ -56,6 +59,9 @@ class DesktopContainer {
     /** Asks Windows to keep the window out of screen captures. */
     val captureGuard = WindowsCaptureGuard()
 
+    /** The cloud queue: it copies a vault to the configured account after a save and on demand. */
+    val cloud: DesktopCloudBackup
+
     private val settingsStore: DesktopSettingsStore
 
     /** Stores what [change] answers and publishes it, so the interface follows the new settings. */
@@ -74,7 +80,11 @@ class DesktopContainer {
         clipboard =
             ClipboardTimer(
                 WindowsClipboard(),
-                clearAfterMillis = clipboardClearMillis(settings.clipboardClearSeconds),
+                clearAfterMillis = { clipboardClearMillis(settings.clipboardClearSeconds) },
+            )
+        cloud =
+            DesktopCloudBackup(
+                stores = DesktopCloudStores(dirs, DpapiSecretBox()),
             )
         val keeper = KeePassMerger()
         val worker =
@@ -97,6 +107,7 @@ class DesktopContainer {
                 conflicts = ConflictMerger(storage, engine, keeper, stores.mergedCopies),
                 executor = worker,
                 now = System::currentTimeMillis,
+                afterSave = { cloud.onSaved(it) { storage.read(it.location) } },
             )
     }
 }

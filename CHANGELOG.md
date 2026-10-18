@@ -6,6 +6,18 @@ All notable changes to this project are documented in this file. The format is b
 
 ## [Unreleased]
 
+## [1.5.1] - 2026-10-18
+
+The Android app does not change. Step 8a of the desktop plan: the cloud base for the desktop, with no screen yet (patch: internal).
+
+### Added
+
+- Desktop: the cloud backup queue (credentials sealed with DPAPI, consent, reminder and state under the private data folder), connected to every successful save. It does nothing until the cloud is configured and accepted.
+
+### Changed
+
+- The clipboard clearing time is read on every copy, so it can change while the app runs.
+
 ## [1.5.0] - 2026-10-18
 
 The Android app does not change. Step 7 of the desktop plan: the desktop protections equal to Android's.

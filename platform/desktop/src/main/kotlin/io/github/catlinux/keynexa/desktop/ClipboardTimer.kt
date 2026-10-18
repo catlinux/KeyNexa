@@ -14,12 +14,14 @@ private const val TIMER_THREAD = "keynexa-clipboard"
 /**
  * Takes a copied secret off the clipboard after [clearAfterMillis], so it does not sit there for the rest of the day.
  *
+ * The delay is read again on every copy, so a setting can change it while the app is running.
+ *
  * A new copy replaces any pending clear, [clearNow] clears at once (on lock and on exit) and [close] stops the timer
  * for good. Meant to be used from the client's own thread; the clear itself runs on the timer thread.
  */
 class ClipboardTimer(
     private val clipboard: SecureClipboard,
-    private val clearAfterMillis: Long = CLEAR_AFTER_MILLIS,
+    private val clearAfterMillis: () -> Long = { CLEAR_AFTER_MILLIS },
     private val scheduler: ScheduledExecutorService = newScheduler(),
 ) : AutoCloseable {
     private var pending: ScheduledFuture<*>? = null
@@ -33,7 +35,7 @@ class ClipboardTimer(
         pending?.cancel(false)
         pending =
             if (sensitive) {
-                scheduler.schedule({ clipboard.clearIfOurs() }, clearAfterMillis, TimeUnit.MILLISECONDS)
+                scheduler.schedule({ clipboard.clearIfOurs() }, clearAfterMillis(), TimeUnit.MILLISECONDS)
             } else {
                 null
             }

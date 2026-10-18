@@ -10,6 +10,8 @@ dependencies {
     api(project(":core:vault"))
     api(project(":core:session"))
     api(project(":platform:jvm"))
+    api(project(":platform:cloud"))
+    api(project(":core:sync"))
 
     testImplementation(libs.junit)
 }
