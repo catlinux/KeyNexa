@@ -10,6 +10,12 @@ All notable changes to this project are documented in this file. The format is b
 
 - ADR-0008 (proposed) and the plan for optional cloud copies of the vault with an assistant: an `offline` build with no network access and a `cloud` build, S3 first and then Dropbox, OneDrive and Google Drive.
 
+## [0.33.10] - 2026-10-18
+
+### Added
+
+- `docs/SECURITY_REVIEW.md` (and its translation): the final review before 1.0, with scope, method, the nine findings fixed in 0.31.0 to 0.33.9, the accepted risks and the checks still to do on a phone. `THREAT_MODEL` updated for T11, T16, T17 and T20. Documentation only (patch).
+
 ## [0.33.9] - 2026-10-18
 
 ### Fixed

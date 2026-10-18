@@ -10,6 +10,12 @@ Todos los cambios notables de este proyecto se documentan en este archivo. El fo
 
 - ADR-0008 (propuesta) y el plan de las copias opcionales de la bóveda en la nube con un asistente: una compilación `offline` sin acceso a la red y una `cloud`, primero S3 y después Dropbox, OneDrive y Google Drive.
 
+## [0.33.10] - 2026-10-18
+
+### Añadido
+
+- `docs/es/SECURITY_REVIEW.md` (y su original en inglés): la revisión final antes de la 1.0, con alcance, método, los nueve hallazgos corregidos de la 0.31.0 a la 0.33.9, los riesgos aceptados y las comprobaciones pendientes en un móvil. `THREAT_MODEL` al día en T11, T16, T17 y T20. Solo documentación (parche).
+
 ## [0.33.9] - 2026-10-18
 
 ### Corregido
