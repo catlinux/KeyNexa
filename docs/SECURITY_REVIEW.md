@@ -2,7 +2,7 @@
 
 [English](SECURITY_REVIEW.md) | [Español](es/SECURITY_REVIEW.md)
 
-Final review before 1.0 (step B3 of the roadmap and the code part of step Z). Done on 2026-10-18 on version 0.33.3; the fixes it led to are in 0.33.4 to 0.33.9.
+Final review before 1.0 (step B3 of the roadmap and the code part of step Z). Done on 2026-10-18 on version 0.33.3; the fixes it led to are in 0.33.4 to 0.33.11.
 
 ## Scope and method
 
@@ -24,6 +24,8 @@ Final review before 1.0 (step B3 of the roadmap and the code part of step Z). Do
 | R7 | Low | Entry | *Open URL* was offered for any address but only http and https open; a phone without a browser would crash on it. | 0.33.8 |
 | R8 | Low | Accessibility | Buttons with a fixed height cut their label with large text (*Unlock with biometrics*). | 0.33.1 |
 | R9 | Info | CI | The intermittent failure of the keepass-rs job was Gradle dependency verification of a POM without checksum, not an interoperability difference. | 0.33.9 |
+
+**Regression caused by this review:** the first version of the R2 fix (0.33.7) also set `isExpandEntityReferences = false`, which on Android breaks the predefined XML entities every vault contains, so every vault read as damaged. Unit tests run on the JVM and did not catch it; the phone did. Fixed in 0.33.11, keeping the protection against external entities.
 
 Also hardened during the same days, before this review: touches are ignored under other apps' windows (0.30.5), the unlock screen quietly mentions a keyboard or accessibility service that does not come with the system (0.31.0), and master passwords are typed with the KeyNexa keypad (0.32.0 to 0.33.0; [ADR-0010](decisions/0010-in-app-password-keypad.md)).
 

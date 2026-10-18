@@ -2,7 +2,7 @@
 
 [English](../SECURITY_REVIEW.md) | [Español](SECURITY_REVIEW.md)
 
-Revisión final antes de la 1.0 (paso B3 de la hoja de ruta y la parte de código del paso Z). Hecha el 2026-10-18 sobre la versión 0.33.3; los arreglos que provocó están en la 0.33.4 a la 0.33.9.
+Revisión final antes de la 1.0 (paso B3 de la hoja de ruta y la parte de código del paso Z). Hecha el 2026-10-18 sobre la versión 0.33.3; los arreglos que provocó están en la 0.33.4 a la 0.33.11.
 
 ## Alcance y método
 
@@ -24,6 +24,8 @@ Revisión final antes de la 1.0 (paso B3 de la hoja de ruta y la parte de códig
 | R7 | Baja | Entrada | *Abrir URL* se ofrecía para cualquier dirección pero solo se abren las http y https; un móvil sin navegador se cerraba al pulsarlo. | 0.33.8 |
 | R8 | Baja | Accesibilidad | Los botones de altura fija cortaban su etiqueta con texto grande (*Desbloquear con biometría*). | 0.33.1 |
 | R9 | Informativo | CI | El fallo intermitente del trabajo de keepass-rs era la verificación de dependencias de Gradle de un POM sin suma, no una diferencia de interoperabilidad. | 0.33.9 |
+
+**Regresión causada por esta revisión:** la primera versión del arreglo de R2 (0.33.7) también ponía `isExpandEntityReferences = false`, lo que en Android rompe las entidades XML predefinidas que contiene toda bóveda, así que cualquier bóveda se leía como dañada. Las pruebas unitarias se ejecutan en la JVM y no lo detectaron; el móvil sí. Corregido en la 0.33.11, manteniendo la protección contra entidades externas.
 
 Además, en los mismos días y antes de esta revisión: se ignoran los toques bajo ventanas de otras apps (0.30.5), la pantalla de desbloqueo menciona en voz baja un teclado o servicio de accesibilidad que no viene con el sistema (0.31.0), y las contraseñas maestras se escriben con el teclado de KeyNexa (0.32.0 a 0.33.0; [ADR-0010](decisions/0010-in-app-password-keypad.md)).
 

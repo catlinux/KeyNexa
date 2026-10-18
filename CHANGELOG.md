@@ -10,6 +10,12 @@ All notable changes to this project are documented in this file. The format is b
 
 - ADR-0008 (proposed) and the plan for optional cloud copies of the vault with an assistant: an `offline` build with no network access and a `cloud` build, S3 first and then Dropbox, OneDrive and Google Drive.
 
+## [0.33.11] - 2026-10-18
+
+### Fixed
+
+- On Android every vault read as damaged since 0.33.7: the XML hardening also turned off entity expansion, which there breaks the predefined entities (`&amp;` and the like) every vault contains. That setting is removed; external entities are still refused. Found on the phone, not by the JVM tests. Patch.
+
 ## [0.33.10] - 2026-10-18
 
 ### Added

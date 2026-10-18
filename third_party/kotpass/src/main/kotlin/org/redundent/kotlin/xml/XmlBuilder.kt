@@ -83,8 +83,8 @@ private fun secureDocumentBuilder(): DocumentBuilder {
             // This parser does not have the feature; the entity resolver below still holds.
         }
     }
-    factory.isExpandEntityReferences = false
-    factory.isXIncludeAware = false
+    // Not `isExpandEntityReferences = false`: on Android it breaks the predefined entities (`&amp;` and the like)
+    // that every vault contains, and the file then reads as damaged.
     return factory.newDocumentBuilder().apply {
         setEntityResolver { _, _ -> throw SAXException("External entities are not allowed") }
     }

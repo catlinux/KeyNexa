@@ -10,6 +10,12 @@ Todos los cambios notables de este proyecto se documentan en este archivo. El fo
 
 - ADR-0008 (propuesta) y el plan de las copias opcionales de la bóveda en la nube con un asistente: una compilación `offline` sin acceso a la red y una `cloud`, primero S3 y después Dropbox, OneDrive y Google Drive.
 
+## [0.33.11] - 2026-10-18
+
+### Corregido
+
+- En Android cualquier bóveda se leía como dañada desde la 0.33.7: el refuerzo del XML desactivaba también la expansión de entidades, lo que allí rompe las entidades predefinidas (`&amp;` y similares) que contiene toda bóveda. Ese ajuste se quita; las entidades externas siguen rechazadas. Encontrado en el móvil, no por las pruebas en la JVM. Parche.
+
 ## [0.33.10] - 2026-10-18
 
 ### Añadido
