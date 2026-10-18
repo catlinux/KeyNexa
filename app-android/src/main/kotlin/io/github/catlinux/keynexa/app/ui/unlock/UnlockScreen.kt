@@ -41,6 +41,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -59,6 +60,8 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LifecycleEventEffect
 import io.github.catlinux.keynexa.app.R
 import io.github.catlinux.keynexa.app.ui.common.BrandMark
 import io.github.catlinux.keynexa.app.ui.common.HexBadge
@@ -85,19 +88,50 @@ private val FieldShape = RoundedCornerShape(14.dp)
 /** A key file can be any file the user can reach. */
 private val KeyFileTypes = arrayOf("*/*")
 
-/** Overwrites a password array that is no longer needed. */
-private val PASSWORD_FILL = Char(0)
-
 /** What the user typed or picked on this screen. Secrets live here only while the screen is on. */
-private class UnlockForm {
+private class UnlockForm(
+    useKeypad: Boolean,
+) {
+    /** What the system keyboard typed; unused while [useKeypad] is on. */
     var password by mutableStateOf("")
     var revealed by mutableStateOf(false)
+
+    /** True while the KeyNexa keypad is used instead of the system keyboard (ADR-0010). */
+    var useKeypad by mutableStateOf(useKeypad)
+    val buffer = PasswordBuffer()
+    val keypad = KeypadState()
+
+    /** How many characters [buffer] holds: observable, unlike the buffer itself. */
+    var typedLength by mutableIntStateOf(0)
     var keyFileName by mutableStateOf<String?>(null)
     var keyFileBytes by mutableStateOf<ByteArray?>(null)
     var keyFileFailed by mutableStateOf(false)
 
     /** A vault needs a password, a key file or both. */
-    val ready: Boolean get() = password.isNotEmpty() || keyFileBytes != null
+    val ready: Boolean
+        get() = (if (useKeypad) typedLength > 0 else password.isNotEmpty()) || keyFileBytes != null
+
+    /** The typed password as a new array the caller owns, or null when nothing was typed; the form is wiped. */
+    fun takePassword(): CharArray? {
+        val typed = if (useKeypad) buffer.copyOut() else password.toCharArray()
+        clearPassword()
+        if (typed.isNotEmpty()) return typed
+        return null
+    }
+
+    /** Wipes whatever was typed, with either input. */
+    fun clearPassword() {
+        buffer.clear()
+        typedLength = 0
+        password = ""
+        revealed = false
+    }
+
+    /** Changes between the keypad and the system keyboard, dropping what was typed with the other one. */
+    fun switchInput() {
+        clearPassword()
+        useKeypad = !useKeypad
+    }
 
     fun pickKeyFile(
         name: String,
@@ -142,24 +176,26 @@ fun UnlockScreen(
     modifier: Modifier = Modifier,
     biometric: BiometricUi = BiometricUi(),
     thirdPartyInput: Boolean = false,
+    passwordKeypad: Boolean = true,
 ) {
-    val form = remember { UnlockForm() }
+    val form = remember { UnlockForm(useKeypad = passwordKeypad) }
     LaunchedEffect(vault.location) {
         if (biometric.available) biometric.onUnlock()
     }
     DisposableEffect(Unit) {
-        onDispose { form.clearKeyFile() }
+        onDispose {
+            form.clearPassword()
+            form.clearKeyFile()
+        }
     }
+    // Nothing typed waits in memory while the app is in the background.
+    LifecycleEventEffect(Lifecycle.Event.ON_STOP) { form.clearPassword() }
     val loading = state is SessionState.Unlocking
     val failure = (state as? SessionState.Failed)?.error
     val enabled = form.ready && !loading
     val submit: () -> Unit = {
         if (enabled) {
-            val typed = form.password.toCharArray()
-            val password = if (typed.isEmpty()) null else typed.copyOf()
-            onUnlock(Credentials.of(password = password, keyFile = form.keyFileBytes?.copyOf()))
-            typed.fill(PASSWORD_FILL)
-            form.password = ""
+            onUnlock(Credentials.of(password = form.takePassword(), keyFile = form.keyFileBytes?.copyOf()))
         }
     }
     Surface(modifier = modifier.fillMaxSize()) {
@@ -179,7 +215,29 @@ fun UnlockScreen(
                 Column(verticalArrangement = Arrangement.spacedBy(BlockGap)) {
                     VaultCard(vault = vault, onBack = onBack)
                     if (loading) ProgressPanel()
-                    PasswordField(form = form, enabled = !loading, onSubmit = submit)
+                    if (form.useKeypad) {
+                        KeypadPasswordField(form = form, enabled = !loading)
+                    } else {
+                        PasswordField(form = form, enabled = !loading, onSubmit = submit)
+                    }
+                    TextButton(
+                        onClick = { form.switchInput() },
+                        enabled = !loading,
+                        modifier = Modifier.heightIn(min = TouchTarget),
+                    ) {
+                        val switchText =
+                            if (form.useKeypad) R.string.unlock_use_system_keyboard else R.string.unlock_use_keypad
+                        Text(text = stringResource(switchText))
+                    }
+                    if (form.useKeypad && !loading) {
+                        PasswordKeypad(
+                            state = form.keypad,
+                            buffer = form.buffer,
+                            enabled = true,
+                            onChanged = { form.typedLength = form.buffer.length },
+                            onDone = submit,
+                        )
+                    }
                     if (thirdPartyInput) {
                         Text(
                             text = stringResource(R.string.unlock_third_party_input),
@@ -329,6 +387,57 @@ private fun PasswordField(
         modifier = modifier.fillMaxWidth(),
     )
 }
+
+/**
+ * The master password while the KeyNexa keypad types it: read-only, so the system keyboard never opens. It shows
+ * dots, or the characters only while "show" is on (that transient text is accepted by ADR-0010).
+ */
+@Composable
+private fun KeypadPasswordField(
+    form: UnlockForm,
+    enabled: Boolean,
+    modifier: Modifier = Modifier,
+) {
+    val description = stringResource(R.string.unlock_show_password)
+    val length = form.typedLength
+    val shown = if (form.revealed) revealedText(form.buffer) else MASK.repeat(length)
+    OutlinedTextField(
+        value = shown,
+        onValueChange = {},
+        readOnly = true,
+        label = { Text(text = stringResource(R.string.unlock_password_label)) },
+        singleLine = true,
+        enabled = enabled,
+        shape = FieldShape,
+        trailingIcon = {
+            TextButton(
+                onClick = { form.revealed = !form.revealed },
+                enabled = enabled,
+                modifier = Modifier.semantics { contentDescription = description },
+            ) {
+                Text(
+                    text =
+                        stringResource(
+                            if (form.revealed) R.string.entry_detail_hide else R.string.entry_detail_show,
+                        ),
+                )
+            }
+        },
+        modifier = modifier.fillMaxWidth(),
+    )
+}
+
+/** The typed characters as text, through a copy that is wiped at once. */
+private fun revealedText(buffer: PasswordBuffer): String {
+    val chars = buffer.copyOut()
+    return try {
+        String(chars)
+    } finally {
+        chars.fill(Char(0))
+    }
+}
+
+private const val MASK = "•"
 
 /** Unlock with biometrics, and the way to stop using it for this vault. */
 @Composable

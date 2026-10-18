@@ -33,6 +33,8 @@ data class SettingsValues(
     val syncWarnDays: Int = DEFAULT_SYNC_WARN_DAYS,
     /** Light or dark: [ThemeMode.System] follows the device by default. */
     val themeMode: ThemeMode = ThemeMode.System,
+    /** On by default: master passwords are typed with the KeyNexa keypad, not the system keyboard (ADR-0010). */
+    val passwordKeypad: Boolean = true,
 ) {
     companion object {
         const val LOCK_IMMEDIATELY = 0
@@ -74,6 +76,7 @@ class AppSettings(
             putInt(BIOMETRIC_DAYS, new.biometricPasswordDays)
             putInt(SYNC_WARN, new.syncWarnDays)
             putString(THEME, new.themeMode.name)
+            putBoolean(PASSWORD_KEYPAD, new.passwordKeypad)
         }
         values = new
     }
@@ -88,6 +91,7 @@ class AppSettings(
             biometricPasswordDays = preferences.getInt(BIOMETRIC_DAYS, defaults.biometricPasswordDays),
             syncWarnDays = preferences.getInt(SYNC_WARN, defaults.syncWarnDays),
             themeMode = ThemeMode.fromStored(preferences.getString(THEME, null)),
+            passwordKeypad = preferences.getBoolean(PASSWORD_KEYPAD, defaults.passwordKeypad),
         )
     }
 
@@ -100,5 +104,6 @@ class AppSettings(
         const val BIOMETRIC_DAYS = "biometric_password_days"
         const val SYNC_WARN = "sync_warn_days"
         const val THEME = "theme_mode"
+        const val PASSWORD_KEYPAD = "password_keypad"
     }
 }

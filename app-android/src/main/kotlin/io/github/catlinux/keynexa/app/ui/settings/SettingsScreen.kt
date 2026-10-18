@@ -141,6 +141,13 @@ fun SettingsScreen(
                         description = stringResource(R.string.settings_allow_screenshots_help),
                     )
                     SettingsDivider()
+                    SwitchSetting(
+                        label = stringResource(R.string.settings_password_keypad),
+                        checked = values.passwordKeypad,
+                        onCheckedChange = { onChange(values.copy(passwordKeypad = it)) },
+                        description = stringResource(R.string.settings_password_keypad_help),
+                    )
+                    SettingsDivider()
                     SettingsLabel(textRes = R.string.settings_clipboard_delay)
                     SettingsValues.CLIPBOARD_CHOICES.forEachIndexed { index, seconds ->
                         if (index > 0) SettingsDivider()

@@ -45,6 +45,8 @@
     <string name="unlock_key_file_remove">Remove the key file</string>
     <string name="unlock_action">Unlock</string>
     <string name="unlock_third_party_input">A keyboard or accessibility service from another app is on. That is usually fine; if you do not recognise it, check your system settings.</string>
+    <string name="unlock_use_system_keyboard">Use the system keyboard</string>
+    <string name="unlock_use_keypad">Use the KeyNexa keypad</string>
     <string name="unlock_opening">Opening… this can take a few seconds.</string>
     <string name="unlock_reconnect">Reconnect file</string>
     <string name="unlock_error_wrong_credentials">That password or key file does not open this vault. Check them and try again.</string>
@@ -54,6 +56,15 @@
     <string name="unlock_error_damaged">This file looks damaged or is still being synchronised. Wait a moment and try again: KeyNexa has not changed it.</string>
     <string name="unlock_error_not_enough_memory">Your device does not have enough memory to open this vault. Lower the vault\'s Argon2 memory in another program (for example KeePassXC) and try again.</string>
     <string name="unlock_error_unreachable">This file cannot be read. It may have been moved, or the permission to read it may have been revoked.</string>
+    <string name="keypad_space">space</string>
+    <string name="keypad_done">Done</string>
+    <string name="keypad_shift">Shift</string>
+    <string name="keypad_shift_once">Shift on for one letter</string>
+    <string name="keypad_shift_locked">Caps lock on</string>
+    <string name="keypad_backspace">Delete last character</string>
+    <string name="keypad_letters">Letters</string>
+    <string name="keypad_symbols">Digits and symbols</string>
+    <string name="keypad_accents">Accented letters</string>
     <string name="clipboard_copied">%1$s copied</string>
 
     <!-- Saving: the status line of an open vault. -->
@@ -260,6 +271,8 @@
     <string name="settings_section_privacy">Privacy</string>
     <string name="settings_allow_screenshots">Allow screenshots</string>
     <string name="settings_allow_screenshots_help">If it is off, the app cannot be captured or recorded and it shows blank in the recent apps. Recommended.</string>
+    <string name="settings_password_keypad">Type passwords with the KeyNexa keypad</string>
+    <string name="settings_password_keypad_help">The master password is typed with a keypad drawn by KeyNexa, so the system keyboard never sees it. You can switch to the system keyboard on the unlock screen at any time.</string>
     <string name="settings_clipboard_delay">How long a copied secret stays on the clipboard</string>
     <string name="settings_clipboard_note">Android only lets KeyNexa clear the clipboard while KeyNexa is in front: if you copy and switch apps, it is cleared when you come back. Locking always clears it.</string>
     <string name="settings_immediately">Immediately</string>

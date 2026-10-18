@@ -412,6 +412,7 @@ private fun AppScreens(
                 onUnlock = { biometric.passwordUnlock(screen.vault, it) },
                 biometric = biometric.uiFor(screen.vault, context as? FragmentActivity, context),
                 thirdPartyInput = remember(screen.vault) { ThirdPartyInput.isActive(context) },
+                passwordKeypad = container.settings.values.passwordKeypad,
                 onReconnect = {
                     actions.beginReconnect(screen.vault)
                     onOpenFolder()

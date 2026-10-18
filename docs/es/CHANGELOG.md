@@ -10,6 +10,18 @@ Todos los cambios notables de este proyecto se documentan en este archivo. El fo
 
 - ADR-0008 (propuesta) y el plan de las copias opcionales de la bóveda en la nube con un asistente: una compilación `offline` sin acceso a la red y una `cloud`, primero S3 y después Dropbox, OneDrive y Google Drive.
 
+## [0.32.0] - 2026-10-18
+
+### Añadido
+
+- El teclado de KeyNexa en la pantalla de desbloqueo (ADR-0010): la contraseña maestra se escribe con teclas dibujadas por la app, así que el teclado del sistema nunca la ve. Activado por defecto; un botón bajo el campo pasa al teclado del sistema en ese intento, y un ajuste lo desactiva. Sin burbuja en la tecla pulsada, solo una vibración corta; cada tecla tiene una etiqueta hablada.
+
+### Seguridad
+
+- En la pantalla de desbloqueo la contraseña escrita se borra al enviarla, al salir de la pantalla y al pasar la app a segundo plano; con el teclado propio nunca se guarda como `String`.
+
+Menor: función nueva y compatible.
+
 ## [0.31.3] - 2026-10-18
 
 ### Añadido

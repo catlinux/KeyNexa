@@ -10,6 +10,18 @@ All notable changes to this project are documented in this file. The format is b
 
 - ADR-0008 (proposed) and the plan for optional cloud copies of the vault with an assistant: an `offline` build with no network access and a `cloud` build, S3 first and then Dropbox, OneDrive and Google Drive.
 
+## [0.32.0] - 2026-10-18
+
+### Added
+
+- The KeyNexa keypad on the unlock screen (ADR-0010): the master password is typed with keys drawn by the app, so the system keyboard never sees it. On by default; a button under the field switches to the system keyboard for that attempt, and a setting turns it off. No preview bubble on the pressed key, only a short vibration; every key has a spoken label.
+
+### Security
+
+- On the unlock screen the typed password is wiped when it is submitted, when the screen is left and when the app goes to the background; with the keypad it is never held as a `String`.
+
+Minor: new, compatible feature.
+
 ## [0.31.3] - 2026-10-18
 
 ### Added
