@@ -203,4 +203,42 @@
     <string name="create_recovery_warning">Si olvidas la contraseña maestra no hay forma de recuperar la bóveda. Anótala y guárdala en un lugar seguro.</string>
     <string name="create_action">Crear bóveda</string>
     <string name="create_file_exists">Ya existe un archivo con ese nombre. Elige otro nombre.</string>
+    <string name="settings_back">Volver</string>
+    <string name="settings_section_appearance">Aspecto</string>
+    <string name="settings_theme">Tema</string>
+    <string name="settings_theme_system">Automático (el del sistema)</string>
+    <string name="settings_theme_light">Claro</string>
+    <string name="settings_theme_dark">Oscuro</string>
+    <string name="settings_section_security">Seguridad</string>
+    <string name="settings_auto_lock">Bloquear tras estar inactivo durante</string>
+    <string name="settings_no_lock_warning">Con este ajuste la bóveda sigue abierta hasta que la bloqueas a mano, lo cual es menos seguro.</string>
+    <string name="settings_lock_on_windows_lock">Bloquear al bloquear la sesión de Windows</string>
+    <string name="settings_lock_on_suspend">Bloquear al suspender el equipo</string>
+    <string name="settings_allow_screenshots">Permitir capturas de pantalla</string>
+    <string name="settings_allow_screenshots_help">Si está desactivado, la ventana no se puede capturar ni grabar. Recomendado.</string>
+    <string name="settings_password_keypad">Escribir las contraseñas con el teclado de KeyNexa</string>
+    <string name="settings_password_keypad_help">La contraseña maestra se escribe con un teclado dibujado por KeyNexa, así que el teclado del sistema nunca la ve. Puedes pasar al teclado del sistema en la pantalla de desbloqueo cuando quieras.</string>
+    <string name="settings_section_clipboard">Portapapeles</string>
+    <string name="settings_clipboard_delay">Tiempo que un secreto copiado queda en el portapapeles</string>
+    <string name="settings_clipboard_note">Al bloquear la bóveda o al salir de la aplicación el portapapeles se borra siempre.</string>
+    <string name="settings_never">Nunca</string>
+    <plurals name="settings_minutes">
+        <item quantity="one">%1$d minuto</item>
+        <item quantity="many">%1$d minutos</item>
+        <item quantity="other">%1$d minutos</item>
+    </plurals>
+    <plurals name="settings_seconds">
+        <item quantity="one">%1$d segundo</item>
+        <item quantity="many">%1$d segundos</item>
+        <item quantity="other">%1$d segundos</item>
+    </plurals>
+    <string name="settings_section_modes">Modos</string>
+    <string name="settings_mode_local">Solo local</string>
+    <string name="settings_mode_local_note">No se abre ninguna conexión.</string>
+    <string name="settings_mode_cloud">Copias en la nube</string>
+    <string name="settings_mode_cloud_configured">Configurada</string>
+    <string name="settings_mode_cloud_unconfigured">Sin configurar</string>
+    <string name="settings_mode_cloud_configure">Configurar</string>
+    <string name="settings_mode_sync">Sincronización con otros dispositivos</string>
+    <string name="settings_mode_sync_note">Disponible en una versión futura.</string>
 </resources>

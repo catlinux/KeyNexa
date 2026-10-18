@@ -51,6 +51,7 @@ internal fun DesktopVaultScreen(
     state: SessionState.Open,
     view: DesktopVaultState,
     onLock: () -> Unit,
+    onSettings: () -> Unit,
     onRetrySave: () -> Unit,
     onRestoreUnsaved: () -> Unit,
     onDiscardUnsaved: () -> Unit,
@@ -62,7 +63,7 @@ internal fun DesktopVaultScreen(
 ) {
     var askingOtherPassword by remember { mutableStateOf(false) }
     Column(modifier = modifier.fillMaxSize()) {
-        VaultTopBar(state = state, view = view, onLock = onLock)
+        VaultTopBar(state = state, view = view, onLock = onLock, onSettings = onSettings)
         VaultNotices(
             state = state,
             onRetrySave = onRetrySave,

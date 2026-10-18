@@ -91,6 +91,7 @@ private fun ApplicationScope.KeyNexaWindow(
     val settings = container.settings
     val idle = remember { IdleTimer() }
     var selected by remember { mutableStateOf<KnownVault?>(null) }
+    var settingsOpen by remember { mutableStateOf(false) }
     val view = remember { DesktopVaultState(container.clipboard, session) }
     val openState = state as? SessionState.Open
     val openVault = openState?.vault
@@ -114,6 +115,7 @@ private fun ApplicationScope.KeyNexaWindow(
     val passwordLabel = stringResource(Res.string.entry_detail_password)
     val lockNow: () -> Unit = {
         selected = null
+        settingsOpen = false
         container.clipboard.clearNow()
         session.lock()
     }
@@ -185,17 +187,26 @@ private fun ApplicationScope.KeyNexaWindow(
                         },
                 color = MaterialTheme.colorScheme.background,
             ) {
-                KeyNexaScreen(
-                    session = session,
-                    state = state,
-                    knownVaults = container.knownVaults,
-                    selected = selected,
-                    onSelect = { selected = it },
-                    onLock = lockNow,
-                    view = view,
-                    useKeypad = settings.useKeypad,
-                    parent = window,
-                )
+                if (settingsOpen) {
+                    DesktopSettingsScreen(
+                        settings = settings,
+                        onUpdate = container::updateSettings,
+                        onBack = { settingsOpen = false },
+                    )
+                } else {
+                    KeyNexaScreen(
+                        session = session,
+                        state = state,
+                        knownVaults = container.knownVaults,
+                        selected = selected,
+                        onSelect = { selected = it },
+                        onLock = lockNow,
+                        onSettings = { settingsOpen = true },
+                        view = view,
+                        useKeypad = settings.useKeypad,
+                        parent = window,
+                    )
+                }
             }
         }
     }
@@ -211,6 +222,7 @@ private fun KeyNexaScreen(
     selected: KnownVault?,
     onSelect: (KnownVault?) -> Unit,
     onLock: () -> Unit,
+    onSettings: () -> Unit,
     view: DesktopVaultState,
     useKeypad: Boolean,
     parent: Frame,
@@ -227,6 +239,7 @@ private fun KeyNexaScreen(
                 state = state,
                 view = view,
                 onLock = onLock,
+                onSettings = onSettings,
                 onRetrySave = session::retrySave,
                 onRestoreUnsaved = session::restoreUnsaved,
                 onDiscardUnsaved = session::discardUnsaved,
@@ -259,6 +272,7 @@ private fun KeyNexaScreen(
                 session = session,
                 knownVaults = knownVaults,
                 onSelect = onSelect,
+                onSettings = onSettings,
                 useKeypad = useKeypad,
                 parent = parent,
             )
@@ -266,11 +280,13 @@ private fun KeyNexaScreen(
 }
 
 /** The list of known vaults and the form for a new one: the two things the user can start from the home. */
+@Suppress("LongParameterList")
 @Composable
 private fun KeyNexaHome(
     session: VaultSession,
     knownVaults: KnownVaults,
     onSelect: (KnownVault) -> Unit,
+    onSettings: () -> Unit,
     useKeypad: Boolean,
     parent: Frame,
 ) {
@@ -302,6 +318,7 @@ private fun KeyNexaHome(
                 }
             },
             onCreateNew = { creating = true },
+            onSettings = onSettings,
             onRemove = { vault ->
                 knownVaults.remove(vault.location)
                 vaults = knownVaults.all()

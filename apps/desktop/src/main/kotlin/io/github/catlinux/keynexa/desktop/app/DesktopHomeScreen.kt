@@ -38,6 +38,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import io.github.catlinux.keynexa.desktop.app.generated.resources.Res
 import io.github.catlinux.keynexa.desktop.app.generated.resources.app_name
+import io.github.catlinux.keynexa.desktop.app.generated.resources.group_settings
 import io.github.catlinux.keynexa.desktop.app.generated.resources.home_cancel
 import io.github.catlinux.keynexa.desktop.app.generated.resources.home_create_new
 import io.github.catlinux.keynexa.desktop.app.generated.resources.home_empty_message
@@ -87,6 +88,7 @@ fun DesktopHomeScreen(
     vaults: List<KnownVault>,
     onOpenExisting: () -> Unit,
     onCreateNew: () -> Unit,
+    onSettings: () -> Unit,
     onRemove: (KnownVault) -> Unit,
     onOpen: (KnownVault) -> Unit,
     modifier: Modifier = Modifier,
@@ -115,7 +117,7 @@ fun DesktopHomeScreen(
                     }
                 }
             }
-            HomeActions(onOpenExisting = onOpenExisting, onCreateNew = onCreateNew)
+            HomeActions(onOpenExisting = onOpenExisting, onCreateNew = onCreateNew, onSettings = onSettings)
         }
     }
     askedToRemove?.let { vault ->
@@ -270,6 +272,7 @@ private fun EmptyVaults(modifier: Modifier = Modifier) {
 private fun HomeActions(
     onOpenExisting: () -> Unit,
     onCreateNew: () -> Unit,
+    onSettings: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -289,6 +292,13 @@ private fun HomeActions(
             modifier = Modifier.fillMaxWidth().heightIn(min = ActionHeight),
         ) {
             Text(text = stringResource(Res.string.home_create_new))
+        }
+        OutlinedButton(
+            onClick = onSettings,
+            shape = RoundedCornerShape(ActionCorner),
+            modifier = Modifier.fillMaxWidth().heightIn(min = ActionHeight),
+        ) {
+            Text(text = stringResource(Res.string.group_settings))
         }
     }
 }

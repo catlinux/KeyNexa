@@ -52,7 +52,6 @@ private val ControlHeight = 44.dp
 private val ControlShape = RoundedCornerShape(12.dp)
 private const val QUIET_ALPHA = 0.85f
 private const val BORDER_ALPHA = 0.6f
-private const val DISABLED_ALPHA = 0.6f
 
 /** How long the pointer rests on a control before its tooltip appears. */
 private const val TOOLTIP_DELAY_MILLIS = 500
@@ -66,6 +65,7 @@ internal fun VaultTopBar(
     state: SessionState.Open,
     view: DesktopVaultState,
     onLock: () -> Unit,
+    onSettings: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Surface(modifier = modifier.fillMaxWidth(), color = MaterialTheme.colorScheme.primary) {
@@ -91,7 +91,7 @@ internal fun VaultTopBar(
             }
             SearchField(view = view, modifier = Modifier.weight(1f))
             NewEntryButton(vault = state.current, view = view)
-            SettingsButton()
+            SettingsButton(onSettings = onSettings)
             LockButton(onLock = onLock)
         }
     }
@@ -184,20 +184,19 @@ private fun NewEntryButton(
     }
 }
 
-/** The way to the settings, which still have no screen: it stays readable while it is not available. */
+/** The way to the settings. */
 @Composable
-private fun SettingsButton(modifier: Modifier = Modifier) {
+private fun SettingsButton(
+    onSettings: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
     val label = stringResource(Res.string.group_settings)
     ShortcutTooltip(text = label, modifier = modifier) {
         OutlinedButton(
-            onClick = {},
-            enabled = false,
+            onClick = onSettings,
             shape = ControlShape,
-            colors =
-                ButtonDefaults.outlinedButtonColors(
-                    disabledContentColor = MaterialTheme.colorScheme.onPrimary.copy(alpha = DISABLED_ALPHA),
-                ),
-            border = BorderStroke(1.dp, MaterialTheme.colorScheme.onPrimary.copy(alpha = DISABLED_ALPHA)),
+            colors = ButtonDefaults.outlinedButtonColors(contentColor = MaterialTheme.colorScheme.onPrimary),
+            border = BorderStroke(1.dp, MaterialTheme.colorScheme.onPrimary.copy(alpha = BORDER_ALPHA)),
             modifier = Modifier.heightIn(min = ControlHeight),
         ) {
             Text(text = label)

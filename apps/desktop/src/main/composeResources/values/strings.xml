@@ -200,4 +200,40 @@
     <string name="create_recovery_warning">If you forget the master password there is no way to recover the vault. Write it down and keep it somewhere safe.</string>
     <string name="create_action">Create vault</string>
     <string name="create_file_exists">A file with that name already exists. Choose another name.</string>
+    <string name="settings_back">Back</string>
+    <string name="settings_section_appearance">Appearance</string>
+    <string name="settings_theme">Theme</string>
+    <string name="settings_theme_system">Automatic (follow the system)</string>
+    <string name="settings_theme_light">Light</string>
+    <string name="settings_theme_dark">Dark</string>
+    <string name="settings_section_security">Security</string>
+    <string name="settings_auto_lock">Lock after being idle for</string>
+    <string name="settings_no_lock_warning">With this setting the vault stays open until you lock it by hand, which is less safe.</string>
+    <string name="settings_lock_on_windows_lock">Lock when the Windows session is locked</string>
+    <string name="settings_lock_on_suspend">Lock when the computer is suspended</string>
+    <string name="settings_allow_screenshots">Allow screenshots</string>
+    <string name="settings_allow_screenshots_help">If it is off, the window cannot be captured or recorded. Recommended.</string>
+    <string name="settings_password_keypad">Type passwords with the KeyNexa keypad</string>
+    <string name="settings_password_keypad_help">The master password is typed with a keypad drawn by KeyNexa, so the system keyboard never sees it. You can switch to the system keyboard on the unlock screen at any time.</string>
+    <string name="settings_section_clipboard">Clipboard</string>
+    <string name="settings_clipboard_delay">How long a copied secret stays on the clipboard</string>
+    <string name="settings_clipboard_note">Locking the vault or leaving the app always clears the clipboard.</string>
+    <string name="settings_never">Never</string>
+    <plurals name="settings_minutes">
+        <item quantity="one">%1$d minute</item>
+        <item quantity="other">%1$d minutes</item>
+    </plurals>
+    <plurals name="settings_seconds">
+        <item quantity="one">%1$d second</item>
+        <item quantity="other">%1$d seconds</item>
+    </plurals>
+    <string name="settings_section_modes">Modes</string>
+    <string name="settings_mode_local">Local only</string>
+    <string name="settings_mode_local_note">No connection is opened.</string>
+    <string name="settings_mode_cloud">Cloud copies</string>
+    <string name="settings_mode_cloud_configured">Configured</string>
+    <string name="settings_mode_cloud_unconfigured">Not configured</string>
+    <string name="settings_mode_cloud_configure">Configure</string>
+    <string name="settings_mode_sync">Synchronisation with other devices</string>
+    <string name="settings_mode_sync_note">Available in a future version.</string>
 </resources>

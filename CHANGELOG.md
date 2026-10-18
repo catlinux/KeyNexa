@@ -6,6 +6,14 @@ All notable changes to this project are documented in this file. The format is b
 
 ## [Unreleased]
 
+## [1.5.2] - 2026-10-18
+
+The Android app does not change. Step 8b of the desktop plan.
+
+### Added
+
+- Desktop: settings screen, opened from the top bar and from the home screen: theme, locking (idle time, Windows lock, suspend), screenshots, KeyNexa keypad, clipboard time and the modes (local only; cloud copies and device sync are shown, not yet available). Every change applies at once.
+
 ## [1.5.1] - 2026-10-18
 
 The Android app does not change. Step 8a of the desktop plan: the cloud base for the desktop, with no screen yet (patch: internal).

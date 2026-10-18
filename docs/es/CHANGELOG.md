@@ -6,6 +6,14 @@ Todos los cambios notables de este proyecto se documentan en este archivo. El fo
 
 ## [Sin publicar]
 
+## [1.5.2] - 2026-10-18
+
+La app de Android no cambia. Paso 8b del plan de escritorio.
+
+### Añadido
+
+- Escritorio: pantalla de ajustes, que se abre desde la barra superior y desde el inicio: tema, bloqueo (tiempo de inactividad, bloqueo de Windows, suspensión), capturas de pantalla, teclado de KeyNexa, tiempo del portapapeles y los modos (solo local; las copias en la nube y la sincronización entre dispositivos se muestran, aún no disponibles). Cada cambio se aplica al instante.
+
 ## [1.5.1] - 2026-10-18
 
 La app de Android no cambia. Paso 8a del plan de escritorio: la base de la nube para el escritorio, aún sin pantalla (parche: interno).
