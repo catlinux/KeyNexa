@@ -36,8 +36,8 @@ apps/desktop          Compose Desktop client for Windows (home screen, one insta
 ui/shared             Compose Multiplatform theme, brand mark and password keypad (Android + desktop)
   │
 platform/jvm         private file stores (backups, save journal, merged-copies ledger), plain JVM
-platform/desktop     local file storage (FileStoragePort) and the per-user desktop stores, plain JVM
-platform/windows     Windows data folder and the DPAPI secret box (current user), JNA
+platform/desktop     local file storage (FileStoragePort), the per-user desktop stores and the secure clipboard, plain JVM
+platform/windows     Windows data folder, the DPAPI secret box (current user) and the Windows clipboard, JNA
 platform/android     SAF storage adapter, Keystore, lifecycle-based auto-lock
 platform/cloud       S3-compatible cloud client (SigV4), JDK HTTP client only
   │
@@ -55,8 +55,8 @@ core/kdbx            adapter implementing KdbxEngine on top of kotpass (the only
 - **`core/sync`** contiene la lógica que protege los datos: huellas de contenido, detección de cambios externos, la fusión y el flujo de guardado seguro. Es deliberadamente independiente de Android para poder probarlo exhaustivamente con un almacenamiento simulado.
 - **`core/session`** reúne la sesión de la bóveda abierta que comparten todos los clientes JVM: desbloquear, editar, guardar y bloquear la bóveda, la lista de bóvedas conocidas con su códec y los ayudantes que recorren el árbol de la bóveda; `apps/android` depende de él.
 - **`platform/jvm`** reúne los almacenes privados de archivos que comparten todos los clientes JVM (`FileBackupStore`, `FileSaveJournal`, `FileMergedCopies`); `platform/android` depende de él.
-- **`platform/desktop`** reúne el almacenamiento que comparte un cliente de escritorio: `FileStoragePort` sobre el sistema de archivos local (escritura atómica con alternativa en el sitio), los almacenes por usuario y el archivo de bóvedas conocidas.
-- **`platform/windows`** es la pieza propia del cliente de Windows: la carpeta de datos `%LOCALAPPDATA%\KeyNexa` y un `SecretBox` sobre DPAPI limitado al usuario actual, a través de JNA.
+- **`platform/desktop`** reúne el almacenamiento que comparte un cliente de escritorio: `FileStoragePort` sobre el sistema de archivos local (escritura atómica con alternativa en el sitio), los almacenes por usuario y el archivo de bóvedas conocidas. También reúne el portapapeles que comparten: `SecureClipboard` marca un secreto copiado, donde el sistema lo permite, para que no entre en el historial del portapapeles ni en la nube, y `ClipboardTimer` lo borra a los 30 segundos, al bloquear y al salir.
+- **`platform/windows`** es la pieza propia del cliente de Windows: la carpeta de datos `%LOCALAPPDATA%\KeyNexa` y un `SecretBox` sobre DPAPI limitado al usuario actual, a través de JNA. También contiene `WindowsClipboard`, que pone un secreto en el portapapeles con los formatos que lo mantienen fuera del historial del portapapeles de Windows y de la nube, y lo vacía solo mientras la copia sigue siendo de KeyNexa.
 - **`platform/android`** implementa `StoragePort` con SAF y envuelve el Android Keystore.
 - **`platform/cloud`** es el cliente de red de la variante `cloud`: un backend compatible con S3 firmado con AWS SigV4, sobre el cliente HTTP del JDK y sin dependencias externas. La variante `offline` nunca lo incluye.
 - **`apps/android`** es la IU y los servicios de Android.

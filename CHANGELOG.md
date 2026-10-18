@@ -6,6 +6,14 @@ All notable changes to this project are documented in this file. The format is b
 
 ## [Unreleased]
 
+## [1.2.1] - 2026-10-18
+
+The Android app does not change.
+
+### Added
+
+- Desktop secure clipboard (not used by the app yet): on Windows a copied secret carries the formats Microsoft documents to keep it out of the clipboard history (Win+V) and the cloud clipboard, and it is cleared after 30 seconds, on lock and on exit, only if the clipboard still holds what KeyNexa put there.
+
 ## [1.2.0] - 2026-10-18
 
 The Android app does not change. With this version the desktop skeleton is complete (step 4 of the desktop plan): it opens, creates, unlocks and locks vaults; browsing and editing come next.

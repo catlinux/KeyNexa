@@ -6,6 +6,14 @@ Todos los cambios notables de este proyecto se documentan en este archivo. El fo
 
 ## [Sin publicar]
 
+## [1.2.1] - 2026-10-18
+
+La app de Android no cambia.
+
+### Añadido
+
+- Portapapeles seguro del escritorio (la app aún no lo usa): en Windows un secreto copiado lleva los formatos que documenta Microsoft para dejarlo fuera del historial del portapapeles (Win+V) y del portapapeles en la nube, y se borra a los 30 segundos, al bloquear y al salir, solo si el portapapeles sigue teniendo lo que puso KeyNexa.
+
 ## [1.2.0] - 2026-10-18
 
 La app de Android no cambia. Con esta versión el esqueleto del escritorio está completo (paso 4 del plan de escritorio): abre, crea, desbloquea y bloquea bóvedas; navegar y editar llegan a continuación.
