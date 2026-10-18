@@ -6,9 +6,25 @@ All notable changes to this project are documented in this file. The format is b
 
 ## [Unreleased]
 
+## [1.0.0] - 2026-10-18
+
+First stable release of the Android app, in two builds signed with the same key: `keynexa-1.0.0.apk` (offline, no Internet permission) and `keynexa-cloud-1.0.0.apk` (adds the optional encrypted cloud copies). Installing one over the other keeps vaults and settings. Since the last published pre-release (0.10.3):
+
 ### Added
 
-- ADR-0008 (proposed) and the plan for optional cloud copies of the vault with an assistant: an `offline` build with no network access and a `cloud` build, S3 first and then Dropbox, OneDrive and Google Drive.
+- Optional encrypted cloud copies of the vault to S3-compatible storage (Backblaze B2 and Cloudflare R2 verified), with an assistant, rotation of old copies and a reminder, in the `cloud` build only ([ADR-0008](docs/decisions/0008-cloud-backup.md), [setup guide](docs/CLOUD_SETUP.md), [privacy](docs/PRIVACY.md)).
+- The KeyNexa keypad for master passwords, on by default, so the system keyboard never sees them; the system keyboard is one tap away and is used automatically with a screen reader ([ADR-0010](docs/decisions/0010-in-app-password-keypad.md)).
+- A new look (direction A, light and dark, Manrope font) for every screen, and a light/dark/automatic theme setting.
+- One-time (TOTP) codes shown read-only, sync status of the vault file with an optional warning, attachments, clearing an entry's history, merging conflict copies written with another password, recovery of changes a failed save could not write.
+- Hardening: touches ignored under other apps' windows, a quiet notice about third-party keyboards or accessibility services, conflict copies with absurd key-derivation costs refused, XML parsing without external entities.
+
+### Changed
+
+- Release workflow: build and signing in separate jobs, actions pinned to commits, permission checks on both APKs.
+
+### Security
+
+- Final security review documented in [SECURITY_REVIEW](docs/SECURITY_REVIEW.md): nine findings fixed (0.31.0 to 0.33.11), accepted risks listed, no high-severity finding open. It is an AI review, not an independent audit.
 
 ## [0.33.15] - 2026-10-18
 

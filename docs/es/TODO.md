@@ -6,6 +6,8 @@ Pasos detallados: consulta la [hoja de ruta](ROADMAP.md).
 
 ## Prioridad alta (fase C — base del proyecto)
 
+- [ ] **Un README mucho más atractivo** (pedido por el titular el 2026-10-18): capturas de las pantallas principales en claro y oscuro (hechas con una bóveda ficticia y el ajuste de capturas activado solo un momento), una cabecera clara con la marca y el lema, insignias (versión, licencia, CI), una lista breve de funciones con iconos, y los pasos de instalación de las dos compilaciones; la misma estructura en `README.es.md`. Las capturas van también a `fastlane/metadata/android/*/images/phoneScreenshots/`.
+
 - [ ] Desbloqueo biométrico: la matriz del ADR-0006 está comprobada en un Pixel 10 Pro (activar, desbloquear, una huella nueva lo invalida, contraseña exigida tras los días elegidos, contraseña cambiada en otro dispositivo). Sigue abierto: móviles sin StrongBox y API 26-29.
 
 - [ ] Medir Argon2 de kotpass en un móvil real cuando la app abra una bóveda; decidir sobre argon2kt (consulta `docs/es/BENCHMARKS.md`).

@@ -6,7 +6,7 @@
 
 Un gestor de contraseñas multiplataforma que prioriza la seguridad, construido sobre bibliotecas criptográficas consolidadas, bóvedas locales y sincronización fluida con Syncthing.
 
-> **Estado del proyecto: la 1.0 de Android está lista para publicarse (última versión preliminar publicada: v0.10.3); después viene el cliente de escritorio.** Puedes crear o abrir una bóveda KDBX, explorarla, buscar, añadir y editar entradas (con adjuntos y borrado de las versiones anteriores de una entrada), usar la papelera, generar contraseñas y ver los códigos de un solo uso (TOTP) de una entrada; el guardado pasa por un flujo seguro, y los cambios hechos en otro sitio (por ejemplo con KeePassXC a través de Syncthing) se fusionan, también las copias de conflicto. Además: desbloqueo biométrico, bloqueo automático (también en segundo plano), protección de pantalla, el teclado de KeyNexa para las contraseñas maestras, y copias cifradas opcionales en la nube (compatibles con S3: Backblaze B2, Cloudflare R2) en la variante `cloud`. Consulta la [revisión de seguridad](docs/es/SECURITY_REVIEW.md). Usa contraseñas reales a partir de la 1.0; hasta que salga, la versión preliminar publicada es más antigua.
+> **Estado del proyecto: 1.0 de Android publicada (2026-10-18); después viene el cliente de escritorio.** Puedes crear o abrir una bóveda KDBX, explorarla, buscar, añadir y editar entradas (con adjuntos y borrado de las versiones anteriores de una entrada), usar la papelera, generar contraseñas y ver los códigos de un solo uso (TOTP) de una entrada; el guardado pasa por un flujo seguro, y los cambios hechos en otro sitio (por ejemplo con KeePassXC a través de Syncthing) se fusionan, también las copias de conflicto. Además: desbloqueo biométrico, bloqueo automático (también en segundo plano), protección de pantalla, el teclado de KeyNexa para las contraseñas maestras, y copias cifradas opcionales en la nube (compatibles con S3: Backblaze B2, Cloudflare R2) en la variante `cloud`. Consulta la [revisión de seguridad](docs/es/SECURITY_REVIEW.md).
 
 ## Qué será KeyNexa
 
@@ -36,11 +36,11 @@ Consulta la [hoja de ruta](docs/es/ROADMAP.md) para ver qué está planificado e
 
 ## Requisitos, instalación y uso
 
-Las versiones se publican en [GitHub Releases](https://github.com/catlinux/KeyNexa/releases) en dos compilaciones de la misma app, firmadas con la misma clave: `keynexa-<versión>.apk` (**offline**: sin ningún permiso de Internet) y `keynexa-cloud-<versión>.apk` (**cloud**: añade las copias cifradas opcionales en la nube, así que pide el permiso de Internet; consulta [Privacidad](docs/es/PRIVACY.md) y la [guía de las copias en la nube](docs/es/CLOUD_SETUP.md)). Instala una de las dos; instalar después la otra conserva tus bóvedas y ajustes. Descarga el APK y su archivo `.sha256` y, en la carpeta donde estén ambos, comprueba la suma y la firma (las órdenes muestran la versión preliminar 0.10.3, que solo tenía la compilación offline):
+Las versiones se publican en [GitHub Releases](https://github.com/catlinux/KeyNexa/releases) en dos compilaciones de la misma app, firmadas con la misma clave: `keynexa-<versión>.apk` (**offline**: sin ningún permiso de Internet) y `keynexa-cloud-<versión>.apk` (**cloud**: añade las copias cifradas opcionales en la nube, así que pide el permiso de Internet; consulta [Privacidad](docs/es/PRIVACY.md) y la [guía de las copias en la nube](docs/es/CLOUD_SETUP.md)). Instala una de las dos; instalar después la otra conserva tus bóvedas y ajustes. Descarga el APK y su archivo `.sha256` y, en la carpeta donde estén ambos, comprueba la suma y la firma (para la compilación cloud, usa `keynexa-cloud-1.0.0.apk`):
 
 ```sh
-sha256sum -c keynexa-0.10.3.apk.sha256
-apksigner verify --print-certs keynexa-0.10.3.apk
+sha256sum -c keynexa-1.0.0.apk.sha256
+apksigner verify --print-certs keynexa-1.0.0.apk
 ```
 
 Compara la huella SHA-256 del certificado que muestra `apksigner` con `51:ca:da:3c:d0:8c:35:5f:13:67:90:b1:be:83:09:00:8b:b9:a3:1e:e9:44:b4:e6:e3:74:7e:6a:e9:d0:44:9b`. Solo la compilación `offline` carece del permiso de Internet; el flujo de publicación lo comprueba antes de publicar.

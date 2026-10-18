@@ -6,7 +6,7 @@
 
 A security-first, cross-platform password manager built around established cryptographic libraries, local vaults, and seamless Syncthing synchronization.
 
-> **Project status: Android 1.0 is ready to be published (latest published pre-release: v0.10.3); the desktop client comes next.** You can create or open a KDBX vault, browse, search, add and edit entries (with attachments and clearing an entry's previous versions), use the recycle bin, generate passwords and see an entry's one-time (TOTP) codes; saves go through a safe-save pipeline, and changes made elsewhere (for example with KeePassXC through Syncthing) are merged, conflict copies included. Also: biometric unlock, auto-lock (also in the background), screen protection, the KeyNexa keypad for master passwords, and optional encrypted cloud copies (S3-compatible: Backblaze B2, Cloudflare R2) in the `cloud` build. See the [security review](docs/SECURITY_REVIEW.md). Use real passwords from 1.0 onwards; until it is out, the published pre-release is older.
+> **Project status: Android 1.0 released (2026-10-18); the desktop client comes next.** You can create or open a KDBX vault, browse, search, add and edit entries (with attachments and clearing an entry's previous versions), use the recycle bin, generate passwords and see an entry's one-time (TOTP) codes; saves go through a safe-save pipeline, and changes made elsewhere (for example with KeePassXC through Syncthing) are merged, conflict copies included. Also: biometric unlock, auto-lock (also in the background), screen protection, the KeyNexa keypad for master passwords, and optional encrypted cloud copies (S3-compatible: Backblaze B2, Cloudflare R2) in the `cloud` build. See the [security review](docs/SECURITY_REVIEW.md).
 
 ## What KeyNexa will be
 
@@ -36,11 +36,11 @@ See the [roadmap](docs/ROADMAP.md) for what is planned in each phase.
 
 ## Requirements, installation and usage
 
-Releases are published on [GitHub Releases](https://github.com/catlinux/KeyNexa/releases) in two builds of the same app, signed with the same key: `keynexa-<version>.apk` (**offline**: no Internet permission at all) and `keynexa-cloud-<version>.apk` (**cloud**: adds the optional encrypted cloud copies, so it asks for the Internet permission; see [Privacy](docs/PRIVACY.md) and the [cloud setup guide](docs/CLOUD_SETUP.md)). Install one of them; installing the other one later keeps your vaults and settings. Download the APK and its `.sha256` file and, in the directory containing both, verify the checksum and the signer (the commands show the 0.10.3 pre-release, which only had the offline build):
+Releases are published on [GitHub Releases](https://github.com/catlinux/KeyNexa/releases) in two builds of the same app, signed with the same key: `keynexa-<version>.apk` (**offline**: no Internet permission at all) and `keynexa-cloud-<version>.apk` (**cloud**: adds the optional encrypted cloud copies, so it asks for the Internet permission; see [Privacy](docs/PRIVACY.md) and the [cloud setup guide](docs/CLOUD_SETUP.md)). Install one of them; installing the other one later keeps your vaults and settings. Download the APK and its `.sha256` file and, in the directory containing both, verify the checksum and the signer (for the cloud build, use `keynexa-cloud-1.0.0.apk`):
 
 ```sh
-sha256sum -c keynexa-0.10.3.apk.sha256
-apksigner verify --print-certs keynexa-0.10.3.apk
+sha256sum -c keynexa-1.0.0.apk.sha256
+apksigner verify --print-certs keynexa-1.0.0.apk
 ```
 
 Compare the SHA-256 certificate fingerprint reported by `apksigner` with `51:ca:da:3c:d0:8c:35:5f:13:67:90:b1:be:83:09:00:8b:b9:a3:1e:e9:44:b4:e6:e3:74:7e:6a:e9:d0:44:9b`. Only the `offline` build is free of the Internet permission; the release workflow checks it before publishing.

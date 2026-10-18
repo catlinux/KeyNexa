@@ -6,9 +6,25 @@ Todos los cambios notables de este proyecto se documentan en este archivo. El fo
 
 ## [Sin publicar]
 
+## [1.0.0] - 2026-10-18
+
+Primera versión estable de la app de Android, en dos compilaciones firmadas con la misma clave: `keynexa-1.0.0.apk` (offline, sin permiso de Internet) y `keynexa-cloud-1.0.0.apk` (añade las copias cifradas opcionales en la nube). Instalar una sobre la otra conserva las bóvedas y los ajustes. Desde la última versión preliminar publicada (0.10.3):
+
 ### Añadido
 
-- ADR-0008 (propuesta) y el plan de las copias opcionales de la bóveda en la nube con un asistente: una compilación `offline` sin acceso a la red y una `cloud`, primero S3 y después Dropbox, OneDrive y Google Drive.
+- Copias cifradas opcionales de la bóveda en almacenamiento compatible con S3 (verificado con Backblaze B2 y Cloudflare R2), con asistente, rotación de las copias antiguas y recordatorio, solo en la compilación `cloud` ([ADR-0008](decisions/0008-cloud-backup.md), [guía](CLOUD_SETUP.md), [privacidad](PRIVACY.md)).
+- El teclado de KeyNexa para las contraseñas maestras, activado por defecto, para que el teclado del sistema nunca las vea; el teclado del sistema está a un toque y se usa automáticamente con un lector de pantalla ([ADR-0010](decisions/0010-in-app-password-keypad.md)).
+- Un aspecto nuevo (dirección A, claro y oscuro, fuente Manrope) en todas las pantallas, y un ajuste de tema claro/oscuro/automático.
+- Códigos de un solo uso (TOTP) en solo lectura, estado de sincronización del archivo con aviso opcional, adjuntos, borrado del historial de una entrada, fusión de copias de conflicto escritas con otra contraseña, recuperación de los cambios que un guardado fallido no pudo escribir.
+- Refuerzo: toques ignorados bajo ventanas de otras apps, aviso discreto de teclados o servicios de accesibilidad de terceros, rechazo de copias de conflicto con un coste de derivación absurdo, análisis XML sin entidades externas.
+
+### Cambiado
+
+- Flujo de publicación: compilación y firma en trabajos separados, acciones fijadas a commits, control de permisos en los dos APK.
+
+### Seguridad
+
+- Revisión de seguridad final documentada en [SECURITY_REVIEW](SECURITY_REVIEW.md): nueve hallazgos corregidos (0.31.0 a 0.33.11), riesgos aceptados listados, ningún hallazgo de gravedad alta abierto. Es una revisión hecha por IA, no una auditoría independiente.
 
 ## [0.33.15] - 2026-10-18
 

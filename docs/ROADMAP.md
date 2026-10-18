@@ -49,7 +49,7 @@ Legend: ✅ done · 🔄 in progress · ⏳ planned. Nothing is "done" until its
 - [Semantic Versioning](https://semver.org/): `MAJOR.MINOR.PATCH`, stored in the `VERSION` file (the Android build will read it).
 - During `0.y.z` the format, settings and APIs may change between minor versions; a `0.y` release is **not** production-ready, even if it compiles and passes tests.
 - `1.0.0` requires: MVP acceptance criteria met, an external security review or at least a documented independent review, and no known data-loss bugs.
-- **Android 1.0 status (2026-10-18):** the owner declared it ready. The documented review is [SECURITY_REVIEW](SECURITY_REVIEW.md) (an AI review, not an independent one) and no data-loss bug is known. Biometrics on phones without StrongBox or on API 26–29 and Argon2 on a modest phone are postponed and do not block 1.0. It is published in both builds, `offline` and `cloud` (owner's decision of 2026-10-18), and needs the `v1.0.0` tag, which also proves the new release workflow. Next: the desktop client.
+- **Android 1.0 status (2026-10-18):** published as `v1.0.0` on 2026-10-18; the owner declared it ready. The documented review is [SECURITY_REVIEW](SECURITY_REVIEW.md) (an AI review, not an independent one) and no data-loss bug is known. Biometrics on phones without StrongBox or on API 26–29 and Argon2 on a modest phone are postponed and do not block 1.0. It is published in both builds, `offline` and `cloud` (owner's decision of 2026-10-18), and needs the `v1.0.0` tag, which also proves the new release workflow. Next: the desktop client.
 - Every finished change bumps the version and adds a [CHANGELOG](../CHANGELOG.md) entry in the same commit.
 
 ## Release criteria (every published build)

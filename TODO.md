@@ -6,6 +6,8 @@ Detailed steps: see the [roadmap](docs/ROADMAP.md).
 
 ## High priority (phase C — project foundation)
 
+- [ ] **A far more attractive README** (requested by the owner on 2026-10-18): screenshots of the main screens in light and dark (taken with a fictitious vault and the screenshot setting turned on only for the moment), a clear hero with the mark and the tagline, badges (release, license, CI), a short feature list with icons, and the install steps for both builds; same structure in `README.es.md`. The screenshots also go to `fastlane/metadata/android/*/images/phoneScreenshots/`.
+
 - [ ] Biometric unlock: the ADR-0006 matrix is checked on a Pixel 10 Pro (enable, unlock, new fingerprint invalidates, password due after the chosen days, password changed on another device). Still open: phones without StrongBox and API 26-29.
 
 - [ ] Measure kotpass Argon2 on a real phone once the app opens a vault; decide on argon2kt (see `docs/BENCHMARKS.md`).
