@@ -22,6 +22,10 @@ First stable release of the Android app, in two builds signed with the same key:
 
 - Release workflow: build and signing in separate jobs, actions pinned to commits, permission checks on both APKs.
 
+### Fixed
+
+- CI: the build and license steps piped Gradle through `tee` without `pipefail`, so a failed build looked green. Found while preparing 1.0: since the Android Gradle plugin update (0.23.5) the CI build had been failing on two checksums that only Linux downloads (`aapt2` for Linux and the `okio` 3.15.0 POM). Both are now in `gradle/verification-metadata.xml`, checked against the SHA-256 and SHA-1 published by Google Maven and Maven Central.
+
 ### Security
 
 - Final security review documented in [SECURITY_REVIEW](docs/SECURITY_REVIEW.md): nine findings fixed (0.31.0 to 0.33.11), accepted risks listed, no high-severity finding open. It is an AI review, not an independent audit.
