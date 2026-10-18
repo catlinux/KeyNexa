@@ -285,9 +285,3 @@ private fun ErrorPanel(
         )
     }
 }
-
-/** The initial shown on the vault's hexagon avatar. */
-private fun initialOf(name: String): String {
-    val trimmed = name.trim()
-    return if (trimmed.isEmpty()) "?" else trimmed.take(1).uppercase()
-}

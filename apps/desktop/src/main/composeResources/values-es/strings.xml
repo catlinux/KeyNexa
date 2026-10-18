@@ -55,9 +55,47 @@
     <string name="group_status_saved">Guardado</string>
     <string name="group_status_unsaved">Cambios sin guardar</string>
     <string name="group_lock">Bloquear</string>
-    <string name="group_section_groups">Grupos</string>
-    <string name="group_section_entries">Entradas</string>
-    <string name="open_vault_empty">Esta bóveda todavía no tiene entradas.</string>
+    <string name="group_settings">Ajustes</string>
+    <string name="group_expand">Desplegar</string>
+    <string name="group_collapse">Contraer</string>
+    <plurals name="group_entries_count">
+        <item quantity="one">%1$d entrada</item>
+        <item quantity="many">%1$d entradas</item>
+        <item quantity="other">%1$d entradas</item>
+    </plurals>
+
+    <string name="search_field_label">Buscar</string>
+    <string name="search_clear">Limpiar</string>
+    <string name="search_no_results">Nada coincide con esa búsqueda.</string>
+    <string name="entries_empty">No hay entradas en este grupo.</string>
+    <string name="entries_column_title">Título</string>
+    <string name="entries_column_user">Usuario</string>
+    <string name="entries_column_web">Web</string>
+    <string name="entries_column_modified">Modificada</string>
+
+    <string name="entry_detail_user_name">Usuario</string>
+    <string name="entry_detail_password">Contraseña</string>
+    <string name="entry_detail_url">URL</string>
+    <string name="entry_detail_notes">Notas</string>
+    <string name="entry_detail_totp">Código de un solo uso</string>
+    <string name="entry_detail_totp_expires">Caduca en %1$d s</string>
+    <string name="entry_detail_totp_urgent">Caduca pronto</string>
+    <string name="entry_detail_show_field">Mostrar %1$s</string>
+    <string name="entry_detail_hide_field">Ocultar %1$s</string>
+    <string name="entry_detail_copy">Copiar</string>
+    <string name="entry_detail_copy_field">Copiar %1$s</string>
+    <string name="entry_detail_open">Abrir</string>
+    <string name="entry_detail_open_field">Abrir %1$s</string>
+    <string name="entry_detail_attachments">Adjuntos</string>
+    <string name="entry_detail_modified">Modificada %1$s</string>
+    <string name="entry_detail_edit">Editar</string>
+    <string name="entry_detail_delete">Eliminar</string>
+    <string name="detail_empty">Selecciona una entrada para ver sus datos.</string>
+    <string name="detail_coming_soon">Llegará en un paso posterior.</string>
+
+    <string name="clipboard_copied">%1$s copiado</string>
+    <string name="status_shortcuts">Ctrl+F buscar · Ctrl+B copiar usuario · Ctrl+C copiar contraseña · Ctrl+U abrir URL · Ctrl+L bloquear</string>
+    <string name="tooltip_shortcut">%1$s (%2$s)</string>
 
     <string name="create_title">Bóveda nueva</string>
     <string name="create_name_label">Nombre de la bóveda</string>

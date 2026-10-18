@@ -1,5 +1,6 @@
 package io.github.catlinux.keynexa.desktop.app
 
+import io.github.catlinux.keynexa.desktop.ClipboardTimer
 import io.github.catlinux.keynexa.desktop.DesktopDirs
 import io.github.catlinux.keynexa.desktop.DesktopStores
 import io.github.catlinux.keynexa.desktop.FileStoragePort
@@ -12,6 +13,7 @@ import io.github.catlinux.keynexa.sync.KeePassMerger
 import io.github.catlinux.keynexa.sync.SafeSaver
 import io.github.catlinux.keynexa.sync.SaveRecovery
 import io.github.catlinux.keynexa.sync.VaultReader
+import io.github.catlinux.keynexa.windows.WindowsClipboard
 import io.github.catlinux.keynexa.windows.WindowsDirs
 import java.nio.file.Files
 import java.util.concurrent.Executors
@@ -29,6 +31,12 @@ class DesktopContainer {
 
     /** The one vault session of the app; nothing is open until the unlock screen asks for it. */
     val session: VaultSession
+
+    /**
+     * The clipboard every copy of a secret goes through: it marks them so Windows keeps them out of the clipboard
+     * history and the cloud clipboard, and clears them after half a minute.
+     */
+    val clipboard: ClipboardTimer = ClipboardTimer(WindowsClipboard())
 
     init {
         Files.createDirectories(dirs.data)

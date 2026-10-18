@@ -6,6 +6,14 @@ All notable changes to this project are documented in this file. The format is b
 
 ## [Unreleased]
 
+## [1.3.0] - 2026-10-18
+
+The Android app does not change.
+
+### Added
+
+- Desktop: the open vault in three panels that use the width of a PC screen: a compact tree of groups with the recycle bin apart, a dense list of entries in sortable columns (title, user name, web, modified) and the entry detail on the right (user name, hidden password, one-time code with its countdown, web address that opens in the browser for http and https only, custom fields, notes and attachment names). Search over the whole vault, and the shortcuts Ctrl+F, Ctrl+B, Ctrl+C, Ctrl+U and Ctrl+L shown in tooltips and a status bar. Copies go through the secure clipboard: passwords, protected fields, one-time codes and notes stay out of the Windows clipboard history and cloud clipboard and are cleared after 30 seconds, on lock and on exit. Editing comes in the next step.
+
 ## [1.2.1] - 2026-10-18
 
 The Android app does not change.

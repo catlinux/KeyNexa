@@ -6,6 +6,14 @@ Todos los cambios notables de este proyecto se documentan en este archivo. El fo
 
 ## [Sin publicar]
 
+## [1.3.0] - 2026-10-18
+
+La app de Android no cambia.
+
+### Añadido
+
+- Escritorio: la bóveda abierta en tres paneles que aprovechan el ancho de la pantalla de un PC: un árbol compacto de grupos con la papelera aparte, una lista densa de entradas en columnas ordenables (título, usuario, web, modificada) y el detalle de la entrada a la derecha (usuario, contraseña oculta, código de un solo uso con su cuenta atrás, dirección web que se abre en el navegador solo si es http o https, campos propios, notas y nombres de los adjuntos). Búsqueda en toda la bóveda y los atajos Ctrl+F, Ctrl+B, Ctrl+C, Ctrl+U y Ctrl+L, que se muestran en las pistas emergentes y en una barra de estado. Las copias pasan por el portapapeles seguro: contraseñas, campos protegidos, códigos de un solo uso y notas quedan fuera del historial y de la nube del portapapeles de Windows y se borran a los 30 segundos, al bloquear y al salir. Editar llega en el paso siguiente.
+
 ## [1.2.1] - 2026-10-18
 
 La app de Android no cambia.

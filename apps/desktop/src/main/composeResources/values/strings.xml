@@ -55,9 +55,46 @@
     <string name="group_status_saved">Saved</string>
     <string name="group_status_unsaved">Unsaved changes</string>
     <string name="group_lock">Lock</string>
-    <string name="group_section_groups">Groups</string>
-    <string name="group_section_entries">Entries</string>
-    <string name="open_vault_empty">This vault has no entries yet.</string>
+    <string name="group_settings">Settings</string>
+    <string name="group_expand">Expand</string>
+    <string name="group_collapse">Collapse</string>
+    <plurals name="group_entries_count">
+        <item quantity="one">%1$d entry</item>
+        <item quantity="other">%1$d entries</item>
+    </plurals>
+
+    <string name="search_field_label">Search</string>
+    <string name="search_clear">Clear</string>
+    <string name="search_no_results">Nothing matches that search.</string>
+    <string name="entries_empty">No entries in this group.</string>
+    <string name="entries_column_title">Title</string>
+    <string name="entries_column_user">User name</string>
+    <string name="entries_column_web">Web</string>
+    <string name="entries_column_modified">Modified</string>
+
+    <string name="entry_detail_user_name">User name</string>
+    <string name="entry_detail_password">Password</string>
+    <string name="entry_detail_url">URL</string>
+    <string name="entry_detail_notes">Notes</string>
+    <string name="entry_detail_totp">One-time code</string>
+    <string name="entry_detail_totp_expires">Expires in %1$d s</string>
+    <string name="entry_detail_totp_urgent">Expires soon</string>
+    <string name="entry_detail_show_field">Show %1$s</string>
+    <string name="entry_detail_hide_field">Hide %1$s</string>
+    <string name="entry_detail_copy">Copy</string>
+    <string name="entry_detail_copy_field">Copy %1$s</string>
+    <string name="entry_detail_open">Open</string>
+    <string name="entry_detail_open_field">Open %1$s</string>
+    <string name="entry_detail_attachments">Attachments</string>
+    <string name="entry_detail_modified">Modified %1$s</string>
+    <string name="entry_detail_edit">Edit</string>
+    <string name="entry_detail_delete">Delete</string>
+    <string name="detail_empty">Select an entry to see its details.</string>
+    <string name="detail_coming_soon">Coming in a later step.</string>
+
+    <string name="clipboard_copied">%1$s copied</string>
+    <string name="status_shortcuts">Ctrl+F search · Ctrl+B copy user name · Ctrl+C copy password · Ctrl+U open URL · Ctrl+L lock</string>
+    <string name="tooltip_shortcut">%1$s (%2$s)</string>
 
     <string name="create_title">New vault</string>
     <string name="create_name_label">Vault name</string>

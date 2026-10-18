@@ -10,6 +10,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -17,12 +18,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.input.key.Key
-import androidx.compose.ui.input.key.KeyEvent
-import androidx.compose.ui.input.key.KeyEventType
-import androidx.compose.ui.input.key.isCtrlPressed
-import androidx.compose.ui.input.key.key
-import androidx.compose.ui.input.key.type
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.ApplicationScope
@@ -32,6 +27,8 @@ import androidx.compose.ui.window.rememberWindowState
 import io.github.catlinux.keynexa.desktop.app.generated.resources.Res
 import io.github.catlinux.keynexa.desktop.app.generated.resources.app_name
 import io.github.catlinux.keynexa.desktop.app.generated.resources.dialog_ok
+import io.github.catlinux.keynexa.desktop.app.generated.resources.entry_detail_password
+import io.github.catlinux.keynexa.desktop.app.generated.resources.entry_detail_user_name
 import io.github.catlinux.keynexa.desktop.app.generated.resources.home_open_existing
 import io.github.catlinux.keynexa.desktop.app.generated.resources.instance_already_open
 import io.github.catlinux.keynexa.session.KnownVault
@@ -77,19 +74,32 @@ private fun ApplicationScope.KeyNexaWindow(
     val session = container.session
     val state by session.state.collectAsState()
     var selected by remember { mutableStateOf<KnownVault?>(null) }
+    val view = remember { DesktopVaultState(container.clipboard) }
+    val openVault = (state as? SessionState.Open)?.vault
+    LaunchedEffect(openVault) {
+        val content = (state as? SessionState.Open)?.current
+        if (content != null) view.open(content) else view.reset()
+    }
+    val userNameLabel = stringResource(Res.string.entry_detail_user_name)
+    val passwordLabel = stringResource(Res.string.entry_detail_password)
     val lockVault: () -> Unit = {
         selected = null
+        container.clipboard.clearNow()
         session.lock()
     }
     Window(
         onCloseRequest = {
+            container.clipboard.clearNow()
+            container.clipboard.close()
             session.lock()
             lock.close()
             exitApplication()
         },
         onKeyEvent = { event ->
-            if (isLockShortcut(event) && state is SessionState.Open) {
-                lockVault()
+            val open = state as? SessionState.Open
+            val shortcut = shortcutOf(event)
+            if (open != null && shortcut != null) {
+                runShortcut(shortcut, view, open.current, userNameLabel, passwordLabel, lockVault)
                 true
             } else {
                 false
@@ -108,16 +118,13 @@ private fun ApplicationScope.KeyNexaWindow(
                     selected = selected,
                     onSelect = { selected = it },
                     onLock = lockVault,
+                    view = view,
                     parent = window,
                 )
             }
         }
     }
 }
-
-/** True when the key event is the Ctrl+L that locks the open vault. */
-private fun isLockShortcut(event: KeyEvent): Boolean =
-    event.type == KeyEventType.KeyDown && event.isCtrlPressed && event.key == Key.L
 
 /** The screen for the current state: the open vault, the unlock screen of the picked vault, or the home list. */
 @Suppress("LongParameterList")
@@ -129,6 +136,7 @@ private fun KeyNexaScreen(
     selected: KnownVault?,
     onSelect: (KnownVault?) -> Unit,
     onLock: () -> Unit,
+    view: DesktopVaultState,
     parent: Frame,
 ) {
     val unlockVault =
@@ -139,8 +147,9 @@ private fun KeyNexaScreen(
         }
     when {
         state is SessionState.Open ->
-            DesktopOpenVaultScreen(
+            DesktopVaultScreen(
                 state = state,
+                view = view,
                 onLock = onLock,
                 onRetrySave = session::retrySave,
                 onRestoreUnsaved = session::restoreUnsaved,

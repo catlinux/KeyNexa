@@ -324,9 +324,3 @@ private fun RemoveVaultDialog(
         },
     )
 }
-
-/** The initial shown on a vault's hexagon avatar. */
-private fun initialOf(name: String): String {
-    val trimmed = name.trim()
-    return if (trimmed.isEmpty()) "?" else trimmed.substring(0, 1).uppercase()
-}

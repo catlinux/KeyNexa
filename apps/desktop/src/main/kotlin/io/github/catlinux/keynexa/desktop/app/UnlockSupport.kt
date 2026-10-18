@@ -71,7 +71,7 @@ import java.io.IOException
 import java.nio.file.Files
 
 /** The mark that stands for every hidden character. */
-private const val MASK = "•"
+internal const val MASK = "•"
 
 /** The height a control that only holds text keeps, so it stays easy to hit. */
 private val TouchTarget = 48.dp
