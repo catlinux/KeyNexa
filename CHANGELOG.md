@@ -10,6 +10,12 @@ All notable changes to this project are documented in this file. The format is b
 
 - ADR-0008 (proposed) and the plan for optional cloud copies of the vault with an assistant: an `offline` build with no network access and a `cloud` build, S3 first and then Dropbox, OneDrive and Google Drive.
 
+## [0.33.2] - 2026-10-18
+
+### Changed
+
+- CI: when the keepass-rs differential test fails, the test message is published as an annotation that can be read without signing in, to diagnose an intermittent failure seen only in CI. Patch: CI only.
+
 ## [0.33.1] - 2026-10-18
 
 ### Fixed
