@@ -6,7 +6,7 @@
 
 A security-first, cross-platform password manager built around established cryptographic libraries, local vaults, and seamless Syncthing synchronization.
 
-> **Project status: Android 1.0 released (2026-10-18); the desktop client comes next.** You can create or open a KDBX vault, browse, search, add and edit entries (with attachments and clearing an entry's previous versions), use the recycle bin, generate passwords and see an entry's one-time (TOTP) codes; saves go through a safe-save pipeline, and changes made elsewhere (for example with KeePassXC through Syncthing) are merged, conflict copies included. Also: biometric unlock, auto-lock (also in the background), screen protection, the KeyNexa keypad for master passwords, and optional encrypted cloud copies (S3-compatible: Backblaze B2, Cloudflare R2) in the `cloud` build. See the [security review](docs/SECURITY_REVIEW.md).
+> **Project status: Android 1.0 released (2026-10-18); the Windows client is being built (a preview, not published yet; see [Install on Windows](docs/INSTALL_WINDOWS.md)).** You can create or open a KDBX vault, browse, search, add and edit entries (with attachments and clearing an entry's previous versions), use the recycle bin, generate passwords and see an entry's one-time (TOTP) codes; saves go through a safe-save pipeline, and changes made elsewhere (for example with KeePassXC through Syncthing) are merged, conflict copies included. Also: biometric unlock, auto-lock (also in the background), screen protection, the KeyNexa keypad for master passwords, and optional encrypted cloud copies (S3-compatible: Backblaze B2, Cloudflare R2) in the `cloud` build. See the [security review](docs/SECURITY_REVIEW.md).
 
 ## What KeyNexa will be
 
