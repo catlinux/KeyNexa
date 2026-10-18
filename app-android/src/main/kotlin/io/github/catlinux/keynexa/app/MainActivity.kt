@@ -8,11 +8,13 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.material3.Surface
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.fragment.app.FragmentActivity
 import io.github.catlinux.keynexa.app.ui.theme.KeyNexaTheme
 import io.github.catlinux.keynexa.app.ui.theme.resolveDarkTheme
+import io.github.catlinux.keynexa.app.ui.unlock.LocalPasswordKeypad
 
 class MainActivity : FragmentActivity() {
     private val container: AppContainer get() = (application as KeyNexaApplication).container
@@ -31,7 +33,11 @@ class MainActivity : FragmentActivity() {
                 // keyboard, while the surface still paints the background behind them.
                 Surface(modifier = Modifier.fillMaxSize()) {
                     Box(modifier = Modifier.safeDrawingPadding()) {
-                        AppRoot(container)
+                        CompositionLocalProvider(
+                            LocalPasswordKeypad provides container.settings.values.passwordKeypad,
+                        ) {
+                            AppRoot(container)
+                        }
                     }
                 }
             }

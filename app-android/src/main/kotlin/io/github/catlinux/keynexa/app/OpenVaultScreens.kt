@@ -108,7 +108,7 @@ fun OpenVaultScreens(
                 onDiscardUnsaved = session::discardUnsaved,
                 onDeleteConflictCopies = session::deleteConflictCopies,
                 onMergeOtherPassword = { password ->
-                    session.mergeOtherPasswordCopies(Credentials.of(password = password.toCharArray()))
+                    session.mergeOtherPasswordCopies(Credentials.of(password = password))
                 },
                 onDismissConflicts = session::dismissConflicts,
             )

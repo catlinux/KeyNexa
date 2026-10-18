@@ -10,6 +10,18 @@ Todos los cambios notables de este proyecto se documentan en este archivo. El fo
 
 - ADR-0008 (propuesta) y el plan de las copias opcionales de la bóveda en la nube con un asistente: una compilación `offline` sin acceso a la red y una `cloud`, primero S3 y después Dropbox, OneDrive y Google Drive.
 
+## [0.33.0] - 2026-10-18
+
+### Añadido
+
+- El teclado de KeyNexa escribe también la contraseña maestra nueva y su confirmación al crear una bóveda (*Listo* pasa a la confirmación), y la contraseña de una copia de conflicto escrita con otra contraseña (ADR-0010).
+
+### Cambiado
+
+- Las tres entradas de contraseña maestra comparten un componente: lo escrito se borra al salir de la pantalla o del diálogo y al pasar la app a segundo plano, la confirmación se compara sin hacer copias en texto, y la contraseña de una copia de conflicto llega a la sesión como un array y no como un `String`.
+
+Menor: comportamiento nuevo y compatible.
+
 ## [0.32.0] - 2026-10-18
 
 ### Añadido

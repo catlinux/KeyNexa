@@ -10,6 +10,18 @@ All notable changes to this project are documented in this file. The format is b
 
 - ADR-0008 (proposed) and the plan for optional cloud copies of the vault with an assistant: an `offline` build with no network access and a `cloud` build, S3 first and then Dropbox, OneDrive and Google Drive.
 
+## [0.33.0] - 2026-10-18
+
+### Added
+
+- The KeyNexa keypad also types the new master password and its confirmation when creating a vault (*Done* moves to the confirmation), and the password of a conflict copy written with another password (ADR-0010).
+
+### Changed
+
+- The three master password inputs share one component: typed text is wiped when the screen or dialog is left and when the app goes to the background, the confirmation is compared without making text copies, and the password of a conflict copy reaches the session as an array instead of a `String`.
+
+Minor: new, compatible behaviour.
+
 ## [0.32.0] - 2026-10-18
 
 ### Added

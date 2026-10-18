@@ -1,3 +1,5 @@
+@file:Suppress("TooManyFunctions")
+
 package io.github.catlinux.keynexa.app.ui.home
 
 import android.content.Context
@@ -16,7 +18,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -27,6 +28,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
@@ -38,15 +40,20 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import io.github.catlinux.keynexa.app.R
+import io.github.catlinux.keynexa.app.ui.unlock.LocalPasswordKeypad
+import io.github.catlinux.keynexa.app.ui.unlock.MasterPasswordField
+import io.github.catlinux.keynexa.app.ui.unlock.PasswordEntry
+import io.github.catlinux.keynexa.app.ui.unlock.PasswordEntryKeypad
+import io.github.catlinux.keynexa.app.ui.unlock.PasswordInputSwitch
+import io.github.catlinux.keynexa.app.ui.unlock.WipeOnLeave
 import io.github.catlinux.keynexa.vault.Credentials
 import java.io.IOException
 
@@ -66,24 +73,15 @@ private const val GOOD_PASSWORD_LENGTH = 12
 /** A key file can be any file the user can reach. */
 private val KeyFileTypes = arrayOf("*/*")
 
-/** What the user typed into the password fields. Secrets live here only while the screen is on. */
-private class PasswordFields {
-    var password by mutableStateOf("")
-    var repeated by mutableStateOf("")
-    var revealed by mutableStateOf(false)
+/** The new master password ([PASSWORD]) and its confirmation ([REPEATED]) share one [PasswordEntry]. */
+private const val PASSWORD = 0
+private const val REPEATED = 1
 
-    /** True once the confirmation is filled in and does not match. */
-    val mismatch: Boolean get() = repeated.isNotEmpty() && repeated != password
+/** True once the confirmation is filled in and does not match. */
+private fun PasswordEntry.mismatch(): Boolean = length(REPEATED) > 0 && !matches(PASSWORD, REPEATED)
 
-    /** True when both fields hold the same password, which is required to create the vault. */
-    val confirmed: Boolean get() = password.isNotEmpty() && repeated == password
-
-    fun clear() {
-        password = ""
-        repeated = ""
-        revealed = false
-    }
-}
+/** True when both fields hold the same password, which is required to create the vault. */
+private fun PasswordEntry.confirmed(): Boolean = length(PASSWORD) > 0 && matches(PASSWORD, REPEATED)
 
 /** The key file the user picked, if any, and whether the last attempt to read one failed. */
 private class KeyFileChoice {
@@ -124,11 +122,13 @@ fun CreateVaultScreen(
     onBack: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val passwordFields = remember { PasswordFields() }
+    val useKeypad = LocalPasswordKeypad.current
+    val passwordFields = remember { PasswordEntry(useKeypad, fields = 2) }
+    WipeOnLeave(passwordFields)
     val keyFile = remember { KeyFileChoice() }
     var name by remember { mutableStateOf("") }
     val canCreate =
-        name.isNotBlank() && passwordFields.password.length >= MIN_PASSWORD_LENGTH && passwordFields.confirmed
+        name.isNotBlank() && passwordFields.length(PASSWORD) >= MIN_PASSWORD_LENGTH && passwordFields.confirmed()
     Surface(modifier = modifier.fillMaxSize()) {
         Column(
             modifier =
@@ -147,10 +147,9 @@ fun CreateVaultScreen(
             Button(
                 onClick = {
                     // Credentials take ownership of the array: from here the callback wipes it, not this screen.
-                    val secret = passwordFields.password.toCharArray()
+                    val secret = passwordFields.take(PASSWORD)
                     onCreate(name.trim(), Credentials.of(password = secret, keyFile = keyFile.bytes))
                     name = ""
-                    passwordFields.clear()
                     keyFile.clear()
                 },
                 enabled = canCreate,
@@ -201,51 +200,42 @@ private fun VaultNameField(
 /** The master password, the confirmation and the switch that shows or hides them. */
 @Composable
 private fun PasswordSection(
-    passwordFields: PasswordFields,
+    passwordFields: PasswordEntry,
     modifier: Modifier = Modifier,
 ) {
+    val repeatedFocus = remember { FocusRequester() }
     Column(
         modifier = modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(ItemGap),
     ) {
-        PasswordField(
-            value = passwordFields.password,
+        MasterPasswordField(
+            entry = passwordFields,
+            field = PASSWORD,
             label = stringResource(R.string.create_password_label),
-            revealed = passwordFields.revealed,
-            onValueChange = { passwordFields.password = it },
+            enabled = true,
+            shape = OutlinedTextFieldDefaults.shape,
         )
-        PasswordField(
-            value = passwordFields.repeated,
+        MasterPasswordField(
+            entry = passwordFields,
+            field = REPEATED,
             label = stringResource(R.string.create_repeat_label),
-            revealed = passwordFields.revealed,
-            onValueChange = { passwordFields.repeated = it },
+            enabled = true,
+            shape = OutlinedTextFieldDefaults.shape,
+            modifier = Modifier.focusRequester(repeatedFocus),
         )
         RevealSwitch(
             revealed = passwordFields.revealed,
             onRevealedChange = { passwordFields.revealed = it },
         )
-        PasswordStrength(length = passwordFields.password.length, mismatch = passwordFields.mismatch)
+        PasswordStrength(length = passwordFields.length(PASSWORD), mismatch = passwordFields.mismatch())
+        PasswordInputSwitch(entry = passwordFields, enabled = true)
+        // Done on the first field moves on to the confirmation, as the system keyboard's Next would.
+        PasswordEntryKeypad(
+            entry = passwordFields,
+            enabled = true,
+            onDone = { if (passwordFields.active == PASSWORD) repeatedFocus.requestFocus() },
+        )
     }
-}
-
-/** A password field: hidden by default, without autocorrect, and never kept beyond this screen. */
-@Composable
-private fun PasswordField(
-    value: String,
-    label: String,
-    revealed: Boolean,
-    onValueChange: (String) -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    OutlinedTextField(
-        value = value,
-        onValueChange = onValueChange,
-        label = { Text(text = label) },
-        singleLine = true,
-        visualTransformation = if (revealed) VisualTransformation.None else PasswordVisualTransformation(),
-        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password, autoCorrectEnabled = false),
-        modifier = modifier.fillMaxWidth(),
-    )
 }
 
 /** Shows or hides both password fields; the switch itself carries the description of what it does. */

@@ -177,7 +177,7 @@ fun GroupScreen(
     onBack: () -> Unit,
     onRetrySave: () -> Unit,
     onDeleteConflictCopies: () -> Unit,
-    onMergeOtherPassword: (String) -> Unit,
+    onMergeOtherPassword: (CharArray) -> Unit,
     onDismissConflicts: () -> Unit,
     modifier: Modifier = Modifier,
     rootTitle: String? = null,

@@ -6,13 +6,13 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.text.KeyboardActions
-import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
@@ -31,12 +31,14 @@ import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import io.github.catlinux.keynexa.app.R
+import io.github.catlinux.keynexa.app.ui.unlock.LocalPasswordKeypad
+import io.github.catlinux.keynexa.app.ui.unlock.MasterPasswordField
+import io.github.catlinux.keynexa.app.ui.unlock.PasswordEntry
+import io.github.catlinux.keynexa.app.ui.unlock.PasswordEntryKeypad
+import io.github.catlinux.keynexa.app.ui.unlock.PasswordInputSwitch
+import io.github.catlinux.keynexa.app.ui.unlock.WipeOnLeave
 import io.github.catlinux.keynexa.sync.CopyProblem
 
 /** Spacing and touch targets of the design grid (docs/DESIGN.md). */
@@ -70,7 +72,7 @@ data class ConflictNotice(
 fun ConflictNoticeBar(
     notice: ConflictNotice,
     onDeleteCopies: () -> Unit,
-    onMergeOtherPassword: (String) -> Unit,
+    onMergeOtherPassword: (CharArray) -> Unit,
     onDismiss: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -175,38 +177,37 @@ private fun NoticeButton(
 }
 
 /**
- * Asks for the password of a copy written with another password. A single field, hidden unless the user reveals it;
- * it never keeps the password after the dialog closes.
+ * Asks for the password of a copy written with another password: one field, typed with the KeyNexa keypad or the
+ * system keyboard (ADR-0010), hidden unless the user reveals it. The password leaves as an array the caller owns, and
+ * nothing typed is kept after the dialog closes.
  */
+@Suppress("LongMethod")
 @Composable
 private fun OtherPasswordDialog(
-    onMerge: (String) -> Unit,
+    onMerge: (CharArray) -> Unit,
     onDismiss: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    var password by remember { mutableStateOf("") }
-    var revealed by remember { mutableStateOf(false) }
+    val useKeypad = LocalPasswordKeypad.current
+    val password = remember { PasswordEntry(useKeypad) }
+    WipeOnLeave(password)
     val description = stringResource(R.string.conflict_password_show)
+    val submit: () -> Unit = { password.take()?.let(onMerge) }
     AlertDialog(
         onDismissRequest = onDismiss,
         modifier = modifier,
         title = { Text(text = stringResource(R.string.conflict_password_title)) },
         text = {
-            Column(verticalArrangement = Arrangement.spacedBy(ItemGap)) {
-                OutlinedTextField(
-                    value = password,
-                    onValueChange = { password = it },
-                    label = { Text(text = stringResource(R.string.conflict_password_label)) },
-                    singleLine = true,
-                    visualTransformation = if (revealed) VisualTransformation.None else PasswordVisualTransformation(),
-                    keyboardOptions =
-                        KeyboardOptions(
-                            keyboardType = KeyboardType.Password,
-                            autoCorrectEnabled = false,
-                            imeAction = ImeAction.Done,
-                        ),
-                    keyboardActions = KeyboardActions(onDone = { onMerge(password) }),
-                    modifier = Modifier.fillMaxWidth(),
+            Column(
+                modifier = Modifier.verticalScroll(rememberScrollState()),
+                verticalArrangement = Arrangement.spacedBy(ItemGap),
+            ) {
+                MasterPasswordField(
+                    entry = password,
+                    label = stringResource(R.string.conflict_password_label),
+                    enabled = true,
+                    shape = OutlinedTextFieldDefaults.shape,
+                    onSubmit = submit,
                 )
                 Row(
                     modifier = Modifier.fillMaxWidth(),
@@ -219,15 +220,17 @@ private fun OtherPasswordDialog(
                         modifier = Modifier.weight(1f),
                     )
                     Switch(
-                        checked = revealed,
-                        onCheckedChange = { revealed = it },
+                        checked = password.revealed,
+                        onCheckedChange = { password.revealed = it },
                         modifier = Modifier.semantics { contentDescription = description },
                     )
                 }
+                PasswordInputSwitch(entry = password, enabled = true)
+                PasswordEntryKeypad(entry = password, enabled = true, onDone = submit)
             }
         },
         confirmButton = {
-            TextButton(onClick = { onMerge(password) }, enabled = password.isNotEmpty()) {
+            TextButton(onClick = submit, enabled = password.length(0) > 0) {
                 Text(text = stringResource(R.string.conflict_password_merge))
             }
         },
