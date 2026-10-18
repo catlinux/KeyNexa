@@ -2,7 +2,7 @@
 
 [English](../../decisions/0010-in-app-password-keypad.md) | [Español](0010-in-app-password-keypad.md)
 
-- **Estado:** Propuesta
+- **Estado:** Aceptada (2026-10-18)
 - **Fecha:** 2026-10-18
 - **Trata:** la amenaza T22 del [THREAT_MODEL](../THREAT_MODEL.md) (un keylogger o malware captura la contraseña maestra)
 
@@ -26,7 +26,7 @@ Restricciones: la contraseña maestra puede contener cualquier carácter (acento
 Opción 2.
 
 1. **Qué es:** un teclado dibujado con Compose dentro de la pantalla de desbloqueo. No es un método de entrada: no se registra en el sistema, no necesita permisos y ninguna otra app puede usarlo ni verlo.
-2. **Cuándo se usa:** un ajuste «Escribir la contraseña maestra con el teclado de KeyNexa» (desactivado por defecto, para que nada cambie a quien ya usa la app) y un botón en la pantalla de desbloqueo para pasar del teclado propio al del sistema en ese intento. Cuando aparece el aviso discreto de un teclado o servicio de accesibilidad de otra app, gana un enlace «Usar el teclado de KeyNexa». El ajuste se aplica primero a la pantalla de desbloqueo; la de crear bóveda y el diálogo de «otra contraseña» de las copias de conflicto vienen en pasos posteriores.
+2. **Cuándo se usa:** solo en los campos donde se escribe una contraseña maestra: la pantalla de desbloqueo, la de crear bóveda (contraseña y confirmación) y el diálogo de «otra contraseña» de las copias de conflicto; nunca en títulos, notas ni búsquedas. Un ajuste «Escribir las contraseñas con el teclado de KeyNexa» está **activado por defecto** (decisión del titular: es la opción más segura), y cada campo de contraseña tiene un botón para pasar al teclado del sistema en ese intento, así que un carácter que el teclado no tenga siempre se puede escribir. Los campos de contraseña de las entradas pueden venir después, como paso propio.
 3. **Distribución:** una página de letras QWERTY con mayúscula y bloqueo de mayúsculas; una página de cifras y símbolos con todos los caracteres ASCII imprimibles; una página de acentos con las letras latinas habituales (á é í ó ú à è ì ò ù ä ë ï ö ü â ê î ô û ñ ç, también en mayúscula). Los caracteres fuera de estas páginas se escriben con el teclado del sistema (el botón para cambiar sigue visible). La distribución es fija, no se baraja: barajar empeora el uso y solo ayuda contra la grabación de pantalla, que `FLAG_SECURE` ya bloquea por defecto.
 4. **Sin eco visual de la tecla:** las teclas pulsadas no muestran la burbuja ampliada (enseñaría cada carácter a quien mire y a la grabación de pantalla si se permiten las capturas); la respuesta es una vibración corta y el estado pulsado de la tecla.
 5. **Memoria:** los caracteres escritos viven en un búfer `CharArray` del formulario de desbloqueo (`PasswordBuffer`: añadir, borrar el último, borrar todo, copiar). Se borra al enviar la contraseña, al salir de la pantalla, al bloquearse la app o pasar a segundo plano, y al crecer (el array viejo se borra tras copiarlo). El campo muestra solo puntos; «mostrar la contraseña» pinta los caracteres solo mientras está activo, y ese texto pasajero se acepta igual que en el campo actual.
@@ -37,13 +37,13 @@ Opción 2.
 
 - Un teclado malicioso o sincronizado con la nube deja de ver la contraseña maestra cuando se usa el teclado propio. Los servicios de accesibilidad y un sistema comprometido todavía pueden (riesgo residual documentado en T22).
 - La contraseña deja de guardarse como `String` mientras se escribe con el teclado propio, lo que además mejora el campo actual.
-- Escribir es más lento que con un teclado conocido; por eso es opcional y el cambio está a un toque.
+- Escribir es más lento que con un teclado conocido; el cambio al teclado del sistema está a un toque y el ajuste se puede desactivar.
 - Las contraseñas con caracteres fuera de las páginas necesitan el teclado del sistema; la app nunca lo impide.
 - Más código de interfaz que mantener y que probar en accesibilidad (TalkBack, texto grande, pantallas pequeñas).
 
 ## Plan de implementación
 
 1. `PasswordBuffer` y el modelo de distribución con pruebas JVM (se borra por todos los caminos, al crecer se borra el array viejo, todos los caracteres ASCII imprimibles son alcanzables).
-2. El teclado en Compose y su uso en la pantalla de desbloqueo: ajuste (desactivado por defecto), botón de cambio, enlace desde el aviso discreto, borrado al salir, al bloquear y en segundo plano. Textos en inglés y español.
+2. El teclado en Compose y su uso en la pantalla de desbloqueo: ajuste (activado por defecto), botón de cambio, borrado al salir, al bloquear y en segundo plano. Textos en inglés y español.
 3. Prueba en el dispositivo con TalkBack y texto grande; después la pantalla de crear bóveda y el diálogo de contraseña de las copias de conflicto.
 4. Documentación en los dos idiomas: DESIGN (componente de teclado), THREAT_MODEL (T7 y T22), lista de funciones del README, TODO y CHANGELOG.

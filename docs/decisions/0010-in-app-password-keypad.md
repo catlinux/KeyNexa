@@ -2,7 +2,7 @@
 
 [English](0010-in-app-password-keypad.md) | [Español](../es/decisions/0010-in-app-password-keypad.md)
 
-- **Status:** Proposed
+- **Status:** Accepted (2026-10-18)
 - **Date:** 2026-10-18
 - **Addresses:** threat T22 in [THREAT_MODEL](../THREAT_MODEL.md) (keylogger or malware captures the master password)
 
@@ -26,7 +26,7 @@ Constraints: the master password may contain any character (accents, symbols, ot
 Option 2.
 
 1. **What it is:** a keypad drawn with Compose inside the unlock screen. It is not an input method: it is not registered with the system, needs no permission, and no other app can use it or see it.
-2. **When it is used:** a setting "Type the master password with the KeyNexa keypad" (off by default, so nothing changes for existing users) and a button on the unlock screen to switch between the keypad and the system keyboard for that attempt. When the quiet notice about a keyboard or accessibility service from another app is shown, it gains a "Use the KeyNexa keypad" link. The setting applies to the unlock screen first; the create-vault screen and the "other password" dialog of conflict copies follow in later steps.
+2. **When it is used:** only in fields where a master password is typed: the unlock screen, the create-vault screen (password and confirmation) and the "other password" dialog of conflict copies; never for titles, notes or search. A setting "Type passwords with the KeyNexa keypad" is **on by default** (decision of the owner: it is the safer choice), and each password field has a button to switch to the system keyboard for that attempt, so a character the keypad lacks can always be typed. The password fields of entries may follow later, as their own step.
 3. **Layout:** a QWERTY letter page with shift and caps lock; a digits and symbols page covering every printable ASCII character; an accents page with the common Latin letters (á é í ó ú à è ì ò ù ä ë ï ö ü â ê î ô û ñ ç, also uppercase). Characters outside these pages are typed with the system keyboard (option to switch stays visible). The layout is fixed, not shuffled: shuffling hurts usability and only helps against screen recording, which `FLAG_SECURE` already blocks by default.
 4. **No visual echo of the key:** pressed keys get no enlarged preview bubble (it would show each character to anyone looking and to screen recording when screenshots are allowed); feedback is a short vibration and the key's pressed state.
 5. **Memory:** the typed characters live in a `CharArray` buffer owned by the unlock form (`PasswordBuffer`: append, delete last, wipe, copy out). It is wiped when the password is submitted, when the screen is left, when the app locks or goes to the background, and when it grows (the old array is wiped after copying). The field shows dots only; "show password" renders the characters only while it is on, and that transient text is accepted as with the current field.
@@ -37,13 +37,13 @@ Option 2.
 
 - A malicious or cloud-synced keyboard no longer sees the master password when the keypad is used. Accessibility services and a compromised system still can (documented residual risk in T22).
 - The password stops being held as a `String` while typed with the keypad, which also improves on the current field.
-- Typing is slower than with a familiar keyboard; that is why it is optional and the switch is one tap away.
+- Typing is slower than with a familiar keyboard; the switch to the system keyboard is one tap away, and the setting can be turned off.
 - Passwords with characters outside the pages need the system keyboard; the app never blocks that.
 - More UI code to maintain and to test for accessibility (TalkBack, large text, small screens).
 
 ## Implementation plan
 
 1. `PasswordBuffer` and the keypad layout model with JVM tests (wipe on every path, growth wipes the old array, every printable ASCII character reachable).
-2. The keypad composable and its use on the unlock screen: setting (off by default), switch button, link from the quiet notice, wiping on leave, lock and background. Strings in English and Spanish.
+2. The keypad composable and its use on the unlock screen: setting (on by default), switch button, wiping on leave, lock and background. Strings in English and Spanish.
 3. Device check with TalkBack and large text; then the create-vault screen and the conflict-copy password dialog.
 4. Docs in both languages: DESIGN (keypad component), THREAT_MODEL (T7 and T22), README feature list, TODO and CHANGELOG.

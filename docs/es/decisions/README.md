@@ -15,6 +15,6 @@ Cada registro explica una decisión importante: contexto, opciones, decisión y 
 | [0007](0007-conflict-copies.md) | Fusión de copias de conflicto de Syncthing: fusión automática, borrado solo con consentimiento | Aceptada |
 | [0008](0008-cloud-backup.md) | Copias de la bóveda en la nube: asistente opcional, variante `cloud` y servicios | Aceptada |
 | [0009](0009-cloud-sync.md) | Sincronización a través de la nube: primero local, escrituras condicionales | Propuesta |
-| [0010](0010-in-app-password-keypad.md) | Teclado propio de la app para la contraseña maestra: opcional, junto al del sistema | Propuesta |
+| [0010](0010-in-app-password-keypad.md) | Teclado propio de la app para la contraseña maestra: activado por defecto, junto al del sistema | Aceptada |
 
 Plantilla para nuevos registros: `docs/decisions/NNNN-short-title.md` y su traducción `docs/es/decisions/NNNN-short-title.md`, con las secciones *Contexto*, *Opciones*, *Decisión*, *Consecuencias*.

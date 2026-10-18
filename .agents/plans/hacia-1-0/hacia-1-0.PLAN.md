@@ -44,10 +44,10 @@ Reglas fijas (AGENTS.md): documentación bilingüe en el mismo commit, `VERSION`
 
 ## Bloque E: teclado propio para la contraseña maestra (ADR-0010, prioridad alta antes de la versión preliminar)
 
-Solo tras aprobar el ADR-0010. Seguirlo al pie de la letra; ante una duda de diseño, parar y anotarla aquí.
+ADR-0010 aceptado el 2026-10-18 (activado por defecto, solo campos de contraseña maestra, distribución fija). Seguirlo al pie de la letra; ante una duda de diseño, parar y anotarla aquí.
 
 - [ ] **E1.** `PasswordBuffer` (`CharArray`, añadir, borrar último, borrar todo con relleno, copiar; al crecer, borra el array viejo) y modelo de distribución (páginas letras/símbolos/acentos, mayúscula y bloqueo) en `app-android/.../ui/unlock/`, con pruebas JVM: todos los ASCII imprimibles alcanzables, borrado por todos los caminos. · 0.32.0 (menor) · DeepSeek, esfuerzo alto + revisión.
-- [ ] **E2.** Teclado en Compose (sin burbuja de tecla, vibración corta, etiquetas habladas, ≥ 44 dp, sigue la escala de letra) y uso en la pantalla de desbloqueo: ajuste desactivado por defecto en `AppSettings`, botón de cambio teclado propio / sistema, enlace «Usar el teclado de KeyNexa» en el aviso discreto, borrado del búfer al enviar, salir, bloquear y en segundo plano. Textos en/es. · 0.33.0 (menor) · DeepSeek, esfuerzo alto, en dos tareas (teclado; integración) + revisión.
+- [ ] **E2.** Teclado en Compose (sin burbuja de tecla, vibración corta, etiquetas habladas, ≥ 44 dp, sigue la escala de letra) y uso en la pantalla de desbloqueo: ajuste activado por defecto en `AppSettings`, botón de cambio teclado propio / sistema, borrado del búfer al enviar, salir, bloquear y en segundo plano. Textos en/es. · 0.33.0 (menor) · DeepSeek, esfuerzo alto, en dos tareas (teclado; integración) + revisión.
 - [ ] **E3.** Prueba en el móvil (TalkBack, texto grande); después pantalla de crear bóveda y diálogo de «otra contraseña». Documentación en/es: DESIGN, THREAT_MODEL (T7, T22), README, TODO. ADR-0010 a «Aceptada» cuando E2 esté probado.
 
 ## Paso final: auditoría completa con Opus y depuración (decidido por el usuario, en unos días)
