@@ -10,6 +10,12 @@ Todos los cambios notables de este proyecto se documentan en este archivo. El fo
 
 - ADR-0008 (propuesta) y el plan de las copias opcionales de la bóveda en la nube con un asistente: una compilación `offline` sin acceso a la red y una `cloud`, primero S3 y después Dropbox, OneDrive y Google Drive.
 
+## [0.33.14] - 2026-10-18
+
+### Cambiado
+
+- Las publicaciones incluyen ahora las dos compilaciones, firmadas con la misma clave: `keynexa-<versión>.apk` (offline, sin permiso de Internet) y `keynexa-cloud-<versión>.apk` (con las copias opcionales en la nube), cada una con su archivo SHA-256; el flujo falla salvo que el APK offline no tenga el permiso de Internet y el cloud sí (ADR-0008, decisión del titular). La compilación cloud de publicación se comprobó en un móvil (desbloqueo y una copia a la nube). README y DEVELOPMENT al día. Parche: herramientas de publicación y documentación.
+
 ## [0.33.13] - 2026-10-18
 
 ### Cambiado

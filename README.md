@@ -6,7 +6,7 @@
 
 A security-first, cross-platform password manager built around established cryptographic libraries, local vaults, and seamless Syncthing synchronization.
 
-> **Project status: early development (0.21.x in development; latest pre-release published: v0.10.3).** Android only, for testing. You can already create or open a KDBX vault, browse, search, add and edit entries (with attached files you can save to disk, and clearing an entry's previous versions), use the recycle bin, generate passwords and show an entry's one-time (TOTP) codes (read-only); saves go through a safe-save pipeline and changes made elsewhere (for example with KeePassXC through Syncthing) are merged. **Also working:** auto-lock (including in the background), screen protection, a settings screen, changes made elsewhere being picked up within seconds, and Syncthing conflict copies being merged when the vault is opened, with deletion offered after consent. **Also:** biometric unlock, and the sync status of the vault file with an optional warning after days without changes. **Not done yet:** fully reliable clipboard clearing and the Windows and Linux clients. Do not store real passwords in KeyNexa until a full release says otherwise.
+> **Project status: Android 1.0 is ready to be published (latest published pre-release: v0.10.3); the desktop client comes next.** You can create or open a KDBX vault, browse, search, add and edit entries (with attachments and clearing an entry's previous versions), use the recycle bin, generate passwords and see an entry's one-time (TOTP) codes; saves go through a safe-save pipeline, and changes made elsewhere (for example with KeePassXC through Syncthing) are merged, conflict copies included. Also: biometric unlock, auto-lock (also in the background), screen protection, the KeyNexa keypad for master passwords, and optional encrypted cloud copies (S3-compatible: Backblaze B2, Cloudflare R2) in the `cloud` build. See the [security review](docs/SECURITY_REVIEW.md). Use real passwords from 1.0 onwards; until it is out, the published pre-release is older.
 
 ## What KeyNexa will be
 
@@ -36,14 +36,14 @@ See the [roadmap](docs/ROADMAP.md) for what is planned in each phase.
 
 ## Requirements, installation and usage
 
-A pre-release is available from [GitHub Releases](https://github.com/catlinux/KeyNexa/releases). Download `keynexa-0.10.3.apk` and `keynexa-0.10.3.apk.sha256`. In the directory containing both files, verify the APK checksum and signer:
+Releases are published on [GitHub Releases](https://github.com/catlinux/KeyNexa/releases) in two builds of the same app, signed with the same key: `keynexa-<version>.apk` (**offline**: no Internet permission at all) and `keynexa-cloud-<version>.apk` (**cloud**: adds the optional encrypted cloud copies, so it asks for the Internet permission; see [Privacy](docs/PRIVACY.md) and the [cloud setup guide](docs/CLOUD_SETUP.md)). Install one of them; installing the other one later keeps your vaults and settings. Download the APK and its `.sha256` file and, in the directory containing both, verify the checksum and the signer (the commands show the 0.10.3 pre-release, which only had the offline build):
 
 ```sh
 sha256sum -c keynexa-0.10.3.apk.sha256
 apksigner verify --print-certs keynexa-0.10.3.apk
 ```
 
-Compare the SHA-256 certificate fingerprint reported by `apksigner` with `51:ca:da:3c:d0:8c:35:5f:13:67:90:b1:be:83:09:00:8b:b9:a3:1e:e9:44:b4:e6:e3:74:7e:6a:e9:d0:44:9b`. The published `offline` build does not request the Internet permission; the `cloud` build declares it for the optional cloud copies when they arrive.
+Compare the SHA-256 certificate fingerprint reported by `apksigner` with `51:ca:da:3c:d0:8c:35:5f:13:67:90:b1:be:83:09:00:8b:b9:a3:1e:e9:44:b4:e6:e3:74:7e:6a:e9:d0:44:9b`. Only the `offline` build is free of the Internet permission; the release workflow checks it before publishing.
 
 To build from source instead, you need JDK 17 and Android SDK 36 (see [Development](docs/DEVELOPMENT.md) for how to point Gradle at the SDK). KeyNexa ships two variants: `offline` (no network access) and `cloud` (declares `INTERNET` for the optional cloud copies; see the [cloud copies setup guide](docs/CLOUD_SETUP.md)). From the repository root:
 
@@ -54,7 +54,7 @@ To build from source instead, you need JDK 17 and Android SDK 36 (see [Developme
 ./gradlew :app-android:assembleCloudDebug
 ```
 
-On Windows use `gradlew.bat` instead of `./gradlew`. The debug APKs are written to `app-android/build/outputs/apk/offline/debug/app-android-offline-debug.apk` and `app-android/build/outputs/apk/cloud/debug/app-android-cloud-debug.apk`, and can be installed on a phone for testing (use fictitious vaults only). Installing one variant over the other is not verified. To try synchronisation, put the vault in a folder shared with Syncthing and add it to KeyNexa with *Open existing vault*, choosing the folder (not a single file: Android revokes the permission on a single file when Syncthing replaces it).
+On Windows use `gradlew.bat` instead of `./gradlew`. The debug APKs are written to `app-android/build/outputs/apk/offline/debug/app-android-offline-debug.apk` and `app-android/build/outputs/apk/cloud/debug/app-android-cloud-debug.apk`, and can be installed on a phone for testing (use fictitious vaults only). Installing one variant over the other keeps vaults and settings (checked on a phone). To try synchronisation, put the vault in a folder shared with Syncthing and add it to KeyNexa with *Open existing vault*, choosing the folder (not a single file: Android revokes the permission on a single file when Syncthing replaces it).
 
 ## Credits and license
 

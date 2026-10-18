@@ -51,23 +51,33 @@ jobs:
         if: failure()
         run: bash scripts/ci-gradle-error.sh gradle.log
 
-      # Only the offline flavor is published: the cloud flavor asks for the Internet permission, so it is built and
-      # checked but not released until the project decides to publish it (ADR-0008).
-      - name: Check that the offline APK has no network permission
+      # Both flavors are published (ADR-0008): offline, with no network access at all, and cloud, which needs the
+      # Internet permission for the optional cloud copies. The check makes sure each one is what its name promises.
+      - name: Check the network permission of each APK
         run: |
           set -euo pipefail
-          apk=app-android/build/outputs/apk/offline/release/app-android-offline-release-unsigned.apk
-          permissions="$("$ANDROID_HOME/build-tools/36.0.0/aapt2" dump permissions "$apk")"
-          echo "$permissions"
-          if grep -q 'android.permission.INTERNET' <<< "$permissions"; then
+          aapt2="$ANDROID_HOME/build-tools/36.0.0/aapt2"
+          out=app-android/build/outputs/apk
+          offline="$("$aapt2" dump permissions "$out/offline/release/app-android-offline-release-unsigned.apk")"
+          cloud="$("$aapt2" dump permissions "$out/cloud/release/app-android-cloud-release-unsigned.apk")"
+          if grep -q 'android.permission.INTERNET' <<< "$offline"; then
             echo '::error title=Release::the offline APK asks for the Internet permission' >&2
             exit 1
           fi
+          if ! grep -q 'android.permission.INTERNET' <<< "$cloud"; then
+            echo '::error title=Release::the cloud APK lacks the Internet permission it needs' >&2
+            exit 1
+          fi
 
+      - name: Collect the unsigned APKs
+        run: |
+          mkdir -p "$RUNNER_TEMP/unsigned"
+          cp app-android/build/outputs/apk/offline/release/app-android-offline-release-unsigned.apk "$RUNNER_TEMP/unsigned/"
+          cp app-android/build/outputs/apk/cloud/release/app-android-cloud-release-unsigned.apk "$RUNNER_TEMP/unsigned/"
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
         with:
           name: unsigned-apk
-          path: app-android/build/outputs/apk/offline/release/app-android-offline-release-unsigned.apk
+          path: ${{ runner.temp }}/unsigned/
           if-no-files-found: error
           retention-days: 1
 
@@ -95,7 +105,7 @@ jobs:
           yes | "$sdkmanager" --licenses > /dev/null || true
           "$sdkmanager" 'build-tools;36.0.0'
 
-      - name: Sign the APK
+      - name: Sign the APKs
         env:
           KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
           KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
@@ -108,18 +118,25 @@ jobs:
           out="$RUNNER_TEMP/dist"
           mkdir -p "$out"
           printf '%s' "$KEYSTORE_BASE64" | base64 --decode > "$keystore"
-          "$tools/zipalign" -p -f 4 \
-            "$RUNNER_TEMP/unsigned/app-android-offline-release-unsigned.apk" \
-            "$RUNNER_TEMP/aligned.apk"
-          "$tools/apksigner" sign \
-            --ks "$keystore" \
-            --ks-key-alias "$KEY_ALIAS" \
-            --ks-pass env:KEYSTORE_PASSWORD \
-            --key-pass env:KEY_PASSWORD \
-            --out "$out/keynexa-$VERSION.apk" \
-            "$RUNNER_TEMP/aligned.apk"
-          "$tools/apksigner" verify --verbose "$out/keynexa-$VERSION.apk"
-          (cd "$out" && sha256sum "keynexa-$VERSION.apk" > "keynexa-$VERSION.apk.sha256")
+          # The offline APK keeps the name earlier releases used; the cloud one gets its own.
+          for flavor in offline cloud; do
+            case "$flavor" in
+              offline) name="keynexa-$VERSION.apk" ;;
+              cloud) name="keynexa-cloud-$VERSION.apk" ;;
+            esac
+            "$tools/zipalign" -p -f 4 \
+              "$RUNNER_TEMP/unsigned/app-android-$flavor-release-unsigned.apk" \
+              "$RUNNER_TEMP/aligned-$flavor.apk"
+            "$tools/apksigner" sign \
+              --ks "$keystore" \
+              --ks-key-alias "$KEY_ALIAS" \
+              --ks-pass env:KEYSTORE_PASSWORD \
+              --key-pass env:KEY_PASSWORD \
+              --out "$out/$name" \
+              "$RUNNER_TEMP/aligned-$flavor.apk"
+            "$tools/apksigner" verify --verbose "$out/$name"
+            (cd "$out" && sha256sum "$name" > "$name.sha256")
+          done
           rm -f "$keystore"
 
       - name: Extract release notes from CHANGELOG.md
@@ -144,6 +161,8 @@ jobs:
           gh release create "$TAG" \
             "$RUNNER_TEMP/dist/keynexa-$VERSION.apk" \
             "$RUNNER_TEMP/dist/keynexa-$VERSION.apk.sha256" \
+            "$RUNNER_TEMP/dist/keynexa-cloud-$VERSION.apk" \
+            "$RUNNER_TEMP/dist/keynexa-cloud-$VERSION.apk.sha256" \
             --title "KeyNexa $VERSION" \
             --notes-file "$RUNNER_TEMP/notes.md" \
             --verify-tag \

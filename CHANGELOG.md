@@ -10,6 +10,12 @@ All notable changes to this project are documented in this file. The format is b
 
 - ADR-0008 (proposed) and the plan for optional cloud copies of the vault with an assistant: an `offline` build with no network access and a `cloud` build, S3 first and then Dropbox, OneDrive and Google Drive.
 
+## [0.33.14] - 2026-10-18
+
+### Changed
+
+- Releases now publish both builds, signed with the same key: `keynexa-<version>.apk` (offline, no Internet permission) and `keynexa-cloud-<version>.apk` (with the optional cloud copies), each with its SHA-256 file; the workflow fails unless the offline APK lacks the Internet permission and the cloud APK has it (ADR-0008, owner's decision). The cloud release build was checked on a phone (unlock and a cloud copy). README and DEVELOPMENT updated. Patch: release tooling and documentation.
+
 ## [0.33.13] - 2026-10-18
 
 ### Changed
