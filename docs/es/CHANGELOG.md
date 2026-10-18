@@ -6,6 +6,14 @@ Todos los cambios notables de este proyecto se documentan en este archivo. El fo
 
 ## [Sin publicar]
 
+## [1.0.4] - 2026-10-18
+
+Interno; la app de Android no cambia.
+
+### Cambiado
+
+- Módulo nuevo `platform/jvm` (`:platform:jvm`): los almacenes privados de archivos `FileBackupStore`, `FileSaveJournal` y `FileMergedCopies`, código JVM puro, salen de `platform/android` con sus pruebas para que el cliente de escritorio los reutilice. Los paquetes y el comportamiento no cambian.
+
 ## [1.0.3] - 2026-10-18
 
 Solo documentación; la app de Android no cambia.

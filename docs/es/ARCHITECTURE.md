@@ -32,6 +32,7 @@ Las dependencias apuntan solo hacia abajo. Los módulos de núcleo son Kotlin/JV
 ```text
 apps/android          Compose UI, navigation, Android services (autofill, biometric, clipboard)
   │
+platform/jvm         private file stores (backups, save journal, merged-copies ledger), plain JVM
 platform/android     SAF storage adapter, Keystore, lifecycle-based auto-lock
 platform/cloud       S3-compatible cloud client (SigV4), JDK HTTP client only
   │
@@ -45,6 +46,7 @@ core/kdbx            adapter implementing KdbxEngine on top of kotpass (the only
 - **`core/vault`** define el dominio (bóveda, grupo, entrada, campo, adjunto, historial) y los puertos: `KdbxEngine` (decodificar/codificar un flujo de bytes KDBX con credenciales) y `StoragePort` (leer, escribir, metadatos, listar los archivos hermanos de un archivo de bóveda).
 - **`core/kdbx`** es el único módulo que depende de kotpass. Sustituir o bifurcar el motor solo afecta a este módulo.
 - **`core/sync`** contiene la lógica que protege los datos: huellas de contenido, detección de cambios externos, la fusión y el flujo de guardado seguro. Es deliberadamente independiente de Android para poder probarlo exhaustivamente con un almacenamiento simulado.
+- **`platform/jvm`** reúne los almacenes privados de archivos que comparten todos los clientes JVM (`FileBackupStore`, `FileSaveJournal`, `FileMergedCopies`); `platform/android` depende de él.
 - **`platform/android`** implementa `StoragePort` con SAF y envuelve el Android Keystore.
 - **`platform/cloud`** es el cliente de red de la variante `cloud`: un backend compatible con S3 firmado con AWS SigV4, sobre el cliente HTTP del JDK y sin dependencias externas. La variante `offline` nunca lo incluye.
 - **`apps/android`** es la IU y los servicios de Android.

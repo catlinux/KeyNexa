@@ -36,6 +36,7 @@ kotlin {
 }
 
 dependencies {
+    api(project(":platform:jvm"))
     api(project(":core:sync"))
     api(project(":core:vault"))
 

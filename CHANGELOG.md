@@ -6,6 +6,14 @@ All notable changes to this project are documented in this file. The format is b
 
 ## [Unreleased]
 
+## [1.0.4] - 2026-10-18
+
+Internal; the Android app does not change.
+
+### Changed
+
+- New module `platform/jvm` (`:platform:jvm`): the private file stores `FileBackupStore`, `FileSaveJournal` and `FileMergedCopies`, plain JVM code, move out of `platform/android` with their tests so the desktop client can reuse them. Packages and behaviour are unchanged.
+
 ## [1.0.3] - 2026-10-18
 
 Documentation only; the Android app does not change.

@@ -19,6 +19,7 @@ rootProject.name = "KeyNexa"
 include(":core:vault")
 include(":core:kdbx")
 include(":core:sync")
+include(":platform:jvm")
 include(":platform:cloud")
 include(":platform:android")
 include(":apps:android")

@@ -147,6 +147,7 @@ jobs:
             --lockfile=core/vault/gradle.lockfile
             --lockfile=core/kdbx/gradle.lockfile
             --lockfile=core/sync/gradle.lockfile
+            --lockfile=platform/jvm/gradle.lockfile
             --lockfile=platform/android/gradle.lockfile
             --lockfile=apps/android/gradle.lockfile
             --lockfile=third_party/kotpass/gradle.lockfile
