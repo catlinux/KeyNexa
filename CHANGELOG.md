@@ -10,6 +10,12 @@ All notable changes to this project are documented in this file. The format is b
 
 - ADR-0008 (proposed) and the plan for optional cloud copies of the vault with an assistant: an `offline` build with no network access and a `cloud` build, S3 first and then Dropbox, OneDrive and Google Drive.
 
+## [0.33.1] - 2026-10-18
+
+### Fixed
+
+- With large text, buttons with a fixed height cut their label (for example *Unlock with biometrics* showed only *Unlock with*): the unlock, home, entry and editor buttons now grow with the font. Patch.
+
 ## [0.33.0] - 2026-10-18
 
 ### Added

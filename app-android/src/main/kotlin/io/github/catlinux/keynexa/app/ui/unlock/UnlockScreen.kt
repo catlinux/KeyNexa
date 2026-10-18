@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -193,7 +192,7 @@ fun UnlockScreen(
                         onClick = submit,
                         enabled = enabled,
                         shape = FieldShape,
-                        modifier = Modifier.fillMaxWidth().height(PrimaryHeight),
+                        modifier = Modifier.fillMaxWidth().heightIn(min = PrimaryHeight),
                     ) {
                         Text(text = stringResource(R.string.unlock_action))
                     }
@@ -316,7 +315,7 @@ private fun BiometricButtons(
             onClick = biometric.onUnlock,
             enabled = !loading,
             shape = FieldShape,
-            modifier = Modifier.fillMaxWidth().height(SecondaryHeight),
+            modifier = Modifier.fillMaxWidth().heightIn(min = SecondaryHeight),
         ) {
             Icon(
                 imageVector = Icons.Filled.Face,

@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
@@ -292,14 +291,14 @@ private fun HomeActions(
         Button(
             onClick = onOpenExisting,
             shape = RoundedCornerShape(ActionCorner),
-            modifier = Modifier.fillMaxWidth().height(ActionHeight),
+            modifier = Modifier.fillMaxWidth().heightIn(min = ActionHeight),
         ) {
             Text(text = stringResource(R.string.home_open_existing))
         }
         OutlinedButton(
             onClick = onCreateNew,
             shape = RoundedCornerShape(ActionCorner),
-            modifier = Modifier.fillMaxWidth().height(ActionHeight),
+            modifier = Modifier.fillMaxWidth().heightIn(min = ActionHeight),
         ) {
             Text(text = stringResource(R.string.home_create_new))
         }

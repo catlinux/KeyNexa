@@ -10,6 +10,12 @@ Todos los cambios notables de este proyecto se documentan en este archivo. El fo
 
 - ADR-0008 (propuesta) y el plan de las copias opcionales de la bóveda en la nube con un asistente: una compilación `offline` sin acceso a la red y una `cloud`, primero S3 y después Dropbox, OneDrive y Google Drive.
 
+## [0.33.1] - 2026-10-18
+
+### Corregido
+
+- Con texto grande, los botones de altura fija cortaban su etiqueta (por ejemplo *Desbloquear con biometría* mostraba solo *Desbloquear con*): los botones de desbloqueo, inicio, entrada y editor crecen ahora con la letra. Parche.
+
 ## [0.33.0] - 2026-10-18
 
 ### Añadido

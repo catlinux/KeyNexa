@@ -16,7 +16,6 @@ import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
@@ -836,7 +835,7 @@ private fun EditActions(
         OutlinedButton(
             onClick = onCancel,
             shape = RoundedCornerShape(ActionCorner),
-            modifier = Modifier.weight(1f).height(ActionHeight),
+            modifier = Modifier.weight(1f).heightIn(min = ActionHeight),
         ) {
             Text(text = stringResource(R.string.edit_cancel))
         }
@@ -844,7 +843,7 @@ private fun EditActions(
             onClick = onSave,
             enabled = saveEnabled,
             shape = RoundedCornerShape(ActionCorner),
-            modifier = Modifier.weight(1f).height(ActionHeight),
+            modifier = Modifier.weight(1f).heightIn(min = ActionHeight),
         ) {
             Text(text = stringResource(R.string.edit_save))
         }
