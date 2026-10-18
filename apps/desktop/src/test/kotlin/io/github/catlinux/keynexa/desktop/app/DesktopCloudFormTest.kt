@@ -1,8 +1,10 @@
 package io.github.catlinux.keynexa.desktop.app
 
+import io.github.catlinux.keynexa.cloud.ConnectionResult
 import io.github.catlinux.keynexa.cloud.S3Setup
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
+import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
@@ -169,4 +171,27 @@ class DesktopCloudFormTest {
             this.accessKeyId = accessKeyId
             this.secretAccessKey = secretAccessKey
         }
+
+    @Test
+    fun changingAnyFieldThrowsAwayTheLastTest() {
+        val changes: List<Pair<String, (SetupForm) -> Unit>> =
+            listOf(
+                "endpoint" to { it.endpoint = "https://s3.example.org" },
+                "region" to { it.region = "eu-west-1" },
+                "bucket" to { it.bucket = "keynexa" },
+                "accessKeyId" to { it.accessKeyId = "access" },
+                "secretAccessKey" to { it.secretAccessKey = "secret" },
+                "pathStyle" to { it.pathStyle = false },
+            )
+        changes.forEach { (field, change) ->
+            val form = SetupForm()
+            form.testedOk = true
+            form.testResult = ConnectionResult.Ok
+
+            change(form)
+
+            assertFalse("changing $field must throw the test away", form.testedOk)
+            assertNull(form.testResult)
+        }
+    }
 }

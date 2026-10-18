@@ -32,12 +32,60 @@ private const val HTTPS_PREFIX = "https://"
  * put there, so a value the user typed is never overwritten.
  */
 internal class SetupForm {
-    var endpoint by mutableStateOf("")
-    var region by mutableStateOf("")
-    var bucket by mutableStateOf("")
-    var accessKeyId by mutableStateOf("")
-    var secretAccessKey by mutableStateOf("")
-    var pathStyle by mutableStateOf(true)
+    private var endpointState by mutableStateOf("")
+    private var regionState by mutableStateOf("")
+    private var bucketState by mutableStateOf("")
+    private var accessKeyIdState by mutableStateOf("")
+    private var secretAccessKeyState by mutableStateOf("")
+    private var pathStyleState by mutableStateOf(true)
+
+    /** The endpoint; changing it throws away the last test. */
+    var endpoint: String
+        get() = endpointState
+        set(value) {
+            endpointState = value
+            invalidateTest()
+        }
+
+    /** The region; changing it throws away the last test. */
+    var region: String
+        get() = regionState
+        set(value) {
+            regionState = value
+            invalidateTest()
+        }
+
+    /** The bucket; changing it throws away the last test. */
+    var bucket: String
+        get() = bucketState
+        set(value) {
+            bucketState = value
+            invalidateTest()
+        }
+
+    /** The access key; changing it throws away the last test. */
+    var accessKeyId: String
+        get() = accessKeyIdState
+        set(value) {
+            accessKeyIdState = value
+            invalidateTest()
+        }
+
+    /** The secret key; changing it throws away the last test. */
+    var secretAccessKey: String
+        get() = secretAccessKeyState
+        set(value) {
+            secretAccessKeyState = value
+            invalidateTest()
+        }
+
+    /** The path style; changing it throws away the last test. */
+    var pathStyle: Boolean
+        get() = pathStyleState
+        set(value) {
+            pathStyleState = value
+            invalidateTest()
+        }
     var keep by mutableStateOf(S3Setup.DEFAULT_KEEP)
     var secretVisible by mutableStateOf(false)
     var errors by mutableStateOf(SetupFormErrors())
@@ -48,7 +96,12 @@ internal class SetupForm {
     /** The last region the assistant filled in by itself, so it never overwrites what the user typed. */
     private var lastAutoRegion by mutableStateOf<String?>(null)
 
-    /** Reads [value] as the endpoint and lets the assistant fill the region in when it can. */
+    /** Forgets the last test, so a change cannot be saved without testing again. */
+    private fun invalidateTest() {
+        testResult = null
+        testedOk = false
+    }
+
     fun onEndpointChange(value: String) {
         endpoint = value
         val result = regionAfterEndpointChange(value, region, lastAutoRegion)

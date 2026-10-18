@@ -6,6 +6,18 @@ All notable changes to this project are documented in this file. The format is b
 
 ## [Unreleased]
 
+## [1.6.0] - 2026-10-18
+
+The Android app does not change. Step 8 of the desktop plan is complete: settings and modes.
+
+### Added
+
+- Desktop: discreet reminder on the home screen to keep a cloud copy while none is configured or none exists ("Set up" opens the assistant, "Later" hides it for 7 days).
+
+### Fixed
+
+- Cloud assistant (desktop): editing any field after a successful connection test now requires testing again before saving.
+
 ## [1.5.3] - 2026-10-18
 
 The Android app does not change. Step 8c, first part of the desktop plan.

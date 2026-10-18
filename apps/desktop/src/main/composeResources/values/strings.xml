@@ -311,4 +311,7 @@
     <string name="cloud_disconnect_confirm">Disconnect and delete</string>
     <string name="cloud_cancel">Cancel</string>
     <string name="cloud_close">Close</string>
+    <string name="cloud_reminder_title">Protect your vault: keep a copy in the cloud</string>
+    <string name="cloud_reminder_configure">Set up</string>
+    <string name="cloud_reminder_later">Later</string>
 </resources>

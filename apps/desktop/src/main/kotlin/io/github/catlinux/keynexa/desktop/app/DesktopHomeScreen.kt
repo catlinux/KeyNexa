@@ -92,6 +92,7 @@ fun DesktopHomeScreen(
     onRemove: (KnownVault) -> Unit,
     onOpen: (KnownVault) -> Unit,
     modifier: Modifier = Modifier,
+    reminder: (@Composable () -> Unit)? = null,
 ) {
     var askedToRemove by remember { mutableStateOf<KnownVault?>(null) }
     Box(modifier = modifier.fillMaxSize(), contentAlignment = Alignment.TopCenter) {
@@ -117,6 +118,7 @@ fun DesktopHomeScreen(
                     }
                 }
             }
+            reminder?.invoke()
             HomeActions(onOpenExisting = onOpenExisting, onCreateNew = onCreateNew, onSettings = onSettings)
         }
     }

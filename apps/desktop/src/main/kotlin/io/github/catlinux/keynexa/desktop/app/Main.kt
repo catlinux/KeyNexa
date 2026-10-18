@@ -15,6 +15,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -46,12 +47,14 @@ import io.github.catlinux.keynexa.vault.NewVault
 import io.github.catlinux.keynexa.vault.VaultLocation
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.jetbrains.compose.resources.stringResource
 import java.awt.Dimension
 import java.awt.FileDialog
 import java.awt.Frame
 import java.io.File
+import java.time.Instant
 import javax.swing.SwingUtilities
 
 /** The file the first instance locks, so a second one knows KeyNexa is already running. */
@@ -93,10 +96,31 @@ private fun ApplicationScope.KeyNexaWindow(
     val state by session.state.collectAsState()
     val settings = container.settings
     val idle = remember { IdleTimer() }
+    val scope = rememberCoroutineScope()
     var selected by remember { mutableStateOf<KnownVault?>(null) }
     var settingsOpen by remember { mutableStateOf(false) }
     var cloudOpen by remember { mutableStateOf(false) }
     var cloudConfigured by remember { mutableStateOf(false) }
+    var reminderState by remember { mutableStateOf<ReminderState?>(null) }
+    var reminderNow by remember { mutableStateOf(Instant.now()) }
+    val reminder: @Composable () -> Unit = {
+        val shown = reminderState
+        if (shown != null && reminderVisible(shown, reminderNow)) {
+            DesktopCloudReminder(
+                onConfigure = { cloudOpen = true },
+                onLater = {
+                    val until = snoozeUntil(Instant.now())
+                    reminderState = shown.copy(snoozedUntil = until)
+                    scope.launch {
+                        withContext(Dispatchers.IO) {
+                            container.cloud.stores.reminder
+                                .snooze(until)
+                        }
+                    }
+                },
+            )
+        }
+    }
     val view = remember { DesktopVaultState(container.clipboard, session) }
     val openState = state as? SessionState.Open
     val openVault = openState?.vault
@@ -107,11 +131,15 @@ private fun ApplicationScope.KeyNexaWindow(
     val windowFocused = LocalWindowInfo.current.isWindowFocused
     // The cloud is configured when its credentials load and its consent is accepted; refreshed when the dialog closes.
     LaunchedEffect(cloudOpen) {
-        cloudConfigured =
+        val read =
             withContext(Dispatchers.IO) {
                 val stores = container.cloud.stores
-                stores.consent.accepted() && stores.credentials.load() != null
+                val configured = stores.consent.accepted() && stores.credentials.load() != null
+                configured to reminderState(container.cloud)
             }
+        cloudConfigured = read.first
+        reminderNow = Instant.now()
+        reminderState = read.second
     }
     LaunchedEffect(windowFocused, openVault) {
         if (!windowFocused || openState == null) return@LaunchedEffect
@@ -221,6 +249,7 @@ private fun ApplicationScope.KeyNexaWindow(
                         onSelect = { selected = it },
                         onLock = lockNow,
                         onSettings = { settingsOpen = true },
+                        reminder = reminder,
                         view = view,
                         useKeypad = settings.useKeypad,
                         parent = window,
@@ -249,6 +278,7 @@ private fun KeyNexaScreen(
     onSelect: (KnownVault?) -> Unit,
     onLock: () -> Unit,
     onSettings: () -> Unit,
+    reminder: (@Composable () -> Unit)?,
     view: DesktopVaultState,
     useKeypad: Boolean,
     parent: Frame,
@@ -299,6 +329,7 @@ private fun KeyNexaScreen(
                 knownVaults = knownVaults,
                 onSelect = onSelect,
                 onSettings = onSettings,
+                reminder = reminder,
                 useKeypad = useKeypad,
                 parent = parent,
             )
@@ -313,6 +344,7 @@ private fun KeyNexaHome(
     knownVaults: KnownVaults,
     onSelect: (KnownVault) -> Unit,
     onSettings: () -> Unit,
+    reminder: (@Composable () -> Unit)?,
     useKeypad: Boolean,
     parent: Frame,
 ) {
@@ -345,6 +377,7 @@ private fun KeyNexaHome(
             },
             onCreateNew = { creating = true },
             onSettings = onSettings,
+            reminder = reminder,
             onRemove = { vault ->
                 knownVaults.remove(vault.location)
                 vaults = knownVaults.all()

@@ -6,6 +6,18 @@ Todos los cambios notables de este proyecto se documentan en este archivo. El fo
 
 ## [Sin publicar]
 
+## [1.6.0] - 2026-10-18
+
+La app de Android no cambia. Paso 8 del plan de escritorio completo: ajustes y modos.
+
+### Añadido
+
+- Escritorio: recordatorio discreto en el inicio para guardar una copia en la nube mientras no haya nada configurado o no exista ninguna copia («Configurar» abre el asistente, «Más tarde» lo oculta 7 días).
+
+### Corregido
+
+- Asistente de la nube (escritorio): al editar cualquier campo tras una prueba de conexión correcta, hay que volver a probar antes de guardar.
+
 ## [1.5.3] - 2026-10-18
 
 La app de Android no cambia. Paso 8c, primera parte del plan de escritorio.

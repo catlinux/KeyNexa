@@ -316,4 +316,7 @@
     <string name="cloud_disconnect_confirm">Desconectar y borrar</string>
     <string name="cloud_cancel">Cancelar</string>
     <string name="cloud_close">Cerrar</string>
+    <string name="cloud_reminder_title">Protege tu bóveda: guarda una copia en la nube</string>
+    <string name="cloud_reminder_configure">Configurar</string>
+    <string name="cloud_reminder_later">Más tarde</string>
 </resources>
