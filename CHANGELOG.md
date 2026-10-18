@@ -6,6 +6,19 @@ All notable changes to this project are documented in this file. The format is b
 
 ## [Unreleased]
 
+## [1.6.2] - 2026-10-19
+
+The Android app does not change. Step 9 of the desktop plan: packages and release workflow for Windows.
+
+### Added
+
+- Windows installer (MSI, per user, no administrator rights, installed in `%LOCALAPPDATA%\KeyNexa-app`, apart from the data folder) and portable ZIP, both with the Java runtime inside and the KeyNexa icon; `:apps:desktop:packageMsi` and `:apps:desktop:portableZip`.
+- `release.yml`: a `windows` job builds both, installs and uninstalls the MSI as a check, and publishes them with their SHA-256 next to the APKs. While the Windows client is a preview, 1.x releases are marked as pre-releases.
+- `docs/INSTALL_WINDOWS.md`: download, checks, SmartScreen warning, installer, portable form and data folder.
+
+### Changed
+
+- Licenses of the Java runtime and Skiko registered in the dependencies and credits documents (the Skia and ICU licenses inside Skiko are still to be verified).
 ## [1.6.1] - 2026-10-19
 
 The Android app does not change. First hand test of the desktop app, started from the packaged build.

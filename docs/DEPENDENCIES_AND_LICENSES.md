@@ -60,6 +60,21 @@ JUnit 4 is test-only and does not appear in the release configurations. Build to
 
 The desktop target of `ui/shared` (`desktopRuntimeClasspath` in [ui/shared/gradle.lockfile](../ui/shared/gradle.lockfile)) uses the same Compose Multiplatform 1.8.2 modules in their desktop form, with Skiko as the graphics layer (Apache-2.0); they will ship with the desktop client and are listed in full when it is packaged. The Windows platform module `platform/windows` adds **JNA 5.19.1** (`net.java.dev.jna:jna` and `jna-platform`, for DPAPI): dual-licensed LGPL-2.1-or-later or Apache-2.0 according to its 5.19.1 POMs; KeyNexa uses it under **Apache-2.0**, compatible with GPL-3.0.
 
+### What the Windows package adds
+
+The MSI and the portable ZIP bundle the Java runtime (built with `jlink` from the JDK that runs the build; the list of modules is in `runtime/release` inside the package) and the desktop runtime classpath above. Checked on 2026-10-19 in the package built from 1.6.0:
+
+| Component | Version | License | Verified in |
+| --- | --- | --- | --- |
+| Java runtime (Eclipse Temurin JDK 17, OpenJDK) | 17.0.18 | **GPL-2.0 with the Classpath Exception**, plus the notices of the third-party code inside the JDK (`aes`, `asm`, `cldr`, `icu`, `siphash`, `unicode`, `zlib`…) | `runtime/legal/java.base/LICENSE` and the `*.md` notices next to it, shipped intact in the package |
+| Skiko (Skia for Kotlin), with its native library `skiko-windows-x64.dll` and `icudtl.dat` | 0.9.4.2 | Apache-2.0 | The Maven POMs of `skiko`, `skiko-awt` and `skiko-awt-runtime-windows-x64` in Gradle's cache. The native library is built from Skia and the ICU data file comes from ICU: their own licenses (Skia: BSD-3-Clause; ICU: Unicode License) are *not verified* here and must be checked against Skiko's sources before the first desktop release |
+| Compose Multiplatform desktop modules, Material 3, lifecycle, `okio`, `kotlinx-datetime`, `atomicfu`, Kotlin standard library | as in the lock file | Apache-2.0 | Same as the Android entries above |
+| JNA and JNA Platform | 5.19.1 | Apache-2.0 (chosen from the dual license) | See above |
+
+The Java runtime is GPL-2.0 *with the Classpath Exception*, which lets software under any license run on it and be distributed with it; it is shipped as a separate, unmodified runtime with its license text and notices, not merged into KeyNexa's code. This is a technical reading for the owner to confirm, not legal advice. The rule above ("not compatible: GPL-2.0-only") is about code linked into KeyNexa, and does not apply to the runtime.
+
+The installers are not code-signed yet: Windows SmartScreen warns on install, and the SHA-256 of every published file is shown next to it.
+
 ### Explicitly avoided
 
 | Component | Reason |

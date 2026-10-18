@@ -6,6 +6,19 @@ Todos los cambios notables de este proyecto se documentan en este archivo. El fo
 
 ## [Sin publicar]
 
+## [1.6.2] - 2026-10-19
+
+La app de Android no cambia. Paso 9 del plan de escritorio: paquetes y flujo de publicación para Windows.
+
+### Añadido
+
+- Instalador de Windows (MSI, por usuario, sin permisos de administrador, instalado en `%LOCALAPPDATA%\KeyNexa-app`, aparte de la carpeta de datos) y ZIP portable, ambos con el runtime de Java dentro y el icono de KeyNexa; `:apps:desktop:packageMsi` y `:apps:desktop:portableZip`.
+- `release.yml`: un trabajo `windows` construye ambos, instala y desinstala el MSI como comprobación y los publica con su SHA-256 junto a las APK. Mientras el cliente de Windows sea una versión preliminar, las versiones 1.x se marcan como preliminares.
+- `docs/es/INSTALL_WINDOWS.md`: descarga, comprobaciones, aviso de SmartScreen, instalador, forma portable y carpeta de datos.
+
+### Cambiado
+
+- Licencias del runtime de Java y de Skiko registradas en los documentos de dependencias y créditos (las licencias de Skia e ICU dentro de Skiko siguen por verificar).
 ## [1.6.1] - 2026-10-19
 
 La app de Android no cambia. Primera prueba a mano de la app de escritorio, hecha desde el paquete.

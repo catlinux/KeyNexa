@@ -60,6 +60,21 @@ JUnit 4 solo se usa en las pruebas y no aparece en las configuraciones de releas
 
 El objetivo de escritorio de `ui/shared` (`desktopRuntimeClasspath` en [ui/shared/gradle.lockfile](../../ui/shared/gradle.lockfile)) usa los mismos módulos de Compose Multiplatform 1.8.2 en su forma de escritorio, con Skiko como capa gráfica (Apache-2.0); se distribuirán con el cliente de escritorio y se listarán completos al empaquetarlo. El módulo de plataforma de Windows `platform/windows` añade **JNA 5.19.1** (`net.java.dev.jna:jna` y `jna-platform`, para DPAPI): doble licencia LGPL-2.1-or-later o Apache-2.0 según sus POM de la 5.19.1; KeyNexa la usa bajo **Apache-2.0**, compatible con GPL-3.0.
 
+### Lo que añade el paquete de Windows
+
+El MSI y el ZIP portable incluyen el runtime de Java (creado con `jlink` a partir del JDK que ejecuta la compilación; la lista de módulos está en `runtime/release` dentro del paquete) y el classpath de ejecución de escritorio de arriba. Comprobado el 2026-10-19 en el paquete de la 1.6.0:
+
+| Componente | Versión | Licencia | Verificado en |
+| --- | --- | --- | --- |
+| Runtime de Java (Eclipse Temurin JDK 17, OpenJDK) | 17.0.18 | **GPL-2.0 con la excepción de Classpath**, más los avisos del código de terceros del JDK (`aes`, `asm`, `cldr`, `icu`, `siphash`, `unicode`, `zlib`…) | `runtime/legal/java.base/LICENSE` y los avisos `*.md` de al lado, incluidos íntegros en el paquete |
+| Skiko (Skia para Kotlin), con su biblioteca nativa `skiko-windows-x64.dll` e `icudtl.dat` | 0.9.4.2 | Apache-2.0 | Los POM de Maven de `skiko`, `skiko-awt` y `skiko-awt-runtime-windows-x64` en la caché de Gradle. La biblioteca nativa se construye con Skia y el archivo de datos viene de ICU: sus licencias propias (Skia: BSD-3-Clause; ICU: Licencia Unicode) *no están verificadas* aquí y hay que comprobarlas en las fuentes de Skiko antes de la primera versión de escritorio |
+| Módulos de escritorio de Compose Multiplatform, Material 3, lifecycle, `okio`, `kotlinx-datetime`, `atomicfu`, biblioteca estándar de Kotlin | los del archivo de bloqueo | Apache-2.0 | Igual que las entradas de Android de arriba |
+| JNA y JNA Platform | 5.19.1 | Apache-2.0 (elegida de la doble licencia) | Ver arriba |
+
+El runtime de Java es GPL-2.0 *con la excepción de Classpath*, que permite ejecutar sobre él y distribuir con él software con cualquier licencia; se entrega como un runtime aparte y sin modificar, con su texto de licencia y sus avisos, no mezclado con el código de KeyNexa. Es una lectura técnica que debe confirmar el titular, no asesoramiento legal. La regla de arriba («no compatible: GPL-2.0-only») se refiere al código enlazado dentro de KeyNexa y no se aplica al runtime.
+
+Los instaladores aún no están firmados: Windows SmartScreen avisa al instalar, y el SHA-256 de cada archivo publicado se muestra a su lado.
+
 ### Evitados explícitamente
 
 | Componente | Motivo |

@@ -4,7 +4,10 @@
 
 Pasos detallados: consulta la [hoja de ruta](ROADMAP.md).
 
-## Prioridad alta (fase C — base del proyecto)
+## Prioridad alta (fase C — cimientos del proyecto)
+
+- [ ] **Paquetes de Windows, antes de la primera versión preliminar de escritorio:** verificar las licencias y avisos de Skia e ICU dentro de Skiko ([dependencias](DEPENDENCIES_AND_LICENSES.md)); decidir D9 (firma de código: SmartScreen avisa mientras los archivos no estén firmados); probar el MSI en Windows 10 y en un equipo limpio, y la actualización sobre un MSI anterior; comprobar que el trabajo `windows` de `release.yml` pasa en una ejecución real (solo se ha probado en local); decidir si las versiones 1.x siguen siendo preliminares mientras el cliente de escritorio sea una versión preliminar (el flujo las marca así).
+- [ ] **Pruebas a mano del escritorio aún abiertas:** bloqueo con Win+L y al suspender, y una copia real a Backblaze B2 o Cloudflare R2 desde el asistente del escritorio (los pasos están en el [plan](../../.agents/plans/escritorio/escritorio.PLAN.md)).
 
 - [ ] **Cliente de escritorio para Windows y sincronización propia de KeyNexa** (prioridad del titular, decidido el 2026-10-18 en el [ADR-0011](decisions/0011-repository-layout.md), el [ADR-0012](decisions/0012-windows-desktop-client.md) y el [ADR-0013](decisions/0013-device-sync.md)): repositorio reorganizado por funciones, tema y sesión compartidos, app para Windows 10/11 con las mismas funciones y el mismo aspecto que Android, modos solo local / copias en la nube / sincronización entre dispositivos, y una sincronización entre dispositivos que sustituye a Syncthing-Fork. Pasos en `.agents/plans/escritorio/escritorio.PLAN.md`. Linux vendrá después en el mismo módulo de escritorio.
 

@@ -25,6 +25,7 @@ See the [roadmap](docs/ROADMAP.md) for what is planned in each phase.
 | --- | --- |
 | [Architecture](docs/ARCHITECTURE.md) | Modules, technology choices, multiplatform strategy |
 | [Threat model](docs/THREAT_MODEL.md) | Assets, attackers, threats, mitigations, residual risks |
+| [Install on Windows](docs/INSTALL_WINDOWS.md) | MSI and portable ZIP of the Windows client (preview), checks and data folder |
 | [Privacy](docs/PRIVACY.md) | What each build does with your data |
 | [Dependencies and licenses](docs/DEPENDENCIES_AND_LICENSES.md) | Researched libraries, verified licenses, sources |
 | [Development](docs/DEVELOPMENT.md) | Requirements, toolchain and how to build and test |
