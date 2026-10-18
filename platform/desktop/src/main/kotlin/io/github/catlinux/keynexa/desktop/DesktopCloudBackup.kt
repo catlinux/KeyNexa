@@ -91,6 +91,7 @@ class DesktopCloudBackup(
         }
     }
 
+    @Suppress("TooGenericExceptionCaught", "SwallowedException")
     private fun runTask(
         vault: KnownVault,
         vaultId: String,
@@ -111,8 +112,13 @@ class DesktopCloudBackup(
             runner.run(vaultId, vault.name, read, force)
         } catch (failure: IOException) {
             state.recordError(vaultId, BackupError.Unavailable, clock.instant())
+        } catch (failure: RuntimeException) {
+            // A failure here must not end the worker thread: the app's uncaught-exception handler locks the vault.
+            state.recordError(vaultId, BackupError.Unavailable, clock.instant())
+        } finally {
+            mutableStatus.value =
+                CloudBackupStatus(state.lastSuccess(vaultId), state.lastError(vaultId), running = false)
         }
-        mutableStatus.value = CloudBackupStatus(state.lastSuccess(vaultId), state.lastError(vaultId), running = false)
     }
 
     private companion object {

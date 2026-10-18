@@ -6,6 +6,14 @@ Todos los cambios notables de este proyecto se documentan en este archivo. El fo
 
 ## [Sin publicar]
 
+## [1.6.3] - 2026-10-19
+
+La app de Android no cambia.
+
+### Corregido
+
+- Copias en la nube del escritorio: un fallo inesperado al copiar ya no termina el hilo de trabajo (el manejador de excepciones habría bloqueado la bóveda) ni deja el estado como «en curso».
+
 ## [1.6.2] - 2026-10-19
 
 La app de Android no cambia. Paso 9 del plan de escritorio: paquetes y flujo de publicación para Windows.

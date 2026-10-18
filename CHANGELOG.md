@@ -6,6 +6,14 @@ All notable changes to this project are documented in this file. The format is b
 
 ## [Unreleased]
 
+## [1.6.3] - 2026-10-19
+
+The Android app does not change.
+
+### Fixed
+
+- Desktop cloud copies: an unexpected failure while copying no longer ends the worker thread (the uncaught-exception handler would have locked the vault) and no longer leaves the status as "running".
+
 ## [1.6.2] - 2026-10-19
 
 The Android app does not change. Step 9 of the desktop plan: packages and release workflow for Windows.

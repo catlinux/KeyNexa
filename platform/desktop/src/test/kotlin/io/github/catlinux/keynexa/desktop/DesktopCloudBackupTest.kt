@@ -86,6 +86,24 @@ class DesktopCloudBackupTest {
     }
 
     @Test
+    fun anUnexpectedFailureNeitherEndsTheWorkerNorLeavesItRunning() {
+        val backend = RecordingBackend()
+        val stores = stores()
+        stores.credentials.save(setupValues())
+        stores.consent.accept()
+        val backup = backup(backend, stores)
+
+        backup.backupNow(vault(), read = { throw IllegalStateException("unexpected") })
+        awaitDone(backup)
+
+        assertFalse(backup.status.value.running)
+        assertEquals(BackupError.Unavailable, backup.statusOf(vaultIdOf(vault().location.value)).lastError)
+        backup.backupNow(vault(), read = { CONTENT })
+        awaitDone(backup)
+        assertEquals(1, backend.puts.size)
+    }
+
+    @Test
     fun resetForgetsEveryVault() {
         val backend = RecordingBackend()
         val stores = stores()
