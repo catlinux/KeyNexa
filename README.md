@@ -11,6 +11,7 @@ A security-first, cross-platform password manager built around established crypt
 ## What KeyNexa will be
 
 - An Android password manager first, with Windows and Linux clients later.
+- **Not planned: macOS and iOS (iPhone/iPad).** The project has no Apple hardware to test on, and a program of this kind cannot be built responsibly with emulators alone.
 - Fully compatible with the KeePass **KDBX** format (3.1, 4.0 and 4.1), so your vault also opens in KeePassXC, KeePassDX and other KeePass clients.
 - Local-first: your vault is a file you own. No accounts, no KeyNexa servers, no telemetry.
 - Designed to live in a folder synchronized by [Syncthing](https://syncthing.net/), detecting external changes and merging conflicts instead of silently losing data.

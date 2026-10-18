@@ -16,6 +16,8 @@ Legend: ✅ done · 🔄 in progress · ⏳ planned. Nothing is "done" until its
 | F — Desktop and own sync | Repository reorganised by role, Windows 10/11 client with the same functions and look as Android, local-only / cloud copies / device sync modes, synchronisation through the cloud and between devices without Syncthing ([ADR-0011](decisions/0011-repository-layout.md), [ADR-0012](decisions/0012-windows-desktop-client.md), [ADR-0013](decisions/0013-device-sync.md)) | 1.0.1 – 1.11.x | 🔄 |
 | Later | Autofill, credential provider, TOTP setup (showing existing codes read-only already works), Linux client | 1.x | ⏳ |
 
+macOS and iOS are not planned: there is no Apple hardware to test on, and a password manager cannot be released on emulators alone.
+
 ## MVP (Android)
 
 **In scope**

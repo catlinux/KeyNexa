@@ -30,17 +30,20 @@ The Android app reached 1.0.0 with all modules at the root of the repository (`c
    platform/jvm     :platform:jvm     private file stores shared by every JVM client (backups, journal, merged-copies ledger)
    platform/android :platform:android SAF, Keystore
    platform/cloud   :platform:cloud   S3-compatible client
-   platform/desktop :platform:desktop plain-file storage, OS secret storage (Windows now, Linux later)
+   platform/desktop :platform:desktop plain-file storage and the secret-store interface, shared by every desktop system
+   platform/windows :platform:windows DPAPI, capture exclusion, Windows data folder (created with the Windows client)
+   platform/linux   (reserved)        Secret Service, XDG folders (created only when the Linux client starts)
    ui/shared        :ui:shared        Compose Multiplatform theme, mark, keypad and shared components (Android + desktop)
    apps/android     :apps:android     the Android app
-   apps/desktop     :apps:desktop     the desktop app (Windows now, Linux later)
+   apps/desktop     :apps:desktop     the desktop app (one code base; packaging per system in apps/desktop/packaging/<system>)
    third_party/kotpass :kotpass       vendored engine (unchanged)
    ```
 
 2. Everything that is not a module stays at the root: `README`, `LICENSE`, `NOTICE`, `CHANGELOG.md`, `TODO.md`, `VERSION`, `docs/`, `testdata/`, `scripts/`, `config/`, `gradle/` and `fastlane/` (F-Droid looks for it there).
 3. Modules move with `git mv`, so their history is kept. The move changes no behaviour of the Android app; the application id, signing and APK names stay the same.
 4. **A single product version.** One `VERSION` file and one `CHANGELOG.md` for every client. A release tag `vX.Y.Z` publishes every client built from that commit (the two APKs and the Windows packages, each with its SHA-256). While the desktop client is behind the Android app, its files carry `preview` in their names and the release notes say so; the release itself keeps the status of the Android app.
-5. Operating-system differences go into `platform/desktop` (one source set or package per system), never into a copy of the app.
+5. Operating-system differences go into one module per system (`platform/windows` now, `platform/linux` later) behind the interfaces of `platform/desktop`, and into the packaging folder of that system, never into a copy of the app. Adding Linux then means adding `platform/linux`, its packaging and a CI job; no existing directory moves and the Android app is not touched. `platform/linux` is not created until the Windows client is finished and the owner authorises it.
+6. Apple systems (macOS, iOS) are not planned: the project has no Apple hardware to test on, and a password manager cannot be released on emulators alone.
 
 ## Consequences
 

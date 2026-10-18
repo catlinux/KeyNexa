@@ -30,17 +30,20 @@ La app de Android llegó a la 1.0.0 con todos los módulos en la raíz del repos
    platform/jvm     :platform:jvm     almacenes privados de archivos comunes a todo cliente JVM (copias, diario, libro de copias fusionadas)
    platform/android :platform:android SAF, Keystore
    platform/cloud   :platform:cloud   cliente compatible con S3
-   platform/desktop :platform:desktop almacenamiento en archivos normales, secretos del sistema (Windows ahora, Linux después)
+   platform/desktop :platform:desktop almacenamiento en archivos normales e interfaz del almacén de secretos, comunes a todos los sistemas de escritorio
+   platform/windows :platform:windows DPAPI, exclusión de capturas, carpeta de datos de Windows (se crea con el cliente de Windows)
+   platform/linux   (reservado)       Secret Service, carpetas XDG (solo se crea cuando empiece el cliente de Linux)
    ui/shared        :ui:shared        tema, marca, teclado y componentes comunes en Compose Multiplatform (Android + escritorio)
    apps/android     :apps:android     la app de Android
-   apps/desktop     :apps:desktop     la app de escritorio (Windows ahora, Linux después)
+   apps/desktop     :apps:desktop     la app de escritorio (un solo código; empaquetado por sistema en apps/desktop/packaging/<sistema>)
    third_party/kotpass :kotpass       motor integrado (sin cambios)
    ```
 
 2. Todo lo que no es un módulo se queda en la raíz: `README`, `LICENSE`, `NOTICE`, `CHANGELOG.md`, `TODO.md`, `VERSION`, `docs/`, `testdata/`, `scripts/`, `config/`, `gradle/` y `fastlane/` (F-Droid lo busca allí).
 3. Los módulos se mueven con `git mv`, así que conservan su historia. El traslado no cambia el comportamiento de la app de Android; el identificador de la aplicación, la firma y los nombres de las APK siguen igual.
 4. **Una sola versión del producto.** Un archivo `VERSION` y un `CHANGELOG.md` para todos los clientes. Una etiqueta de publicación `vX.Y.Z` publica todos los clientes compilados desde ese commit (las dos APK y los paquetes de Windows, cada uno con su SHA-256). Mientras el cliente de escritorio vaya por detrás de la app de Android, sus archivos llevan `preview` en el nombre y las notas de la publicación lo dicen; la publicación conserva el estado de la app de Android.
-5. Las diferencias entre sistemas operativos van en `platform/desktop` (un conjunto de fuentes o paquete por sistema), nunca en una copia de la app.
+5. Las diferencias entre sistemas operativos van en un módulo por sistema (`platform/windows` ahora, `platform/linux` después) detrás de las interfaces de `platform/desktop`, y en la carpeta de empaquetado de ese sistema, nunca en una copia de la app. Añadir Linux será entonces añadir `platform/linux`, su empaquetado y un trabajo de CI; ningún directorio existente se mueve y la app de Android no se toca. `platform/linux` no se crea hasta que el cliente de Windows esté terminado y el titular lo autorice.
+6. Los sistemas de Apple (macOS, iOS) no están previstos: el proyecto no dispone de hardware de Apple para probar, y un gestor de contraseñas no se puede publicar solo con emuladores.
 
 ## Consecuencias
 

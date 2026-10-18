@@ -16,6 +16,8 @@ Leyenda: ✅ hecho · 🔄 en curso · ⏳ planificado. Nada está «hecho» has
 | F — Escritorio y sincronización propia | Repositorio reorganizado por funciones, cliente para Windows 10/11 con las mismas funciones y el mismo aspecto que Android, modos solo local / copias en la nube / sincronización entre dispositivos, sincronización por la nube y entre dispositivos sin Syncthing ([ADR-0011](decisions/0011-repository-layout.md), [ADR-0012](decisions/0012-windows-desktop-client.md), [ADR-0013](decisions/0013-device-sync.md)) | 1.0.1 – 1.11.x | 🔄 |
 | Más adelante | Autorrelleno, proveedor de credenciales, configurar TOTP (mostrar los códigos existentes en solo lectura ya funciona), cliente de Linux | 1.x | ⏳ |
 
+macOS e iOS no están previstos: no hay hardware de Apple para probar, y un gestor de contraseñas no se puede publicar solo con emuladores.
+
 ## MVP (Android)
 
 **Dentro del alcance**

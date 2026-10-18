@@ -6,6 +6,18 @@ All notable changes to this project are documented in this file. The format is b
 
 ## [Unreleased]
 
+## [1.0.3] - 2026-10-18
+
+Documentation only; the Android app does not change.
+
+### Changed
+
+- [ADR-0011](docs/decisions/0011-repository-layout.md): the layout is ready for Linux. Operating-system code gets one module per system (`platform/windows` with the Windows client; `platform/linux` reserved and not created until Windows is finished) behind the interfaces of `platform/desktop`, and packaging goes in `apps/desktop/packaging/<system>`, so adding Linux moves no directory.
+
+### Added
+
+- README, roadmap, architecture and ADR-0011: macOS and iOS are not planned, because the project has no Apple hardware to test on and a password manager cannot be released on emulators alone.
+
 ## [1.0.2] - 2026-10-18
 
 Internal; the Android app does not change.

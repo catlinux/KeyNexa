@@ -6,6 +6,18 @@ Todos los cambios notables de este proyecto se documentan en este archivo. El fo
 
 ## [Sin publicar]
 
+## [1.0.3] - 2026-10-18
+
+Solo documentación; la app de Android no cambia.
+
+### Cambiado
+
+- [ADR-0011](decisions/0011-repository-layout.md): la estructura queda preparada para Linux. El código de cada sistema operativo tiene un módulo propio (`platform/windows` con el cliente de Windows; `platform/linux` reservado y sin crear hasta que Windows esté terminado) detrás de las interfaces de `platform/desktop`, y el empaquetado va en `apps/desktop/packaging/<sistema>`, de modo que añadir Linux no mueve ningún directorio.
+
+### Añadido
+
+- README, hoja de ruta, arquitectura y ADR-0011: macOS e iOS no están previstos, porque el proyecto no dispone de hardware de Apple para probar y un gestor de contraseñas no se puede publicar solo con emuladores.
+
 ## [1.0.2] - 2026-10-18
 
 Interno; la app de Android no cambia.

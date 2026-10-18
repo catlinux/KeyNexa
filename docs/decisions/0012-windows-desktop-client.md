@@ -26,7 +26,7 @@ The owner wants a Windows client with the same functions and the same look as An
 6. **Secrets:** cloud credentials and the device key of ADR-0013 are encrypted with DPAPI for the current user, called through JNA. There is no quick unlock in the first version; Windows Hello will get its own record.
 7. **Protections equivalent to Android's:** the window is excluded from screen capture (`SetWindowDisplayAffinity` with `WDA_EXCLUDEFROMCAPTURE`) unless the user allows screenshots; copied secrets are marked so that Windows keeps them out of the clipboard history and the cloud clipboard, and are cleared after the configured time, on lock and on exit; the vault locks after inactivity, when the Windows session is locked and on suspend; a single instance runs at a time; nothing about the vault is logged.
 8. **KeyNexa keypad (ADR-0010):** available for master passwords but **off by default** on the desktop, where a physical keyboard is normal and an on-screen keypad only helps against keyloggers.
-9. **Linux** follows in the same `apps/desktop` module, with its own packages and the Secret Service in `platform/desktop`, under its own record.
+9. **Linux** follows in the same `apps/desktop` module, with its own packages and the Secret Service in `platform/linux` (created then, see ADR-0011), under its own record.
 
 ## Consequences
 

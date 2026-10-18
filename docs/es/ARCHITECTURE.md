@@ -110,7 +110,9 @@ Vive en `core/sync` como `ConflictMerger` (con el puerto `MergedCopies` para el 
 | Núcleo compartido con Kotlin Multiplatform (KMP) | No es posible hoy sin reescribir el motor: no se encontró ninguna biblioteca KDBX para KMP; kotpass es solo JVM. La JVM de escritorio lo hace innecesario. |
 | Flutter / React Native | Rechazadas: peor acceso a las API de seguridad de Android (Keystore, autorrelleno, proveedor de credenciales) y ninguna biblioteca KDBX madura en esos ecosistemas con licencia verificada. |
 
-Los clientes de escritorio añaden su propio almacenamiento de secretos: Windows usa DPAPI para el usuario actual ([ADR-0012](decisions/0012-windows-desktop-client.md)); Linux usará el Secret Service, con su propio registro.
+Los clientes de escritorio añaden su propio almacenamiento de secretos: Windows usa DPAPI para el usuario actual ([ADR-0012](decisions/0012-windows-desktop-client.md)); Linux usará el Secret Service, con su propio registro. Cada sistema tiene su módulo (`platform/windows` ahora; `platform/linux` está reservado y no se crea hasta que el cliente de Windows esté terminado), así que añadir Linux no mueve ningún directorio.
+
+Los sistemas de Apple (macOS, iOS) no están previstos: no hay hardware de Apple para probar, y una aplicación de este tipo no se puede desarrollar con responsabilidad solo con emuladores.
 
 ## Internacionalización
 

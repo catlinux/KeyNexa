@@ -26,7 +26,7 @@ El propietario quiere un cliente para Windows con las mismas funciones y el mism
 6. **Secretos:** las credenciales de la nube y la clave del dispositivo del ADR-0013 se cifran con DPAPI para el usuario actual, llamada mediante JNA. No hay desbloqueo rápido en la primera versión; Windows Hello tendrá su propio registro.
 7. **Protecciones equivalentes a las de Android:** la ventana queda excluida de las capturas de pantalla (`SetWindowDisplayAffinity` con `WDA_EXCLUDEFROMCAPTURE`) salvo que el usuario las permita; los secretos copiados se marcan para que Windows no los guarde en el historial del portapapeles ni en el portapapeles en la nube, y se borran pasado el tiempo configurado, al bloquear y al salir; la bóveda se bloquea tras un tiempo sin actividad, al bloquear la sesión de Windows y al suspender; solo se ejecuta una instancia a la vez; nada de la bóveda se registra.
 8. **Teclado de KeyNexa (ADR-0010):** disponible para las contraseñas maestras pero **desactivado por defecto** en el escritorio, donde lo normal es un teclado físico y un teclado en pantalla solo ayuda contra los keyloggers.
-9. **Linux** vendrá en el mismo módulo `apps/desktop`, con sus propios paquetes y el Secret Service en `platform/desktop`, con su propio registro.
+9. **Linux** vendrá en el mismo módulo `apps/desktop`, con sus propios paquetes y el Secret Service en `platform/linux` (que se creará entonces, véase el ADR-0011), con su propio registro.
 
 ## Consecuencias
 

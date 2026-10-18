@@ -11,6 +11,7 @@ Un gestor de contraseñas multiplataforma que prioriza la seguridad, construido 
 ## Qué será KeyNexa
 
 - Un gestor de contraseñas para Android en primer lugar, con clientes para Windows y Linux más adelante.
+- **No previstos: macOS ni iOS (iPhone/iPad).** El proyecto no dispone de hardware de Apple para probar, y un programa de este tipo no se puede construir con responsabilidad solo con emuladores.
 - Totalmente compatible con el formato **KDBX** de KeePass (3.1, 4.0 y 4.1), de modo que tu bóveda también se abre en KeePassXC, KeePassDX y otros clientes de KeePass.
 - Local primero: tu bóveda es un archivo que te pertenece. Sin cuentas, sin servidores de KeyNexa, sin telemetría.
 - Diseñado para vivir en una carpeta sincronizada con [Syncthing](https://syncthing.net/), detectando los cambios externos y fusionando los conflictos en lugar de perder datos en silencio.

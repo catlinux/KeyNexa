@@ -18,7 +18,7 @@ Reglas fijas (AGENTS.md): docs bilingües en el mismo commit (`bash scripts/chec
   KeyNexa/
     README*, LICENSE, NOTICE, CHANGELOG.md, TODO.md, VERSION, docs/, testdata/, scripts/, config/, gradle/, fastlane/, third_party/
     core/vault  core/kdbx  core/sync  core/session (nuevo)  core/peer (nuevo)
-    platform/android  platform/cloud  platform/jvm (nuevo: archivos comunes)  platform/desktop (nuevo)
+    platform/android  platform/cloud  platform/jvm (nuevo: archivos comunes)  platform/desktop (nuevo: común a Windows y Linux)  platform/windows (nuevo: DPAPI, capturas)  [platform/linux: reservado, NO se crea hasta que Windows esté terminado y el usuario lo autorice]
     ui/shared         (nuevo: tema, marca, teclado; Compose Multiplatform Android + escritorio)
     apps/android      (antes app-android)
     apps/desktop      (nuevo: Windows ahora, Linux después; mismo código, empaquetado por sistema)
@@ -54,7 +54,7 @@ Reglas fijas (AGENTS.md): docs bilingües en el mismo commit (`bash scripts/chec
 
 ## Bloque 3: la app de escritorio (Windows)
 
-- [ ] **3. `platform/desktop`:** `FileStoragePort` sobre `java.nio` (escritura en temporal **cifrado** en la misma carpeta y `ATOMIC_MOVE`; si falla, el camino de `VerifiedWriter`), carpeta de datos `%LOCALAPPDATA%\KeyNexa` (copias, diario, libro de copias de conflicto), `DpapiSecretStore` con JNA. Pruebas JVM (las de DPAPI solo en Windows). · 1.1.0 (menor) · AgentRelay, esfuerzo medio, en dos tareas (almacenamiento; DPAPI).
+- [ ] **3. `platform/desktop` y `platform/windows`:** en `platform/desktop` (común a los sistemas de escritorio) `FileStoragePort` sobre `java.nio` (escritura en temporal **cifrado** en la misma carpeta y `ATOMIC_MOVE`; si falla, el camino de `VerifiedWriter`), interfaz del almacén de secretos y de la carpeta de datos; en `platform/windows` la carpeta `%LOCALAPPDATA%\KeyNexa` (copias, diario, libro de copias de conflicto) y `DpapiSecretStore` con JNA. El empaquetado de Windows va en `apps/desktop/packaging/windows`. Pruebas JVM (las de DPAPI solo en Windows). · 1.1.0 (menor) · AgentRelay, esfuerzo medio, en dos tareas (almacenamiento; DPAPI).
 - [ ] **4. Esqueleto `apps/desktop`:** ventana con el tema de `ui/shared`, una sola instancia, lista de bóvedas conocidas, abrir con el selector nativo, crear bóveda (KDBX 4, Argon2id), desbloquear con contraseña y/o archivo de clave (teclado propio opcional, D8), recuperación de guardados al arrancar (`SaveRecovery`). Textos en/es. · Terminado: abre y crea bóvedas de `testdata/` en una carpeta de prueba nueva; `.\gradlew.bat :apps:desktop:run`. · 1.2.0 (menor) · AgentRelay esfuerzo medio, tareas por pantalla; Opus revisa la primera.
 - [ ] **5. Navegar y leer:** diseño de escritorio en tres paneles (grupos | entradas | detalle) con el estilo de la dirección A (`design/mockups/`), búsqueda, detalle con copiar/mostrar, TOTP, abrir URL, papelera; atajos de teclado (Ctrl+F, Ctrl+B/Ctrl+C copiar usuario/contraseña, Ctrl+L bloquear). Portapapeles que se borra solo. · 1.3.0 (menor) · AgentRelay esfuerzo medio. **Antes, maqueta HTML de los tres paneles para que el usuario la apruebe** (Opus + Artifact).
 - [ ] **6. Editar y guardar:** entradas y grupos (crear, editar, mover, borrar), historial, adjuntos, guardado seguro, cambios externos por sondeo (como `VaultSession`) y copias de conflicto con su aviso. · 1.4.0 (menor) · AgentRelay esfuerzo alto.
