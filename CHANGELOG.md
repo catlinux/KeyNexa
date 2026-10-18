@@ -6,6 +6,14 @@ All notable changes to this project are documented in this file. The format is b
 
 ## [Unreleased]
 
+## [1.2.0] - 2026-10-18
+
+The Android app does not change. With this version the desktop skeleton is complete (step 4 of the desktop plan): it opens, creates, unlocks and locks vaults; browsing and editing come next.
+
+### Added
+
+- Desktop: creating a new vault (name, master password with confirmation and strength, optional key file) saved where the user chooses with the native dialog, in KDBX 4.1 with Argon2id like on Android. An existing file is never overwritten, and the password is only taken once the destination is chosen.
+
 ## [1.1.2] - 2026-10-18
 
 The Android app does not change.

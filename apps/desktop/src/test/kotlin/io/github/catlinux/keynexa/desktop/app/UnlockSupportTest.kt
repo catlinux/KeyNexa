@@ -92,24 +92,53 @@ class UnlockSupportTest {
     @Test
     fun forgetsTheTypedPasswordWhenItIsTaken() {
         val password = DesktopPassword()
-        password.text = "master-password"
+        password.setText(0, "master-password")
 
-        assertEquals(15, password.length)
+        assertEquals(15, password.length())
         assertArrayEquals("master-password".toCharArray(), password.take())
-        assertEquals(0, password.length)
-        assertEquals("", password.text)
+        assertEquals(0, password.length())
+        assertEquals("", password.text())
     }
 
     @Test
     fun forgetsTheKeypadPasswordWhenItIsTaken() {
         val password = DesktopPassword(useKeypad = true)
-        password.buffer.append('a')
-        password.buffer.append('b')
+        password.buffer().append('a')
+        password.buffer().append('b')
         password.keypadChanged()
 
-        assertEquals(2, password.length)
+        assertEquals(2, password.length())
         assertArrayEquals(charArrayOf('a', 'b'), password.take())
-        assertEquals(0, password.length)
-        assertTrue(password.buffer.isEmpty())
+        assertEquals(0, password.length())
+        assertTrue(password.buffer().isEmpty())
+    }
+
+    @Test
+    fun keepsTwoFieldsApartAndWipesBothWhenOneIsTaken() {
+        val password = DesktopPassword(fields = 2)
+        password.setText(0, "master-password")
+        password.setText(1, "master-password")
+
+        assertTrue(password.matches(0, 1))
+        assertEquals("master-password", password.text(0))
+
+        assertArrayEquals("master-password".toCharArray(), password.take(0))
+
+        assertEquals(0, password.length(0))
+        assertEquals(0, password.length(1))
+    }
+
+    @Test
+    fun tellsTheTwoKeypadFieldsApart() {
+        val password = DesktopPassword(useKeypad = true, fields = 2)
+        password.buffer(0).append('a')
+        password.buffer(1).append('a')
+
+        assertTrue(password.matches(0, 1))
+
+        password.buffer(1).append('b')
+
+        assertFalse(password.matches(0, 1))
+        assertFalse(password.buffer(1).isEmpty())
     }
 }

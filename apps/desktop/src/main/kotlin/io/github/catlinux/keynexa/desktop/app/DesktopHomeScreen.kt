@@ -20,6 +20,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -38,6 +39,7 @@ import androidx.compose.ui.unit.dp
 import io.github.catlinux.keynexa.desktop.app.generated.resources.Res
 import io.github.catlinux.keynexa.desktop.app.generated.resources.app_name
 import io.github.catlinux.keynexa.desktop.app.generated.resources.home_cancel
+import io.github.catlinux.keynexa.desktop.app.generated.resources.home_create_new
 import io.github.catlinux.keynexa.desktop.app.generated.resources.home_empty_message
 import io.github.catlinux.keynexa.desktop.app.generated.resources.home_open_existing
 import io.github.catlinux.keynexa.desktop.app.generated.resources.home_remove
@@ -77,12 +79,14 @@ private val ContentWidth = 480.dp
 
 /**
  * The vaults this desktop app knows about, with the look of the Android home screen: the brand, the list in a card
- * and the action to add a vault. Clicking a vault reports it through [onOpen]; unlocking it is a later screen.
+ * and the actions to add one. Clicking a vault reports it through [onOpen]; unlocking it is a later screen.
  */
+@Suppress("LongParameterList")
 @Composable
 fun DesktopHomeScreen(
     vaults: List<KnownVault>,
     onOpenExisting: () -> Unit,
+    onCreateNew: () -> Unit,
     onRemove: (KnownVault) -> Unit,
     onOpen: (KnownVault) -> Unit,
     modifier: Modifier = Modifier,
@@ -111,7 +115,7 @@ fun DesktopHomeScreen(
                     }
                 }
             }
-            OpenExistingButton(onClick = onOpenExisting)
+            HomeActions(onOpenExisting = onOpenExisting, onCreateNew = onCreateNew)
         }
     }
     askedToRemove?.let { vault ->
@@ -261,18 +265,31 @@ private fun EmptyVaults(modifier: Modifier = Modifier) {
     }
 }
 
-/** The way to add a vault, in the lower half of the window. */
+/** The ways to add a vault, in the lower half of the window: open one that exists, or create a new one. */
 @Composable
-private fun OpenExistingButton(
-    onClick: () -> Unit,
+private fun HomeActions(
+    onOpenExisting: () -> Unit,
+    onCreateNew: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Button(
-        onClick = onClick,
-        shape = RoundedCornerShape(ActionCorner),
-        modifier = modifier.fillMaxWidth().padding(top = BlockGap, bottom = BlockGap).heightIn(min = ActionHeight),
+    Column(
+        modifier = modifier.fillMaxWidth().padding(top = BlockGap, bottom = BlockGap),
+        verticalArrangement = Arrangement.spacedBy(ItemGap),
     ) {
-        Text(text = stringResource(Res.string.home_open_existing))
+        Button(
+            onClick = onOpenExisting,
+            shape = RoundedCornerShape(ActionCorner),
+            modifier = Modifier.fillMaxWidth().heightIn(min = ActionHeight),
+        ) {
+            Text(text = stringResource(Res.string.home_open_existing))
+        }
+        OutlinedButton(
+            onClick = onCreateNew,
+            shape = RoundedCornerShape(ActionCorner),
+            modifier = Modifier.fillMaxWidth().heightIn(min = ActionHeight),
+        ) {
+            Text(text = stringResource(Res.string.home_create_new))
+        }
     }
 }
 

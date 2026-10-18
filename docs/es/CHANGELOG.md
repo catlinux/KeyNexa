@@ -6,6 +6,14 @@ Todos los cambios notables de este proyecto se documentan en este archivo. El fo
 
 ## [Sin publicar]
 
+## [1.2.0] - 2026-10-18
+
+La app de Android no cambia. Con esta versión el esqueleto del escritorio está completo (paso 4 del plan de escritorio): abre, crea, desbloquea y bloquea bóvedas; navegar y editar llegan a continuación.
+
+### Añadido
+
+- Escritorio: crear una bóveda nueva (nombre, contraseña maestra con confirmación y fortaleza, archivo de clave opcional) guardada donde el usuario elige con el diálogo nativo, en KDBX 4.1 con Argon2id como en Android. Nunca se sobrescribe un archivo existente, y la contraseña solo se toma una vez elegido el destino.
+
 ## [1.1.2] - 2026-10-18
 
 La app de Android no cambia.

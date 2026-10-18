@@ -39,6 +39,7 @@ import io.github.catlinux.keynexa.session.KnownVaults
 import io.github.catlinux.keynexa.session.SessionState
 import io.github.catlinux.keynexa.session.VaultSession
 import io.github.catlinux.keynexa.ui.theme.KeyNexaTheme
+import io.github.catlinux.keynexa.vault.NewVault
 import io.github.catlinux.keynexa.vault.VaultLocation
 import org.jetbrains.compose.resources.stringResource
 import java.awt.Dimension
@@ -163,35 +164,52 @@ private fun KeyNexaScreen(
                     session.dismissFailure()
                 },
             )
-        else -> KeyNexaHome(knownVaults = knownVaults, onSelect = onSelect, parent = parent)
+        else -> KeyNexaHome(session = session, knownVaults = knownVaults, onSelect = onSelect, parent = parent)
     }
 }
 
-/** The list of known vaults, with the way to add one and to drop one from the list. */
+/** The list of known vaults and the form for a new one: the two things the user can start from the home. */
 @Composable
 private fun KeyNexaHome(
+    session: VaultSession,
     knownVaults: KnownVaults,
     onSelect: (KnownVault) -> Unit,
     parent: Frame,
 ) {
     var vaults by remember { mutableStateOf(knownVaults.all()) }
-    val openTitle = stringResource(Res.string.home_open_existing)
-    DesktopHomeScreen(
-        vaults = vaults,
-        onOpenExisting = {
-            chooseVaultFile(parent, openTitle)?.let { file ->
-                val vault = KnownVault(vaultNameOf(file.name), VaultLocation(file.absolutePath))
+    var creating by remember { mutableStateOf(false) }
+    if (creating) {
+        DesktopCreateVaultScreen(
+            parent = parent,
+            onBack = { creating = false },
+            onCreate = { file, name, credentials ->
+                val vault = KnownVault(name, VaultLocation(file.absolutePath))
                 knownVaults.add(vault)
                 vaults = knownVaults.all()
                 onSelect(vault)
-            }
-        },
-        onRemove = { vault ->
-            knownVaults.remove(vault.location)
-            vaults = knownVaults.all()
-        },
-        onOpen = onSelect,
-    )
+                session.create(vault, NewVault().create(name), credentials)
+            },
+        )
+    } else {
+        val openTitle = stringResource(Res.string.home_open_existing)
+        DesktopHomeScreen(
+            vaults = vaults,
+            onOpenExisting = {
+                chooseVaultFile(parent, openTitle)?.let { file ->
+                    val vault = KnownVault(vaultNameOf(file.name), VaultLocation(file.absolutePath))
+                    knownVaults.add(vault)
+                    vaults = knownVaults.all()
+                    onSelect(vault)
+                }
+            },
+            onCreateNew = { creating = true },
+            onRemove = { vault ->
+                knownVaults.remove(vault.location)
+                vaults = knownVaults.all()
+            },
+            onOpen = onSelect,
+        )
+    }
 }
 
 /** The small window a second instance shows before leaving. */

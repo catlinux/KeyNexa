@@ -16,14 +16,11 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardActions
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -32,19 +29,9 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.input.key.Key
-import androidx.compose.ui.input.key.KeyEvent
-import androidx.compose.ui.input.key.KeyEventType
-import androidx.compose.ui.input.key.key
-import androidx.compose.ui.input.key.onPreviewKeyEvent
-import androidx.compose.ui.input.key.type
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import io.github.catlinux.keynexa.desktop.app.generated.resources.Res
@@ -53,36 +40,24 @@ import io.github.catlinux.keynexa.desktop.app.generated.resources.entry_detail_h
 import io.github.catlinux.keynexa.desktop.app.generated.resources.entry_detail_show
 import io.github.catlinux.keynexa.desktop.app.generated.resources.unlock_action
 import io.github.catlinux.keynexa.desktop.app.generated.resources.unlock_back_to_list
-import io.github.catlinux.keynexa.desktop.app.generated.resources.unlock_key_file_choose
-import io.github.catlinux.keynexa.desktop.app.generated.resources.unlock_key_file_chosen
-import io.github.catlinux.keynexa.desktop.app.generated.resources.unlock_key_file_failed
-import io.github.catlinux.keynexa.desktop.app.generated.resources.unlock_key_file_label
-import io.github.catlinux.keynexa.desktop.app.generated.resources.unlock_key_file_remove
 import io.github.catlinux.keynexa.desktop.app.generated.resources.unlock_opening
 import io.github.catlinux.keynexa.desktop.app.generated.resources.unlock_password_label
 import io.github.catlinux.keynexa.desktop.app.generated.resources.unlock_show_password
-import io.github.catlinux.keynexa.desktop.app.generated.resources.unlock_use_keypad
-import io.github.catlinux.keynexa.desktop.app.generated.resources.unlock_use_system_keyboard
 import io.github.catlinux.keynexa.session.KnownVault
 import io.github.catlinux.keynexa.session.SessionState
 import io.github.catlinux.keynexa.session.UnlockError
 import io.github.catlinux.keynexa.ui.brand.BrandMark
 import io.github.catlinux.keynexa.ui.brand.HexBadge
-import io.github.catlinux.keynexa.ui.keypad.PasswordBuffer
 import io.github.catlinux.keynexa.ui.keypad.PasswordKeypad
 import io.github.catlinux.keynexa.vault.Credentials
 import org.jetbrains.compose.resources.stringResource
-import java.awt.FileDialog
 import java.awt.Frame
 import java.io.File
-import java.io.IOException
-import java.nio.file.Files
 
 /** Spacing and shapes of the design grid (docs/DESIGN.md), as on Android. */
 private val ScreenPadding = 20.dp
 private val BlockGap = 16.dp
 private val ItemGap = 8.dp
-private val TouchTarget = 48.dp
 private val FieldShape = RoundedCornerShape(14.dp)
 private val CardShape = RoundedCornerShape(16.dp)
 private val MarkSize = 96.dp
@@ -92,9 +67,6 @@ private val SecondaryHeight = 52.dp
 private val ProgressSize = 36.dp
 private val ContentWidth = 480.dp
 private const val CARD_BORDER_ALPHA = 0.4f
-
-/** The mark that stands for every hidden character. */
-private const val MASK = "•"
 
 /**
  * Opens one vault: the master password, an optional key file, the loading state of the key derivation and a
@@ -125,12 +97,13 @@ fun DesktopUnlockScreen(
     }
     val loading = state is SessionState.Unlocking
     val failure = (state as? SessionState.Failed)?.error
-    val enabled = (password.length > 0 || keyFile.chosen) && !loading
+    val enabled = (password.length() > 0 || keyFile.chosen) && !loading
     val submit: () -> Unit = {
         if (enabled) {
             onUnlock(Credentials.of(password = password.take(), keyFile = keyFile.copyOut()))
         }
     }
+    val revealDescription = stringResource(Res.string.unlock_show_password)
     Box(modifier = modifier.fillMaxSize(), contentAlignment = Alignment.TopCenter) {
         Column(
             modifier =
@@ -144,12 +117,22 @@ fun DesktopUnlockScreen(
             Column(verticalArrangement = Arrangement.spacedBy(BlockGap)) {
                 VaultCard(vault = vault)
                 if (loading) ProgressPanel()
-                PasswordField(password = password, enabled = !loading, onSubmit = submit, onEdited = onEdited)
+                DesktopPasswordField(
+                    password = password,
+                    label = stringResource(Res.string.unlock_password_label),
+                    enabled = !loading,
+                    shape = FieldShape,
+                    onSubmit = submit,
+                    trailingIcon = {
+                        RevealButton(password = password, enabled = !loading, description = revealDescription)
+                    },
+                    onChanged = onEdited,
+                )
                 PasswordInputSwitch(password = password, enabled = !loading)
                 if (password.useKeypad && !loading) {
                     PasswordKeypad(
                         state = password.keypad,
-                        buffer = password.buffer,
+                        buffer = password.buffer(),
                         enabled = true,
                         onChanged = { password.keypadChanged() },
                         onDone = submit,
@@ -157,7 +140,13 @@ fun DesktopUnlockScreen(
                     )
                 }
                 if (failure != null) ErrorPanel(error = failure)
-                KeyFilePicker(parent = parent, holder = keyFile, enabled = !loading, onEdited = onEdited)
+                DesktopKeyFilePicker(
+                    parent = parent,
+                    holder = keyFile,
+                    enabled = !loading,
+                    shape = FieldShape,
+                    onEdited = onEdited,
+                )
                 Button(
                     onClick = submit,
                     enabled = enabled,
@@ -244,49 +233,6 @@ private fun VaultCard(
     }
 }
 
-/** The master password, with the button that shows it and the Enter key that unlocks. */
-@Composable
-private fun PasswordField(
-    password: DesktopPassword,
-    enabled: Boolean,
-    onSubmit: () -> Unit,
-    onEdited: () -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    val label = stringResource(Res.string.unlock_password_label)
-    val description = stringResource(Res.string.unlock_show_password)
-    if (password.useKeypad) {
-        OutlinedTextField(
-            value = if (password.revealed) revealedText(password.buffer) else MASK.repeat(password.bufferLength),
-            onValueChange = {},
-            readOnly = true,
-            label = { Text(text = label) },
-            singleLine = true,
-            enabled = enabled,
-            shape = FieldShape,
-            trailingIcon = { RevealButton(password = password, enabled = enabled, description = description) },
-            modifier = modifier.fillMaxWidth(),
-        )
-    } else {
-        OutlinedTextField(
-            value = password.text,
-            onValueChange = {
-                password.text = it
-                onEdited()
-            },
-            label = { Text(text = label) },
-            singleLine = true,
-            enabled = enabled,
-            shape = FieldShape,
-            visualTransformation = if (password.revealed) VisualTransformation.None else PasswordVisualTransformation(),
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password, imeAction = ImeAction.Done),
-            keyboardActions = KeyboardActions(onDone = { onSubmit() }),
-            trailingIcon = { RevealButton(password = password, enabled = enabled, description = description) },
-            modifier = modifier.fillMaxWidth().onPreviewKeyEvent { event -> submitOnEnter(event, onSubmit) },
-        )
-    }
-}
-
 /** Shows or hides the typed master password; the button itself says what it does. */
 @Composable
 private fun RevealButton(
@@ -300,23 +246,6 @@ private fun RevealButton(
         modifier = Modifier.semantics { contentDescription = description },
     ) {
         val text = if (password.revealed) Res.string.entry_detail_hide else Res.string.entry_detail_show
-        Text(text = stringResource(text))
-    }
-}
-
-/** The text button that switches between the KeyNexa keypad and the system keyboard. */
-@Composable
-private fun PasswordInputSwitch(
-    password: DesktopPassword,
-    enabled: Boolean,
-    modifier: Modifier = Modifier,
-) {
-    TextButton(
-        onClick = { password.switchInput() },
-        enabled = enabled,
-        modifier = modifier.heightIn(min = TouchTarget),
-    ) {
-        val text = if (password.useKeypad) Res.string.unlock_use_system_keyboard else Res.string.unlock_use_keypad
         Text(text = stringResource(text))
     }
 }
@@ -354,111 +283,6 @@ private fun ErrorPanel(
             color = MaterialTheme.colorScheme.onErrorContainer,
             modifier = Modifier.padding(12.dp),
         )
-    }
-}
-
-/**
- * The optional key file: choose one, see its name, or drop it again. The file is read only when it is chosen; the
- * bytes are never logged, and a file that cannot be read is reported instead of being ignored.
- */
-@Composable
-private fun KeyFilePicker(
-    parent: Frame,
-    holder: KeyFileHolder,
-    enabled: Boolean,
-    onEdited: () -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    val chooseTitle = stringResource(Res.string.unlock_key_file_choose)
-    Column(
-        modifier = modifier.fillMaxWidth(),
-        verticalArrangement = Arrangement.spacedBy(ItemGap),
-    ) {
-        Text(
-            text = stringResource(Res.string.unlock_key_file_label),
-            style = MaterialTheme.typography.titleSmall,
-            fontWeight = FontWeight.Bold,
-        )
-        if (holder.name == null) {
-            OutlinedButton(
-                onClick = {
-                    chooseKeyFile(parent, chooseTitle)?.let { file ->
-                        val bytes = readKeyFile(file)
-                        if (bytes == null) holder.markFailed() else holder.pick(file.name, bytes)
-                        onEdited()
-                    }
-                },
-                enabled = enabled,
-                shape = FieldShape,
-                modifier = Modifier.fillMaxWidth().heightIn(min = TouchTarget),
-            ) {
-                Text(text = chooseTitle)
-            }
-            if (holder.failed) {
-                Text(
-                    text = stringResource(Res.string.unlock_key_file_failed),
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.error,
-                )
-            }
-        } else {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Text(
-                    text = stringResource(Res.string.unlock_key_file_chosen, holder.name.orEmpty()),
-                    style = MaterialTheme.typography.bodyMedium,
-                    modifier = Modifier.weight(1f),
-                )
-                TextButton(
-                    onClick = {
-                        holder.clear()
-                        onEdited()
-                    },
-                    enabled = enabled,
-                ) {
-                    Text(text = stringResource(Res.string.unlock_key_file_remove))
-                }
-            }
-        }
-    }
-}
-
-/** Asks for a key file with the native dialog; null when the user cancels. */
-private fun chooseKeyFile(
-    parent: Frame,
-    title: String,
-): File? {
-    val dialog = FileDialog(parent, title, FileDialog.LOAD)
-    dialog.isVisible = true
-    val directory = dialog.directory
-    val name = dialog.file
-    return if (directory != null && name != null) File(directory, name) else null
-}
-
-/** Runs [onSubmit] and eats the event when it is the Enter key, so the password field never keeps a line break. */
-private fun submitOnEnter(
-    event: KeyEvent,
-    onSubmit: () -> Unit,
-): Boolean {
-    if (event.type != KeyEventType.KeyDown || event.key != Key.Enter) return false
-    onSubmit()
-    return true
-}
-
-/** Reads the whole key file the user picked; a file that cannot be read leaves the picker as it was. */
-private fun readKeyFile(file: File): ByteArray? =
-    try {
-        Files.readAllBytes(file.toPath())
-    } catch (failure: IOException) {
-        null
-    }
-
-/** The typed characters as text, through a copy that is wiped at once. */
-private fun revealedText(buffer: PasswordBuffer): String {
-    val chars = buffer.copyOut()
-    return try {
-        String(chars)
-    } finally {
-        chars.fill(Char(0))
     }
 }
 
