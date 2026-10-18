@@ -24,7 +24,7 @@ Primera versión estable de la app de Android, en dos compilaciones firmadas con
 
 ### Corregido
 
-- CI: los pasos de compilación y de licencias pasaban Gradle por `tee` sin `pipefail`, así que una compilación fallida salía en verde. Encontrado al preparar la 1.0: desde la actualización del plugin de Android (0.23.5) la compilación del CI fallaba por dos sumas que solo descarga Linux (`aapt2` para Linux y los POM de `okio` y `okio-jvm` 3.15.0). Las dos están ahora en `gradle/verification-metadata.xml`, comprobadas contra el SHA-256 y el SHA-1 publicados por Google Maven y Maven Central.
+- CI: los pasos de compilación y de licencias pasaban Gradle por `tee` sin `pipefail`, así que una compilación fallida salía en verde. Encontrado al preparar la 1.0: desde la actualización del plugin de Android (0.23.5) la compilación del CI fallaba por dos sumas que solo descarga Linux (`aapt2` para Linux y los POM de `okio` y `okio-jvm` 3.15.0). Las dos están ahora en `gradle/verification-metadata.xml`, comprobadas contra el SHA-256 y el SHA-1 publicados por Google Maven y Maven Central. El aviso `OldTargetApi` de lint (objetivo 36 mientras el SDK del CI conoce la 37) es informativo hasta la migración de herramientas; `ExpiredTargetSdkVersion` sigue bloqueando.
 
 ### Seguridad
 
