@@ -428,7 +428,10 @@ private fun FieldsCard(
                     )
                 FieldKind.Url ->
                     FieldRow(label = row.label, value = row.value) {
-                        OpenIconButton(label = row.label, onOpen = { onOpenUrl(row.value) })
+                        // Only web addresses open; an ssh:// or other address can still be copied.
+                        if (isWebAddress(row.value)) {
+                            OpenIconButton(label = row.label, onOpen = { onOpenUrl(row.value) })
+                        }
                         CopyIconButton(label = row.label, onCopy = { onCopy(row.label, row.value, false) })
                     }
                 is FieldKind.Totp ->
@@ -905,3 +908,8 @@ private fun initialsOf(title: String): String {
     val initials = words.take(2).joinToString("") { it.substring(0, 1).uppercase() }
     return initials.ifEmpty { "?" }
 }
+
+private val WEB_SCHEMES = setOf("http", "https")
+
+/** True for an http or https address: the only kind the entry screen offers to open in a browser. */
+fun isWebAddress(address: String): Boolean = address.trim().substringBefore(':', "").lowercase() in WEB_SCHEMES

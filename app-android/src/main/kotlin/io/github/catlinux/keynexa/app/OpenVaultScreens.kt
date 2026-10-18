@@ -1,5 +1,6 @@
 package io.github.catlinux.keynexa.app
 
+import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
 import androidx.compose.runtime.Composable
@@ -16,6 +17,7 @@ import io.github.catlinux.keynexa.app.ui.common.ConflictNotice
 import io.github.catlinux.keynexa.app.ui.common.SaveStatus
 import io.github.catlinux.keynexa.app.ui.edit.EntryEditScreen
 import io.github.catlinux.keynexa.app.ui.entry.EntryDetailScreen
+import io.github.catlinux.keynexa.app.ui.entry.isWebAddress
 import io.github.catlinux.keynexa.app.ui.group.GroupScreen
 import io.github.catlinux.keynexa.app.ui.search.SearchScreen
 import io.github.catlinux.keynexa.app.vault.SessionState
@@ -34,8 +36,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.IOException
 import java.util.UUID
-
-private val WEB_SCHEMES = setOf("http", "https")
 
 /** The screens that show an open vault, connected to the session. Every edit goes through [VaultEditor]. */
 @Suppress("LongMethod")
@@ -242,8 +242,11 @@ private fun openWebAddress(
     context: Context,
     address: String,
 ) {
-    val uri = address.trim().toUri()
-    if (uri.scheme?.lowercase() in WEB_SCHEMES) {
-        context.startActivity(Intent(Intent.ACTION_VIEW, uri).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
+    if (!isWebAddress(address)) return
+    try {
+        val view = Intent(Intent.ACTION_VIEW, address.trim().toUri()).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        context.startActivity(view)
+    } catch (_: ActivityNotFoundException) {
+        // No browser is installed: there is nothing to open it with, and the address can still be copied.
     }
 }

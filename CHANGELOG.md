@@ -10,6 +10,12 @@ All notable changes to this project are documented in this file. The format is b
 
 - ADR-0008 (proposed) and the plan for optional cloud copies of the vault with an assistant: an `offline` build with no network access and a `cloud` build, S3 first and then Dropbox, OneDrive and Google Drive.
 
+## [0.33.8] - 2026-10-18
+
+### Fixed
+
+- The entry screen showed *Open URL* for any address, but only http and https open: for `ssh://` and similar the button did nothing. It now appears only for web addresses (the address can always be copied), and a phone without a browser no longer crashes when it is tapped. Found in the final audit. Patch.
+
 ## [0.33.7] - 2026-10-18
 
 ### Security

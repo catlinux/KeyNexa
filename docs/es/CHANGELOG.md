@@ -10,6 +10,12 @@ Todos los cambios notables de este proyecto se documentan en este archivo. El fo
 
 - ADR-0008 (propuesta) y el plan de las copias opcionales de la bóveda en la nube con un asistente: una compilación `offline` sin acceso a la red y una `cloud`, primero S3 y después Dropbox, OneDrive y Google Drive.
 
+## [0.33.8] - 2026-10-18
+
+### Corregido
+
+- La pantalla de entrada mostraba *Abrir URL* para cualquier dirección, pero solo se abren las http y https: con `ssh://` y similares el botón no hacía nada. Ahora solo aparece en direcciones web (la dirección siempre se puede copiar), y un móvil sin navegador ya no se cierra al pulsarlo. Encontrado en la auditoría final. Parche.
+
 ## [0.33.7] - 2026-10-18
 
 ### Seguridad
