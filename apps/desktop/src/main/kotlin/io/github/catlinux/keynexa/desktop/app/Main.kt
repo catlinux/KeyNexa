@@ -74,7 +74,7 @@ private fun ApplicationScope.KeyNexaWindow(
     val session = container.session
     val state by session.state.collectAsState()
     var selected by remember { mutableStateOf<KnownVault?>(null) }
-    val view = remember { DesktopVaultState(container.clipboard) }
+    val view = remember { DesktopVaultState(container.clipboard, session) }
     val openVault = (state as? SessionState.Open)?.vault
     LaunchedEffect(openVault) {
         val content = (state as? SessionState.Open)?.current
@@ -154,6 +154,7 @@ private fun KeyNexaScreen(
                 onRetrySave = session::retrySave,
                 onRestoreUnsaved = session::restoreUnsaved,
                 onDiscardUnsaved = session::discardUnsaved,
+                parent = parent,
             )
         unlockVault != null ->
             DesktopUnlockScreen(

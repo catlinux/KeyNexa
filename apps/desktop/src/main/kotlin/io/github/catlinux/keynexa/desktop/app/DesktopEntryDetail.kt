@@ -15,6 +15,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -62,6 +63,7 @@ import io.github.catlinux.keynexa.vault.Vault
 import io.github.catlinux.keynexa.vault.totp
 import kotlinx.coroutines.delay
 import org.jetbrains.compose.resources.stringResource
+import java.awt.Frame
 import java.time.Instant
 import java.time.ZoneId
 import java.util.Locale
@@ -84,23 +86,75 @@ private const val URGENT_SECONDS = 5
 internal val DetailPanelWidth = PanelWidth
 
 /**
- * The right panel: the selected entry, read-only for now. Its user name, password, one-time code, address, custom
- * fields and notes each have a copy button, secrets stay hidden until they are asked for, and Edit and Delete are
- * shown but wait for the step that can save changes.
+ * The right panel, in whichever state it is in: the entry read-only, the form for a new or an edited entry, or one
+ * previous version. A read-only entry shows its user name, password, one-time code, address, custom fields, notes,
+ * attachments and history, with a copy button per field and secrets hidden until they are asked for.
  */
 @Composable
 internal fun EntryDetailPanel(
     vault: Vault,
     view: DesktopVaultState,
+    saving: Boolean,
+    parent: Frame,
     modifier: Modifier = Modifier,
 ) {
     val entry = vault.entry(view.selectedEntry)
-    if (entry == null) {
-        EmptyDetail(modifier = modifier)
-        return
+    when (val mode = view.mode) {
+        is DetailMode.Edit ->
+            EntryEditPanel(
+                vault = vault,
+                entry = if (mode.isNew) null else entry,
+                isNew = mode.isNew,
+                saving = saving,
+                view = view,
+                parent = parent,
+                modifier = modifier,
+            )
+        is DetailMode.Version ->
+            entry?.history?.getOrNull(mode.index)?.let { version ->
+                EntryReadView(
+                    entry = version,
+                    groupPath = entryPath(vault, entry),
+                    view = view,
+                    withHistory = false,
+                    onEdit = null,
+                    modifier = modifier,
+                )
+            } ?: EmptyDetail(modifier = modifier)
+        DetailMode.Read ->
+            if (entry == null) {
+                EmptyDetail(modifier = modifier)
+            } else {
+                EntryReadView(
+                    entry = entry,
+                    groupPath = entryPath(vault, entry),
+                    view = view,
+                    withHistory = true,
+                    onEdit = view::startEdit,
+                    modifier = modifier,
+                )
+            }
     }
+}
+
+/** The names of the groups that lead to [entry], root included. */
+private fun entryPath(
+    vault: Vault,
+    entry: Entry,
+): String = vault.root.pathToEntry(entry.id).joinToString(PATH_SEPARATOR)
+
+/** One entry, read-only: its header, its fields and, for the selected entry, its history. */
+@Suppress("LongParameterList")
+@Composable
+private fun EntryReadView(
+    entry: Entry,
+    groupPath: String,
+    view: DesktopVaultState,
+    withHistory: Boolean,
+    onEdit: (() -> Unit)?,
+    modifier: Modifier = Modifier,
+) {
     var revealed by remember(entry.id) { mutableStateOf(false) }
-    val path = remember(vault, entry.id) { vault.root.pathToEntry(entry.id).joinToString(PATH_SEPARATOR) }
     Column(
         modifier =
             modifier
@@ -112,9 +166,16 @@ internal fun EntryDetailPanel(
                 .padding(DetailPadding),
         verticalArrangement = Arrangement.spacedBy(DetailGap),
     ) {
-        DetailHeader(entry = entry, group = path)
+        if (onEdit == null) {
+            HistoryBackButton(view = view)
+        }
+        DetailHeader(entry = entry, group = groupPath)
         HorizontalDivider()
         DetailBody(entry = entry, view = view, revealed = revealed, onReveal = { revealed = !revealed })
+        if (withHistory) {
+            EntryHistorySection(entry = entry, view = view)
+        }
+        DetailActions(onEdit = onEdit, modifier = Modifier.fillMaxWidth())
     }
 }
 
@@ -163,7 +224,6 @@ private fun DetailBody(
         }
         NotesField(entry = entry, view = view)
         AttachmentsField(entry = entry)
-        DetailActions()
     }
 }
 
@@ -357,14 +417,28 @@ private fun AttachmentsField(
     }
 }
 
-/** Edit and Delete, shown but waiting for the step that can save changes. */
+/** Edit and Delete: Edit opens the form in place, and Delete waits for the step that moves entries to the bin. */
 @Composable
-private fun DetailActions(modifier: Modifier = Modifier) {
+private fun DetailActions(
+    onEdit: (() -> Unit)?,
+    modifier: Modifier = Modifier,
+) {
     Row(
-        modifier = modifier.fillMaxWidth(),
+        modifier = modifier,
         horizontalArrangement = Arrangement.spacedBy(ItemGap),
     ) {
-        DisabledAction(text = stringResource(Res.string.entry_detail_edit))
+        ShortcutTooltip(
+            text =
+                stringResource(
+                    Res.string.tooltip_shortcut,
+                    stringResource(Res.string.entry_detail_edit),
+                    CTRL_E,
+                ),
+        ) {
+            OutlinedButton(onClick = { onEdit?.invoke() }, enabled = onEdit != null) {
+                Text(text = stringResource(Res.string.entry_detail_edit))
+            }
+        }
         DisabledAction(text = stringResource(Res.string.entry_detail_delete))
     }
 }

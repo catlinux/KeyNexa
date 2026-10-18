@@ -23,6 +23,7 @@ import io.github.catlinux.keynexa.desktop.app.generated.resources.status_shortcu
 import io.github.catlinux.keynexa.session.SessionState
 import kotlinx.coroutines.delay
 import org.jetbrains.compose.resources.stringResource
+import java.awt.Frame
 
 /** The room of the left panel, the rhythm of the status bar and how long a copy is confirmed for. */
 private val GroupPanelWidth = 240.dp
@@ -45,6 +46,7 @@ internal fun DesktopVaultScreen(
     onRetrySave: () -> Unit,
     onRestoreUnsaved: () -> Unit,
     onDiscardUnsaved: () -> Unit,
+    parent: Frame,
     modifier: Modifier = Modifier,
 ) {
     Column(modifier = modifier.fillMaxSize()) {
@@ -60,7 +62,13 @@ internal fun DesktopVaultScreen(
             VerticalDivider(color = MaterialTheme.colorScheme.outline.copy(alpha = DIVIDER_ALPHA))
             EntryListPanel(vault = state.current, view = view, modifier = Modifier.weight(1f))
             VerticalDivider(color = MaterialTheme.colorScheme.outline.copy(alpha = DIVIDER_ALPHA))
-            EntryDetailPanel(vault = state.current, view = view, modifier = Modifier.width(DetailPanelWidth))
+            EntryDetailPanel(
+                vault = state.current,
+                view = view,
+                saving = state.saving,
+                parent = parent,
+                modifier = Modifier.width(DetailPanelWidth),
+            )
         }
         VaultStatusBar(view = view)
     }

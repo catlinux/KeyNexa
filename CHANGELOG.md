@@ -6,6 +6,14 @@ All notable changes to this project are documented in this file. The format is b
 
 ## [Unreleased]
 
+## [1.3.2] - 2026-10-18
+
+The Android app does not change.
+
+### Added
+
+- Desktop: editing and creating entries in place in the detail panel (title, user name, password with the generator and its strength, URL, notes, custom fields with their protection, attachments that can be added, removed or saved to disk after a warning that the saved file is not encrypted, and a read-only view of each previous version), saved through the safe save. Shortcuts Ctrl+N, Ctrl+E, Ctrl+S and Esc.
+
 ## [1.3.1] - 2026-10-18
 
 The Android app does not change.

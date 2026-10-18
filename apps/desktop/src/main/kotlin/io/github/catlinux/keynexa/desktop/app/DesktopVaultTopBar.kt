@@ -28,6 +28,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import io.github.catlinux.keynexa.desktop.app.generated.resources.Res
+import io.github.catlinux.keynexa.desktop.app.generated.resources.edit_title_new
 import io.github.catlinux.keynexa.desktop.app.generated.resources.group_lock
 import io.github.catlinux.keynexa.desktop.app.generated.resources.group_settings
 import io.github.catlinux.keynexa.desktop.app.generated.resources.group_status_saved
@@ -39,6 +40,7 @@ import io.github.catlinux.keynexa.desktop.app.generated.resources.search_field_l
 import io.github.catlinux.keynexa.desktop.app.generated.resources.tooltip_shortcut
 import io.github.catlinux.keynexa.session.SessionState
 import io.github.catlinux.keynexa.sync.SaveFailure
+import io.github.catlinux.keynexa.vault.Vault
 import org.jetbrains.compose.resources.stringResource
 
 /** The band at the top, and the room the vault name takes in it. */
@@ -88,6 +90,7 @@ internal fun VaultTopBar(
                 )
             }
             SearchField(view = view, modifier = Modifier.weight(1f))
+            NewEntryButton(vault = state.current, view = view)
             SettingsButton()
             LockButton(onLock = onLock)
         }
@@ -157,6 +160,27 @@ private fun SearchField(
                     .focusRequester(view.searchField)
                     .onFocusChanged { view.searchFocused = it.isFocused },
         )
+    }
+}
+
+/** The way to a new entry, which opens the form in the detail panel. */
+@Composable
+private fun NewEntryButton(
+    vault: Vault,
+    view: DesktopVaultState,
+    modifier: Modifier = Modifier,
+) {
+    val label = stringResource(Res.string.edit_title_new)
+    ShortcutTooltip(text = stringResource(Res.string.tooltip_shortcut, label, CTRL_N), modifier = modifier) {
+        OutlinedButton(
+            onClick = { view.startNewEntry(vault) },
+            shape = ControlShape,
+            colors = ButtonDefaults.outlinedButtonColors(contentColor = MaterialTheme.colorScheme.onPrimary),
+            border = BorderStroke(1.dp, MaterialTheme.colorScheme.onPrimary.copy(alpha = BORDER_ALPHA)),
+            modifier = Modifier.heightIn(min = ControlHeight),
+        ) {
+            Text(text = label)
+        }
     }
 }
 

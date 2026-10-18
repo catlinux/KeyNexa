@@ -6,6 +6,14 @@ Todos los cambios notables de este proyecto se documentan en este archivo. El fo
 
 ## [Sin publicar]
 
+## [1.3.2] - 2026-10-18
+
+La app de Android no cambia.
+
+### Añadido
+
+- Escritorio: editar y crear entradas en el propio panel de detalle (título, usuario, contraseña con el generador y su fortaleza, URL, notas, campos propios con su protección, adjuntos que se pueden añadir, quitar o guardar en disco tras avisar de que el archivo guardado no va cifrado, y una vista de solo lectura de cada versión anterior), guardado con el guardado seguro. Atajos Ctrl+N, Ctrl+E, Ctrl+S y Esc.
+
 ## [1.3.1] - 2026-10-18
 
 La app de Android no cambia.

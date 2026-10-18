@@ -2,7 +2,6 @@
 
 package io.github.catlinux.keynexa.desktop.app
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -10,7 +9,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
@@ -32,7 +30,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.semantics.contentDescription
@@ -44,10 +41,6 @@ import io.github.catlinux.keynexa.desktop.app.generated.resources.create_action
 import io.github.catlinux.keynexa.desktop.app.generated.resources.create_file_exists
 import io.github.catlinux.keynexa.desktop.app.generated.resources.create_key_file_help
 import io.github.catlinux.keynexa.desktop.app.generated.resources.create_name_label
-import io.github.catlinux.keynexa.desktop.app.generated.resources.create_password_min
-import io.github.catlinux.keynexa.desktop.app.generated.resources.create_password_mismatch
-import io.github.catlinux.keynexa.desktop.app.generated.resources.create_password_ok
-import io.github.catlinux.keynexa.desktop.app.generated.resources.create_password_weak
 import io.github.catlinux.keynexa.desktop.app.generated.resources.create_recovery_warning
 import io.github.catlinux.keynexa.desktop.app.generated.resources.create_repeat_label
 import io.github.catlinux.keynexa.desktop.app.generated.resources.create_show_password
@@ -68,16 +61,9 @@ private val ItemGap = 8.dp
 private val NoticePadding = 12.dp
 private val TouchTarget = 48.dp
 private val ActionHeight = 54.dp
-private val StrengthBarHeight = 6.dp
 private val FieldShape = RoundedCornerShape(14.dp)
 private val CardShape = RoundedCornerShape(16.dp)
 private val ContentWidth = 480.dp
-
-/** A master password shorter than this cannot create a vault. */
-private const val MIN_PASSWORD_LENGTH = 8
-
-/** From this length on the warning goes away; a longer password is never blocked. */
-private const val GOOD_PASSWORD_LENGTH = 12
 
 /** The new master password ([PASSWORD]) and its confirmation ([REPEATED]) are the two fields of the holder. */
 private const val PASSWORD = 0
@@ -278,54 +264,6 @@ private fun RevealSwitch(
             checked = revealed,
             onCheckedChange = onRevealedChange,
             modifier = Modifier.semantics { contentDescription = label },
-        )
-    }
-}
-
-/**
- * How long the master password is: a bar that grows with it and a word that says what that means. A password below
- * the minimum blocks the Create button; a merely weak one only warns, as the design system asks.
- */
-@Composable
-private fun PasswordStrength(
-    length: Int,
-    mismatch: Boolean,
-    modifier: Modifier = Modifier,
-) {
-    val acceptable = length >= GOOD_PASSWORD_LENGTH && !mismatch
-    val filled = (length.toFloat() / GOOD_PASSWORD_LENGTH).coerceIn(0f, 1f)
-    val color = if (acceptable) MaterialTheme.colorScheme.secondary else MaterialTheme.colorScheme.error
-    val message =
-        when {
-            length < MIN_PASSWORD_LENGTH -> stringResource(Res.string.create_password_min, MIN_PASSWORD_LENGTH)
-            mismatch -> stringResource(Res.string.create_password_mismatch)
-            length < GOOD_PASSWORD_LENGTH -> stringResource(Res.string.create_password_weak, GOOD_PASSWORD_LENGTH)
-            else -> stringResource(Res.string.create_password_ok)
-        }
-    Column(
-        modifier = modifier.fillMaxWidth(),
-        verticalArrangement = Arrangement.spacedBy(ItemGap),
-    ) {
-        Box(
-            modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .height(StrengthBarHeight)
-                    .clip(MaterialTheme.shapes.small)
-                    .background(MaterialTheme.colorScheme.surfaceVariant),
-        ) {
-            Box(
-                modifier =
-                    Modifier
-                        .fillMaxWidth(filled)
-                        .height(StrengthBarHeight)
-                        .background(color),
-            )
-        }
-        Text(
-            text = message,
-            style = MaterialTheme.typography.bodyMedium,
-            color = if (acceptable) MaterialTheme.colorScheme.onSurfaceVariant else MaterialTheme.colorScheme.error,
         )
     }
 }

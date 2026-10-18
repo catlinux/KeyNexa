@@ -5,11 +5,28 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.focus.FocusRequester
 import io.github.catlinux.keynexa.desktop.ClipboardTimer
+import io.github.catlinux.keynexa.session.VaultSession
 import io.github.catlinux.keynexa.vault.Group
 import io.github.catlinux.keynexa.vault.Vault
 import java.awt.Desktop
 import java.io.IOException
 import java.util.UUID
+
+/** What the detail panel shows: the entry read-only, the form, or one previous version. */
+internal sealed interface DetailMode {
+    /** The selected entry, read-only. */
+    data object Read : DetailMode
+
+    /** The form, for the selected entry or for one that is being created. */
+    data class Edit(
+        val isNew: Boolean,
+    ) : DetailMode
+
+    /** One previous version of the selected entry, read-only. */
+    data class Version(
+        val index: Int,
+    ) : DetailMode
+}
 
 /**
  * The selection to keep: [selected] itself while it is one of [visible], and nothing when it is not, so the detail
@@ -20,13 +37,25 @@ internal fun selectionAmong(
     visible: Collection<UUID>,
 ): UUID? = selected?.takeIf { it in visible }
 
+/** The group a new entry goes to: the selected one, or the root when the bin or a search is showing. */
+internal fun newEntryGroup(
+    vault: Vault,
+    selectedGroup: UUID?,
+    searching: Boolean,
+): UUID {
+    if (searching || selectedGroup == null || selectedGroup == vault.meta.recycleBinGroup) return vault.root.id
+    return selectedGroup
+}
+
 /**
- * What the three-panel browser is looking at: the selected group and entry, the search, the order of the list and the
- * last thing that was copied. It also copies to the clipboard and opens web addresses, so a screen never touches the
- * system on its own.
+ * What the three-panel browser is looking at: the selected group and entry, the search, the order of the list, the
+ * detail mode and the last thing that was copied. It also saves through the session, copies to the clipboard and opens
+ * web addresses, so a screen never touches the system on its own.
  */
+@Suppress("TooManyFunctions")
 internal class DesktopVaultState(
     private val clipboard: ClipboardTimer,
+    private val session: VaultSession,
 ) {
     /** The group whose entries the centre panel lists. */
     var selectedGroup by mutableStateOf<UUID?>(null)
@@ -50,6 +79,10 @@ internal class DesktopVaultState(
     var collapsed by mutableStateOf<Set<UUID>>(emptySet())
         private set
 
+    /** What the detail panel shows. */
+    var mode by mutableStateOf<DetailMode>(DetailMode.Read)
+        private set
+
     /** The label of the last copied field, shown for a moment in the status bar. */
     var copied by mutableStateOf<String?>(null)
 
@@ -66,6 +99,7 @@ internal class DesktopVaultState(
         query = ""
         sort = EntrySort.Title
         collapsed = emptySet()
+        mode = DetailMode.Read
         copied = null
     }
 
@@ -74,16 +108,19 @@ internal class DesktopVaultState(
         selectedGroup = null
         selectedEntry = null
         query = ""
+        mode = DetailMode.Read
         copied = null
     }
 
     fun selectGroup(group: Group) {
         selectedGroup = group.id
         selectedEntry = null
+        mode = DetailMode.Read
     }
 
     fun selectEntry(entryId: UUID?) {
         selectedEntry = entryId
+        mode = DetailMode.Read
     }
 
     fun changeSort(order: EntrySort) {
@@ -101,6 +138,33 @@ internal class DesktopVaultState(
     fun focusDetail() {
         detailPanel.requestFocus()
     }
+
+    /** Opens the form for a new entry, which the panel adds to the group the list is showing. */
+    fun startNewEntry(vault: Vault) {
+        selectedEntry = null
+        selectedGroup = newEntryGroup(vault, selectedGroup, query.isNotBlank())
+        mode = DetailMode.Edit(isNew = true)
+    }
+
+    /** Opens the form for the selected entry. */
+    fun startEdit() {
+        if (selectedEntry == null) return
+        mode = DetailMode.Edit(isNew = false)
+    }
+
+    /** Shows one previous version of the selected entry, read-only. */
+    fun showVersion(index: Int) {
+        if (selectedEntry == null) return
+        mode = DetailMode.Version(index)
+    }
+
+    /** Leaves the form or the version view and shows the entry again. */
+    fun closeDetailMode() {
+        mode = DetailMode.Read
+    }
+
+    /** Saves [change] through the session; false while a save is already running, so the form stays open. */
+    fun save(change: (Vault) -> Vault): Boolean = session.apply(change)
 
     /** Copies [value], marking it when [sensitive], and shows [label] as the confirmation. */
     fun copy(
