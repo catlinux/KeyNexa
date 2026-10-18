@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- The texts of the shared components (ui/shared): the brand mark and the password keypad. -->
+    <string name="brand_mark_description">KeyNexa logo</string>
+    <string name="keypad_space">space</string>
+    <string name="keypad_done">Done</string>
+    <string name="keypad_shift">Shift</string>
+    <string name="keypad_shift_once">Shift on for one letter</string>
+    <string name="keypad_shift_locked">Caps lock on</string>
+    <string name="keypad_backspace">Delete last character</string>
+    <string name="keypad_letters">Letters</string>
+    <string name="keypad_symbols">Digits and symbols</string>
+    <string name="keypad_accents">Accented letters</string>
+</resources>

@@ -11,7 +11,9 @@ plugins {
     alias(libs.plugins.android.library) apply false
     alias(libs.plugins.kotlin.android) apply false
     alias(libs.plugins.kotlin.jvm) apply false
+    alias(libs.plugins.kotlin.multiplatform) apply false
     alias(libs.plugins.compose.compiler) apply false
+    alias(libs.plugins.compose.multiplatform) apply false
     alias(libs.plugins.detekt) apply false
     alias(libs.plugins.ktlint) apply false
     alias(libs.plugins.license.report)
@@ -19,7 +21,7 @@ plugins {
 
 licenseReport {
     projects = (listOf(project) + project.subprojects).toTypedArray()
-    configurations = arrayOf("runtimeClasspath", "releaseRuntimeClasspath")
+    configurations = arrayOf("runtimeClasspath", "releaseRuntimeClasspath", "desktopRuntimeClasspath")
     renderers = arrayOf<ReportRenderer>(JsonReportRenderer(), TextReportRenderer())
 }
 
@@ -30,6 +32,7 @@ subprojects {
             "releaseRuntimeClasspath",
             "offlineReleaseRuntimeClasspath",
             "cloudReleaseRuntimeClasspath",
+            "desktopRuntimeClasspath",
         )
     configurations.configureEach {
         // The app ships two release flavors, so its released configuration names carry the flavor.
@@ -73,7 +76,18 @@ subprojects {
         }
 
         tasks.withType<Detekt>().configureEach {
-            setSource(files("src/main/kotlin", "src/test/kotlin", "src/main/java", "src/test/java"))
+            setSource(
+                files(
+                    "src/main/kotlin",
+                    "src/test/kotlin",
+                    "src/main/java",
+                    "src/test/java",
+                    "src/commonMain/kotlin",
+                    "src/androidMain/kotlin",
+                    "src/desktopMain/kotlin",
+                    "src/desktopTest/kotlin",
+                ),
+            )
         }
     }
 }

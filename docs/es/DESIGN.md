@@ -38,7 +38,7 @@ Los tokens están en `apps/android/.../ui/theme/Palette.kt` y se corresponden un
 
 ## Tipografía
 
-La interfaz usa la escala tipográfica de Material 3 con **Manrope**, incluida como una sola fuente variable (`res/font/manrope.ttf`, SIL OFL 1.1, ver [Créditos](CREDITS.md)); las contraseñas y los códigos mantienen la fuente monoespaciada de la plataforma.
+La interfaz usa la escala tipográfica de Material 3 con **Manrope**, incluida como una sola fuente variable (`ui/shared/src/commonRes/font/manrope.ttf`, SIL OFL 1.1, ver [Créditos](CREDITS.md)); las contraseñas y los códigos mantienen la fuente monoespaciada de la plataforma.
 
 | Uso | Estilo | Tamaño / peso |
 | --- | --- | --- |

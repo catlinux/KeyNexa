@@ -16,9 +16,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.fragment.app.FragmentActivity
-import io.github.catlinux.keynexa.app.ui.theme.KeyNexaTheme
 import io.github.catlinux.keynexa.app.ui.theme.resolveDarkTheme
 import io.github.catlinux.keynexa.app.ui.unlock.LocalPasswordKeypad
+import io.github.catlinux.keynexa.ui.theme.KeyNexaTheme
 
 class MainActivity : FragmentActivity() {
     private val container: AppContainer get() = (application as KeyNexaApplication).container

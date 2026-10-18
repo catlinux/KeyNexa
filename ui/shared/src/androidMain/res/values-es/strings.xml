@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Los textos de los componentes compartidos (ui/shared): la marca y el teclado de contraseñas. -->
+    <string name="brand_mark_description">Marca de KeyNexa</string>
+    <string name="keypad_space">espacio</string>
+    <string name="keypad_done">Listo</string>
+    <string name="keypad_shift">Mayúscula</string>
+    <string name="keypad_shift_once">Mayúscula para una letra</string>
+    <string name="keypad_shift_locked">Bloqueo de mayúsculas activado</string>
+    <string name="keypad_backspace">Borrar el último carácter</string>
+    <string name="keypad_letters">Letras</string>
+    <string name="keypad_symbols">Cifras y símbolos</string>
+    <string name="keypad_accents">Letras con acento</string>
+</resources>

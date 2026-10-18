@@ -66,11 +66,11 @@ import androidx.compose.ui.unit.dp
 import io.github.catlinux.keynexa.app.R
 import io.github.catlinux.keynexa.app.ui.common.ConflictNotice
 import io.github.catlinux.keynexa.app.ui.common.ConflictNoticeBar
-import io.github.catlinux.keynexa.app.ui.common.HexBadge
 import io.github.catlinux.keynexa.app.ui.common.SaveStatus
 import io.github.catlinux.keynexa.app.ui.common.SaveStatusBar
-import io.github.catlinux.keynexa.app.ui.theme.LocalDarkTheme
 import io.github.catlinux.keynexa.sync.RecoveryOutcome
+import io.github.catlinux.keynexa.ui.brand.HexBadge
+import io.github.catlinux.keynexa.ui.theme.LocalDarkTheme
 import io.github.catlinux.keynexa.vault.Entry
 import io.github.catlinux.keynexa.vault.Group
 import io.github.catlinux.keynexa.vault.totp

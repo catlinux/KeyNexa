@@ -38,7 +38,7 @@ Tokens live in `apps/android/.../ui/theme/Palette.kt` and map one to one onto Ma
 
 ## Typography
 
-The interface uses the Material 3 type scale with **Manrope**, bundled as one variable font (`res/font/manrope.ttf`, SIL OFL 1.1, see [CREDITS](../CREDITS.md)); passwords and codes keep the platform monospace font.
+The interface uses the Material 3 type scale with **Manrope**, bundled as one variable font (`ui/shared/src/commonRes/font/manrope.ttf`, SIL OFL 1.1, see [CREDITS](../CREDITS.md)); passwords and codes keep the platform monospace font.
 
 | Use | Style | Size / weight |
 | --- | --- | --- |

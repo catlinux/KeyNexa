@@ -43,9 +43,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import io.github.catlinux.keynexa.app.R
-import io.github.catlinux.keynexa.app.ui.common.BrandMark
-import io.github.catlinux.keynexa.app.ui.common.HexBadge
 import io.github.catlinux.keynexa.session.KnownVault
+import io.github.catlinux.keynexa.ui.brand.BrandMark
+import io.github.catlinux.keynexa.ui.brand.HexBadge
 
 /** Spacing and touch targets of the design grid (docs/DESIGN.md): 4 dp steps, targets of at least 48 dp. */
 private val ScreenPadding = 20.dp

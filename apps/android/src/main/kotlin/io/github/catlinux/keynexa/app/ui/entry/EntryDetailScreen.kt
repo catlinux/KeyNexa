@@ -60,7 +60,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import io.github.catlinux.keynexa.app.R
-import io.github.catlinux.keynexa.app.ui.common.HexBadge
+import io.github.catlinux.keynexa.ui.brand.HexBadge
 import io.github.catlinux.keynexa.vault.Attachment
 import io.github.catlinux.keynexa.vault.Binary
 import io.github.catlinux.keynexa.vault.BinaryId

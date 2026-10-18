@@ -150,6 +150,7 @@ jobs:
             --lockfile=core/session/gradle.lockfile
             --lockfile=platform/jvm/gradle.lockfile
             --lockfile=platform/android/gradle.lockfile
+            --lockfile=ui/shared/gradle.lockfile
             --lockfile=apps/android/gradle.lockfile
             --lockfile=third_party/kotpass/gradle.lockfile
 

@@ -26,6 +26,9 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LifecycleEventEffect
 import io.github.catlinux.keynexa.app.R
+import io.github.catlinux.keynexa.ui.keypad.KeypadState
+import io.github.catlinux.keynexa.ui.keypad.PasswordBuffer
+import io.github.catlinux.keynexa.ui.keypad.PasswordKeypad
 
 /** Whether master passwords are typed with the KeyNexa keypad (ADR-0010); provided from the settings. */
 val LocalPasswordKeypad = compositionLocalOf { true }

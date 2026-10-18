@@ -68,6 +68,7 @@ dependencies {
     implementation(project(":platform:android"))
     implementation(project(":core:kdbx"))
     implementation(project(":core:session"))
+    implementation(project(":ui:shared"))
 
     // The cloud client and its credential store exist only in the cloud flavor; the offline APK must not carry them.
     "cloudImplementation"(project(":platform:cloud"))

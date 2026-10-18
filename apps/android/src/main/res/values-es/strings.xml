@@ -34,7 +34,6 @@
     <string name="create_action">Crear bóveda</string>
 
     <!-- Desbloqueo: abrir una bóveda. -->
-    <string name="brand_mark_description">Marca de KeyNexa</string>
     <string name="unlock_change">Cambiar</string>
     <string name="unlock_password_label">Contraseña maestra</string>
     <string name="unlock_show_password">Mostrar la contraseña</string>
@@ -56,15 +55,6 @@
     <string name="unlock_error_damaged">Este archivo parece dañado o se está sincronizando todavía. Espera un momento y vuelve a intentarlo: KeyNexa no lo ha modificado.</string>
     <string name="unlock_error_not_enough_memory">Tu dispositivo no tiene memoria suficiente para abrir esta bóveda. Reduce la memoria de Argon2 de la bóveda desde otro programa (por ejemplo KeePassXC) y vuelve a intentarlo.</string>
     <string name="unlock_error_unreachable">No se puede leer este archivo. Puede que se haya movido o que se haya revocado el permiso para leerlo.</string>
-    <string name="keypad_space">espacio</string>
-    <string name="keypad_done">Listo</string>
-    <string name="keypad_shift">Mayúscula</string>
-    <string name="keypad_shift_once">Mayúscula para una letra</string>
-    <string name="keypad_shift_locked">Bloqueo de mayúsculas activado</string>
-    <string name="keypad_backspace">Borrar el último carácter</string>
-    <string name="keypad_letters">Letras</string>
-    <string name="keypad_symbols">Cifras y símbolos</string>
-    <string name="keypad_accents">Letras con acento</string>
     <string name="clipboard_copied">%1$s copiado</string>
 
     <!-- Guardado: la línea de estado de una bóveda abierta. -->

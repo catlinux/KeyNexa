@@ -6,6 +6,15 @@ All notable changes to this project are documented in this file. The format is b
 
 ## [Unreleased]
 
+## [1.0.6] - 2026-10-18
+
+Internal; the Android app should look and behave the same (to be confirmed on a phone).
+
+### Changed
+
+- New Compose Multiplatform module `ui/shared` (`:ui:shared`, Android and desktop targets): the palette, theme, Manrope typography, brand mark, hexagon and the KeyNexa keypad move out of the Android app with their tests, so the desktop client can reuse them. Their texts move to the module (same English and Spanish strings) and the Manrope font file to `ui/shared/src/commonRes/font/`, shared by both targets.
+- Compose Multiplatform 1.8.2 (JetBrains, Apache-2.0) is added for that module. It was chosen because it keeps the Android app on its current Jetpack Compose 1.9.1 and Material 3 1.3.2; in the APK it only adds the small `ui-backhandler` module. Recorded in the dependencies and credits.
+
 ## [1.0.5] - 2026-10-18
 
 Internal; the Android app does not change.
