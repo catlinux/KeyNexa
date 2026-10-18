@@ -10,6 +10,12 @@ All notable changes to this project are documented in this file. The format is b
 
 - ADR-0008 (proposed) and the plan for optional cloud copies of the vault with an assistant: an `offline` build with no network access and a `cloud` build, S3 first and then Dropbox, OneDrive and Google Drive.
 
+## [0.33.15] - 2026-10-18
+
+### Removed
+
+- Test vaults and test folders cleaned from the owner's phone and PC before 1.0 (the fictitious vaults in `testdata/` stay: the tests need them); the stale entries of the phone's vault list are gone, so the TODO item is removed. Documentation only (patch).
+
 ## [0.33.14] - 2026-10-18
 
 ### Changed

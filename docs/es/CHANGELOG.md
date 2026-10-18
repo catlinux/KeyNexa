@@ -10,6 +10,12 @@ Todos los cambios notables de este proyecto se documentan en este archivo. El fo
 
 - ADR-0008 (propuesta) y el plan de las copias opcionales de la bóveda en la nube con un asistente: una compilación `offline` sin acceso a la red y una `cloud`, primero S3 y después Dropbox, OneDrive y Google Drive.
 
+## [0.33.15] - 2026-10-18
+
+### Eliminado
+
+- Bóvedas y carpetas de prueba borradas del móvil y del PC del titular antes de la 1.0 (las bóvedas ficticias de `testdata/` se quedan: las necesitan las pruebas); las entradas obsoletas de la lista de bóvedas del móvil ya no están, así que se quita la tarea del TODO. Solo documentación (parche).
+
 ## [0.33.14] - 2026-10-18
 
 ### Cambiado

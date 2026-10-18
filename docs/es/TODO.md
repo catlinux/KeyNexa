@@ -32,7 +32,6 @@ Pasos detallados: consulta la [hoja de ruta](ROADMAP.md).
 - [ ] **Solicitudes de cambio a kotpass #43 a #46** ([keemobile/kotpass](https://github.com/keemobile/kotpass/pulls)): el CI en rojo se diagnosticó y se gestionó el 2026-10-15 (#43: fixture de prueba corregido y subido como `1955d4a`; #44 y #46: solo el paso del token de Codecov, que un fork no puede pasar, explicado en un comentario; #45: corte de red, PR reabierta) y la pregunta del mantenedor en la #46 está respondida. Solo se espera al mantenedor: su respuesta en la #46 y, si lo pide, la aprobación para ejecutar el workflow en la #43. Notas: `.agents/plans/kotpass-upstream/`.
 - [ ] **Por qué el trabajo `differential` del CI resuelve a veces `kotlinx-coroutines-bom` 1.8.0 en el classpath de compilación** cuando los demás trabajos y Windows nunca lo hacen. El fallo intermitente era la verificación de dependencias de Gradle, no keepass-rs (leído en la anotación añadida en la 0.33.2); la 0.33.9 añade la suma comprobada contra Maven Central, lo que acaba con el fallo. La causa de la resolución variable sigue sin conocerse; mirarla al pasar a Gradle 9.
 - [ ] **Comprobar el workflow de release con las variantes:** `release.yml` firma ahora el APK `offline` desde su ruta nueva y no se ha ejecutado desde entonces; el primer tag posterior a 0.10.3 lo demostrará. Nada posterior a la 0.10.3 se ha publicado.
-- [ ] Quitar las entradas de bóvedas obsoletas de la lista del móvil (dos «demo» y los «prova-ac4» duplicados).
 
 ## Prioridad baja (más adelante)
 

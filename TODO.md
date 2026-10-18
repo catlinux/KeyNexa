@@ -32,7 +32,6 @@ Detailed steps: see the [roadmap](docs/ROADMAP.md).
 - [ ] **kotpass pull requests #43 to #46** ([keemobile/kotpass](https://github.com/keemobile/kotpass/pulls)): the red CI was diagnosed and handled on 2026-10-15 (#43: test fixture fixed and pushed as `1955d4a`; #44 and #46: only the Codecov token step, which forks cannot pass, explained in a comment; #45: network timeout, PR reopened) and the maintainer's question on #46 was answered. Waiting only for the maintainer: his reply on #46 and, if it asks for it, approval to run the workflow on #43. Notes: `.agents/plans/kotpass-upstream/`.
 - [ ] **Why the `differential` CI job sometimes resolves `kotlinx-coroutines-bom` 1.8.0 on the build classpath** while other jobs and Windows never do. The intermittent failure was Gradle dependency verification, not keepass-rs (read from the annotation added in 0.33.2); 0.33.9 adds the checksum checked against Maven Central, which stops the failure. The cause of the varying resolution is still unknown; look at it when moving to Gradle 9.
 - [ ] **Check the release workflow with the build variants:** `release.yml` now signs the `offline` APK from its new path and has not run since; the first tag after 0.10.3 will prove it. Nothing after 0.10.3 has been released.
-- [ ] Remove the stale vault entries left in the phone's list (two "demo" vaults and the "prova-ac4" duplicates).
 
 ## Low priority (later)
 
