@@ -18,6 +18,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.key.onPreviewKeyEvent
+import androidx.compose.ui.input.pointer.PointerEventType
+import androidx.compose.ui.input.pointer.onPointerEvent
 import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
@@ -25,6 +28,7 @@ import androidx.compose.ui.window.ApplicationScope
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
 import androidx.compose.ui.window.rememberWindowState
+import io.github.catlinux.keynexa.desktop.Theme
 import io.github.catlinux.keynexa.desktop.app.generated.resources.Res
 import io.github.catlinux.keynexa.desktop.app.generated.resources.app_name
 import io.github.catlinux.keynexa.desktop.app.generated.resources.dialog_ok
@@ -45,12 +49,16 @@ import java.awt.Dimension
 import java.awt.FileDialog
 import java.awt.Frame
 import java.io.File
+import javax.swing.SwingUtilities
 
 /** The file the first instance locks, so a second one knows KeyNexa is already running. */
 private const val INSTANCE_LOCK = "instance.lock"
 
 /** How often an open vault looks for a version written elsewhere, while the window has the focus. */
 private const val REFRESH_MILLIS = 5_000L
+
+/** How often the idle time is looked at while a vault is open. */
+private const val IDLE_CHECK_MILLIS = 15_000L
 
 private val WindowSize = DpSize(1100.dp, 750.dp)
 private val AlreadyOpenWindowSize = DpSize(380.dp, 190.dp)
@@ -72,13 +80,16 @@ fun main() =
 
 /** The main window: the home screen, the unlock screen of the vault the user picked, the open vault, and locking. */
 @Composable
-@Suppress("LongMethod")
+@Suppress("LongMethod", "CyclomaticComplexMethod")
+@OptIn(androidx.compose.ui.ExperimentalComposeUiApi::class)
 private fun ApplicationScope.KeyNexaWindow(
     container: DesktopContainer,
     lock: InstanceLock,
 ) {
     val session = container.session
     val state by session.state.collectAsState()
+    val settings = container.settings
+    val idle = remember { IdleTimer() }
     var selected by remember { mutableStateOf<KnownVault?>(null) }
     val view = remember { DesktopVaultState(container.clipboard, session) }
     val openState = state as? SessionState.Open
@@ -101,13 +112,14 @@ private fun ApplicationScope.KeyNexaWindow(
     }
     val userNameLabel = stringResource(Res.string.entry_detail_user_name)
     val passwordLabel = stringResource(Res.string.entry_detail_password)
-    val lockVault: () -> Unit = {
+    val lockNow: () -> Unit = {
         selected = null
         container.clipboard.clearNow()
         session.lock()
     }
     Window(
         onCloseRequest = {
+            container.systemEvents.close()
             container.clipboard.clearNow()
             container.clipboard.close()
             session.lock()
@@ -115,10 +127,11 @@ private fun ApplicationScope.KeyNexaWindow(
             exitApplication()
         },
         onKeyEvent = { event ->
+            idle.restart()
             val open = state as? SessionState.Open
             val shortcut = shortcutOf(event)
             if (open != null && shortcut != null) {
-                runShortcut(shortcut, view, open.current, userNameLabel, passwordLabel, lockVault)
+                runShortcut(shortcut, view, open.current, userNameLabel, passwordLabel, lockNow)
                 true
             } else {
                 false
@@ -128,16 +141,59 @@ private fun ApplicationScope.KeyNexaWindow(
         title = stringResource(Res.string.app_name),
     ) {
         window.minimumSize = Dimension(MIN_WINDOW_WIDTH, MIN_WINDOW_HEIGHT)
-        KeyNexaTheme(darkTheme = isSystemInDarkTheme()) {
-            Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
+        LaunchedEffect(settings.allowScreenshots) {
+            container.captureGuard.apply(window, settings.allowScreenshots)
+        }
+        LaunchedEffect(Unit) {
+            container.systemEvents.listen(
+                onSessionLocked = { if (container.settings.lockOnWindowsLock) SwingUtilities.invokeLater(lockNow) },
+                onSuspend = { if (container.settings.lockOnSuspend) SwingUtilities.invokeLater(lockNow) },
+            )
+        }
+        LaunchedEffect(Unit) {
+            Thread.setDefaultUncaughtExceptionHandler { thread, failure ->
+                lockNow()
+                System.err.println("Uncaught in ${thread.name}: ${failure.javaClass.name}")
+                failure.stackTrace.forEach { System.err.println("  at $it") }
+            }
+        }
+        LaunchedEffect(openVault, settings.lockAfterIdleMinutes) {
+            if (openVault == null || settings.lockAfterIdleMinutes <= 0) return@LaunchedEffect
+            while (true) {
+                delay(IDLE_CHECK_MILLIS)
+                if (idle.isDue(settings.lockAfterIdleMinutes)) lockNow()
+            }
+        }
+        KeyNexaTheme(
+            darkTheme =
+                when (settings.theme) {
+                    Theme.System -> isSystemInDarkTheme()
+                    Theme.Light -> false
+                    Theme.Dark -> true
+                },
+        ) {
+            Surface(
+                modifier =
+                    Modifier
+                        .fillMaxSize()
+                        .onPointerEvent(PointerEventType.Move) { idle.restart() }
+                        .onPointerEvent(PointerEventType.Press) { idle.restart() }
+                        .onPointerEvent(PointerEventType.Scroll) { idle.restart() }
+                        .onPreviewKeyEvent {
+                            idle.restart()
+                            false
+                        },
+                color = MaterialTheme.colorScheme.background,
+            ) {
                 KeyNexaScreen(
                     session = session,
                     state = state,
                     knownVaults = container.knownVaults,
                     selected = selected,
                     onSelect = { selected = it },
-                    onLock = lockVault,
+                    onLock = lockNow,
                     view = view,
+                    useKeypad = settings.useKeypad,
                     parent = window,
                 )
             }
@@ -156,6 +212,7 @@ private fun KeyNexaScreen(
     onSelect: (KnownVault?) -> Unit,
     onLock: () -> Unit,
     view: DesktopVaultState,
+    useKeypad: Boolean,
     parent: Frame,
 ) {
     val unlockVault =
@@ -183,6 +240,7 @@ private fun KeyNexaScreen(
                 parent = parent,
                 vault = unlockVault,
                 state = state,
+                useKeypad = useKeypad,
                 onUnlock = { credentials ->
                     onSelect(unlockVault)
                     session.unlock(unlockVault, credentials)
@@ -196,7 +254,14 @@ private fun KeyNexaScreen(
                     session.dismissFailure()
                 },
             )
-        else -> KeyNexaHome(session = session, knownVaults = knownVaults, onSelect = onSelect, parent = parent)
+        else ->
+            KeyNexaHome(
+                session = session,
+                knownVaults = knownVaults,
+                onSelect = onSelect,
+                useKeypad = useKeypad,
+                parent = parent,
+            )
     }
 }
 
@@ -206,6 +271,7 @@ private fun KeyNexaHome(
     session: VaultSession,
     knownVaults: KnownVaults,
     onSelect: (KnownVault) -> Unit,
+    useKeypad: Boolean,
     parent: Frame,
 ) {
     var vaults by remember { mutableStateOf(knownVaults.all()) }
@@ -213,6 +279,7 @@ private fun KeyNexaHome(
     if (creating) {
         DesktopCreateVaultScreen(
             parent = parent,
+            useKeypad = useKeypad,
             onBack = { creating = false },
             onCreate = { file, name, credentials ->
                 val vault = KnownVault(name, VaultLocation(file.absolutePath))

@@ -6,6 +6,18 @@ All notable changes to this project are documented in this file. The format is b
 
 ## [Unreleased]
 
+## [1.5.0] - 2026-10-18
+
+The Android app does not change. Step 7 of the desktop plan: the desktop protections equal to Android's.
+
+### Added
+
+- Desktop: the vault locks after 5 minutes without keyboard or mouse use in the window, when Windows is locked (Win+L) and when the computer suspends; every lock also clears the clipboard. The window is excluded from screen captures unless screenshots are allowed. The theme, the KeyNexa keypad default and the clipboard time come from the desktop settings. An unexpected error locks the vault and is printed without its message.
+
+### Changed
+
+- Threat model T23 and T24 (desktop) move from planned to implemented, stating that capture exclusion needs Windows 10 2004 or later and does not stop a photo of the screen.
+
 ## [1.4.1] - 2026-10-18
 
 The Android app does not change.

@@ -91,9 +91,10 @@ fun DesktopCreateVaultScreen(
     parent: Frame,
     onBack: () -> Unit,
     onCreate: (file: File, name: String, credentials: Credentials) -> Unit,
+    useKeypad: Boolean = false,
     modifier: Modifier = Modifier,
 ) {
-    val password = remember { DesktopPassword(fields = 2) }
+    val password = remember { DesktopPassword(useKeypad = useKeypad, fields = 2) }
     val keyFile = remember { KeyFileHolder() }
     DisposableEffect(Unit) {
         onDispose {

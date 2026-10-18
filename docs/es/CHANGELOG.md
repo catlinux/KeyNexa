@@ -6,6 +6,18 @@ Todos los cambios notables de este proyecto se documentan en este archivo. El fo
 
 ## [Sin publicar]
 
+## [1.5.0] - 2026-10-18
+
+La app de Android no cambia. Paso 7 del plan de escritorio: las protecciones del escritorio a la altura de Android.
+
+### Añadido
+
+- Escritorio: la bóveda se bloquea tras 5 minutos sin usar el teclado o el ratón en la ventana, al bloquear Windows (Win+L) y al suspender el equipo; cada bloqueo borra también el portapapeles. La ventana queda excluida de las capturas de pantalla salvo que se permitan. El tema, el teclado de KeyNexa por defecto y el tiempo del portapapeles salen de los ajustes del escritorio. Un error inesperado bloquea la bóveda y se muestra sin su mensaje.
+
+### Cambiado
+
+- Modelo de amenazas T23 y T24 (escritorio) pasan de previstos a implementados, indicando que la exclusión de capturas necesita Windows 10 2004 o posterior y que no impide una foto de la pantalla.
+
 ## [1.4.1] - 2026-10-18
 
 La app de Android no cambia.

@@ -1,9 +1,15 @@
 package io.github.catlinux.keynexa.desktop.app
 
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import io.github.catlinux.keynexa.desktop.ClipboardTimer
 import io.github.catlinux.keynexa.desktop.DesktopDirs
+import io.github.catlinux.keynexa.desktop.DesktopSettings
+import io.github.catlinux.keynexa.desktop.DesktopSettingsStore
 import io.github.catlinux.keynexa.desktop.DesktopStores
 import io.github.catlinux.keynexa.desktop.FileStoragePort
+import io.github.catlinux.keynexa.desktop.SystemEvents
 import io.github.catlinux.keynexa.kdbx.KotpassKdbxEngine
 import io.github.catlinux.keynexa.session.KnownVaults
 import io.github.catlinux.keynexa.session.VaultReaders
@@ -13,8 +19,10 @@ import io.github.catlinux.keynexa.sync.KeePassMerger
 import io.github.catlinux.keynexa.sync.SafeSaver
 import io.github.catlinux.keynexa.sync.SaveRecovery
 import io.github.catlinux.keynexa.sync.VaultReader
+import io.github.catlinux.keynexa.windows.WindowsCaptureGuard
 import io.github.catlinux.keynexa.windows.WindowsClipboard
 import io.github.catlinux.keynexa.windows.WindowsDirs
+import io.github.catlinux.keynexa.windows.WindowsSystemEvents
 import java.nio.file.Files
 import java.util.concurrent.Executors
 
@@ -34,14 +42,40 @@ class DesktopContainer {
 
     /**
      * The clipboard every copy of a secret goes through: it marks them so Windows keeps them out of the clipboard
-     * history and the cloud clipboard, and clears them after half a minute.
+     * history and the cloud clipboard, and clears them after the time the settings ask for.
      */
-    val clipboard: ClipboardTimer = ClipboardTimer(WindowsClipboard())
+    val clipboard: ClipboardTimer
+
+    /** What the user chose, read by the interface; [updateSettings] is the only way to change it. */
+    var settings by mutableStateOf(DesktopSettings())
+        private set
+
+    /** The Windows session and power watch, closed when the app leaves. */
+    val systemEvents: SystemEvents = WindowsSystemEvents()
+
+    /** Asks Windows to keep the window out of screen captures. */
+    val captureGuard = WindowsCaptureGuard()
+
+    private val settingsStore: DesktopSettingsStore
+
+    /** Stores what [change] answers and publishes it, so the interface follows the new settings. */
+    fun updateSettings(change: (DesktopSettings) -> DesktopSettings) {
+        val updated = change(settings)
+        settingsStore.save(updated)
+        settings = updated
+    }
 
     init {
         Files.createDirectories(dirs.data)
         val stores = DesktopStores(dirs)
         knownVaults = stores.knownVaults
+        settingsStore = stores.settings
+        settings = settingsStore.load()
+        clipboard =
+            ClipboardTimer(
+                WindowsClipboard(),
+                clearAfterMillis = clipboardClearMillis(settings.clipboardClearSeconds),
+            )
         val keeper = KeePassMerger()
         val worker =
             Executors.newSingleThreadExecutor { task ->

@@ -84,10 +84,11 @@ fun DesktopUnlockScreen(
     state: SessionState,
     onUnlock: (Credentials) -> Unit,
     onBack: () -> Unit,
+    useKeypad: Boolean = false,
     modifier: Modifier = Modifier,
     onEdited: () -> Unit = {},
 ) {
-    val password = remember { DesktopPassword() }
+    val password = remember { DesktopPassword(useKeypad = useKeypad) }
     val keyFile = remember { KeyFileHolder() }
     DisposableEffect(Unit) {
         onDispose {
