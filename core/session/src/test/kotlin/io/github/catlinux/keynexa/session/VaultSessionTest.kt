@@ -1,4 +1,4 @@
-package io.github.catlinux.keynexa.app.vault
+package io.github.catlinux.keynexa.session
 
 import io.github.catlinux.keynexa.kdbx.KotpassKdbxEngine
 import io.github.catlinux.keynexa.platform.FileBackupStore

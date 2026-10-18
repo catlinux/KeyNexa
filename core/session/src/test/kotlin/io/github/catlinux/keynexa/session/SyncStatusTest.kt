@@ -1,4 +1,4 @@
-package io.github.catlinux.keynexa.app.vault
+package io.github.catlinux.keynexa.session
 
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull

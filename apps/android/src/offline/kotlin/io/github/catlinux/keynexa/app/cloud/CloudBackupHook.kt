@@ -1,7 +1,7 @@
 package io.github.catlinux.keynexa.app.cloud
 
 import android.content.Context
-import io.github.catlinux.keynexa.app.vault.KnownVault
+import io.github.catlinux.keynexa.session.KnownVault
 
 /**
  * The offline variant has no cloud backup: this empty hook keeps the session free of conditionals while the offline

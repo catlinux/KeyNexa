@@ -5,5 +5,5 @@ fun syncWarning(
     nowMillis: Long,
     warnDays: Int,
 ): Int? =
-    io.github.catlinux.keynexa.app.vault
+    io.github.catlinux.keynexa.session
         .syncWarning(lastModifiedMillis, nowMillis, warnDays)

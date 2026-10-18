@@ -24,11 +24,11 @@ import io.github.catlinux.keynexa.app.ui.settings.SettingsScreen
 import io.github.catlinux.keynexa.app.ui.unlock.BiometricOfferDialog
 import io.github.catlinux.keynexa.app.ui.unlock.BiometricUi
 import io.github.catlinux.keynexa.app.ui.unlock.UnlockScreen
-import io.github.catlinux.keynexa.app.vault.CloudBackupSource
-import io.github.catlinux.keynexa.app.vault.KnownVault
-import io.github.catlinux.keynexa.app.vault.SessionState
-import io.github.catlinux.keynexa.app.vault.UnlockError
 import io.github.catlinux.keynexa.platform.SafVaultAccess
+import io.github.catlinux.keynexa.session.CloudBackupSource
+import io.github.catlinux.keynexa.session.KnownVault
+import io.github.catlinux.keynexa.session.SessionState
+import io.github.catlinux.keynexa.session.UnlockError
 import io.github.catlinux.keynexa.vault.Credentials
 import io.github.catlinux.keynexa.vault.NewVault
 import kotlinx.coroutines.delay

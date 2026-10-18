@@ -20,11 +20,11 @@ import io.github.catlinux.keynexa.app.ui.entry.EntryDetailScreen
 import io.github.catlinux.keynexa.app.ui.entry.isWebAddress
 import io.github.catlinux.keynexa.app.ui.group.GroupScreen
 import io.github.catlinux.keynexa.app.ui.search.SearchScreen
-import io.github.catlinux.keynexa.app.vault.SessionState
-import io.github.catlinux.keynexa.app.vault.findEntry
-import io.github.catlinux.keynexa.app.vault.findGroup
-import io.github.catlinux.keynexa.app.vault.mapEntry
-import io.github.catlinux.keynexa.app.vault.pathToEntry
+import io.github.catlinux.keynexa.session.SessionState
+import io.github.catlinux.keynexa.session.findEntry
+import io.github.catlinux.keynexa.session.findGroup
+import io.github.catlinux.keynexa.session.mapEntry
+import io.github.catlinux.keynexa.session.pathToEntry
 import io.github.catlinux.keynexa.vault.Credentials
 import io.github.catlinux.keynexa.vault.Entry
 import io.github.catlinux.keynexa.vault.FieldValue

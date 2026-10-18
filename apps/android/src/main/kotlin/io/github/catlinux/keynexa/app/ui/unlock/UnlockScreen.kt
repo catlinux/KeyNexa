@@ -54,9 +54,9 @@ import androidx.compose.ui.unit.dp
 import io.github.catlinux.keynexa.app.R
 import io.github.catlinux.keynexa.app.ui.common.BrandMark
 import io.github.catlinux.keynexa.app.ui.common.HexBadge
-import io.github.catlinux.keynexa.app.vault.KnownVault
-import io.github.catlinux.keynexa.app.vault.SessionState
-import io.github.catlinux.keynexa.app.vault.UnlockError
+import io.github.catlinux.keynexa.session.KnownVault
+import io.github.catlinux.keynexa.session.SessionState
+import io.github.catlinux.keynexa.session.UnlockError
 import io.github.catlinux.keynexa.vault.Credentials
 import java.io.IOException
 

@@ -43,7 +43,7 @@ import io.github.catlinux.keynexa.app.R
 import io.github.catlinux.keynexa.app.settings.SettingsValues
 import io.github.catlinux.keynexa.app.settings.ThemeMode
 import io.github.catlinux.keynexa.app.ui.theme.LocalDarkTheme
-import io.github.catlinux.keynexa.app.vault.CloudBackupSource
+import io.github.catlinux.keynexa.session.CloudBackupSource
 
 /** Spacing and touch targets of the design grid (docs/DESIGN.md). */
 private val ScreenPadding = 20.dp

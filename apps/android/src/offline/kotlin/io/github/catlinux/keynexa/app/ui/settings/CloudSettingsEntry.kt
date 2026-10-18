@@ -1,7 +1,7 @@
 package io.github.catlinux.keynexa.app.ui.settings
 
 import androidx.compose.runtime.Composable
-import io.github.catlinux.keynexa.app.vault.CloudBackupSource
+import io.github.catlinux.keynexa.session.CloudBackupSource
 
 /**
  * The offline variant has no cloud entry at all: this empty function keeps the settings screen free of conditionals

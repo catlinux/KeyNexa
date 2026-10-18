@@ -36,6 +36,8 @@ platform/jvm         private file stores (backups, save journal, merged-copies l
 platform/android     SAF storage adapter, Keystore, lifecycle-based auto-lock
 platform/cloud       S3-compatible cloud client (SigV4), JDK HTTP client only
   │
+core/session         the open vault's session (unlock, edit, save, lock) and the known-vaults list
+  │
 core/sync            change detection, merge, safe-save pipeline (uses StoragePort)
   │
 core/vault           domain model, use cases, search, StoragePort / KdbxEngine interfaces
@@ -46,6 +48,7 @@ core/kdbx            adapter implementing KdbxEngine on top of kotpass (the only
 - **`core/vault`** define el dominio (bóveda, grupo, entrada, campo, adjunto, historial) y los puertos: `KdbxEngine` (decodificar/codificar un flujo de bytes KDBX con credenciales) y `StoragePort` (leer, escribir, metadatos, listar los archivos hermanos de un archivo de bóveda).
 - **`core/kdbx`** es el único módulo que depende de kotpass. Sustituir o bifurcar el motor solo afecta a este módulo.
 - **`core/sync`** contiene la lógica que protege los datos: huellas de contenido, detección de cambios externos, la fusión y el flujo de guardado seguro. Es deliberadamente independiente de Android para poder probarlo exhaustivamente con un almacenamiento simulado.
+- **`core/session`** reúne la sesión de la bóveda abierta que comparten todos los clientes JVM: desbloquear, editar, guardar y bloquear la bóveda, la lista de bóvedas conocidas con su códec y los ayudantes que recorren el árbol de la bóveda; `apps/android` depende de él.
 - **`platform/jvm`** reúne los almacenes privados de archivos que comparten todos los clientes JVM (`FileBackupStore`, `FileSaveJournal`, `FileMergedCopies`); `platform/android` depende de él.
 - **`platform/android`** implementa `StoragePort` con SAF y envuelve el Android Keystore.
 - **`platform/cloud`** es el cliente de red de la variante `cloud`: un backend compatible con S3 firmado con AWS SigV4, sobre el cliente HTTP del JDK y sin dependencias externas. La variante `offline` nunca lo incluye.

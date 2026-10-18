@@ -1,4 +1,4 @@
-package io.github.catlinux.keynexa.app.vault
+package io.github.catlinux.keynexa.session
 
 /**
  * Heuristic: warn when the vault file has not changed for at least [warnDays] days. Returns the number of days when

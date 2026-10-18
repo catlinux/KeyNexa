@@ -59,13 +59,13 @@ import io.github.catlinux.keynexa.app.cloud.CloudBackupService
 import io.github.catlinux.keynexa.app.cloud.CloudBackupStatus
 import io.github.catlinux.keynexa.app.cloud.CloudConsentStore
 import io.github.catlinux.keynexa.app.cloud.CloudStores
-import io.github.catlinux.keynexa.app.vault.CloudBackupSource
 import io.github.catlinux.keynexa.cloud.ConnectionResult
 import io.github.catlinux.keynexa.cloud.S3Setup
 import io.github.catlinux.keynexa.cloud.regionAfterEndpointChange
 import io.github.catlinux.keynexa.cloud.regionFromEndpoint
 import io.github.catlinux.keynexa.cloud.testConnection
 import io.github.catlinux.keynexa.cloud.vaultIdOf
+import io.github.catlinux.keynexa.session.CloudBackupSource
 import io.github.catlinux.keynexa.sync.BackupError
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers

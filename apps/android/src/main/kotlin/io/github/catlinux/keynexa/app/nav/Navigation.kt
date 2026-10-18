@@ -1,7 +1,7 @@
 package io.github.catlinux.keynexa.app.nav
 
 import androidx.compose.runtime.mutableStateListOf
-import io.github.catlinux.keynexa.app.vault.KnownVault
+import io.github.catlinux.keynexa.session.KnownVault
 import java.util.UUID
 
 /** The screens of the app. A screen carries only ids, never vault content or secrets. */

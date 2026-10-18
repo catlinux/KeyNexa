@@ -1,11 +1,11 @@
 package io.github.catlinux.keynexa.app.cloud
 
 import android.content.Context
-import io.github.catlinux.keynexa.app.vault.KnownVault
 import io.github.catlinux.keynexa.cloud.CloudBackupRunner
 import io.github.catlinux.keynexa.cloud.FileBackupState
 import io.github.catlinux.keynexa.cloud.S3Setup
 import io.github.catlinux.keynexa.cloud.vaultIdOf
+import io.github.catlinux.keynexa.session.KnownVault
 import io.github.catlinux.keynexa.sync.BackupError
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

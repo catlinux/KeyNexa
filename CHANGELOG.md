@@ -6,6 +6,14 @@ All notable changes to this project are documented in this file. The format is b
 
 ## [Unreleased]
 
+## [1.0.5] - 2026-10-18
+
+Internal; the Android app does not change.
+
+### Changed
+
+- New module `core/session` (`:core:session`, package `io.github.catlinux.keynexa.session`): the vault session (`VaultSession` and its states), the vault-tree helpers, the sync warning and the known-vaults list move out of the Android app with their tests, so the desktop client can reuse them. The list of known vaults is now behind a `KnownVaults` interface; Android keeps its implementation over private preferences. `kotlinx-coroutines-core` 1.9.0, already shipped, becomes a direct dependency of the new module.
+
 ## [1.0.4] - 2026-10-18
 
 Internal; the Android app does not change.

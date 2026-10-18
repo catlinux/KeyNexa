@@ -1,4 +1,4 @@
-package io.github.catlinux.keynexa.app.vault
+package io.github.catlinux.keynexa.session
 
 /**
  * The open vault, as the cloud settings need it: the vault and a way to read its encrypted bytes.

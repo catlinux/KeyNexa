@@ -6,6 +6,14 @@ Todos los cambios notables de este proyecto se documentan en este archivo. El fo
 
 ## [Sin publicar]
 
+## [1.0.5] - 2026-10-18
+
+Interno; la app de Android no cambia.
+
+### Cambiado
+
+- Módulo nuevo `core/session` (`:core:session`, paquete `io.github.catlinux.keynexa.session`): la sesión de la bóveda (`VaultSession` y sus estados), los ayudantes del árbol de la bóveda, el aviso de sincronización y la lista de bóvedas conocidas salen de la app de Android con sus pruebas, para que el cliente de escritorio los reutilice. La lista de bóvedas conocidas queda detrás de una interfaz `KnownVaults`; Android conserva su implementación sobre las preferencias privadas. `kotlinx-coroutines-core` 1.9.0, que ya se distribuía, pasa a ser dependencia directa del módulo nuevo.
+
 ## [1.0.4] - 2026-10-18
 
 Interno; la app de Android no cambia.

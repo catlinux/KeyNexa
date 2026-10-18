@@ -1,4 +1,4 @@
-package io.github.catlinux.keynexa.app.vault
+package io.github.catlinux.keynexa.session
 
 import io.github.catlinux.keynexa.sync.BackupKind
 import io.github.catlinux.keynexa.sync.BackupRef
