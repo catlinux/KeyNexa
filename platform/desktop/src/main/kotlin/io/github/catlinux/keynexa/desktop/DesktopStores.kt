@@ -20,10 +20,14 @@ class DesktopStores(
     val mergedCopies = FileMergedCopies(dirs.data.resolve(MERGED_COPIES).toFile())
     val knownVaults = FileKnownVaults(dirs.data.resolve(KNOWN_VAULTS))
 
+    /** What the user chose for locking, the clipboard, the keypad and the theme. */
+    val settings = DesktopSettingsStore(dirs.data.resolve(SETTINGS))
+
     private companion object {
         const val BACKUPS = "backups"
         const val JOURNAL = "journal"
         const val MERGED_COPIES = "merged-copies"
         const val KNOWN_VAULTS = "known-vaults.txt"
+        const val SETTINGS = "settings.properties"
     }
 }

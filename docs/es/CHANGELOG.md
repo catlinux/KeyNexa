@@ -6,6 +6,14 @@ Todos los cambios notables de este proyecto se documentan en este archivo. El fo
 
 ## [Sin publicar]
 
+## [1.4.1] - 2026-10-18
+
+La app de Android no cambia.
+
+### Añadido
+
+- Piezas de plataforma del escritorio para el paso de seguridad (la app aún no las usa): el archivo de ajustes del escritorio (sin secretos; los valores fuera de rango vuelven a su valor por defecto), los avisos de bloqueo de la sesión de Windows y de suspensión recibidos con una ventana oculta como documenta Microsoft (sin sondeos), y excluir la ventana de las capturas de pantalla con `SetWindowDisplayAffinity`.
+
 ## [1.4.0] - 2026-10-18
 
 La app de Android no cambia. Con esta versión el cliente de escritorio lee y edita bóvedas como la app de Android (paso 6 del plan de escritorio).

@@ -6,6 +6,14 @@ All notable changes to this project are documented in this file. The format is b
 
 ## [Unreleased]
 
+## [1.4.1] - 2026-10-18
+
+The Android app does not change.
+
+### Added
+
+- Desktop platform pieces for the security step (not used by the app yet): the desktop settings file (no secrets; out-of-range values fall back to their default), the Windows session-lock and suspend notifications received through a hidden window as Microsoft documents (no polling), and excluding the window from screen captures with `SetWindowDisplayAffinity`.
+
 ## [1.4.0] - 2026-10-18
 
 The Android app does not change. With this version the desktop client reads and edits vaults like the Android app (step 6 of the desktop plan).
