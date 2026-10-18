@@ -149,7 +149,7 @@ private fun DetailBody(
             value = entry.url,
             view = view,
             shortcut = CTRL_U,
-            onOpen = { view.openUrl(entry.url) },
+            onOpen = if (isWebAddress(entry.url)) ({ view.openUrl(entry.url) }) else null,
         )
         customFields(entry).forEach { (name, value) ->
             DetailField(

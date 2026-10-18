@@ -6,6 +6,14 @@ All notable changes to this project are documented in this file. The format is b
 
 ## [Unreleased]
 
+## [1.3.1] - 2026-10-18
+
+The Android app does not change.
+
+### Fixed
+
+- Desktop, after a manual test of the three panels: the Open button only appears for web addresses (http and https), the copy confirmation reads "Copied: <field>", the disabled Settings button is readable on the top bar, the detail empties when the selected entry is not among the search results, and the search field no longer shows a clipped label.
+
 ## [1.3.0] - 2026-10-18
 
 The Android app does not change.

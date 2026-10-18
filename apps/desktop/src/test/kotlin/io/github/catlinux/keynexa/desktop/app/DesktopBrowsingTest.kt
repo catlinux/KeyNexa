@@ -9,6 +9,7 @@ import io.github.catlinux.keynexa.vault.Times
 import io.github.catlinux.keynexa.vault.Vault
 import io.github.catlinux.keynexa.vault.VaultSearch
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
@@ -100,6 +101,27 @@ class DesktopBrowsingTest {
         assertNull(browsableUri("ftp://github.com"))
         assertNull(browsableUri("https://"))
         assertNull(browsableUri("not an address"))
+    }
+
+    @Test
+    fun knowsWhichAddressesTheBrowserMayOpen() {
+        assertTrue(isWebAddress("https://github.com/ana"))
+        assertTrue(isWebAddress("http://example.org"))
+        assertFalse(isWebAddress("ssh://server.example.org"))
+        assertFalse(isWebAddress("ftp://example.org"))
+        assertFalse(isWebAddress("server.example.org"))
+        assertFalse(isWebAddress(""))
+    }
+
+    @Test
+    fun keepsTheSelectionOnlyWhileItIsVisible() {
+        val entry = data.githubId
+        val other = UUID.randomUUID()
+
+        assertEquals(entry, selectionAmong(entry, listOf(entry, other)))
+        assertNull(selectionAmong(entry, listOf(other)))
+        assertNull(selectionAmong(null, listOf(entry)))
+        assertNull(selectionAmong(entry, emptyList()))
     }
 
     @Test

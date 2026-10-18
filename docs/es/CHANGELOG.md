@@ -6,6 +6,14 @@ Todos los cambios notables de este proyecto se documentan en este archivo. El fo
 
 ## [Sin publicar]
 
+## [1.3.1] - 2026-10-18
+
+La app de Android no cambia.
+
+### Corregido
+
+- Escritorio, tras una prueba a mano de los tres paneles: el botón Abrir solo aparece en direcciones web (http y https), la confirmación de copia dice «Copiado: <campo>», el botón Ajustes desactivado se lee bien en la barra superior, el detalle se vacía cuando la entrada seleccionada no está entre los resultados de la búsqueda y el campo de búsqueda ya no muestra una etiqueta cortada.
+
 ## [1.3.0] - 2026-10-18
 
 La app de Android no cambia.

@@ -180,6 +180,7 @@ private fun EntryList(
     val focus = remember { FocusRequester() }
     val scope = rememberCoroutineScope()
     LaunchedEffect(view.selectedGroup) { focus.requestFocus() }
+    LaunchedEffect(rows) { view.selectEntry(selectionAmong(view.selectedEntry, rows.map { it.entry.id })) }
     LazyColumn(
         state = listState,
         modifier =

@@ -12,6 +12,15 @@ import java.io.IOException
 import java.util.UUID
 
 /**
+ * The selection to keep: [selected] itself while it is one of [visible], and nothing when it is not, so the detail
+ * goes back to its empty state when a search or a change of group leaves the selected entry out.
+ */
+internal fun selectionAmong(
+    selected: UUID?,
+    visible: Collection<UUID>,
+): UUID? = selected?.takeIf { it in visible }
+
+/**
  * What the three-panel browser is looking at: the selected group and entry, the search, the order of the list and the
  * last thing that was copied. It also copies to the clipboard and opens web addresses, so a screen never touches the
  * system on its own.
@@ -73,7 +82,7 @@ internal class DesktopVaultState(
         selectedEntry = null
     }
 
-    fun selectEntry(entryId: UUID) {
+    fun selectEntry(entryId: UUID?) {
         selectedEntry = entryId
     }
 

@@ -102,6 +102,9 @@ internal fun browsableUri(url: String): URI? {
     return if (scheme in WEB_SCHEMES && !uri.host.isNullOrBlank()) uri else null
 }
 
+/** True when [url] is an address the system browser may open. */
+internal fun isWebAddress(url: String): Boolean = browsableUri(url) != null
+
 /** The custom fields of [entry], in name order: everything that is not one of the five standard ones. */
 internal fun customFields(entry: Entry): List<Pair<String, FieldValue>> =
     entry.fields.entries

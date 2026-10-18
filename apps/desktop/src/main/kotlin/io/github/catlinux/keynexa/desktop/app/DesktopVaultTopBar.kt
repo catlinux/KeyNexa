@@ -50,6 +50,7 @@ private val ControlHeight = 44.dp
 private val ControlShape = RoundedCornerShape(12.dp)
 private const val QUIET_ALPHA = 0.85f
 private const val BORDER_ALPHA = 0.6f
+private const val DISABLED_ALPHA = 0.6f
 
 /** How long the pointer rests on a control before its tooltip appears. */
 private const val TOOLTIP_DELAY_MILLIS = 500
@@ -134,7 +135,7 @@ private fun SearchField(
         OutlinedTextField(
             value = view.query,
             onValueChange = { view.query = it },
-            label = { Text(text = label) },
+            placeholder = { Text(text = label) },
             singleLine = true,
             shape = ControlShape,
             colors =
@@ -159,17 +160,23 @@ private fun SearchField(
     }
 }
 
-/** The way to the settings, which still have no screen. */
+/** The way to the settings, which still have no screen: it stays readable while it is not available. */
 @Composable
 private fun SettingsButton(modifier: Modifier = Modifier) {
-    ShortcutTooltip(text = stringResource(Res.string.group_settings), modifier = modifier) {
+    val label = stringResource(Res.string.group_settings)
+    ShortcutTooltip(text = label, modifier = modifier) {
         OutlinedButton(
             onClick = {},
             enabled = false,
             shape = ControlShape,
+            colors =
+                ButtonDefaults.outlinedButtonColors(
+                    disabledContentColor = MaterialTheme.colorScheme.onPrimary.copy(alpha = DISABLED_ALPHA),
+                ),
+            border = BorderStroke(1.dp, MaterialTheme.colorScheme.onPrimary.copy(alpha = DISABLED_ALPHA)),
             modifier = Modifier.heightIn(min = ControlHeight),
         ) {
-            Text(text = stringResource(Res.string.group_settings))
+            Text(text = label)
         }
     }
 }

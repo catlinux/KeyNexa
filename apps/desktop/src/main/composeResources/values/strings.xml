@@ -92,7 +92,7 @@
     <string name="detail_empty">Select an entry to see its details.</string>
     <string name="detail_coming_soon">Coming in a later step.</string>
 
-    <string name="clipboard_copied">%1$s copied</string>
+    <string name="clipboard_copied">Copied: %1$s</string>
     <string name="status_shortcuts">Ctrl+F search · Ctrl+B copy user name · Ctrl+C copy password · Ctrl+U open URL · Ctrl+L lock</string>
     <string name="tooltip_shortcut">%1$s (%2$s)</string>
 
