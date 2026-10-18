@@ -11,4 +11,50 @@
     <string name="home_cancel">Cancel</string>
     <string name="instance_already_open">KeyNexa is already open</string>
     <string name="dialog_ok">OK</string>
+
+    <string name="unlock_password_label">Master password</string>
+    <string name="unlock_show_password">Show the password</string>
+    <string name="unlock_key_file_label">Key file (optional)</string>
+    <string name="unlock_key_file_choose">Choose a key file</string>
+    <string name="unlock_key_file_failed">That file could not be read. Try another one.</string>
+    <string name="unlock_key_file_chosen">Key file: %1$s</string>
+    <string name="unlock_key_file_remove">Remove the key file</string>
+    <string name="unlock_action">Unlock</string>
+    <string name="unlock_back_to_list">Back to the list</string>
+    <string name="unlock_use_system_keyboard">Use the system keyboard</string>
+    <string name="unlock_use_keypad">Use the KeyNexa keypad</string>
+    <string name="unlock_opening">Opening. this can take a few seconds.</string>
+    <string name="unlock_error_wrong_credentials">That password or key file does not open this vault. Check them and try again.</string>
+    <string name="unlock_error_invalid_key_file">That key file is not valid. Choose another one.</string>
+    <string name="unlock_error_not_a_vault">This file is not a KDBX vault.</string>
+    <string name="unlock_error_unsupported_format">This vault uses a format KeyNexa does not support yet.</string>
+    <string name="unlock_error_damaged">This file looks damaged or is still being synchronised. Wait a moment and try again: KeyNexa has not changed it.</string>
+    <string name="unlock_error_not_enough_memory">Your device does not have enough memory to open this vault. Lower the vault's Argon2 memory in another program (for example KeePassXC) and try again.</string>
+    <string name="unlock_error_unreachable">This file cannot be read. It may have been moved, or the permission to read it may have been revoked.</string>
+    <string name="entry_detail_show">Show</string>
+    <string name="entry_detail_hide">Hide</string>
+    <string name="entry_detail_untitled">Untitled</string>
+
+    <string name="save_saving">Saving.</string>
+    <string name="save_retry">Retry</string>
+    <string name="save_problem_title">Could not save.</string>
+    <string name="save_changes_kept">Your changes are still here and in a private encrypted copy. Nothing has been lost.</string>
+    <string name="save_problem_external_change">The file changed on another device, and this version cannot be merged with it yet.</string>
+    <string name="save_problem_unmergeable">The file changed on another device, and the two versions cannot be combined safely.</string>
+    <string name="save_problem_changed_during_save">The file changed again while saving. Saving once more will merge the newest version.</string>
+    <string name="save_problem_file_unreadable">The file on storage looks damaged or is still being copied, so KeyNexa has not written to it.</string>
+    <string name="save_problem_credentials_changed">This vault no longer opens with the credentials in use; another device may have changed them.</string>
+    <string name="save_problem_encode_failed">KeyNexa could not build the encrypted file for this vault.</string>
+    <string name="save_problem_storage_error">The storage refused to write the file: permission, space or a provider failure.</string>
+    <string name="save_problem_write_not_verified">The file does not hold exactly what KeyNexa wrote, so the save is not trusted.</string>
+    <string name="save_recovered_title">Unsaved changes from your previous session were found.</string>
+    <string name="save_recovered_restore">Restore</string>
+    <string name="save_recovered_discard">Discard</string>
+
+    <string name="group_status_saved">Saved</string>
+    <string name="group_status_unsaved">Unsaved changes</string>
+    <string name="group_lock">Lock</string>
+    <string name="group_section_groups">Groups</string>
+    <string name="group_section_entries">Entries</string>
+    <string name="open_vault_empty">This vault has no entries yet.</string>
 </resources>

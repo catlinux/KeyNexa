@@ -6,6 +6,14 @@ Todos los cambios notables de este proyecto se documentan en este archivo. El fo
 
 ## [Sin publicar]
 
+## [1.1.2] - 2026-10-18
+
+La app de Android no cambia.
+
+### Añadido
+
+- Escritorio: desbloquear una bóveda con la contraseña maestra y/o un archivo de clave (el teclado de KeyNexa está disponible y desactivado por defecto), los mismos mensajes de error que en Android, y una primera vista de la bóveda abierta con su estado de guardado, el aviso para restaurar o descartar cambios sin guardar de un guardado interrumpido y el bloqueo con un botón o con Ctrl+L. El campo de la contraseña se vacía en cuanto la contraseña pasa a la sesión, y la pantalla borra sus copias de la contraseña y del archivo de clave al cerrarse.
+
 ## [1.1.1] - 2026-10-18
 
 La app de Android no cambia.

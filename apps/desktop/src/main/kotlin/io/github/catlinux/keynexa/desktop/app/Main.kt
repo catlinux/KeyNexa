@@ -10,12 +10,19 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.key.Key
+import androidx.compose.ui.input.key.KeyEvent
+import androidx.compose.ui.input.key.KeyEventType
+import androidx.compose.ui.input.key.isCtrlPressed
+import androidx.compose.ui.input.key.key
+import androidx.compose.ui.input.key.type
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.ApplicationScope
@@ -28,6 +35,9 @@ import io.github.catlinux.keynexa.desktop.app.generated.resources.dialog_ok
 import io.github.catlinux.keynexa.desktop.app.generated.resources.home_open_existing
 import io.github.catlinux.keynexa.desktop.app.generated.resources.instance_already_open
 import io.github.catlinux.keynexa.session.KnownVault
+import io.github.catlinux.keynexa.session.KnownVaults
+import io.github.catlinux.keynexa.session.SessionState
+import io.github.catlinux.keynexa.session.VaultSession
 import io.github.catlinux.keynexa.ui.theme.KeyNexaTheme
 import io.github.catlinux.keynexa.vault.VaultLocation
 import org.jetbrains.compose.resources.stringResource
@@ -57,19 +67,32 @@ fun main() =
         }
     }
 
-/** The main window: the home screen, and locking the vault when the window is closed. */
+/** The main window: the home screen, the unlock screen of the vault the user picked, the open vault, and locking. */
 @Composable
 private fun ApplicationScope.KeyNexaWindow(
     container: DesktopContainer,
     lock: InstanceLock,
 ) {
-    var vaults by remember { mutableStateOf(container.knownVaults.all()) }
-    val openTitle = stringResource(Res.string.home_open_existing)
+    val session = container.session
+    val state by session.state.collectAsState()
+    var selected by remember { mutableStateOf<KnownVault?>(null) }
+    val lockVault: () -> Unit = {
+        selected = null
+        session.lock()
+    }
     Window(
         onCloseRequest = {
-            container.session.lock()
+            session.lock()
             lock.close()
             exitApplication()
+        },
+        onKeyEvent = { event ->
+            if (isLockShortcut(event) && state is SessionState.Open) {
+                lockVault()
+                true
+            } else {
+                false
+            }
         },
         state = rememberWindowState(size = WindowSize),
         title = stringResource(Res.string.app_name),
@@ -77,25 +100,98 @@ private fun ApplicationScope.KeyNexaWindow(
         window.minimumSize = Dimension(MIN_WINDOW_WIDTH, MIN_WINDOW_HEIGHT)
         KeyNexaTheme(darkTheme = isSystemInDarkTheme()) {
             Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
-                DesktopHomeScreen(
-                    vaults = vaults,
-                    onOpenExisting = {
-                        chooseVaultFile(window, openTitle)?.let { file ->
-                            container.knownVaults.add(
-                                KnownVault(vaultNameOf(file.name), VaultLocation(file.absolutePath)),
-                            )
-                            vaults = container.knownVaults.all()
-                        }
-                    },
-                    onRemove = { vault ->
-                        container.knownVaults.remove(vault.location)
-                        vaults = container.knownVaults.all()
-                    },
-                    onOpen = { },
+                KeyNexaScreen(
+                    session = session,
+                    state = state,
+                    knownVaults = container.knownVaults,
+                    selected = selected,
+                    onSelect = { selected = it },
+                    onLock = lockVault,
+                    parent = window,
                 )
             }
         }
     }
+}
+
+/** True when the key event is the Ctrl+L that locks the open vault. */
+private fun isLockShortcut(event: KeyEvent): Boolean =
+    event.type == KeyEventType.KeyDown && event.isCtrlPressed && event.key == Key.L
+
+/** The screen for the current state: the open vault, the unlock screen of the picked vault, or the home list. */
+@Suppress("LongParameterList")
+@Composable
+private fun KeyNexaScreen(
+    session: VaultSession,
+    state: SessionState,
+    knownVaults: KnownVaults,
+    selected: KnownVault?,
+    onSelect: (KnownVault?) -> Unit,
+    onLock: () -> Unit,
+    parent: Frame,
+) {
+    val unlockVault =
+        when (state) {
+            is SessionState.Unlocking -> state.vault
+            is SessionState.Failed -> state.vault
+            else -> selected
+        }
+    when {
+        state is SessionState.Open ->
+            DesktopOpenVaultScreen(
+                state = state,
+                onLock = onLock,
+                onRetrySave = session::retrySave,
+                onRestoreUnsaved = session::restoreUnsaved,
+                onDiscardUnsaved = session::discardUnsaved,
+            )
+        unlockVault != null ->
+            DesktopUnlockScreen(
+                parent = parent,
+                vault = unlockVault,
+                state = state,
+                onUnlock = { credentials ->
+                    onSelect(unlockVault)
+                    session.unlock(unlockVault, credentials)
+                },
+                onEdited = {
+                    onSelect(unlockVault)
+                    session.dismissFailure()
+                },
+                onBack = {
+                    onSelect(null)
+                    session.dismissFailure()
+                },
+            )
+        else -> KeyNexaHome(knownVaults = knownVaults, onSelect = onSelect, parent = parent)
+    }
+}
+
+/** The list of known vaults, with the way to add one and to drop one from the list. */
+@Composable
+private fun KeyNexaHome(
+    knownVaults: KnownVaults,
+    onSelect: (KnownVault) -> Unit,
+    parent: Frame,
+) {
+    var vaults by remember { mutableStateOf(knownVaults.all()) }
+    val openTitle = stringResource(Res.string.home_open_existing)
+    DesktopHomeScreen(
+        vaults = vaults,
+        onOpenExisting = {
+            chooseVaultFile(parent, openTitle)?.let { file ->
+                val vault = KnownVault(vaultNameOf(file.name), VaultLocation(file.absolutePath))
+                knownVaults.add(vault)
+                vaults = knownVaults.all()
+                onSelect(vault)
+            }
+        },
+        onRemove = { vault ->
+            knownVaults.remove(vault.location)
+            vaults = knownVaults.all()
+        },
+        onOpen = onSelect,
+    )
 }
 
 /** The small window a second instance shows before leaving. */

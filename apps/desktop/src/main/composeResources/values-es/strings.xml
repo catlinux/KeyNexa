@@ -11,4 +11,50 @@
     <string name="home_cancel">Cancelar</string>
     <string name="instance_already_open">KeyNexa ya está abierto</string>
     <string name="dialog_ok">Aceptar</string>
+
+    <string name="unlock_password_label">Contraseña maestra</string>
+    <string name="unlock_show_password">Mostrar la contraseña</string>
+    <string name="unlock_key_file_label">Archivo de clave (opcional)</string>
+    <string name="unlock_key_file_choose">Elegir un archivo de clave</string>
+    <string name="unlock_key_file_failed">No se ha podido leer ese archivo. Prueba con otro.</string>
+    <string name="unlock_key_file_chosen">Archivo de clave: %1$s</string>
+    <string name="unlock_key_file_remove">Quitar el archivo de clave</string>
+    <string name="unlock_action">Desbloquear</string>
+    <string name="unlock_back_to_list">Volver a la lista</string>
+    <string name="unlock_use_system_keyboard">Usar el teclado del sistema</string>
+    <string name="unlock_use_keypad">Usar el teclado de KeyNexa</string>
+    <string name="unlock_opening">Abriendo. puede tardar unos segundos.</string>
+    <string name="unlock_error_wrong_credentials">Esa contraseña o ese archivo de clave no abren esta bóveda. Compruébalos e inténtalo de nuevo.</string>
+    <string name="unlock_error_invalid_key_file">Ese archivo de clave no es válido. Elige otro.</string>
+    <string name="unlock_error_not_a_vault">Este archivo no es una bóveda KDBX.</string>
+    <string name="unlock_error_unsupported_format">Esta bóveda usa un formato que KeyNexa todavía no admite.</string>
+    <string name="unlock_error_damaged">Este archivo parece dañado o se está sincronizando todavía. Espera un momento y vuelve a intentarlo: KeyNexa no lo ha modificado.</string>
+    <string name="unlock_error_not_enough_memory">Tu dispositivo no tiene memoria suficiente para abrir esta bóveda. Reduce la memoria de Argon2 de la bóveda desde otro programa (por ejemplo KeePassXC) y vuelve a intentarlo.</string>
+    <string name="unlock_error_unreachable">No se puede leer este archivo. Puede que se haya movido o que se haya revocado el permiso para leerlo.</string>
+    <string name="entry_detail_show">Mostrar</string>
+    <string name="entry_detail_hide">Ocultar</string>
+    <string name="entry_detail_untitled">Sin título</string>
+
+    <string name="save_saving">Guardando.</string>
+    <string name="save_retry">Reintentar</string>
+    <string name="save_problem_title">No se ha podido guardar.</string>
+    <string name="save_changes_kept">Tus cambios siguen aquí y en una copia privada cifrada. No se ha perdido nada.</string>
+    <string name="save_problem_external_change">El archivo ha cambiado en otro dispositivo y esta versión todavía no se puede fusionar con él.</string>
+    <string name="save_problem_unmergeable">El archivo ha cambiado en otro dispositivo y las dos versiones no se pueden combinar con seguridad.</string>
+    <string name="save_problem_changed_during_save">El archivo ha vuelto a cambiar mientras se guardaba. Si guardas otra vez, se fusionará la versión más reciente.</string>
+    <string name="save_problem_file_unreadable">El archivo del almacenamiento parece dañado o se sigue copiando, así que KeyNexa no ha escrito en él.</string>
+    <string name="save_problem_credentials_changed">Esta bóveda ya no se abre con las credenciales en uso; puede que otro dispositivo las haya cambiado.</string>
+    <string name="save_problem_encode_failed">KeyNexa no ha podido construir el archivo cifrado de esta bóveda.</string>
+    <string name="save_problem_storage_error">El almacenamiento no ha querido escribir el archivo: permiso, espacio o un fallo del proveedor.</string>
+    <string name="save_problem_write_not_verified">El archivo no contiene exactamente lo que KeyNexa escribió, así que el guardado no es de fiar.</string>
+    <string name="save_recovered_title">Se encontraron cambios sin guardar de la sesión anterior.</string>
+    <string name="save_recovered_restore">Restaurar</string>
+    <string name="save_recovered_discard">Descartar</string>
+
+    <string name="group_status_saved">Guardado</string>
+    <string name="group_status_unsaved">Cambios sin guardar</string>
+    <string name="group_lock">Bloquear</string>
+    <string name="group_section_groups">Grupos</string>
+    <string name="group_section_entries">Entradas</string>
+    <string name="open_vault_empty">Esta bóveda todavía no tiene entradas.</string>
 </resources>

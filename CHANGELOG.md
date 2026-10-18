@@ -6,6 +6,14 @@ All notable changes to this project are documented in this file. The format is b
 
 ## [Unreleased]
 
+## [1.1.2] - 2026-10-18
+
+The Android app does not change.
+
+### Added
+
+- Desktop: unlocking a vault with the master password and/or a key file (the KeyNexa keypad is available and off by default), the same error messages as Android, and a first view of the open vault with its save status, the notice to restore or discard unsaved changes from an interrupted save, and locking with a button or Ctrl+L. The password field is emptied as soon as the password is handed to the session, and the screen wipes its copies of the password and key file when it closes.
+
 ## [1.1.1] - 2026-10-18
 
 The Android app does not change.
