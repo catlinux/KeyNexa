@@ -47,3 +47,7 @@ Opción 2.
 2. El teclado en Compose y su uso en la pantalla de desbloqueo: ajuste (activado por defecto), botón de cambio, borrado al salir, al bloquear y en segundo plano. Textos en inglés y español.
 3. Prueba en el dispositivo con TalkBack y texto grande; después la pantalla de crear bóveda y el diálogo de contraseña de las copias de conflicto.
 4. Documentación en los dos idiomas: DESIGN (componente de teclado), THREAT_MODEL (T7 y T22), lista de funciones del README, TODO y CHANGELOG.
+
+## Adenda (2026-10-18, antes de cualquier publicación)
+
+El punto 6 dejaba un hueco: con un lector de pantalla activo, el teclado anuncia cada tecla en voz alta, mientras que el teclado del sistema sigue el ajuste de Android que evita leer las contraseñas (desactivado por defecto, salvo con auriculares). Por eso, mientras haya un lector de pantalla activo, el ajuste no se aplica y las contraseñas maestras se escriben con el teclado del sistema; el usuario todavía puede pasar al teclado propio a propósito. El titular no necesita el teclado con un lector de pantalla, y así nunca es menos privado que el teclado del sistema.

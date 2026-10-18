@@ -10,6 +10,12 @@ All notable changes to this project are documented in this file. The format is b
 
 - ADR-0008 (proposed) and the plan for optional cloud copies of the vault with an assistant: an `offline` build with no network access and a `cloud` build, S3 first and then Dropbox, OneDrive and Google Drive.
 
+## [0.33.3] - 2026-10-18
+
+### Security
+
+- While a screen reader is on, master passwords are typed with the system keyboard instead of the KeyNexa keypad: the keypad would speak every key aloud, whereas the system keyboard follows the Android setting that keeps passwords from being spoken (ADR-0010 addendum). Patch.
+
 ## [0.33.2] - 2026-10-18
 
 ### Changed

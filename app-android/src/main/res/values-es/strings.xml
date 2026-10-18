@@ -279,7 +279,7 @@
     <string name="settings_allow_screenshots">Permitir capturas de pantalla</string>
     <string name="settings_allow_screenshots_help">Si está desactivado, la app no se puede capturar ni grabar y se ve en blanco en las apps recientes. Recomendado.</string>
     <string name="settings_password_keypad">Escribir las contraseñas con el teclado de KeyNexa</string>
-    <string name="settings_password_keypad_help">La contraseña maestra se escribe con un teclado dibujado por KeyNexa, así que el teclado del sistema nunca la ve. Puedes pasar al teclado del sistema en la pantalla de desbloqueo cuando quieras.</string>
+    <string name="settings_password_keypad_help">La contraseña maestra se escribe con un teclado dibujado por KeyNexa, así que el teclado del sistema nunca la ve. Puedes pasar al teclado del sistema en la pantalla de desbloqueo cuando quieras. Con un lector de pantalla activo se usa el teclado del sistema, porque no lee las contraseñas en voz alta.</string>
     <string name="settings_clipboard_delay">Tiempo que un secreto copiado queda en el portapapeles</string>
     <string name="settings_clipboard_note">Android solo permite borrar el portapapeles cuando KeyNexa está delante: si copias y cambias de app, se borra al volver. Al bloquear se borra siempre.</string>
     <string name="settings_immediately">Inmediatamente</string>

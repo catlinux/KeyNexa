@@ -47,3 +47,7 @@ Option 2.
 2. The keypad composable and its use on the unlock screen: setting (on by default), switch button, wiping on leave, lock and background. Strings in English and Spanish.
 3. Device check with TalkBack and large text; then the create-vault screen and the conflict-copy password dialog.
 4. Docs in both languages: DESIGN (keypad component), THREAT_MODEL (T7 and T22), README feature list, TODO and CHANGELOG.
+
+## Addendum (2026-10-18, before any release)
+
+Point 6 left a gap: with a screen reader on, the keypad announces every key aloud, while the system keyboard follows the Android setting that keeps passwords from being spoken (off by default, except with headphones). So while a screen reader is on, the setting does not apply and master passwords are typed with the system keyboard; the user can still switch to the keypad on purpose. The owner does not need the keypad with a screen reader, and this keeps it from ever being less private than the system keyboard.

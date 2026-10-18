@@ -272,7 +272,7 @@
     <string name="settings_allow_screenshots">Allow screenshots</string>
     <string name="settings_allow_screenshots_help">If it is off, the app cannot be captured or recorded and it shows blank in the recent apps. Recommended.</string>
     <string name="settings_password_keypad">Type passwords with the KeyNexa keypad</string>
-    <string name="settings_password_keypad_help">The master password is typed with a keypad drawn by KeyNexa, so the system keyboard never sees it. You can switch to the system keyboard on the unlock screen at any time.</string>
+    <string name="settings_password_keypad_help">The master password is typed with a keypad drawn by KeyNexa, so the system keyboard never sees it. You can switch to the system keyboard on the unlock screen at any time. With a screen reader on, the system keyboard is used, because it does not read passwords aloud.</string>
     <string name="settings_clipboard_delay">How long a copied secret stays on the clipboard</string>
     <string name="settings_clipboard_note">Android only lets KeyNexa clear the clipboard while KeyNexa is in front: if you copy and switch apps, it is cleared when you come back. Locking always clears it.</string>
     <string name="settings_immediately">Immediately</string>

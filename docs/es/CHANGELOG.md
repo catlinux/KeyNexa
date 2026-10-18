@@ -10,6 +10,12 @@ Todos los cambios notables de este proyecto se documentan en este archivo. El fo
 
 - ADR-0008 (propuesta) y el plan de las copias opcionales de la bóveda en la nube con un asistente: una compilación `offline` sin acceso a la red y una `cloud`, primero S3 y después Dropbox, OneDrive y Google Drive.
 
+## [0.33.3] - 2026-10-18
+
+### Seguridad
+
+- Mientras haya un lector de pantalla activo, las contraseñas maestras se escriben con el teclado del sistema y no con el de KeyNexa: el teclado propio leería cada tecla en voz alta, y el del sistema sigue el ajuste de Android que evita leer las contraseñas (adenda del ADR-0010). Parche.
+
 ## [0.33.2] - 2026-10-18
 
 ### Cambiado
