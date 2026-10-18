@@ -10,6 +10,16 @@ Todos los cambios notables de este proyecto se documentan en este archivo. El fo
 
 - ADR-0008 (propuesta) y el plan de las copias opcionales de la bóveda en la nube con un asistente: una compilación `offline` sin acceso a la red y una `cloud`, primero S3 y después Dropbox, OneDrive y Google Drive.
 
+## [0.30.4] - 2026-10-18
+
+### Corregido
+
+- La pantalla de desbloqueo mostraba el archivo de la bóveda como una ruta codificada como URL (`primary%3Asyncthing-proves%2F…`); ahora muestra el nombre de archivo normal. Parche: solo visualización.
+
+### Cambiado
+
+- Redacción en español: «cubo» (bucket) pasa a «contenedor» en el asistente de la nube y en la guía de la nube, el aviso de privacidad y el ADR-0008 en español.
+
 ## [0.30.3] - 2026-10-17
 
 ### Añadido

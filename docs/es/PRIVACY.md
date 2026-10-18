@@ -13,7 +13,7 @@ KeyNexa es local-first: tu bóveda es un archivo que te pertenece. El proyecto n
 
 - Solo envía algo después de que leas y aceptes la pantalla de consentimiento.
 - Qué envía: **solo una copia cifrada del archivo de tu bóveda** (`.kdbx`), tal cual está en disco. La contraseña maestra, el archivo de clave, las claves derivadas y el contenido descifrado nunca salen del dispositivo.
-- A dónde va: **solo al servicio en la nube que tú elijas y configures** (por ejemplo un cubo compatible con S3). KeyNexa no tiene servidores propios.
+- A dónde va: **solo al servicio en la nube que tú elijas y configures** (por ejemplo un contenedor compatible con S3). KeyNexa no tiene servidores propios.
 - Para qué: para guardar copias de seguridad de la bóveda y, más adelante, para sincronizar entre tus dispositivos.
 - No se envían estadísticas, ni identificadores de publicidad, ni informes de fallos de terceros.
 

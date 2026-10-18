@@ -275,8 +275,9 @@ private fun initialOf(name: String): String {
 
 /** The file part of the vault location, when it looks like a file name. */
 private fun fileNameOf(vault: KnownVault): String? {
-    val candidate = vault.location.value.substringAfterLast('/')
-    return candidate.takeIf { it.isNotBlank() && it != vault.location.value && '.' in it }
+    val decoded = Uri.decode(vault.location.value)
+    val candidate = decoded.substringAfterLast('/')
+    return candidate.takeIf { it.isNotBlank() && it != decoded && '.' in it }
 }
 
 /** The master password, with the button that reveals it, and the keyboard action that submits the form. */

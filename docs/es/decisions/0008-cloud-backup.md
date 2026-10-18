@@ -21,7 +21,7 @@ Restricciones:
 
 1. **Una carpeta que ofrece el selector del sistema (SAF).** Sencillo, sin código de red y sigue disponible; pero el soporte de cada proveedor es desigual y no hay nada que guíe al usuario.
 2. **WebDAV** (Koofr, Nextcloud, servidor propio). Protocolo simple; quedan pocos proveedores gratuitos.
-3. **Almacenamiento compatible con S3** (Backblaze B2, Cloudflare R2, MinIO en un VPS, AWS). No necesita registrar el proyecto y el servidor ofrece versiones y retención; el usuario debe crear cuenta, cubo y claves, así que el asistente tiene que guiarlo.
+3. **Almacenamiento compatible con S3** (Backblaze B2, Cloudflare R2, MinIO en un VPS, AWS). No necesita registrar el proyecto y el servidor ofrece versiones y retención; el usuario debe crear cuenta, contenedor y claves, así que el asistente tiene que guiarlo.
 4. **OAuth con la API REST del proveedor** (Google Drive, Dropbox, OneDrive). Lo más fácil para el usuario final (un solo inicio de sesión); necesita los registros de arriba y las reglas de cada proveedor deciden el esfuerzo.
 5. **Syncthing como complemento opcional.** Ya está en evaluación (TODO); es independiente de este registro.
 

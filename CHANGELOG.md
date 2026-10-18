@@ -10,6 +10,16 @@ All notable changes to this project are documented in this file. The format is b
 
 - ADR-0008 (proposed) and the plan for optional cloud copies of the vault with an assistant: an `offline` build with no network access and a `cloud` build, S3 first and then Dropbox, OneDrive and Google Drive.
 
+## [0.30.4] - 2026-10-18
+
+### Fixed
+
+- The unlock screen showed the vault file as a URL-encoded path (`primary%3Asyncthing-proves%2F…`); it now shows the plain file name. Patch: display only.
+
+### Changed
+
+- Spanish wording: «cubo» (bucket) becomes «contenedor» in the cloud assistant and in the Spanish cloud guide, privacy notice and ADR-0008.
+
 ## [0.30.3] - 2026-10-17
 
 ### Added
