@@ -118,6 +118,9 @@ internal class DesktopVaultState(
     var prompt by mutableStateOf<VaultPrompt?>(null)
         private set
 
+    /** True for a moment after a version written elsewhere was loaded, so the status bar can say so. */
+    var updatedElsewhere by mutableStateOf(false)
+
     /** The entries the centre panel is showing, in order, so a removal can move the selection sensibly. */
     var visibleRows by mutableStateOf<List<UUID>>(emptyList())
         private set

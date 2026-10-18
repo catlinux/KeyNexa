@@ -6,6 +6,14 @@ All notable changes to this project are documented in this file. The format is b
 
 ## [Unreleased]
 
+## [1.4.0] - 2026-10-18
+
+The Android app does not change. With this version the desktop client reads and edits vaults like the Android app (step 6 of the desktop plan).
+
+### Added
+
+- Desktop: while the window has the focus, the vault file is checked every 5 seconds and a version written elsewhere (for example by Syncthing) is loaded with a short notice; the conflict-copies notice offers the same actions as Android (delete the merged copies, merge copies written with another password, keep them).
+
 ## [1.3.3] - 2026-10-18
 
 The Android app does not change.

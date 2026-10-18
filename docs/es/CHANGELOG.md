@@ -6,6 +6,14 @@ Todos los cambios notables de este proyecto se documentan en este archivo. El fo
 
 ## [Sin publicar]
 
+## [1.4.0] - 2026-10-18
+
+La app de Android no cambia. Con esta versión el cliente de escritorio lee y edita bóvedas como la app de Android (paso 6 del plan de escritorio).
+
+### Añadido
+
+- Escritorio: mientras la ventana tiene el foco, el archivo de la bóveda se comprueba cada 5 segundos y una versión escrita en otro sitio (por ejemplo por Syncthing) se carga con un aviso breve; el aviso de copias de conflicto ofrece las mismas acciones que Android (borrar las copias fusionadas, fusionar copias escritas con otra contraseña, conservarlas).
+
 ## [1.3.3] - 2026-10-18
 
 La app de Android no cambia.

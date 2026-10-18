@@ -94,6 +94,31 @@
     <string name="detail_coming_soon">Llegará en un paso posterior.</string>
 
     <string name="clipboard_copied">Copiado: %1$s</string>
+    <string name="vault_updated_elsewhere">Actualizado con cambios hechos en otro sitio</string>
+    <plurals name="conflict_merged_now">
+        <item quantity="one">Se ha fusionado %1$d copia de conflicto de Syncthing en la bóveda. ¿Borrar las copias?</item>
+        <item quantity="many">Se han fusionado %1$d copias de conflicto de Syncthing en la bóveda. ¿Borrar las copias?</item>
+        <item quantity="other">Se han fusionado %1$d copias de conflicto de Syncthing en la bóveda. ¿Borrar las copias?</item>
+    </plurals>
+    <plurals name="conflict_merged_before">
+        <item quantity="one">Ya se fusionó %1$d copia de conflicto y sigue ahí. ¿Borrar las copias?</item>
+        <item quantity="many">Ya se fusionaron %1$d copias de conflicto y siguen ahí. ¿Borrar las copias?</item>
+        <item quantity="other">Ya se fusionaron %1$d copias de conflicto y siguen ahí. ¿Borrar las copias?</item>
+    </plurals>
+    <string name="conflict_delete_copies">Borrar las copias</string>
+    <string name="conflict_keep_copies">Mantener</string>
+    <string name="conflict_problems_title">Estas copias no se han podido fusionar:</string>
+    <string name="conflict_problem_other_password">Una copia está escrita con otra contraseña, así que no se puede fusionar. No se ha modificado.</string>
+    <string name="conflict_problem_damaged">Una copia parece dañada o se sigue sincronizando. KeyNexa lo volverá a intentar.</string>
+    <string name="conflict_problem_other_vault">Una copia es de otra bóveda.</string>
+    <string name="conflict_problem_unreadable">No se ha podido leer una copia.</string>
+    <string name="conflict_enter_other_password">Escribir esa contraseña</string>
+    <string name="conflict_other_password_rejected">Esa contraseña no ha abierto la copia, así que sigue sin fusionar.</string>
+    <string name="conflict_password_title">Contraseña de la copia</string>
+    <string name="conflict_password_label">Contraseña</string>
+    <string name="conflict_password_show">Mostrar la contraseña</string>
+    <string name="conflict_password_merge">Fusionar</string>
+    <string name="conflict_password_cancel">Cancelar</string>
     <string name="status_shortcuts">Ctrl+F buscar · Ctrl+B copiar usuario · Ctrl+C copiar contraseña · Ctrl+U abrir URL · Ctrl+N entrada nueva · Ctrl+E editar · Ctrl+L bloquear</string>
     <string name="tooltip_shortcut">%1$s (%2$s)</string>
 

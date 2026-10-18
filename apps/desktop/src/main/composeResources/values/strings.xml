@@ -93,6 +93,29 @@
     <string name="detail_coming_soon">Coming in a later step.</string>
 
     <string name="clipboard_copied">Copied: %1$s</string>
+    <string name="vault_updated_elsewhere">Updated with changes made elsewhere</string>
+    <plurals name="conflict_merged_now">
+        <item quantity="one">%1$d Syncthing conflict copy was merged into the vault. Delete the copies?</item>
+        <item quantity="other">%1$d Syncthing conflict copies were merged into the vault. Delete the copies?</item>
+    </plurals>
+    <plurals name="conflict_merged_before">
+        <item quantity="one">%1$d conflict copy was merged earlier and is still there. Delete the copies?</item>
+        <item quantity="other">%1$d conflict copies were merged earlier and are still there. Delete the copies?</item>
+    </plurals>
+    <string name="conflict_delete_copies">Delete the copies</string>
+    <string name="conflict_keep_copies">Keep</string>
+    <string name="conflict_problems_title">These copies could not be merged:</string>
+    <string name="conflict_problem_other_password">A copy is written with another password, so it cannot be merged. It has not been touched.</string>
+    <string name="conflict_problem_damaged">A copy looks damaged or is still being synchronised. KeyNexa will try again.</string>
+    <string name="conflict_problem_other_vault">A copy belongs to another vault.</string>
+    <string name="conflict_problem_unreadable">A copy could not be read.</string>
+    <string name="conflict_enter_other_password">Enter that password</string>
+    <string name="conflict_other_password_rejected">That password did not open the copy, so it stays unmerged.</string>
+    <string name="conflict_password_title">Password of the copy</string>
+    <string name="conflict_password_label">Password</string>
+    <string name="conflict_password_show">Show the password</string>
+    <string name="conflict_password_merge">Merge</string>
+    <string name="conflict_password_cancel">Cancel</string>
     <string name="status_shortcuts">Ctrl+F search · Ctrl+B copy user name · Ctrl+C copy password · Ctrl+U open URL · Ctrl+N new entry · Ctrl+E edit · Ctrl+L lock</string>
     <string name="tooltip_shortcut">%1$s (%2$s)</string>
 

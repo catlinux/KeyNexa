@@ -18,6 +18,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.ApplicationScope
@@ -38,6 +39,7 @@ import io.github.catlinux.keynexa.session.VaultSession
 import io.github.catlinux.keynexa.ui.theme.KeyNexaTheme
 import io.github.catlinux.keynexa.vault.NewVault
 import io.github.catlinux.keynexa.vault.VaultLocation
+import kotlinx.coroutines.delay
 import org.jetbrains.compose.resources.stringResource
 import java.awt.Dimension
 import java.awt.FileDialog
@@ -46,6 +48,9 @@ import java.io.File
 
 /** The file the first instance locks, so a second one knows KeyNexa is already running. */
 private const val INSTANCE_LOCK = "instance.lock"
+
+/** How often an open vault looks for a version written elsewhere, while the window has the focus. */
+private const val REFRESH_MILLIS = 5_000L
 
 private val WindowSize = DpSize(1100.dp, 750.dp)
 private val AlreadyOpenWindowSize = DpSize(380.dp, 190.dp)
@@ -67,6 +72,7 @@ fun main() =
 
 /** The main window: the home screen, the unlock screen of the vault the user picked, the open vault, and locking. */
 @Composable
+@Suppress("LongMethod")
 private fun ApplicationScope.KeyNexaWindow(
     container: DesktopContainer,
     lock: InstanceLock,
@@ -75,7 +81,20 @@ private fun ApplicationScope.KeyNexaWindow(
     val state by session.state.collectAsState()
     var selected by remember { mutableStateOf<KnownVault?>(null) }
     val view = remember { DesktopVaultState(container.clipboard, session) }
-    val openVault = (state as? SessionState.Open)?.vault
+    val openState = state as? SessionState.Open
+    val openVault = openState?.vault
+    val windowFocused = LocalWindowInfo.current.isWindowFocused
+    LaunchedEffect(windowFocused, openVault) {
+        if (!windowFocused || openState == null) return@LaunchedEffect
+        session.refreshIfChanged()
+        while (true) {
+            delay(REFRESH_MILLIS)
+            session.refreshIfChanged()
+        }
+    }
+    LaunchedEffect(openState?.lastExternalChangeMillis) {
+        if (openState?.lastExternalChangeMillis != null) view.updatedElsewhere = true
+    }
     LaunchedEffect(openVault) {
         val content = (state as? SessionState.Open)?.current
         if (content != null) view.open(content) else view.reset()
@@ -154,6 +173,9 @@ private fun KeyNexaScreen(
                 onRetrySave = session::retrySave,
                 onRestoreUnsaved = session::restoreUnsaved,
                 onDiscardUnsaved = session::discardUnsaved,
+                onDeleteConflictCopies = session::deleteConflictCopies,
+                onMergeOtherPassword = session::mergeOtherPasswordCopies,
+                onDismissConflicts = session::dismissConflicts,
                 parent = parent,
             )
         unlockVault != null ->

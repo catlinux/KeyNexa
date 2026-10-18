@@ -13,6 +13,10 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
@@ -20,7 +24,9 @@ import androidx.compose.ui.unit.dp
 import io.github.catlinux.keynexa.desktop.app.generated.resources.Res
 import io.github.catlinux.keynexa.desktop.app.generated.resources.clipboard_copied
 import io.github.catlinux.keynexa.desktop.app.generated.resources.status_shortcuts
+import io.github.catlinux.keynexa.desktop.app.generated.resources.vault_updated_elsewhere
 import io.github.catlinux.keynexa.session.SessionState
+import io.github.catlinux.keynexa.vault.Credentials
 import kotlinx.coroutines.delay
 import org.jetbrains.compose.resources.stringResource
 import java.awt.Frame
@@ -30,6 +36,8 @@ private val GroupPanelWidth = 240.dp
 private val StatusPadding = 8.dp
 private val StatusGap = 12.dp
 private const val COPIED_MILLIS = 2_500L
+private val BannerPadding = 12.dp
+private const val UPDATED_MILLIS = 4_000L
 private const val DIVIDER_ALPHA = 0.3f
 
 /**
@@ -46,9 +54,13 @@ internal fun DesktopVaultScreen(
     onRetrySave: () -> Unit,
     onRestoreUnsaved: () -> Unit,
     onDiscardUnsaved: () -> Unit,
+    onDeleteConflictCopies: () -> Unit,
+    onMergeOtherPassword: (Credentials) -> Unit,
+    onDismissConflicts: () -> Unit,
     parent: Frame,
     modifier: Modifier = Modifier,
 ) {
+    var askingOtherPassword by remember { mutableStateOf(false) }
     Column(modifier = modifier.fillMaxSize()) {
         VaultTopBar(state = state, view = view, onLock = onLock)
         VaultNotices(
@@ -57,6 +69,15 @@ internal fun DesktopVaultScreen(
             onRestoreUnsaved = onRestoreUnsaved,
             onDiscardUnsaved = onDiscardUnsaved,
         )
+        state.conflicts?.let { report ->
+            ConflictBanner(
+                report = report,
+                onDeleteCopies = onDeleteConflictCopies,
+                onEnterPassword = { askingOtherPassword = true },
+                onDismiss = onDismissConflicts,
+                modifier = Modifier.padding(BannerPadding),
+            )
+        }
         Row(modifier = Modifier.weight(1f).fillMaxWidth()) {
             GroupPanel(vault = state.current, view = view, modifier = Modifier.width(GroupPanelWidth))
             VerticalDivider(color = MaterialTheme.colorScheme.outline.copy(alpha = DIVIDER_ALPHA))
@@ -73,6 +94,15 @@ internal fun DesktopVaultScreen(
         VaultStatusBar(view = view)
     }
     VaultPromptDialogs(vault = state.current, view = view)
+    if (askingOtherPassword) {
+        OtherPasswordDialog(
+            onMerge = { credentials ->
+                askingOtherPassword = false
+                onMergeOtherPassword(credentials)
+            },
+            onDismiss = { askingOtherPassword = false },
+        )
+    }
 }
 
 /** The slim bar at the bottom: what the shortcuts do, and what was copied last. */
@@ -87,6 +117,18 @@ private fun VaultStatusBar(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(StatusGap),
         ) {
+            if (view.updatedElsewhere) {
+                Text(
+                    text = stringResource(Res.string.vault_updated_elsewhere),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.primary,
+                    maxLines = 1,
+                )
+                LaunchedEffect(Unit) {
+                    delay(UPDATED_MILLIS)
+                    view.updatedElsewhere = false
+                }
+            }
             Text(
                 text = stringResource(Res.string.status_shortcuts),
                 style = MaterialTheme.typography.bodySmall,
