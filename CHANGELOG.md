@@ -10,6 +10,12 @@ All notable changes to this project are documented in this file. The format is b
 
 - ADR-0008 (proposed) and the plan for optional cloud copies of the vault with an assistant: an `offline` build with no network access and a `cloud` build, S3 first and then Dropbox, OneDrive and Google Drive.
 
+## [0.30.5] - 2026-10-18
+
+### Security
+
+- Touches are ignored while another app draws a window over KeyNexa (`filterTouchesWhenObscured`), against tapjacking and fake overlays (threat T22). Patch: hardening with no change to the format or to normal use.
+
 ## [0.30.4] - 2026-10-18
 
 ### Fixed

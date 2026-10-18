@@ -20,6 +20,8 @@ class MainActivity : FragmentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         applyScreenProtection(container.settings.values.allowScreenshots)
+        // Drops touches while another app draws a window over this one (tapjacking, fake overlays).
+        window.decorView.filterTouchesWhenObscured = true
         setContent {
             val allowScreenshots = container.settings.values.allowScreenshots
             LaunchedEffect(allowScreenshots) { applyScreenProtection(allowScreenshots) }
