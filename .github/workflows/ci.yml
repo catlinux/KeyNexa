@@ -79,7 +79,24 @@ jobs:
         run: cargo +1.99.0 build --release --locked
       - name: Differential test against keepass-rs
         # Absolute path: Gradle runs the test from the module folder.
-        run: KEEPASS_RS_DUMP="$GITHUB_WORKSPACE/tools/kdbx-dump-rs/target/release/kdbx-dump" ./gradlew :core-kdbx:test --tests '*KeepassRsDifferential*'
+        run: |
+          set -o pipefail
+          KEEPASS_RS_DUMP="$GITHUB_WORKSPACE/tools/kdbx-dump-rs/target/release/kdbx-dump" ./gradlew :core-kdbx:test --tests '*KeepassRsDifferential*' 2>&1 | tee gradle.log
+      # Annotations can be read without signing in, unlike the logs; the vaults compared are the fictitious ones in testdata/.
+      - name: Publish the failure as an annotation
+        if: failure()
+        run: |
+          bash scripts/ci-gradle-error.sh gradle.log
+          python3 - <<'PY'
+          import glob
+          import xml.etree.ElementTree as ET
+          for path in glob.glob('core-kdbx/build/test-results/test/*.xml'):
+              for case in ET.parse(path).getroot().iter('testcase'):
+                  for failure in list(case.iter('failure')) + list(case.iter('error')):
+                      message = (failure.get('message') or failure.text or '')[:3000]
+                      message = message.replace('%', '%25').replace('\r', '').replace('\n', '%0A')
+                      print(f"::error title=Test {case.get('name')}::{message}")
+          PY
 
   docs-i18n:
     runs-on: ubuntu-latest
