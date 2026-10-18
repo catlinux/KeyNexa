@@ -29,9 +29,9 @@ jobs:
           java-version: '17'
       - uses: gradle/actions/setup-gradle@v6
 
-      # core-kdbx is pure JVM: no Android SDK is needed here.
+      # core/kdbx is pure JVM: no Android SDK is needed here.
       - name: Build the test classpath
-        run: ./gradlew :core-kdbx:writeFuzzClasspath
+        run: ./gradlew :core:kdbx:writeFuzzClasspath
 
       - name: Download the Jazzer CLI and check its checksum
         run: |
@@ -51,7 +51,7 @@ jobs:
           FUZZ_SECONDS: ${{ inputs.seconds || '300' }}
         run: |
           case "$FUZZ_SECONDS" in ''|*[!0-9]*) echo 'seconds must be a number' >&2; exit 1 ;; esac
-          ./jazzer --cp="$(cat core-kdbx/build/fuzz-classpath.txt)" \
+          ./jazzer --cp="$(cat core/kdbx/build/fuzz-classpath.txt)" \
             --target_class=io.github.catlinux.keynexa.kdbx.DecoderFuzzTarget \
             -max_total_time="$FUZZ_SECONDS" -timeout=20 -rss_limit_mb=3072 corpus
 

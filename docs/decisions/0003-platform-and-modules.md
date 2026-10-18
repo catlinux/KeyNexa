@@ -18,7 +18,7 @@ Android is the first platform; Windows and Linux will follow. The KDBX engine (A
 
 ## Decision
 
-Option 1. Gradle multi-module project: `core-vault`, `core-kdbx`, `core-sync` (pure Kotlin/JVM, no Android imports), `platform-android`, `app-android`. Details in [ARCHITECTURE](../ARCHITECTURE.md). minSdk 26, compile/target SDK 36.
+Option 1. Gradle multi-module project: `core/vault`, `core/kdbx`, `core/sync` (pure Kotlin/JVM, no Android imports), `platform/android`, `apps/android`. Details in [ARCHITECTURE](../ARCHITECTURE.md). minSdk 26, compile/target SDK 36.
 
 ## Consequences
 

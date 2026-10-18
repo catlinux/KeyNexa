@@ -38,7 +38,7 @@ jobs:
         # pipefail: without it the step takes tee's exit code and a failed build looks green.
         run: |
           set -o pipefail
-          ./gradlew build check :app-android:assembleOfflineRelease :app-android:assembleCloudRelease 2>&1 | tee gradle.log
+          ./gradlew build check :apps:android:assembleOfflineRelease :apps:android:assembleCloudRelease 2>&1 | tee gradle.log
       - name: Publish the Gradle error as an annotation
         if: failure()
         run: bash scripts/ci-gradle-error.sh gradle.log
@@ -84,7 +84,7 @@ jobs:
         # Absolute path: Gradle runs the test from the module folder.
         run: |
           set -o pipefail
-          KEEPASS_RS_DUMP="$GITHUB_WORKSPACE/tools/kdbx-dump-rs/target/release/kdbx-dump" ./gradlew :core-kdbx:test --tests '*KeepassRsDifferential*' 2>&1 | tee gradle.log
+          KEEPASS_RS_DUMP="$GITHUB_WORKSPACE/tools/kdbx-dump-rs/target/release/kdbx-dump" ./gradlew :core:kdbx:test --tests '*KeepassRsDifferential*' 2>&1 | tee gradle.log
       # Annotations can be read without signing in, unlike the logs; the vaults compared are the fictitious ones in testdata/.
       - name: Publish the failure as an annotation
         if: failure()
@@ -93,7 +93,7 @@ jobs:
           python3 - <<'PY'
           import glob
           import xml.etree.ElementTree as ET
-          for path in glob.glob('core-kdbx/build/test-results/test/*.xml'):
+          for path in glob.glob('core/kdbx/build/test-results/test/*.xml'):
               for case in ET.parse(path).getroot().iter('testcase'):
                   for failure in list(case.iter('failure')) + list(case.iter('error')):
                       message = (failure.get('message') or failure.text or '')[:3000]
@@ -144,11 +144,11 @@ jobs:
         uses: google/osv-scanner-action/osv-scanner-action@v2.7.0
         with:
           scan-args: |-
-            --lockfile=core-vault/gradle.lockfile
-            --lockfile=core-kdbx/gradle.lockfile
-            --lockfile=core-sync/gradle.lockfile
-            --lockfile=platform-android/gradle.lockfile
-            --lockfile=app-android/gradle.lockfile
+            --lockfile=core/vault/gradle.lockfile
+            --lockfile=core/kdbx/gradle.lockfile
+            --lockfile=core/sync/gradle.lockfile
+            --lockfile=platform/android/gradle.lockfile
+            --lockfile=apps/android/gradle.lockfile
             --lockfile=third_party/kotpass/gradle.lockfile
 
   # Informational only: build tools are not distributed with the app.

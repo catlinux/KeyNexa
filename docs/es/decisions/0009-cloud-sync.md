@@ -12,7 +12,7 @@ El [ADR-0008](0008-cloud-backup.md) añadió **copias** opcionales en la nube: i
 
 Lo que el proyecto ya tiene:
 
-- Un proceso de guardado seguro en `core-sync` (copia privada, nueva comprobación de la huella, fusión por UUID y fechas de modificación con historial, escritura y lectura de comprobación) y un motor de fusión que nunca sobrescribe lo que no sabe fusionar.
+- Un proceso de guardado seguro en `core/sync` (copia privada, nueva comprobación de la huella, fusión por UUID y fechas de modificación con historial, escritura y lectura de comprobación) y un motor de fusión que nunca sobrescribe lo que no sabe fusionar.
 - Una interfaz `CloudBackend` (poner, obtener, listar y borrar por nombre) con un indicador de capacidad de escrituras condicionales, y un cliente S3 que hoy declara `conditionalWrites = false`.
 - Credenciales cifradas, una pantalla de consentimiento y una variante de compilación `cloud`.
 
@@ -43,7 +43,7 @@ Lo que necesita un archivo remoto compartido y no un archivo local: dos disposit
 - Dos dispositivos que editan la misma entrada sin conexión siguen produciendo una fusión por fechas de modificación, como con Syncthing: gana la edición más reciente y la anterior queda en el historial de la entrada.
 - El objeto remoto es un único punto de divergencia: si un servicio devuelve una lectura caducada tras una escritura (consistencia débil), un dispositivo puede trabajar un momento con una versión vieja; la escritura condicional es lo que evita que sobrescriba una más nueva.
 - El modelo de amenazas debe añadir: un atacante con la cuenta de la nube puede borrar o revertir el objeto sincronizado (la app conserva su archivo local y sus copias privadas, y el usuario puede restaurar desde las copias rotadas), y puede ver su tamaño, nombre y fechas.
-- El paso de reconciliación es lógica de `core-sync` sobre `CloudBackend`; necesita un servicio falso con precondiciones inyectables para probar las carreras en la JVM antes de usar ningún servicio real.
+- El paso de reconciliación es lógica de `core/sync` sobre `CloudBackend`; necesita un servicio falso con precondiciones inyectables para probar las carreras en la JVM antes de usar ningún servicio real.
 
 ## Puntos abiertos (a verificar antes de prometerlos)
 

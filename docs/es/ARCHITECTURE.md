@@ -30,24 +30,24 @@
 Las dependencias apuntan solo hacia abajo. Los módulos de núcleo son Kotlin/JVM puro, sin importaciones de Android, de modo que se pueden probar en la JVM y reutilizar en un cliente de escritorio.
 
 ```text
-app-android          Compose UI, navigation, Android services (autofill, biometric, clipboard)
+apps/android          Compose UI, navigation, Android services (autofill, biometric, clipboard)
   │
-platform-android     SAF storage adapter, Keystore, lifecycle-based auto-lock
-platform-cloud       S3-compatible cloud client (SigV4), JDK HTTP client only
+platform/android     SAF storage adapter, Keystore, lifecycle-based auto-lock
+platform/cloud       S3-compatible cloud client (SigV4), JDK HTTP client only
   │
-core-sync            change detection, merge, safe-save pipeline (uses StoragePort)
+core/sync            change detection, merge, safe-save pipeline (uses StoragePort)
   │
-core-vault           domain model, use cases, search, StoragePort / KdbxEngine interfaces
+core/vault           domain model, use cases, search, StoragePort / KdbxEngine interfaces
   │
-core-kdbx            adapter implementing KdbxEngine on top of kotpass (the only module that sees kotpass)
+core/kdbx            adapter implementing KdbxEngine on top of kotpass (the only module that sees kotpass)
 ```
 
-- **`core-vault`** define el dominio (bóveda, grupo, entrada, campo, adjunto, historial) y los puertos: `KdbxEngine` (decodificar/codificar un flujo de bytes KDBX con credenciales) y `StoragePort` (leer, escribir, metadatos, listar los archivos hermanos de un archivo de bóveda).
-- **`core-kdbx`** es el único módulo que depende de kotpass. Sustituir o bifurcar el motor solo afecta a este módulo.
-- **`core-sync`** contiene la lógica que protege los datos: huellas de contenido, detección de cambios externos, la fusión y el flujo de guardado seguro. Es deliberadamente independiente de Android para poder probarlo exhaustivamente con un almacenamiento simulado.
-- **`platform-android`** implementa `StoragePort` con SAF y envuelve el Android Keystore.
-- **`platform-cloud`** es el cliente de red de la variante `cloud`: un backend compatible con S3 firmado con AWS SigV4, sobre el cliente HTTP del JDK y sin dependencias externas. La variante `offline` nunca lo incluye.
-- **`app-android`** es la IU y los servicios de Android.
+- **`core/vault`** define el dominio (bóveda, grupo, entrada, campo, adjunto, historial) y los puertos: `KdbxEngine` (decodificar/codificar un flujo de bytes KDBX con credenciales) y `StoragePort` (leer, escribir, metadatos, listar los archivos hermanos de un archivo de bóveda).
+- **`core/kdbx`** es el único módulo que depende de kotpass. Sustituir o bifurcar el motor solo afecta a este módulo.
+- **`core/sync`** contiene la lógica que protege los datos: huellas de contenido, detección de cambios externos, la fusión y el flujo de guardado seguro. Es deliberadamente independiente de Android para poder probarlo exhaustivamente con un almacenamiento simulado.
+- **`platform/android`** implementa `StoragePort` con SAF y envuelve el Android Keystore.
+- **`platform/cloud`** es el cliente de red de la variante `cloud`: un backend compatible con S3 firmado con AWS SigV4, sobre el cliente HTTP del JDK y sin dependencias externas. La variante `offline` nunca lo incluye.
+- **`apps/android`** es la IU y los servicios de Android.
 
 **Próxima estructura (aceptada, [ADR-0011](decisions/0011-repository-layout.md)):** para el cliente de Windows ([ADR-0012](decisions/0012-windows-desktop-client.md)) y después Linux, los módulos pasan a `core/`, `platform/`, `ui/` y `apps/` (`apps/android`, `apps/desktop`); la sesión de la bóveda pasa a `core/session`, los almacenes privados de archivos a `platform/jvm`, el tema y el teclado a `ui/shared` (Compose Multiplatform), y la sincronización entre dispositivos ([ADR-0013](decisions/0013-device-sync.md)) tiene `core/peer`. Esta sección describe la estructura actual hasta que se haga ese traslado.
 
@@ -62,7 +62,7 @@ core-kdbx            adapter implementing KdbxEngine on top of kotpass (the only
 
 ### Flujo de guardado seguro
 
-Implementado en `core-sync` (`SafeSaver`, `VerifiedWriter`, `SaveRecovery`, `VaultReader`).
+Implementado en `core/sync` (`SafeSaver`, `VerifiedWriter`, `SaveRecovery`, `VaultReader`).
 
 1. Serializar la bóveda en memoria como un nuevo array de bytes cifrado y descifrarlo una vez, para demostrar que los bytes nuevos son correctos.
 2. Volver a leer el archivo actual y comparar su huella con la cargada. Si cambió, descifrarlo y **fusionarlo** con la bóveda en memoria y serializar de nuevo (como mucho unas pocas rondas). Sin fusión no se escribe nada.
@@ -85,7 +85,7 @@ La fusión de KeyNexa sigue la semántica de la sincronización de KeePass 2.x, 
 - Los movimientos siguen la hora de cambio de ubicación más reciente.
 - Las eliminaciones solo se aplican a través de la lista de objetos eliminados de la bóveda, y solo si el objeto no se modificó después de la eliminación.
 
-Implementado en `core-sync` como `KeePassMerger`, con estas reglas adicionales: los empates favorecen la versión del usuario en memoria; un objeto cuyo nuevo grupo padre no sobrevivió va al antepasado superviviente más cercano; los movimientos cruzados que formarían un bucle cuelgan el grupo de la raíz, de modo que no se pierde nada; la metadata se fusiona campo a campo por sus propios tiempos `*Changed`; los adjuntos que nadie referencia se descartan; un registro de borrado del grupo raíz se ignora. El código de edición debe actualizar la fecha de última modificación de un objeto (y la de cambio de ubicación al moverlo), porque la fusión decide por esas fechas. Probado con escenarios y con pares de bóvedas generados al azar comprobados contra invariantes (no se pierde nada, sin bucles, sin adjuntos colgantes, mismo resultado sea cual sea el lado «nuestro»).
+Implementado en `core/sync` como `KeePassMerger`, con estas reglas adicionales: los empates favorecen la versión del usuario en memoria; un objeto cuyo nuevo grupo padre no sobrevivió va al antepasado superviviente más cercano; los movimientos cruzados que formarían un bucle cuelgan el grupo de la raíz, de modo que no se pierde nada; la metadata se fusiona campo a campo por sus propios tiempos `*Changed`; los adjuntos que nadie referencia se descartan; un registro de borrado del grupo raíz se ignora. El código de edición debe actualizar la fecha de última modificación de un objeto (y la de cambio de ubicación al moverlo), porque la fusión decide por esas fechas. Probado con escenarios y con pares de bóvedas generados al azar comprobados contra invariantes (no se pierde nada, sin bucles, sin adjuntos colgantes, mismo resultado sea cual sea el lado «nuestro»).
 
 Si los archivos no se pueden fusionar (por ejemplo, por tener contraseñas maestras distintas), KeyNexa no escribe: conserva ambas versiones y consulta al usuario.
 
@@ -99,7 +99,7 @@ Cuando dos dispositivos cambian la bóveda sin verse entre sí, Syncthing conser
 - Las copias que no se pueden fusionar se informan y se dejan como están: escritas con otra contraseña, dañadas o aún en transferencia, de otra bóveda o ilegibles.
 - **Nada se borra sin consentimiento.** Tras una fusión, la app dice cuántas copias se han fusionado y ofrece borrarlas, y solo borra las copias del registro cuyos bytes siguen coincidiendo con la huella grabada, releída justo antes de borrar. Si se rechaza, se conservan y la oferta vuelve en la siguiente apertura.
 
-Vive en `core-sync` como `ConflictMerger` (con el puerto `MergedCopies` para el registro); la app de Android lo conecta en `VaultSession`, guarda el registro con `FileMergedCopies` y muestra el aviso en la pantalla de grupos. Como en el resto de la bóveda, solo se guardan huellas y motivos: nunca contenido ni secretos.
+Vive en `core/sync` como `ConflictMerger` (con el puerto `MergedCopies` para el registro); la app de Android lo conecta en `VaultSession`, guarda el registro con `FileMergedCopies` y muestra el aviso en la pantalla de grupos. Como en el resto de la bóveda, solo se guardan huellas y motivos: nunca contenido ni secretos.
 
 ## Estrategia multiplataforma
 

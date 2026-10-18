@@ -18,11 +18,11 @@ KeyNexa debe leer y escribir KDBX 3.1, 4.0 y 4.1 sin implementar criptografía p
 
 ## Decisión
 
-Usar **kotpass**, aislada en el módulo `core-kdbx` tras la interfaz `KdbxEngine` de KeyNexa.
+Usar **kotpass**, aislada en el módulo `core/kdbx` tras la interfaz `KdbxEngine` de KeyNexa.
 
 ## Consecuencias
 
-- Solo `core-kdbx` depende de kotpass; sustituirla o bifurcarla no afecta al resto.
+- Solo `core/kdbx` depende de kotpass; sustituirla o bifurcarla no afecta al resto.
 - La fase C/D debe demostrar, con pruebas automatizadas sobre un corpus de archivos de prueba creado por KeePassXC y KeePass 2.x:
   - la conservación en ida y vuelta de grupos, entradas, campos personalizados, adjuntos, historial, iconos, datos personalizados y objetos eliminados;
   - el comportamiento con elementos XML desconocidos (probablemente se descartan; en ese caso, documentarlo o aportar una corrección);

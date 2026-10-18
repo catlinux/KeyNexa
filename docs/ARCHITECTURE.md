@@ -30,24 +30,24 @@
 Dependencies point downwards only. Core modules are pure Kotlin/JVM, with no Android imports, so they can be unit-tested on the JVM and reused by a desktop client.
 
 ```text
-app-android          Compose UI, navigation, Android services (autofill, biometric, clipboard)
+apps/android          Compose UI, navigation, Android services (autofill, biometric, clipboard)
   │
-platform-android     SAF storage adapter, Keystore, lifecycle-based auto-lock
-platform-cloud       S3-compatible cloud client (SigV4), JDK HTTP client only
+platform/android     SAF storage adapter, Keystore, lifecycle-based auto-lock
+platform/cloud       S3-compatible cloud client (SigV4), JDK HTTP client only
   │
-core-sync            change detection, merge, safe-save pipeline (uses StoragePort)
+core/sync            change detection, merge, safe-save pipeline (uses StoragePort)
   │
-core-vault           domain model, use cases, search, StoragePort / KdbxEngine interfaces
+core/vault           domain model, use cases, search, StoragePort / KdbxEngine interfaces
   │
-core-kdbx            adapter implementing KdbxEngine on top of kotpass (the only module that sees kotpass)
+core/kdbx            adapter implementing KdbxEngine on top of kotpass (the only module that sees kotpass)
 ```
 
-- **`core-vault`** defines the domain (vault, group, entry, field, attachment, history) and the ports: `KdbxEngine` (decode/encode a KDBX byte stream with credentials) and `StoragePort` (read, write, metadata, list siblings of a vault file).
-- **`core-kdbx`** is the only module that depends on kotpass. Replacing or forking the engine affects only this module.
-- **`core-sync`** contains the logic that protects data: content fingerprints, external-change detection, the merge and the safe-save pipeline. It is deliberately independent of Android so it can be tested exhaustively with fake storage.
-- **`platform-android`** implements `StoragePort` with SAF and wraps the Android Keystore.
-- **`platform-cloud`** is the network client of the `cloud` variant: an S3-compatible backend signed with AWS SigV4, over the JDK HTTP client and with no external dependency. The `offline` variant never includes it.
-- **`app-android`** is the UI and the Android services.
+- **`core/vault`** defines the domain (vault, group, entry, field, attachment, history) and the ports: `KdbxEngine` (decode/encode a KDBX byte stream with credentials) and `StoragePort` (read, write, metadata, list siblings of a vault file).
+- **`core/kdbx`** is the only module that depends on kotpass. Replacing or forking the engine affects only this module.
+- **`core/sync`** contains the logic that protects data: content fingerprints, external-change detection, the merge and the safe-save pipeline. It is deliberately independent of Android so it can be tested exhaustively with fake storage.
+- **`platform/android`** implements `StoragePort` with SAF and wraps the Android Keystore.
+- **`platform/cloud`** is the network client of the `cloud` variant: an S3-compatible backend signed with AWS SigV4, over the JDK HTTP client and with no external dependency. The `offline` variant never includes it.
+- **`apps/android`** is the UI and the Android services.
 
 **Next layout (accepted, [ADR-0011](decisions/0011-repository-layout.md)):** for the Windows client ([ADR-0012](decisions/0012-windows-desktop-client.md)) and later Linux, the modules move into `core/`, `platform/`, `ui/` and `apps/` (`apps/android`, `apps/desktop`); the vault session moves to `core/session`, the private file stores to `platform/jvm`, the theme and keypad to `ui/shared` (Compose Multiplatform), and device synchronisation ([ADR-0013](decisions/0013-device-sync.md)) gets `core/peer`. This section describes the current layout until that move is done.
 
@@ -62,7 +62,7 @@ core-kdbx            adapter implementing KdbxEngine on top of kotpass (the only
 
 ### Safe-save pipeline
 
-Implemented in `core-sync` (`SafeSaver`, `VerifiedWriter`, `SaveRecovery`, `VaultReader`).
+Implemented in `core/sync` (`SafeSaver`, `VerifiedWriter`, `SaveRecovery`, `VaultReader`).
 
 1. Serialize the vault to a new encrypted byte array in memory and decrypt it once, to prove the new bytes are good.
 2. Re-read the current file and compare its fingerprint with the one loaded. If it changed, decrypt it and **merge** it into the in-memory vault, then serialize again (a few rounds at most). Without a merge, nothing is written.
@@ -85,7 +85,7 @@ KeyNexa's merge follows the semantics of KeePass 2.x synchronization as also imp
 - Moves follow the newer location-changed time.
 - Deletions apply only through the vault's deleted-objects list, and only if the object was not modified after the deletion.
 
-Implemented in `core-sync` as `KeePassMerger`, with these further rules: ties favour the user's in-memory version; an object whose new parent group did not survive goes to the nearest surviving ancestor; crossed moves that would form a loop attach the group to the root, so nothing is dropped; metadata merges field by field by its own `*Changed` times; attachments nobody references are dropped; a deletion record for the root group is ignored. The editing code must update an object's last-modification time (and location-changed time when moving it), because the merge decides by those times. Tested with scenarios and with randomly generated pairs of vaults checked against invariants (nothing lost, no loops, no dangling attachments, same result whichever side is "ours").
+Implemented in `core/sync` as `KeePassMerger`, with these further rules: ties favour the user's in-memory version; an object whose new parent group did not survive goes to the nearest surviving ancestor; crossed moves that would form a loop attach the group to the root, so nothing is dropped; metadata merges field by field by its own `*Changed` times; attachments nobody references are dropped; a deletion record for the root group is ignored. The editing code must update an object's last-modification time (and location-changed time when moving it), because the merge decides by those times. Tested with scenarios and with randomly generated pairs of vaults checked against invariants (nothing lost, no loops, no dangling attachments, same result whichever side is "ours").
 
 If the files cannot be merged (for example, different master keys), KeyNexa does not write: it keeps both versions and asks the user.
 
@@ -99,7 +99,7 @@ When two devices change the vault while they cannot see each other, Syncthing ke
 - Copies that cannot be merged are reported and left alone: written with another password, damaged or still in transfer, belonging to another vault, or unreadable.
 - **Nothing is deleted without consent.** After a merge the app says how many copies were merged and offers to delete them, and it deletes only copies in the ledger whose bytes still match the recorded fingerprint, read again just before deleting. Declining keeps them, and the offer comes back on the next open.
 
-It lives in `core-sync` as `ConflictMerger` (with the `MergedCopies` port for the ledger); the Android app wires it in `VaultSession`, stores the ledger with `FileMergedCopies` and shows the notice in the group screen. As with the rest of the vault, only fingerprints and reasons are kept: never content or secrets.
+It lives in `core/sync` as `ConflictMerger` (with the `MergedCopies` port for the ledger); the Android app wires it in `VaultSession`, stores the ledger with `FileMergedCopies` and shows the notice in the group screen. As with the rest of the vault, only fingerprints and reasons are kept: never content or secrets.
 
 ## Multiplatform strategy
 

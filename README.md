@@ -50,11 +50,11 @@ To build from source instead, you need JDK 17 and Android SDK 36 (see [Developme
 ```sh
 ./gradlew build
 ./gradlew test
-./gradlew :app-android:assembleOfflineDebug
-./gradlew :app-android:assembleCloudDebug
+./gradlew :apps:android:assembleOfflineDebug
+./gradlew :apps:android:assembleCloudDebug
 ```
 
-On Windows use `gradlew.bat` instead of `./gradlew`. The debug APKs are written to `app-android/build/outputs/apk/offline/debug/app-android-offline-debug.apk` and `app-android/build/outputs/apk/cloud/debug/app-android-cloud-debug.apk`, and can be installed on a phone for testing (use fictitious vaults only). Installing one variant over the other keeps vaults and settings (checked on a phone). To try synchronisation, put the vault in a folder shared with Syncthing and add it to KeyNexa with *Open existing vault*, choosing the folder (not a single file: Android revokes the permission on a single file when Syncthing replaces it).
+On Windows use `gradlew.bat` instead of `./gradlew`. The debug APKs are written to `apps/android/build/outputs/apk/offline/debug/keynexa-android-offline-debug.apk` and `apps/android/build/outputs/apk/cloud/debug/keynexa-android-cloud-debug.apk`, and can be installed on a phone for testing (use fictitious vaults only). Installing one variant over the other keeps vaults and settings (checked on a phone). To try synchronisation, put the vault in a folder shared with Syncthing and add it to KeyNexa with *Open existing vault*, choosing the folder (not a single file: Android revokes the permission on a single file when Syncthing replaces it).
 
 ## Credits and license
 

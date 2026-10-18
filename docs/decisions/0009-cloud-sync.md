@@ -12,7 +12,7 @@
 
 What the project already has:
 
-- A safe-save pipeline in `core-sync` (private backup, fingerprint re-check, merge by UUID and modification times with history, write, read-back) and a merge engine that never overwrites what it cannot merge.
+- A safe-save pipeline in `core/sync` (private backup, fingerprint re-check, merge by UUID and modification times with history, write, read-back) and a merge engine that never overwrites what it cannot merge.
 - A `CloudBackend` interface (put, get, list, delete by name) with a capability flag for conditional writes, and an S3 client that today reports `conditionalWrites = false`.
 - Encrypted credentials, a consent screen and a `cloud` build variant.
 
@@ -43,7 +43,7 @@ What a shared remote file needs that a local file does not: two devices can both
 - Two devices editing the same entry offline still produce a merge by modification times, as with Syncthing: the later edit wins and the earlier one stays in the entry's history.
 - The remote object is a single point of divergence: if a service returns a stale read after a write (weak consistency), a device can briefly work from an old version; the conditional write is what keeps it from overwriting a newer one.
 - The threat model must add: an attacker with the cloud account can delete or roll back the synchronised object (the app keeps its local file and private backups, and the user can restore from the rotated copies), and can see its size, name and times.
-- The reconcile step is plain `core-sync` logic over `CloudBackend`; it needs a fake backend with injectable preconditions to test races on the JVM before any real service is used.
+- The reconcile step is plain `core/sync` logic over `CloudBackend`; it needs a fake backend with injectable preconditions to test races on the JVM before any real service is used.
 
 ## Open points (to verify before they are promised)
 

@@ -30,31 +30,31 @@ Run these from the repository root. On Windows use `gradlew.bat` instead of `./g
 | `./gradlew build` | Compiles every module, runs the unit tests and lint |
 | `./gradlew check` | Runs the quality checks (unit tests, Android Lint, detekt, ktlint) |
 | `./gradlew test` | Runs the unit tests of every module |
-| `./gradlew :core-kdbx:test` | Runs the KDBX engine tests against the vault corpus in `testdata/` |
-| `./gradlew :app-android:assembleOfflineDebug` | Builds the offline debug APK at `app-android/build/outputs/apk/offline/debug/app-android-offline-debug.apk` |
-| `./gradlew :app-android:assembleCloudDebug` | Builds the cloud debug APK at `app-android/build/outputs/apk/cloud/debug/app-android-cloud-debug.apk` |
+| `./gradlew :core:kdbx:test` | Runs the KDBX engine tests against the vault corpus in `testdata/` |
+| `./gradlew :apps:android:assembleOfflineDebug` | Builds the offline debug APK at `apps/android/build/outputs/apk/offline/debug/keynexa-android-offline-debug.apk` |
+| `./gradlew :apps:android:assembleCloudDebug` | Builds the cloud debug APK at `apps/android/build/outputs/apk/cloud/debug/keynexa-android-cloud-debug.apk` |
 
-The app has two `distribution` flavors: `offline` (no `INTERNET`, the one published) and `cloud` (declares `INTERNET` for the cloud copies still to come). The merged offline manifest is checked on `check` (`:app-android:verifyOfflineHasNoInternet`), and the cloud one is checked the other way round. Installing one flavor over the other is not verified.
+The app has two `distribution` flavors: `offline` (no `INTERNET`, the one published) and `cloud` (declares `INTERNET` for the cloud copies still to come). The merged offline manifest is checked on `check` (`:apps:android:verifyOfflineHasNoInternet`), and the cloud one is checked the other way round. Installing one flavor over the other is not verified.
 
 These commands were verified locally on Windows with JDK 17 (Temurin) and Android SDK 36.
 
 ### KDBX engine tests
 
-`core-kdbx` tests the engine against the fictitious vaults of `testdata/` ([Test vaults](TEST_VAULTS.md)):
+`core/kdbx` tests the engine against the fictitious vaults of `testdata/` ([Test vaults](TEST_VAULTS.md)):
 
 - Corpus (AC1): every vault opens with its credentials, reports the expected format and holds the expected content.
 - Errors: wrong password, key file problems, foreign data, and truncated or altered files. A damaged KDBX 4 file is reported as damaged, never as a wrong password.
 - Round trip (AC2): decode, encode and decode again give the same vault for every vault and for every cipher and key derivation combination.
 - Differential (AC2): the engine's output is exported to XML with `keepassxc-cli` and compared with the export of the original. It is skipped without error when KeePassXC is not installed.
-- Differential against keepass-rs (AC2, ADR-0005): `tools/kdbx-dump-rs` is a small Rust tool (`keepass = "=0.15.2"`) that dumps a vault as canonical JSON. Build it once with `cargo build --release --locked` (inside `tools/kdbx-dump-rs`) and run `KEEPASS_RS_DUMP=tools/kdbx-dump-rs/target/release/kdbx-dump ./gradlew :core-kdbx:test --tests '*KeepassRsDifferential*'`. On Windows the binary is `tools\kdbx-dump-rs\target\release\kdbx-dump.exe`; set `$env:KEEPASS_RS_DUMP` to it. Without the variable the test is skipped; the `differential` CI job runs it with Rust 1.99.0.
-- Fuzzing: randomly damaged copies of vaults (bit flips, cuts, insertions, deletions) must only ever fail with a `VaultException`, within a time limit. The seed is fixed; `KEYNEXA_FUZZ_ITERATIONS=3000 ./gradlew :core-kdbx:test --tests '*DecoderMutationFuzz*'` runs it much longer.
-- Coverage-guided fuzzing (Jazzer): `DecoderFuzzTarget` is a Jazzer entry point (a static `fuzzerTestOneInput(ByteArray)`) over the decoder, and `DecoderFuzzTargetTest` exercises it on the fast corpus vaults inside `check`. `./gradlew :core-kdbx:writeFuzzClasspath` writes the test runtime classpath to `core-kdbx/build/fuzz-classpath.txt`. The `fuzz` workflow ([fuzz.yml](../.github/workflows/fuzz.yml)) runs every Monday and on demand, downloads the Jazzer CLI 0.30.0 and checks its SHA-256 before running it; Jazzer is not a Gradle dependency and is not part of the app. On Linux or WSL, download it the same way and run `./jazzer --cp="$(cat core-kdbx/build/fuzz-classpath.txt)" --target_class=io.github.catlinux.keynexa.kdbx.DecoderFuzzTarget -max_total_time=300 -timeout=20 -rss_limit_mb=3072 corpus`.
+- Differential against keepass-rs (AC2, ADR-0005): `tools/kdbx-dump-rs` is a small Rust tool (`keepass = "=0.15.2"`) that dumps a vault as canonical JSON. Build it once with `cargo build --release --locked` (inside `tools/kdbx-dump-rs`) and run `KEEPASS_RS_DUMP=tools/kdbx-dump-rs/target/release/kdbx-dump ./gradlew :core:kdbx:test --tests '*KeepassRsDifferential*'`. On Windows the binary is `tools\kdbx-dump-rs\target\release\kdbx-dump.exe`; set `$env:KEEPASS_RS_DUMP` to it. Without the variable the test is skipped; the `differential` CI job runs it with Rust 1.99.0.
+- Fuzzing: randomly damaged copies of vaults (bit flips, cuts, insertions, deletions) must only ever fail with a `VaultException`, within a time limit. The seed is fixed; `KEYNEXA_FUZZ_ITERATIONS=3000 ./gradlew :core:kdbx:test --tests '*DecoderMutationFuzz*'` runs it much longer.
+- Coverage-guided fuzzing (Jazzer): `DecoderFuzzTarget` is a Jazzer entry point (a static `fuzzerTestOneInput(ByteArray)`) over the decoder, and `DecoderFuzzTargetTest` exercises it on the fast corpus vaults inside `check`. `./gradlew :core:kdbx:writeFuzzClasspath` writes the test runtime classpath to `core/kdbx/build/fuzz-classpath.txt`. The `fuzz` workflow ([fuzz.yml](../.github/workflows/fuzz.yml)) runs every Monday and on demand, downloads the Jazzer CLI 0.30.0 and checks its SHA-256 before running it; Jazzer is not a Gradle dependency and is not part of the app. On Linux or WSL, download it the same way and run `./jazzer --cp="$(cat core/kdbx/build/fuzz-classpath.txt)" --target_class=io.github.catlinux.keynexa.kdbx.DecoderFuzzTarget -max_total_time=300 -timeout=20 -rss_limit_mb=3072 corpus`.
 - Key derivation limits: a file that asks for absurd Argon2 memory or iterations, or an absurd number of AES-KDF rounds, is refused before any work (`UnsupportedFormat`), because the parameters are read from the unencrypted header.
-- Argon2 timing, off by default: `KEYNEXA_PERF=1 ./gradlew :core-kdbx:test --tests '*Argon2Performance*' -i` (see [Benchmarks](BENCHMARKS.md)). `KEYNEXA_TEST_HEAP` sets the test heap (default 2g).
+- Argon2 timing, off by default: `KEYNEXA_PERF=1 ./gradlew :core:kdbx:test --tests '*Argon2Performance*' -i` (see [Benchmarks](BENCHMARKS.md)). `KEYNEXA_TEST_HEAP` sets the test heap (default 2g).
 
 ## Module layout
 
-Dependencies point downwards only; the `core-*` modules are pure Kotlin/JVM and do not import Android. See [Architecture](ARCHITECTURE.md).
+Dependencies point downwards only; the `core/*` modules are pure Kotlin/JVM and do not import Android. See [Architecture](ARCHITECTURE.md).
 
 ## Quality checks
 
@@ -64,7 +64,7 @@ Dependencies point downwards only; the `core-*` modules are pure Kotlin/JVM and 
 | --- | --- |
 | `./gradlew check` | Every check below (unit tests, Android Lint, detekt, ktlint) |
 | `./gradlew test` | Unit tests of every module |
-| `./gradlew lint` | Android Lint in `platform-android` and `app-android` |
+| `./gradlew lint` | Android Lint in `platform/android` and `apps/android` |
 | `./gradlew detekt` | Kotlin static analysis |
 | `./gradlew ktlintCheck` | Kotlin code style |
 | `./gradlew ktlintFormat` | Applies ktlint's automatic fixes to the sources |
@@ -108,7 +108,7 @@ bash scripts/check-docs-i18n.sh
 
 ### Dependency locking
 
-Dependency locking is active only for the runtime configurations that ship with the app (`runtimeClasspath` in the JVM modules; `releaseRuntimeClasspath` in the Android libraries; and `offlineReleaseRuntimeClasspath` and `cloudReleaseRuntimeClasspath` in `app-android`, whose name carries the flavor) and in `STRICT` mode, so the `gradle.lockfile` files under each module contain only distributed dependencies. `./gradlew build check` fails if a lock file is out of date. After changing a runtime dependency, regenerate the locks, review the diff and commit it together with `gradle/verification-metadata.xml`:
+Dependency locking is active only for the runtime configurations that ship with the app (`runtimeClasspath` in the JVM modules; `releaseRuntimeClasspath` in the Android libraries; and `offlineReleaseRuntimeClasspath` and `cloudReleaseRuntimeClasspath` in `apps/android`, whose name carries the flavor) and in `STRICT` mode, so the `gradle.lockfile` files under each module contain only distributed dependencies. `./gradlew build check` fails if a lock file is out of date. After changing a runtime dependency, regenerate the locks, review the diff and commit it together with `gradle/verification-metadata.xml`:
 
 ```sh
 ./gradlew build --write-locks
@@ -121,7 +121,7 @@ Dependency locking is active only for the runtime configurations that ship with 
 
 ## Releases
 
-[`release.yml`](../.github/workflows/release.yml) runs when a tag `vX.Y.Z` is pushed, in two jobs. **build** has read-only access and no secrets: it stops unless the tag equals `v` + the contents of `VERSION`, runs `./gradlew build check :app-android:assembleOfflineRelease :app-android:assembleCloudRelease`, fails unless the offline APK lacks the Internet permission and the cloud APK has it (`aapt2 dump permissions`), and hands both unsigned APKs to the next job as an artifact. **publish** runs no Gradle and no third-party code: it aligns both APKs with `zipalign`, signs them with `apksigner` using the repository secrets, verifies the signatures, and publishes a GitHub release with `keynexa-<version>.apk` (offline), `keynexa-cloud-<version>.apk`, their SHA-256 files and the changelog entry as notes (it stops if `CHANGELOG.md` has no entry for that version). Keeping them apart means nothing the build runs shares a machine with the keystore. Every action is pinned to a commit. Versions `0.y.z` are published as pre-releases. The keystore is decoded to the runner's temporary directory and removed at the end of the job; the passwords reach `apksigner` through environment variables, never on the command line.
+[`release.yml`](../.github/workflows/release.yml) runs when a tag `vX.Y.Z` is pushed, in two jobs. **build** has read-only access and no secrets: it stops unless the tag equals `v` + the contents of `VERSION`, runs `./gradlew build check :apps:android:assembleOfflineRelease :apps:android:assembleCloudRelease`, fails unless the offline APK lacks the Internet permission and the cloud APK has it (`aapt2 dump permissions`), and hands both unsigned APKs to the next job as an artifact. **publish** runs no Gradle and no third-party code: it aligns both APKs with `zipalign`, signs them with `apksigner` using the repository secrets, verifies the signatures, and publishes a GitHub release with `keynexa-<version>.apk` (offline), `keynexa-cloud-<version>.apk`, their SHA-256 files and the changelog entry as notes (it stops if `CHANGELOG.md` has no entry for that version). Keeping them apart means nothing the build runs shares a machine with the keystore. Every action is pinned to a commit. Versions `0.y.z` are published as pre-releases. The keystore is decoded to the runner's temporary directory and removed at the end of the job; the passwords reach `apksigner` through environment variables, never on the command line.
 
 To publish: bump `VERSION` and `CHANGELOG.md`, commit, then create and push the tag (`git tag vX.Y.Z && git push origin vX.Y.Z`). Both the push and the tag need the maintainer's approval.
 

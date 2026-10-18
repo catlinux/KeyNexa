@@ -39,7 +39,7 @@ El código propio de KeyNexa se distribuye bajo **GPL-3.0-only** con los términ
 
 ## Dependencias de tiempo de ejecución del APK de Android
 
-Las entradas siguientes son los módulos externos fijados para los sabores de release de la aplicación (`offlineReleaseRuntimeClasspath` y `cloudReleaseRuntimeClasspath`) en [app-android/gradle.lockfile](../../app-android/gradle.lockfile), agrupados por proyecto. Se excluyen las dependencias de pruebas y de compilación. El módulo fuente `:kotpass`, incluido en la app, está vendorizado y no aparece como coordenada externa en el lockfile; sus licencias de código integrado se indican abajo. Las entradas BOM del lockfile alinean versiones y no se empaquetan en el APK.
+Las entradas siguientes son los módulos externos fijados para los sabores de release de la aplicación (`offlineReleaseRuntimeClasspath` y `cloudReleaseRuntimeClasspath`) en [apps/android/gradle.lockfile](../../apps/android/gradle.lockfile), agrupados por proyecto. Se excluyen las dependencias de pruebas y de compilación. El módulo fuente `:kotpass`, incluido en la app, está vendorizado y no aparece como coordenada externa en el lockfile; sus licencias de código integrado se indican abajo. Las entradas BOM del lockfile alinean versiones y no se empaquetan en el APK.
 
 | Proyecto | Módulos fijados y versiones | Licencia |
 | --- | --- | --- |
@@ -53,7 +53,7 @@ Las entradas siguientes son los módulos externos fijados para los sabores de re
 | Guava | `listenablefuture` 1.0 | Por verificar |
 | JetBrains | `annotations` 23.0.0 | Por verificar |
 | JSpecify | `jspecify` 1.0.0 | Por verificar |
-| Manrope (fuente incluida, no es un módulo de Gradle) | `app-android/src/main/res/font/manrope.ttf`, fuente variable de google/fonts, commit `b31870a` | SIL OFL 1.1 (verificada en el `OFL.txt` original, conservado en `third_party/manrope/`; compatible con distribuirla dentro de una app GPL-3.0) |
+| Manrope (fuente incluida, no es un módulo de Gradle) | `apps/android/src/main/res/font/manrope.ttf`, fuente variable de google/fonts, commit `b31870a` | SIL OFL 1.1 (verificada en el `OFL.txt` original, conservado en `third_party/manrope/`; compatible con distribuirla dentro de una app GPL-3.0) |
 
 JUnit 4 solo se usa en las pruebas y no aparece en las configuraciones de release. Las herramientas de compilación se enumeran por separado más abajo. El lockfile también contiene androidx.compose:compose-bom 2025.09.00, kotlinx-coroutines-bom 1.9.0 y kotlinx-serialization-bom 1.7.3; son metadatos para alinear versiones, no contenido del APK.
 

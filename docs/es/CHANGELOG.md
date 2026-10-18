@@ -6,6 +6,15 @@ Todos los cambios notables de este proyecto se documentan en este archivo. El fo
 
 ## [Sin publicar]
 
+## [1.0.2] - 2026-10-18
+
+Interno; la app de Android no cambia.
+
+### Cambiado
+
+- Los módulos pasan a carpetas por papel, como decide el [ADR-0011](decisions/0011-repository-layout.md): `core/{vault,kdbx,sync}`, `platform/{android,cloud}` y `apps/android` (rutas de Gradle `:core:vault`, `:apps:android`, …). Se conserva la historia (`git mv`). Los flujos de CI, publicación y fuzzing, la documentación y los créditos siguen las rutas nuevas. Los APK sin firmar se llaman ahora `keynexa-android-<variante>-release-unsigned.apk`; los nombres de los archivos publicados no cambian.
+
+
 ## [1.0.1] - 2026-10-18
 
 Solo documentación; la app de Android no cambia.

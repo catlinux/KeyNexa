@@ -18,11 +18,11 @@ KeyNexa must read and write KDBX 3.1, 4.0 and 4.1 without implementing its own c
 
 ## Decision
 
-Use **kotpass**, isolated in the `core-kdbx` module behind KeyNexa's `KdbxEngine` interface.
+Use **kotpass**, isolated in the `core/kdbx` module behind KeyNexa's `KdbxEngine` interface.
 
 ## Consequences
 
-- Only `core-kdbx` depends on kotpass; replacing or forking it does not affect the rest.
+- Only `core/kdbx` depends on kotpass; replacing or forking it does not affect the rest.
 - Phase C/D must prove, with automated tests on a fixture corpus created by KeePassXC and KeePass 2.x:
   - round-trip preservation of groups, entries, custom fields, attachments, history, icons, custom data and deleted objects;
   - behaviour with unknown XML elements (probably dropped; if so, document it or contribute a fix);

@@ -6,11 +6,11 @@
 
 kotpass calcula Argon2 en Kotlin, sin código nativo (el [ADR-0005](decisions/0005-reinforced-kotpass.md) mantiene argon2kt como opción si las cifras de abajo no son aceptables en móviles).
 
-Prueba: [`Argon2PerformanceTest`](../../core-kdbx/src/test/kotlin/io/github/catlinux/keynexa/kdbx/Argon2PerformanceTest.kt), omitida salvo que esté definida `KEYNEXA_PERF`. Abre bóvedas del corpus (consulta [Bóvedas de prueba](TEST_VAULTS.md)) e imprime el tiempo.
+Prueba: [`Argon2PerformanceTest`](../../core/kdbx/src/test/kotlin/io/github/catlinux/keynexa/kdbx/Argon2PerformanceTest.kt), omitida salvo que esté definida `KEYNEXA_PERF`. Abre bóvedas del corpus (consulta [Bóvedas de prueba](TEST_VAULTS.md)) e imprime el tiempo.
 
 ```sh
-KEYNEXA_PERF=1 ./gradlew :core-kdbx:test --tests '*Argon2Performance*' -i
-KEYNEXA_TEST_HEAP=512m KEYNEXA_PERF=1 ./gradlew :core-kdbx:test --tests '*Argon2Performance*' -i
+KEYNEXA_PERF=1 ./gradlew :core:kdbx:test --tests '*Argon2Performance*' -i
+KEYNEXA_TEST_HEAP=512m KEYNEXA_PERF=1 ./gradlew :core:kdbx:test --tests '*Argon2Performance*' -i
 ```
 
 ### JVM de escritorio (2026-10-13)

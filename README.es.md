@@ -50,11 +50,11 @@ Como alternativa, puedes compilar desde el código fuente. Necesitas JDK 17 y An
 ```sh
 ./gradlew build
 ./gradlew test
-./gradlew :app-android:assembleOfflineDebug
-./gradlew :app-android:assembleCloudDebug
+./gradlew :apps:android:assembleOfflineDebug
+./gradlew :apps:android:assembleCloudDebug
 ```
 
-En Windows usa `gradlew.bat` en lugar de `./gradlew`. Los APK de depuración se generan en `app-android/build/outputs/apk/offline/debug/app-android-offline-debug.apk` y `app-android/build/outputs/apk/cloud/debug/app-android-cloud-debug.apk`, y se pueden instalar en un móvil para probar (usa solo bóvedas ficticias). Instalar una variante sobre la otra conserva las bóvedas y los ajustes (comprobado en un móvil). Para probar la sincronización, deja la bóveda en una carpeta compartida con Syncthing y añádela a KeyNexa con *Abrir una bóveda existente*, eligiendo la carpeta (no un archivo suelto: Android revoca el permiso sobre un archivo suelto cuando Syncthing lo sustituye).
+En Windows usa `gradlew.bat` en lugar de `./gradlew`. Los APK de depuración se generan en `apps/android/build/outputs/apk/offline/debug/keynexa-android-offline-debug.apk` y `apps/android/build/outputs/apk/cloud/debug/keynexa-android-cloud-debug.apk`, y se pueden instalar en un móvil para probar (usa solo bóvedas ficticias). Instalar una variante sobre la otra conserva las bóvedas y los ajustes (comprobado en un móvil). Para probar la sincronización, deja la bóveda en una carpeta compartida con Syncthing y añádela a KeyNexa con *Abrir una bóveda existente*, eligiendo la carpeta (no un archivo suelto: Android revoca el permiso sobre un archivo suelto cuando Syncthing lo sustituye).
 
 ## Créditos y licencia
 

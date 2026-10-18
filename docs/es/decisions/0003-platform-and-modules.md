@@ -18,7 +18,7 @@ Android es la primera plataforma; Windows y Linux vendrán después. El motor KD
 
 ## Decisión
 
-Opción 1. Proyecto Gradle multimódulo: `core-vault`, `core-kdbx`, `core-sync` (Kotlin/JVM puro, sin importaciones de Android), `platform-android`, `app-android`. Detalles en [ARCHITECTURE](../ARCHITECTURE.md). minSdk 26, SDK de compilación y de destino 36.
+Opción 1. Proyecto Gradle multimódulo: `core/vault`, `core/kdbx`, `core/sync` (Kotlin/JVM puro, sin importaciones de Android), `platform/android`, `apps/android`. Detalles en [ARCHITECTURE](../ARCHITECTURE.md). minSdk 26, SDK de compilación y de destino 36.
 
 ## Consecuencias
 

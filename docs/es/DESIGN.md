@@ -2,7 +2,7 @@
 
 [English](../DESIGN.md) | [Español](DESIGN.md)
 
-> **Estado:** la marca es la del responsable (2026-10-13). La dirección visual «A, clara y sobria» (construida sobre esta paleta, con su tema oscuro a juego) y la fuente Manrope las eligió el responsable el 2026-10-16; las maquetas se guardan en `design/mockups/`. Los tokens de abajo están implementados en `app-android`; cambiar un valor es editar una línea, y la prueba de contraste mantiene la paleta accesible. **La dirección A ya cubre todas las pantallas** (desbloqueo, lista de bóvedas, grupo, entrada, editor de entrada y ajustes); las capturas de `fastlane/` siguen pendientes de rehacer en el móvil.
+> **Estado:** la marca es la del responsable (2026-10-13). La dirección visual «A, clara y sobria» (construida sobre esta paleta, con su tema oscuro a juego) y la fuente Manrope las eligió el responsable el 2026-10-16; las maquetas se guardan en `design/mockups/`. Los tokens de abajo están implementados en `apps/android`; cambiar un valor es editar una línea, y la prueba de contraste mantiene la paleta accesible. **La dirección A ya cubre todas las pantallas** (desbloqueo, lista de bóvedas, grupo, entrada, editor de entrada y ajustes); las capturas de `fastlane/` siguen pendientes de rehacer en el móvil.
 
 ## Principios
 
@@ -14,14 +14,14 @@
 
 ## Identidad
 
-- **Marca:** un hexágono partido en azul marino y azul celeste, con un pequeño hexágono «nodo» separado arriba a la derecha, un anillo hexagonal interior y un escudo con cerradura en el centro. Origen: `design/icon/KeyNexa.jpg`, aportado por el responsable (hecho con ChatGPT). Está trazado a vectores en `app-android/src/main/res/drawable/ic_launcher_foreground.xml` (dos colores, `#03265D` y `#06A6F3`, sobre blanco) e `ic_launcher_monochrome.xml` (iconos temáticos, Android 13+), y escalado para que las esquinas del hexágono toquen la zona segura de 66 dp de los iconos adaptativos.
+- **Marca:** un hexágono partido en azul marino y azul celeste, con un pequeño hexágono «nodo» separado arriba a la derecha, un anillo hexagonal interior y un escudo con cerradura en el centro. Origen: `design/icon/KeyNexa.jpg`, aportado por el responsable (hecho con ChatGPT). Está trazado a vectores en `apps/android/src/main/res/drawable/ic_launcher_foreground.xml` (dos colores, `#03265D` y `#06A6F3`, sobre blanco) e `ic_launcher_monochrome.xml` (iconos temáticos, Android 13+), y escalado para que las esquinas del hexágono toquen la zona segura de 66 dp de los iconos adaptativos.
 - **Nombre:** «KeyNexa», en la fuente de la interfaz con peso medio, nunca estilizado.
 - **Idea de color:** el azul marino del icono como color de marca y su azul celeste como secundario, oscurecido donde hace falta para que el texto siga siendo legible; grises azulados neutros para las superficies. El rojo se reserva para errores y acciones destructivas.
 - **Paleta fija, sin color dinámico:** la app no toma sus colores del fondo de pantalla, así que se ve igual, y mantiene su contraste comprobado, en todos los dispositivos.
 
 ## Color
 
-Los tokens están en `app-android/.../ui/theme/Palette.kt` y se corresponden uno a uno con los roles de Material 3. Los contrastes indicados son el más bajo de cada pareja de roles, comprobados por `PaletteContrastTest` (texto de al menos 4,5:1, bordes de la interfaz de al menos 3:1).
+Los tokens están en `apps/android/.../ui/theme/Palette.kt` y se corresponden uno a uno con los roles de Material 3. Los contrastes indicados son el más bajo de cada pareja de roles, comprobados por `PaletteContrastTest` (texto de al menos 4,5:1, bordes de la interfaz de al menos 3:1).
 
 | Rol | Claro | Oscuro | Notas |
 | --- | --- | --- | --- |

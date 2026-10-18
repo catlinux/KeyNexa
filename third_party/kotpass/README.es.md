@@ -8,7 +8,7 @@ Copia de [kotpass](https://github.com/keemobile/kotpass), una biblioteca KDBX pa
 - **Commit upstream:** `4e0bd6b6b13e59d48ebe0bd9c06de3f918de6945` (versión 0.13.0, 2025-09-28)
 - **Importado:** solo `kotpass/src/main`. No se importan los tests y sus bóvedas de ejemplo, ni la configuración de publicación, firma, documentación y comprobación de actualizaciones. El `build.gradle.kts` de aquí es propio de KeyNexa.
 - **Dependencia:** Okio 3.15.0 (Apache-2.0), desde el catálogo de versiones.
-- **Solo `core-kdbx` puede depender de este módulo.**
+- **Solo `core/kdbx` puede depender de este módulo.**
 
 ## Código de terceros incluido
 
@@ -24,7 +24,7 @@ Se conserva intacto con sus avisos:
 
 El código es idéntico al del commit upstream salvo por los cambios de abajo. Los cambios hechos en KeyNexa se anotan aquí, el más reciente primero, cada uno con su motivo; siguen bajo licencia MIT para poder ofrecerlos a upstream.
 
-- **Analizador XML protegido contra entidades externas (XXE).** `org/redundent/kotlin/xml/XmlBuilder.kt` (el kotlin-xml-builder incluido, Apache-2.0) creaba su `DocumentBuilder` con la configuración por defecto de la plataforma, que en la JVM resuelve entidades externas y DTD. Los archivos de clave XML son archivos cualesquiera que elige el usuario, así que uno hostil podía meter un archivo local en la clave o conectarse a la red. Todas las funciones `parse` usan ahora un constructor que rechaza un DOCTYPE donde el analizador lo admite, desactiva las entidades externas y la carga de DTD, activa el procesamiento seguro e instala un resolvedor de entidades que rechaza toda entidad externa (el único ajuste que también respeta el analizador de Android). Encontrado en la auditoría de KeyNexa y cubierto por `XmlHardeningTest` en `core-kdbx`; esta parte sigue bajo Apache-2.0.
+- **Analizador XML protegido contra entidades externas (XXE).** `org/redundent/kotlin/xml/XmlBuilder.kt` (el kotlin-xml-builder incluido, Apache-2.0) creaba su `DocumentBuilder` con la configuración por defecto de la plataforma, que en la JVM resuelve entidades externas y DTD. Los archivos de clave XML son archivos cualesquiera que elige el usuario, así que uno hostil podía meter un archivo local en la clave o conectarse a la red. Todas las funciones `parse` usan ahora un constructor que rechaza un DOCTYPE donde el analizador lo admite, desactiva las entidades externas y la carga de DTD, activa el procesamiento seguro e instala un resolvedor de entidades que rechaza toda entidad externa (el único ajuste que también respeta el analizador de Android). Encontrado en la auditoría de KeyNexa y cubierto por `XmlHardeningTest` en `core/kdbx`; esta parte sigue bajo Apache-2.0.
 
 - **Credenciales a partir de componentes ya cifrados.** `database/Credentials.kt` gana `Credentials.fromHashes(passphraseHash, keyHash)`, que crea credenciales a partir del SHA-256 de la frase de paso y de la clave procesada del archivo de clave (32 bytes cada una), los valores que KDBX cifra antes de la derivación de clave. Lo necesita el desbloqueo biométrico de KeyNexa (ADR-0006), que guarda esos componentes en lugar de la contraseña.
 

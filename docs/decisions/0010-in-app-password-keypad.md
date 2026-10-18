@@ -31,7 +31,7 @@ Option 2.
 4. **No visual echo of the key:** pressed keys get no enlarged preview bubble (it would show each character to anyone looking and to screen recording when screenshots are allowed); feedback is a short vibration and the key's pressed state.
 5. **Memory:** the typed characters live in a `CharArray` buffer owned by the unlock form (`PasswordBuffer`: append, delete last, wipe, copy out). It is wiped when the password is submitted, when the screen is left, when the app locks or goes to the background, and when it grows (the old array is wiped after copying). The field shows dots only; "show password" renders the characters only while it is on, and that transient text is accepted as with the current field.
 6. **Accessibility:** every key is a real button with a spoken label ("a", "capital A", "at sign"), at least 44 dp high and with spacing, and the keypad follows the font scale. A screen reader therefore announces each key: that is the price of accessibility and the reason the quiet notice exists. Keys are never hidden from accessibility services.
-7. **Nothing else changes:** key files, biometric unlock, the safe-save pipeline and the vault format are untouched. Code lives in `app-android` only (`ui/unlock/` and a JVM-testable `PasswordBuffer` and layout model); no new dependency.
+7. **Nothing else changes:** key files, biometric unlock, the safe-save pipeline and the vault format are untouched. Code lives in `apps/android` only (`ui/unlock/` and a JVM-testable `PasswordBuffer` and layout model); no new dependency.
 
 ## Consequences
 

@@ -2,7 +2,7 @@
 
 [English](DESIGN.md) | [Español](es/DESIGN.md)
 
-> **Status:** the mark is the maintainer's own (2026-10-13). The visual direction "A, light and sober" (built on this palette, with a matching dark theme) and the Manrope font were chosen by the maintainer on 2026-10-16; the mockups are kept in `design/mockups/`. The tokens below are implemented in `app-android`; changing a value is a one-line edit, and the contrast test keeps the palette accessible. **Direction A now covers every screen** (unlock, vault list, group, entry, entry editor and settings); the `fastlane/` screenshots still have to be taken again on a phone.
+> **Status:** the mark is the maintainer's own (2026-10-13). The visual direction "A, light and sober" (built on this palette, with a matching dark theme) and the Manrope font were chosen by the maintainer on 2026-10-16; the mockups are kept in `design/mockups/`. The tokens below are implemented in `apps/android`; changing a value is a one-line edit, and the contrast test keeps the palette accessible. **Direction A now covers every screen** (unlock, vault list, group, entry, entry editor and settings); the `fastlane/` screenshots still have to be taken again on a phone.
 
 ## Principles
 
@@ -14,14 +14,14 @@
 
 ## Identity
 
-- **Mark:** a hexagon split navy and sky blue, with a separate small hexagon "node" at its upper right, an inner hexagonal ring, and a shield with a keyhole at the centre. Source: `design/icon/KeyNexa.jpg`, supplied by the maintainer (made with ChatGPT). It is traced to vector paths in `app-android/src/main/res/drawable/ic_launcher_foreground.xml` (two colours, `#03265D` and `#06A6F3`, on white) and `ic_launcher_monochrome.xml` (themed icons, Android 13+), and scaled so the hexagon's corners touch the 66 dp safe zone of adaptive icons.
+- **Mark:** a hexagon split navy and sky blue, with a separate small hexagon "node" at its upper right, an inner hexagonal ring, and a shield with a keyhole at the centre. Source: `design/icon/KeyNexa.jpg`, supplied by the maintainer (made with ChatGPT). It is traced to vector paths in `apps/android/src/main/res/drawable/ic_launcher_foreground.xml` (two colours, `#03265D` and `#06A6F3`, on white) and `ic_launcher_monochrome.xml` (themed icons, Android 13+), and scaled so the hexagon's corners touch the 66 dp safe zone of adaptive icons.
 - **Name:** "KeyNexa", set in the interface font in a medium weight, never stylised.
 - **Colour idea:** the icon's navy as the brand colour and its sky blue as the secondary, darkened where needed so text stays readable; neutral blue-greys for surfaces. Red is reserved for errors and destructive actions.
 - **Fixed palette, no dynamic colour:** the app does not take its colours from the wallpaper, so it looks the same, and keeps its checked contrast, on every device.
 
 ## Colour
 
-Tokens live in `app-android/.../ui/theme/Palette.kt` and map one to one onto Material 3 roles. Contrast ratios are the lowest for each role pair, checked by `PaletteContrastTest` (text at least 4.5:1, interface edges at least 3:1).
+Tokens live in `apps/android/.../ui/theme/Palette.kt` and map one to one onto Material 3 roles. Contrast ratios are the lowest for each role pair, checked by `PaletteContrastTest` (text at least 4.5:1, interface edges at least 3:1).
 
 | Role | Light | Dark | Notes |
 | --- | --- | --- | --- |

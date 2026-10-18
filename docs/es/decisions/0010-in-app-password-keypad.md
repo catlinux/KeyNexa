@@ -31,7 +31,7 @@ Opción 2.
 4. **Sin eco visual de la tecla:** las teclas pulsadas no muestran la burbuja ampliada (enseñaría cada carácter a quien mire y a la grabación de pantalla si se permiten las capturas); la respuesta es una vibración corta y el estado pulsado de la tecla.
 5. **Memoria:** los caracteres escritos viven en un búfer `CharArray` del formulario de desbloqueo (`PasswordBuffer`: añadir, borrar el último, borrar todo, copiar). Se borra al enviar la contraseña, al salir de la pantalla, al bloquearse la app o pasar a segundo plano, y al crecer (el array viejo se borra tras copiarlo). El campo muestra solo puntos; «mostrar la contraseña» pinta los caracteres solo mientras está activo, y ese texto pasajero se acepta igual que en el campo actual.
 6. **Accesibilidad:** cada tecla es un botón real con una etiqueta hablada («a», «A mayúscula», «arroba»), de al menos 44 dp de alto y con separación, y el teclado sigue la escala de letra. Por tanto un lector de pantalla anuncia cada tecla: es el precio de la accesibilidad y la razón de que exista el aviso discreto. Las teclas nunca se ocultan a los servicios de accesibilidad.
-7. **Nada más cambia:** los archivos de clave, el desbloqueo biométrico, el canal de guardado seguro y el formato de la bóveda no se tocan. El código vive solo en `app-android` (`ui/unlock/` y un `PasswordBuffer` y un modelo de distribución que se prueban en la JVM); sin dependencias nuevas.
+7. **Nada más cambia:** los archivos de clave, el desbloqueo biométrico, el canal de guardado seguro y el formato de la bóveda no se tocan. El código vive solo en `apps/android` (`ui/unlock/` y un `PasswordBuffer` y un modelo de distribución que se prueban en la JVM); sin dependencias nuevas.
 
 ## Consecuencias
 

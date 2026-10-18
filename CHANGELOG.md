@@ -6,6 +6,15 @@ All notable changes to this project are documented in this file. The format is b
 
 ## [Unreleased]
 
+## [1.0.2] - 2026-10-18
+
+Internal; the Android app does not change.
+
+### Changed
+
+- The modules move to folders by role, as [ADR-0011](docs/decisions/0011-repository-layout.md) decides: `core/{vault,kdbx,sync}`, `platform/{android,cloud}` and `apps/android` (Gradle paths `:core:vault`, `:apps:android`, …). History is kept (`git mv`). CI, release and fuzz workflows, documentation and credits follow the new paths. The unsigned APKs are now named `keynexa-android-<flavor>-release-unsigned.apk`; the published file names do not change.
+
+
 ## [1.0.1] - 2026-10-18
 
 Documentation only; the Android app does not change.
