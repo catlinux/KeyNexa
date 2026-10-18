@@ -10,6 +10,12 @@ Todos los cambios notables de este proyecto se documentan en este archivo. El fo
 
 - ADR-0008 (propuesta) y el plan de las copias opcionales de la bóveda en la nube con un asistente: una compilación `offline` sin acceso a la red y una `cloud`, primero S3 y después Dropbox, OneDrive y Google Drive.
 
+## [0.33.9] - 2026-10-18
+
+### Corregido
+
+- CI: el fallo intermitente del trabajo diferencial con keepass-rs no era una diferencia de interoperabilidad, sino la verificación de dependencias de Gradle: ese trabajo resuelve a veces el POM de `kotlinx-coroutines-bom` 1.8.0, que no tenía suma. Su SHA-256, que coincide con el SHA-256 y el SHA-1 publicados por Maven Central, está ahora en `gradle/verification-metadata.xml`. Parche: solo compilación.
+
 ## [0.33.8] - 2026-10-18
 
 ### Corregido

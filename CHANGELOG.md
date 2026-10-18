@@ -10,6 +10,12 @@ All notable changes to this project are documented in this file. The format is b
 
 - ADR-0008 (proposed) and the plan for optional cloud copies of the vault with an assistant: an `offline` build with no network access and a `cloud` build, S3 first and then Dropbox, OneDrive and Google Drive.
 
+## [0.33.9] - 2026-10-18
+
+### Fixed
+
+- CI: the intermittent failure of the keepass-rs differential job was not an interoperability difference but Gradle dependency verification: that job sometimes resolves the `kotlinx-coroutines-bom` 1.8.0 POM, which had no checksum. Its SHA-256, matching the SHA-256 and SHA-1 published by Maven Central, is now in `gradle/verification-metadata.xml`. Patch: build only.
+
 ## [0.33.8] - 2026-10-18
 
 ### Fixed
