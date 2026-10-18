@@ -25,6 +25,7 @@
     <string name="create_password_weak">Débil. Para una contraseña más fuerte, procura llegar a %1$d.</string>
     <string name="create_password_ok">La longitud es aceptable.</string>
     <string name="create_key_file_label">Archivo de clave (opcional)</string>
+    <string name="create_key_file_help">Segunda llave opcional: un archivo que también tendrás que elegir para abrir la bóveda. Te protege si alguien averigua tu contraseña, pero si pierdes el archivo pierdes la bóveda. Guarda una copia en un sitio seguro, aparte de la bóveda.</string>
     <string name="create_key_file_choose">Elegir un archivo de clave</string>
     <string name="create_key_file_failed">No se ha podido leer ese archivo. Prueba con otro.</string>
     <string name="create_key_file_chosen">Archivo de clave: %1$s</string>

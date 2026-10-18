@@ -352,6 +352,10 @@ private fun KeyFilePicker(
             text = stringResource(R.string.create_key_file_label),
             style = MaterialTheme.typography.titleMedium,
         )
+        Text(
+            text = stringResource(R.string.create_key_file_help),
+            style = MaterialTheme.typography.bodyMedium,
+        )
         if (choice.name == null) {
             OutlinedButton(
                 onClick = { chooser.launch(KeyFileTypes) },

@@ -25,6 +25,7 @@
     <string name="create_password_weak">Weak. For a stronger password, aim for %1$d.</string>
     <string name="create_password_ok">Acceptable length.</string>
     <string name="create_key_file_label">Key file (optional)</string>
+    <string name="create_key_file_help">Optional second key: a file you must also pick to open the vault. It protects you if someone learns your password, but if you lose the file you lose the vault. Keep a copy somewhere safe, apart from the vault.</string>
     <string name="create_key_file_choose">Choose a key file</string>
     <string name="create_key_file_failed">That file could not be read. Try another one.</string>
     <string name="create_key_file_chosen">Key file: %1$s</string>
