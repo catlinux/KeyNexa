@@ -10,6 +10,12 @@ All notable changes to this project are documented in this file. The format is b
 
 - ADR-0008 (proposed) and the plan for optional cloud copies of the vault with an assistant: an `offline` build with no network access and a `cloud` build, S3 first and then Dropbox, OneDrive and Google Drive.
 
+## [0.33.6] - 2026-10-18
+
+### Security
+
+- Release workflow: building and signing are now separate jobs, so nothing the build runs (Gradle, its plugins, the dependencies, third-party actions) shares a machine with the signing key; every action is pinned to a commit; and the release fails if the offline APK asks for the Internet permission, a check the plan expected but the workflow did not have. Found in the final audit. Patch: release tooling only (not run yet; the next tag proves it).
+
 ## [0.33.5] - 2026-10-18
 
 ### Security

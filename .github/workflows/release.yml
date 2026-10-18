@@ -4,20 +4,24 @@ on:
   push:
     tags: ['v[0-9]+.[0-9]+.[0-9]+']
 
+# Read-only by default: only the job that publishes gets write access.
 permissions:
-  contents: write
+  contents: read
 
 concurrency:
   group: release-${{ github.ref }}
   cancel-in-progress: false
 
+# Actions are pinned to the commit of the release they name, so a moved tag cannot change what runs next to the
+# signing key. Building and signing are separate jobs: the build runs Gradle, its plugins and every dependency, and
+# none of that code shares a machine with the keystore.
 jobs:
-  release:
+  build:
     runs-on: ubuntu-latest
     env:
       TAG: ${{ github.ref_name }}
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
 
       - name: Check that the tag matches VERSION
         run: |
@@ -26,13 +30,12 @@ jobs:
             echo "Tag $TAG does not match VERSION $version" >&2
             exit 1
           fi
-          echo "VERSION=$version" >> "$GITHUB_ENV"
 
-      - uses: actions/setup-java@v6
+      - uses: actions/setup-java@b843ebf9b913146b38da2eaa7aeddf76074ae1ad # v6
         with:
           distribution: temurin
           java-version: '17'
-      - uses: gradle/actions/setup-gradle@v6
+      - uses: gradle/actions/setup-gradle@3f5f9adaf7d9fecd50b5935e54106014257a94e6 # v6
       - name: Android SDK packages
         run: |
           sdkmanager="$(find "$ANDROID_HOME/cmdline-tools" -name sdkmanager -type f | head -n 1)"
@@ -41,13 +44,57 @@ jobs:
           "$sdkmanager" 'platforms;android-36' 'build-tools;36.0.0'
 
       - name: Build and check
-        run: ./gradlew build check :app-android:assembleOfflineRelease :app-android:assembleCloudRelease 2>&1 | tee gradle.log
+        run: |
+          set -o pipefail
+          ./gradlew build check :app-android:assembleOfflineRelease :app-android:assembleCloudRelease 2>&1 | tee gradle.log
       - name: Publish the Gradle error as an annotation
         if: failure()
         run: bash scripts/ci-gradle-error.sh gradle.log
 
       # Only the offline flavor is published: the cloud flavor asks for the Internet permission, so it is built and
       # checked but not released until the project decides to publish it (ADR-0008).
+      - name: Check that the offline APK has no network permission
+        run: |
+          set -euo pipefail
+          apk=app-android/build/outputs/apk/offline/release/app-android-offline-release-unsigned.apk
+          permissions="$("$ANDROID_HOME/build-tools/36.0.0/aapt2" dump permissions "$apk")"
+          echo "$permissions"
+          if grep -q 'android.permission.INTERNET' <<< "$permissions"; then
+            echo '::error title=Release::the offline APK asks for the Internet permission' >&2
+            exit 1
+          fi
+
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
+        with:
+          name: unsigned-apk
+          path: app-android/build/outputs/apk/offline/release/app-android-offline-release-unsigned.apk
+          if-no-files-found: error
+          retention-days: 1
+
+  publish:
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    env:
+      TAG: ${{ github.ref_name }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      - uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v7
+        with:
+          name: unsigned-apk
+          path: ${{ runner.temp }}/unsigned
+
+      - name: Read VERSION
+        run: echo "VERSION=$(tr -d '[:space:]' < VERSION)" >> "$GITHUB_ENV"
+
+      - name: Android build tools
+        run: |
+          sdkmanager="$(find "$ANDROID_HOME/cmdline-tools" -name sdkmanager -type f | head -n 1)"
+          test -n "$sdkmanager" || { echo 'sdkmanager not found under ANDROID_HOME' >&2; exit 1; }
+          yes | "$sdkmanager" --licenses > /dev/null || true
+          "$sdkmanager" 'build-tools;36.0.0'
+
       - name: Sign the APK
         env:
           KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
@@ -62,7 +109,7 @@ jobs:
           mkdir -p "$out"
           printf '%s' "$KEYSTORE_BASE64" | base64 --decode > "$keystore"
           "$tools/zipalign" -p -f 4 \
-            app-android/build/outputs/apk/offline/release/app-android-offline-release-unsigned.apk \
+            "$RUNNER_TEMP/unsigned/app-android-offline-release-unsigned.apk" \
             "$RUNNER_TEMP/aligned.apk"
           "$tools/apksigner" sign \
             --ks "$keystore" \

@@ -10,6 +10,12 @@ Todos los cambios notables de este proyecto se documentan en este archivo. El fo
 
 - ADR-0008 (propuesta) y el plan de las copias opcionales de la bóveda en la nube con un asistente: una compilación `offline` sin acceso a la red y una `cloud`, primero S3 y después Dropbox, OneDrive y Google Drive.
 
+## [0.33.6] - 2026-10-18
+
+### Seguridad
+
+- Flujo de publicación: compilar y firmar son ahora trabajos separados, así que nada de lo que ejecuta la compilación (Gradle, sus plugins, las dependencias, acciones de terceros) comparte máquina con la clave de firma; todas las acciones están fijadas a un commit; y la publicación falla si el APK offline pide el permiso de Internet, un control que el plan daba por hecho y el flujo no tenía. Encontrado en la auditoría final. Parche: solo herramientas de publicación (aún sin ejecutar; la próxima etiqueta lo comprueba).
+
 ## [0.33.5] - 2026-10-18
 
 ### Seguridad
