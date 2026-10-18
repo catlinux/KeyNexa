@@ -1,0 +1,11 @@
+# This is a Gradle generated file for dependency locking.
+# Manual edits can break the build and are not advised.
+# This file is expected to be part of source control.
+net.java.dev.jna:jna-platform:5.19.1=runtimeClasspath
+net.java.dev.jna:jna:5.19.1=runtimeClasspath
+org.jetbrains.kotlin:kotlin-stdlib:2.2.21=runtimeClasspath
+org.jetbrains.kotlinx:kotlinx-coroutines-bom:1.9.0=runtimeClasspath
+org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:1.9.0=runtimeClasspath
+org.jetbrains.kotlinx:kotlinx-coroutines-core:1.9.0=runtimeClasspath
+org.jetbrains:annotations:23.0.0=runtimeClasspath
+empty=

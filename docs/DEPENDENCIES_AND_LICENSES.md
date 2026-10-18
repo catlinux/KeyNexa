@@ -58,7 +58,7 @@ The entries below are the external modules locked for the app's release flavors 
 
 JUnit 4 is test-only and does not appear in the release configurations. Build tools are listed separately below. The lockfile also contains androidx.compose:compose-bom 2025.09.00, kotlinx-coroutines-bom 1.9.0 and kotlinx-serialization-bom 1.7.3; these are alignment metadata, not APK payloads.
 
-The desktop target of `ui/shared` (`desktopRuntimeClasspath` in [ui/shared/gradle.lockfile](../ui/shared/gradle.lockfile)) uses the same Compose Multiplatform 1.8.2 modules in their desktop form, with Skiko as the graphics layer (Apache-2.0); they will ship with the desktop client and are listed in full when it is packaged.
+The desktop target of `ui/shared` (`desktopRuntimeClasspath` in [ui/shared/gradle.lockfile](../ui/shared/gradle.lockfile)) uses the same Compose Multiplatform 1.8.2 modules in their desktop form, with Skiko as the graphics layer (Apache-2.0); they will ship with the desktop client and are listed in full when it is packaged. The Windows platform module `platform/windows` adds **JNA 5.19.1** (`net.java.dev.jna:jna` and `jna-platform`, for DPAPI): dual-licensed LGPL-2.1-or-later or Apache-2.0 according to its 5.19.1 POMs; KeyNexa uses it under **Apache-2.0**, compatible with GPL-3.0.
 
 ### Explicitly avoided
 

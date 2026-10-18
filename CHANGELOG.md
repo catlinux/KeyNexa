@@ -6,6 +6,15 @@ All notable changes to this project are documented in this file. The format is b
 
 ## [Unreleased]
 
+## [1.1.0] - 2026-10-18
+
+The Android app does not change. The desktop client gets its Windows platform layer (the app itself comes next).
+
+### Added
+
+- New module `platform/windows` (`:platform:windows`): the per-user data folder `%LOCALAPPDATA%\KeyNexa` and `DpapiSecretBox`, which seals the desktop client's secrets with Windows DPAPI for the current user ([ADR-0012](docs/decisions/0012-windows-desktop-client.md)). Its DPAPI tests run on Windows and are skipped elsewhere.
+- JNA 5.19.1 (Apache-2.0, dual-licensed with LGPL-2.1-or-later) to call DPAPI, recorded in the dependencies and credits.
+
 ## [1.0.9] - 2026-10-18
 
 Internal; the Android app does not change.

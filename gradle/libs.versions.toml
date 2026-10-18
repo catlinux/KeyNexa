@@ -10,6 +10,7 @@ fragment = "1.8.5"
 junit = "4.13.2"
 okio = "3.15.0"
 kotlinxCoroutines = "1.9.0"
+jna = "5.19.1"
 detekt = "1.23.8"
 ktlintGradle = "14.2.0"
 licenseReport = "3.1.4"
@@ -23,6 +24,8 @@ androidx-compose-material3 = { group = "androidx.compose.material3", name = "mat
 androidx-compose-ui = { group = "androidx.compose.ui", name = "ui" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
+jna = { group = "net.java.dev.jna", name = "jna", version.ref = "jna" }
+jna-platform = { group = "net.java.dev.jna", name = "jna-platform", version.ref = "jna" }
 kotlinx-coroutines-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version.ref = "kotlinxCoroutines" }
 okio = { group = "com.squareup.okio", name = "okio", version.ref = "okio" }
 

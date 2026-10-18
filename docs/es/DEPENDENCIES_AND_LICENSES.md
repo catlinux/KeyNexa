@@ -58,7 +58,7 @@ Las entradas siguientes son los módulos externos fijados para los sabores de re
 
 JUnit 4 solo se usa en las pruebas y no aparece en las configuraciones de release. Las herramientas de compilación se enumeran por separado más abajo. El lockfile también contiene androidx.compose:compose-bom 2025.09.00, kotlinx-coroutines-bom 1.9.0 y kotlinx-serialization-bom 1.7.3; son metadatos para alinear versiones, no contenido del APK.
 
-El objetivo de escritorio de `ui/shared` (`desktopRuntimeClasspath` en [ui/shared/gradle.lockfile](../../ui/shared/gradle.lockfile)) usa los mismos módulos de Compose Multiplatform 1.8.2 en su forma de escritorio, con Skiko como capa gráfica (Apache-2.0); se distribuirán con el cliente de escritorio y se listarán completos al empaquetarlo.
+El objetivo de escritorio de `ui/shared` (`desktopRuntimeClasspath` en [ui/shared/gradle.lockfile](../../ui/shared/gradle.lockfile)) usa los mismos módulos de Compose Multiplatform 1.8.2 en su forma de escritorio, con Skiko como capa gráfica (Apache-2.0); se distribuirán con el cliente de escritorio y se listarán completos al empaquetarlo. El módulo de plataforma de Windows `platform/windows` añade **JNA 5.19.1** (`net.java.dev.jna:jna` y `jna-platform`, para DPAPI): doble licencia LGPL-2.1-or-later o Apache-2.0 según sus POM de la 5.19.1; KeyNexa la usa bajo **Apache-2.0**, compatible con GPL-3.0.
 
 ### Evitados explícitamente
 

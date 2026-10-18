@@ -6,6 +6,15 @@ Todos los cambios notables de este proyecto se documentan en este archivo. El fo
 
 ## [Sin publicar]
 
+## [1.1.0] - 2026-10-18
+
+La app de Android no cambia. El cliente de escritorio recibe su capa de plataforma de Windows (la app llega en el paso siguiente).
+
+### Añadido
+
+- Módulo nuevo `platform/windows` (`:platform:windows`): la carpeta de datos por usuario `%LOCALAPPDATA%\KeyNexa` y `DpapiSecretBox`, que sella los secretos del cliente de escritorio con DPAPI de Windows para el usuario actual ([ADR-0012](decisions/0012-windows-desktop-client.md)). Sus pruebas de DPAPI se ejecutan en Windows y se saltan en los demás sistemas.
+- JNA 5.19.1 (Apache-2.0, con doble licencia LGPL-2.1-or-later) para llamar a DPAPI, registrada en las dependencias y los créditos.
+
 ## [1.0.9] - 2026-10-18
 
 Interno; la app de Android no cambia.

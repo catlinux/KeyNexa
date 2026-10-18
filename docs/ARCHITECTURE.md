@@ -36,6 +36,7 @@ ui/shared             Compose Multiplatform theme, brand mark and password keypa
   │
 platform/jvm         private file stores (backups, save journal, merged-copies ledger), plain JVM
 platform/desktop     local file storage (FileStoragePort) and the per-user desktop stores, plain JVM
+platform/windows     Windows data folder and the DPAPI secret box (current user), JNA
 platform/android     SAF storage adapter, Keystore, lifecycle-based auto-lock
 platform/cloud       S3-compatible cloud client (SigV4), JDK HTTP client only
   │
@@ -54,6 +55,7 @@ core/kdbx            adapter implementing KdbxEngine on top of kotpass (the only
 - **`core/session`** holds the open vault's session that every JVM client shares: unlocking, editing, saving and locking the vault, the list of known vaults with its codec, and the helpers that walk a vault tree; `apps/android` depends on it.
 - **`platform/jvm`** holds the private file stores that every JVM client shares (`FileBackupStore`, `FileSaveJournal`, `FileMergedCopies`); `platform/android` depends on it.
 - **`platform/desktop`** holds the storage a desktop client shares: `FileStoragePort` over the local file system (an atomic write with an in-place fallback), the per-user stores and the known-vaults file.
+- **`platform/windows`** is the Windows client's own piece: the `%LOCALAPPDATA%\KeyNexa` data folder and a `SecretBox` over DPAPI scoped to the current user, through JNA.
 - **`platform/android`** implements `StoragePort` with SAF and wraps the Android Keystore.
 - **`platform/cloud`** is the network client of the `cloud` variant: an S3-compatible backend signed with AWS SigV4, over the JDK HTTP client and with no external dependency. The `offline` variant never includes it.
 - **`apps/android`** is the UI and the Android services.
