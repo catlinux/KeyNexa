@@ -17,6 +17,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.key.onPreviewKeyEvent
@@ -128,7 +129,8 @@ private fun ApplicationScope.KeyNexaWindow(
         openState?.let { open ->
             CloudBackupSource(open.vault) { container.readVault(open.vault.location) }
         }
-    val windowFocused = LocalWindowInfo.current.isWindowFocused
+    // The window info only exists inside the Window content, so the focus is read there and kept here.
+    var windowFocused by remember { mutableStateOf(true) }
     // The cloud is configured when its credentials load and its consent is accepted; refreshed when the dialog closes.
     LaunchedEffect(cloudOpen) {
         val read =
@@ -188,6 +190,10 @@ private fun ApplicationScope.KeyNexaWindow(
         title = stringResource(Res.string.app_name),
     ) {
         window.minimumSize = Dimension(MIN_WINDOW_WIDTH, MIN_WINDOW_HEIGHT)
+        val windowInfo = LocalWindowInfo.current
+        LaunchedEffect(windowInfo) {
+            snapshotFlow { windowInfo.isWindowFocused }.collect { windowFocused = it }
+        }
         LaunchedEffect(settings.allowScreenshots) {
             container.captureGuard.apply(window, settings.allowScreenshots)
         }
@@ -256,13 +262,13 @@ private fun ApplicationScope.KeyNexaWindow(
                     )
                 }
             }
-        }
-        if (cloudOpen) {
-            DesktopCloudDialog(
-                cloud = container.cloud,
-                source = cloudSource,
-                onDismiss = { cloudOpen = false },
-            )
+            if (cloudOpen) {
+                DesktopCloudDialog(
+                    cloud = container.cloud,
+                    source = cloudSource,
+                    onDismiss = { cloudOpen = false },
+                )
+            }
         }
     }
 }

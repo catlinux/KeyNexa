@@ -6,6 +6,17 @@ Todos los cambios notables de este proyecto se documentan en este archivo. El fo
 
 ## [Sin publicar]
 
+## [1.6.1] - 2026-10-19
+
+La app de Android no cambia. Primera prueba a mano de la app de escritorio, hecha desde el paquete.
+
+### Corregido
+
+- Escritorio: la app no arrancaba (desde la 1.4.0): el foco de la ventana se leía fuera de la ventana. Ahora se lee dentro.
+- Ajustes del escritorio: las opciones de bloqueo por inactividad decían «5 segundos» en lugar de minutos y las del portapapeles «60 minutos» en lugar de segundos; la unidad es ahora explícita.
+- Asistente de la nube del escritorio: la ventana usaba los colores de Material por defecto en lugar del tema de KeyNexa.
+- Editor de entradas del escritorio: una contraseña de entrada vacía mostraba el mínimo de la «contraseña maestra»; las entradas solo reciben un aviso de «débil».
+
 ## [1.6.0] - 2026-10-18
 
 La app de Android no cambia. Paso 8 del plan de escritorio completo: ajustes y modos.

@@ -6,6 +6,17 @@ All notable changes to this project are documented in this file. The format is b
 
 ## [Unreleased]
 
+## [1.6.1] - 2026-10-19
+
+The Android app does not change. First hand test of the desktop app, started from the packaged build.
+
+### Fixed
+
+- Desktop: the app did not start (since 1.4.0): the window focus was read outside the window. It is read inside it now.
+- Desktop settings: the idle lock choices said "5 seconds" instead of minutes and the clipboard choices "60 minutes" instead of seconds; the unit is explicit now.
+- Desktop cloud assistant: the window used the default Material colours instead of KeyNexa's theme.
+- Desktop entry editor: an empty entry password showed the "master password" minimum; entries now only get a "weak" hint.
+
 ## [1.6.0] - 2026-10-18
 
 The Android app does not change. Step 8 of the desktop plan is complete: settings and modes.

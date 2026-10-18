@@ -342,7 +342,7 @@ private fun PasswordField(
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
         }
-        PasswordStrength(length = form.password.length, mismatch = false)
+        PasswordStrength(length = form.password.length, mismatch = false, master = false)
     }
 }
 

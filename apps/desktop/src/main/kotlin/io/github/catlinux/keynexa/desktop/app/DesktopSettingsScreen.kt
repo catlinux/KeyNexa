@@ -160,7 +160,7 @@ private fun SecuritySection(
         SectionLabel(text = stringResource(Res.string.settings_auto_lock))
         DesktopSettings.LOCK_AFTER_IDLE_CHOICES.forEach { minutes ->
             ChoiceRow(
-                label = amountLabel(choiceLabel(minutes)),
+                label = amountLabel(choiceLabel(minutes), inMinutes = true),
                 selected = settings.lockAfterIdleMinutes == minutes,
                 onSelect = { onUpdate { it.copy(lockAfterIdleMinutes = minutes) } },
             )
@@ -203,7 +203,7 @@ private fun ClipboardSection(
         SectionLabel(text = stringResource(Res.string.settings_clipboard_delay))
         DesktopSettings.CLIPBOARD_CLEAR_CHOICES.forEach { seconds ->
             ChoiceRow(
-                label = amountLabel(choiceLabel(seconds)),
+                label = amountLabel(choiceLabel(seconds), inMinutes = false),
                 selected = settings.clipboardClearSeconds == seconds,
                 onSelect = { onUpdate { it.copy(clipboardClearSeconds = seconds) } },
             )
@@ -397,21 +397,19 @@ private fun ModeCard(
     }
 }
 
-/** The label of an amount of minutes or seconds. */
+/** The label of an amount of minutes or, when [inMinutes] is false, of seconds. */
 @Composable
-private fun amountLabel(label: ChoiceLabel): String =
+private fun amountLabel(
+    label: ChoiceLabel,
+    inMinutes: Boolean,
+): String =
     when (label) {
         ChoiceLabel.Never -> stringResource(Res.string.settings_never)
-        is ChoiceLabel.Amount -> amountText(label.value)
+        is ChoiceLabel.Amount -> {
+            val unit = if (inMinutes) Res.plurals.settings_minutes else Res.plurals.settings_seconds
+            pluralStringResource(unit, label.value, label.value)
+        }
     }
-
-/** The text of an amount, in the unit it is offered in. */
-@Composable
-private fun amountText(value: Int): String {
-    val inMinutes = value % SECONDS_PER_MINUTE == 0 && value >= SECONDS_PER_MINUTE
-    val unit = if (inMinutes) Res.plurals.settings_minutes else Res.plurals.settings_seconds
-    return pluralStringResource(unit, value, value)
-}
 
 /** The label of one theme. */
 @Composable
@@ -423,4 +421,3 @@ private fun themeLabel(theme: Theme): org.jetbrains.compose.resources.StringReso
     }
 
 private const val DIVIDER_ALPHA = 0.3f
-private const val SECONDS_PER_MINUTE = 60

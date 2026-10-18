@@ -30,19 +30,27 @@ private val StrengthGap = 6.dp
 
 /**
  * How long a password is: a bar that grows with it and a word that says what that means. A password below the
- * minimum is blocked by the caller; a merely weak one only warns, as the design system asks.
+ * minimum is blocked by the caller; a merely weak one only warns, as the design system asks. With [master] false
+ * (an entry's own password) nothing is required: an empty password says nothing and a short one is only called weak.
  */
 @Composable
 internal fun PasswordStrength(
     length: Int,
     mismatch: Boolean,
     modifier: Modifier = Modifier,
+    master: Boolean = true,
 ) {
     val acceptable = length >= GOOD_PASSWORD_LENGTH && !mismatch
     val filled = (length.toFloat() / GOOD_PASSWORD_LENGTH).coerceIn(0f, 1f)
     val color = if (acceptable) MaterialTheme.colorScheme.secondary else MaterialTheme.colorScheme.error
     val message =
         when {
+            !master && length == 0 -> null
+            !master && length < GOOD_PASSWORD_LENGTH ->
+                stringResource(
+                    Res.string.create_password_weak,
+                    GOOD_PASSWORD_LENGTH,
+                )
             length < MIN_PASSWORD_LENGTH -> stringResource(Res.string.create_password_min, MIN_PASSWORD_LENGTH)
             mismatch -> stringResource(Res.string.create_password_mismatch)
             length < GOOD_PASSWORD_LENGTH -> stringResource(Res.string.create_password_weak, GOOD_PASSWORD_LENGTH)
@@ -68,10 +76,12 @@ internal fun PasswordStrength(
                         .background(color),
             )
         }
-        Text(
-            text = message,
-            style = MaterialTheme.typography.bodySmall,
-            color = if (acceptable) MaterialTheme.colorScheme.onSurfaceVariant else MaterialTheme.colorScheme.error,
-        )
+        if (message != null) {
+            Text(
+                text = message,
+                style = MaterialTheme.typography.bodySmall,
+                color = if (acceptable) MaterialTheme.colorScheme.onSurfaceVariant else MaterialTheme.colorScheme.error,
+            )
+        }
     }
 }
