@@ -72,6 +72,7 @@ internal fun DesktopVaultScreen(
         }
         VaultStatusBar(view = view)
     }
+    VaultPromptDialogs(vault = state.current, view = view)
 }
 
 /** The slim bar at the bottom: what the shortcuts do, and what was copied last. */

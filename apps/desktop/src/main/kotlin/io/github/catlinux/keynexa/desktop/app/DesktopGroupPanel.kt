@@ -16,6 +16,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -30,6 +31,7 @@ import io.github.catlinux.keynexa.desktop.app.generated.resources.Res
 import io.github.catlinux.keynexa.desktop.app.generated.resources.group_collapse
 import io.github.catlinux.keynexa.desktop.app.generated.resources.group_entries_count
 import io.github.catlinux.keynexa.desktop.app.generated.resources.group_expand
+import io.github.catlinux.keynexa.desktop.app.generated.resources.group_new_group
 import io.github.catlinux.keynexa.session.findGroup
 import io.github.catlinux.keynexa.vault.Group
 import io.github.catlinux.keynexa.vault.Vault
@@ -70,14 +72,20 @@ internal fun GroupPanel(
                 .verticalScroll(rememberScrollState())
                 .padding(vertical = PanelGap),
     ) {
-        GroupBranch(group = vault.root, depth = 0, recycleBin = recycleBin, view = view)
+        GroupBranch(group = vault.root, depth = 0, vault = vault, recycleBin = recycleBin, view = view)
         val bin = recycleBin?.let { vault.root.findGroup(it) }
         if (bin != null) {
             HorizontalDivider(
                 modifier = Modifier.padding(vertical = PanelGap),
                 color = MaterialTheme.colorScheme.outline.copy(alpha = DIVIDER_ALPHA),
             )
-            GroupBranch(group = bin, depth = 0, recycleBin = recycleBin, view = view)
+            GroupBranch(group = bin, depth = 0, vault = vault, recycleBin = recycleBin, view = view)
+        }
+        TextButton(
+            onClick = { view.ask(VaultPrompt.NewGroup(view.selectedGroup ?: vault.root.id)) },
+            modifier = Modifier.fillMaxWidth().padding(horizontal = RowPaddingStart),
+        ) {
+            Text(text = stringResource(Res.string.group_new_group))
         }
     }
 }
@@ -87,17 +95,31 @@ internal fun GroupPanel(
 private fun GroupBranch(
     group: Group,
     depth: Int,
+    vault: Vault,
     recycleBin: UUID?,
     view: DesktopVaultState,
 ) {
-    GroupRow(group = group, depth = depth, view = view)
+    GroupRow(group = group, depth = depth, vault = vault, view = view)
     if (group.id in view.collapsed) return
-    treeChildren(group, recycleBin).forEach { child -> GroupBranch(child, depth + 1, recycleBin, view) }
+    treeChildren(group, recycleBin).forEach { child -> GroupBranch(child, depth + 1, vault, recycleBin, view) }
 }
 
 /** One row of the tree: the fold control, the name and how many entries the group holds. */
 @Composable
 private fun GroupRow(
+    group: Group,
+    depth: Int,
+    vault: Vault,
+    view: DesktopVaultState,
+) {
+    NodeContextMenu(actions = groupActions(vault, group.id), onAction = { runNodeAction(it, group.id, view) }) {
+        GroupRowContent(group = group, depth = depth, view = view)
+    }
+}
+
+/** What a group row shows. */
+@Composable
+private fun GroupRowContent(
     group: Group,
     depth: Int,
     view: DesktopVaultState,

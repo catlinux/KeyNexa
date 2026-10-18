@@ -6,6 +6,15 @@ All notable changes to this project are documented in this file. The format is b
 
 ## [Unreleased]
 
+## [1.3.3] - 2026-10-18
+
+The Android app does not change.
+
+### Added
+
+- Desktop: right-click menus on groups (new subgroup, rename, move to recycle bin) and entries (edit, move to another group, move to recycle bin), a New group action, the Delete key, and in the recycle bin restore, delete permanently and empty, each with a confirmation.
+- Core: `VaultEditor.renameGroup`, which also moves the group's modification time to now, so a merge with another copy of the vault keeps the newer name.
+
 ## [1.3.2] - 2026-10-18
 
 The Android app does not change.

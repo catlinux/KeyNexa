@@ -51,6 +51,26 @@ class VaultEditor(
         return vault.copy(root = vault.root.mapGroup(parent.id) { it.copy(groups = it.groups + group) })
     }
 
+    /**
+     * Renames the group [groupId] to [name]. Its modification time moves to now, so a merge with another copy of the
+     * vault keeps the newer name.
+     */
+    fun renameGroup(
+        vault: Vault,
+        groupId: UUID,
+        name: String,
+    ): Vault {
+        val group = requireGroup(vault, groupId)
+        if (group.name == name) return vault
+        val now = clock.instant()
+        return vault.copy(
+            root =
+                vault.root.mapGroup(group.id) {
+                    it.copy(name = name, times = it.times.copy(lastModified = now))
+                },
+        )
+    }
+
     /** Adds an entry whose only field is its [title], inside the group [groupId]. */
     fun addEntry(
         vault: Vault,

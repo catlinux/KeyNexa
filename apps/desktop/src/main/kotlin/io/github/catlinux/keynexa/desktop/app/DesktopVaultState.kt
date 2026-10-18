@@ -28,6 +28,37 @@ internal sealed interface DetailMode {
     ) : DetailMode
 }
 
+/** What the browser is asking the user to fill in or to confirm. */
+internal sealed interface VaultPrompt {
+    /** A name for the new group inside [parentId]. */
+    data class NewGroup(
+        val parentId: UUID,
+    ) : VaultPrompt
+
+    /** A new name for the group [groupId]. */
+    data class RenameGroup(
+        val groupId: UUID,
+    ) : VaultPrompt
+
+    /** The group [objectId] moves to. */
+    data class MoveTo(
+        val objectId: UUID,
+    ) : VaultPrompt
+
+    /** Confirmation that [objectId] goes to the recycle bin. */
+    data class MoveToBin(
+        val objectId: UUID,
+    ) : VaultPrompt
+
+    /** Confirmation that [objectId] is erased for good. */
+    data class DeleteForever(
+        val objectId: UUID,
+    ) : VaultPrompt
+
+    /** Confirmation that everything in the recycle bin is erased. */
+    data object EmptyBin : VaultPrompt
+}
+
 /**
  * The selection to keep: [selected] itself while it is one of [visible], and nothing when it is not, so the detail
  * goes back to its empty state when a search or a change of group leaves the selected entry out.
@@ -81,6 +112,14 @@ internal class DesktopVaultState(
 
     /** What the detail panel shows. */
     var mode by mutableStateOf<DetailMode>(DetailMode.Read)
+        private set
+
+    /** The question the browser is waiting for an answer to, or null. */
+    var prompt by mutableStateOf<VaultPrompt?>(null)
+        private set
+
+    /** The entries the centre panel is showing, in order, so a removal can move the selection sensibly. */
+    var visibleRows by mutableStateOf<List<UUID>>(emptyList())
         private set
 
     /** The label of the last copied field, shown for a moment in the status bar. */
@@ -165,6 +204,21 @@ internal class DesktopVaultState(
 
     /** Saves [change] through the session; false while a save is already running, so the form stays open. */
     fun save(change: (Vault) -> Vault): Boolean = session.apply(change)
+
+    /** Asks the user to fill in or confirm something; only one question is open at a time. */
+    fun ask(question: VaultPrompt) {
+        prompt = question
+    }
+
+    /** Answers nothing: the question is dropped and nothing changes. */
+    fun dismissPrompt() {
+        prompt = null
+    }
+
+    /** Records what the centre panel is showing, so a removal knows which entry to select next. */
+    fun showRows(ids: List<UUID>) {
+        visibleRows = ids
+    }
 
     /** Copies [value], marking it when [sensitive], and shows [label] as the confirmation. */
     fun copy(

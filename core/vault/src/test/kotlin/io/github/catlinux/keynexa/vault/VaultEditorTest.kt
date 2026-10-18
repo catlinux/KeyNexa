@@ -55,6 +55,28 @@ class VaultEditorTest {
     }
 
     @Test
+    fun renamingAGroupChangesItsNameAndModificationTimeOnly() {
+        val vault = editorVault()
+        val before = requireNotNull(vault.root.findGroup(INTERNET_ID))
+
+        val edited = editor().renameGroup(vault, INTERNET_ID, "Web")
+
+        val renamed = requireNotNull(edited.root.findGroup(INTERNET_ID))
+        assertEquals("Web", renamed.name)
+        assertEquals(before.times.copy(lastModified = EDITED_AT), renamed.times)
+        assertEquals(before.copy(name = "Web", times = renamed.times), renamed)
+        assertEquals(vault, editorVault())
+    }
+
+    @Test
+    fun renamingAGroupToItsOwnNameChangesNothing() {
+        val vault = editorVault()
+        val name = requireNotNull(vault.root.findGroup(INTERNET_ID)).name
+
+        assertEquals(vault, editor().renameGroup(vault, INTERNET_ID, name))
+    }
+
+    @Test
     fun addingAnEntryCreatesItWithItsTitleAndTimes() {
         val vault = editorVault()
 

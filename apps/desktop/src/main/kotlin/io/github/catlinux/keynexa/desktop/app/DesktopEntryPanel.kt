@@ -1,3 +1,5 @@
+@file:Suppress("TooManyFunctions")
+
 package io.github.catlinux.keynexa.desktop.app
 
 import androidx.compose.foundation.background
@@ -20,6 +22,7 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
@@ -41,6 +44,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import io.github.catlinux.keynexa.desktop.app.generated.resources.Res
+import io.github.catlinux.keynexa.desktop.app.generated.resources.bin_empty
 import io.github.catlinux.keynexa.desktop.app.generated.resources.entries_column_modified
 import io.github.catlinux.keynexa.desktop.app.generated.resources.entries_column_title
 import io.github.catlinux.keynexa.desktop.app.generated.resources.entries_column_user
@@ -48,6 +52,7 @@ import io.github.catlinux.keynexa.desktop.app.generated.resources.entries_column
 import io.github.catlinux.keynexa.desktop.app.generated.resources.entries_empty
 import io.github.catlinux.keynexa.desktop.app.generated.resources.entry_detail_untitled
 import io.github.catlinux.keynexa.desktop.app.generated.resources.search_no_results
+import io.github.catlinux.keynexa.session.findGroup
 import io.github.catlinux.keynexa.ui.brand.HexBadge
 import io.github.catlinux.keynexa.vault.Vault
 import io.github.catlinux.keynexa.vault.VaultSearch
@@ -56,6 +61,7 @@ import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.stringResource
 import java.time.ZoneId
 import java.util.Locale
+import java.util.UUID
 
 /** The dense rows, the header that sorts them, and how narrow the panel can be before the web and date columns go. */
 private val RowHeight = 44.dp
@@ -90,13 +96,37 @@ internal fun EntryListPanel(
     BoxWithConstraints(modifier.fillMaxHeight().background(MaterialTheme.colorScheme.surface)) {
         val wide = maxWidth >= NarrowPanelWidth
         Column(modifier = Modifier.fillMaxSize()) {
+            val bin = vault.meta.recycleBinGroup
+            if (view.selectedGroup == bin && bin != null) {
+                BinActions(vault = vault, binId = bin, view = view)
+            }
             EntryListHeader(sort = view.sort, wide = wide, onSort = view::changeSort)
             HorizontalDivider(color = MaterialTheme.colorScheme.outline.copy(alpha = DIVIDER_ALPHA))
             if (rows.isEmpty()) {
                 EmptyEntries(searching = view.query.isNotBlank(), modifier = Modifier.weight(1f))
             } else {
-                EntryList(rows = rows, wide = wide, view = view, modifier = Modifier.weight(1f))
+                EntryList(rows = rows, wide = wide, vault = vault, view = view, modifier = Modifier.weight(1f))
             }
+        }
+    }
+}
+
+/** What the recycle bin offers over everything it holds. */
+@Composable
+private fun BinActions(
+    vault: Vault,
+    binId: UUID,
+    view: DesktopVaultState,
+    modifier: Modifier = Modifier,
+) {
+    val bin = vault.root.findGroup(binId)
+    val empty = bin == null || (bin.entries.isEmpty() && bin.groups.isEmpty())
+    Row(
+        modifier = modifier.fillMaxWidth().padding(horizontal = RowPadding, vertical = RowPadding),
+        horizontalArrangement = Arrangement.End,
+    ) {
+        TextButton(onClick = { view.ask(VaultPrompt.EmptyBin) }, enabled = !empty) {
+            Text(text = stringResource(Res.string.bin_empty))
         }
     }
 }
@@ -173,6 +203,7 @@ private fun SortHeader(
 private fun EntryList(
     rows: List<EntryRow>,
     wide: Boolean,
+    vault: Vault,
     view: DesktopVaultState,
     modifier: Modifier = Modifier,
 ) {
@@ -180,7 +211,10 @@ private fun EntryList(
     val focus = remember { FocusRequester() }
     val scope = rememberCoroutineScope()
     LaunchedEffect(view.selectedGroup) { focus.requestFocus() }
-    LaunchedEffect(rows) { view.selectEntry(selectionAmong(view.selectedEntry, rows.map { it.entry.id })) }
+    LaunchedEffect(rows) {
+        view.showRows(rows.map { it.entry.id })
+        view.selectEntry(selectionAmong(view.selectedEntry, rows.map { it.entry.id }))
+    }
     LazyColumn(
         state = listState,
         modifier =
@@ -188,13 +222,14 @@ private fun EntryList(
                 .fillMaxWidth()
                 .focusRequester(focus)
                 .focusable()
-                .onKeyEvent { event -> moveSelection(event, rows, view, listState, scope) },
+                .onKeyEvent { event -> moveSelection(event, rows, vault, view, listState, scope) },
     ) {
         items(rows, key = { it.entry.id }) { row ->
             EntryListRow(
                 row = row,
                 wide = wide,
                 selected = view.selectedEntry == row.entry.id,
+                vault = vault,
                 view = view,
             )
             HorizontalDivider(color = MaterialTheme.colorScheme.outline.copy(alpha = DIVIDER_ALPHA))
@@ -208,13 +243,26 @@ private fun EntryListRow(
     row: EntryRow,
     wide: Boolean,
     selected: Boolean,
+    vault: Vault,
     view: DesktopVaultState,
-    modifier: Modifier = Modifier,
+) {
+    NodeContextMenu(actions = entryActions(vault, row.entry.id), onAction = { runNodeAction(it, row.entry.id, view) }) {
+        EntryListRowContent(row = row, wide = wide, selected = selected, view = view)
+    }
+}
+
+/** What an entry row shows. */
+@Composable
+private fun EntryListRowContent(
+    row: EntryRow,
+    wide: Boolean,
+    selected: Boolean,
+    view: DesktopVaultState,
 ) {
     val background = if (selected) MaterialTheme.colorScheme.secondaryContainer else Color.Transparent
     Row(
         modifier =
-            modifier
+            Modifier
                 .fillMaxWidth()
                 .height(RowHeight)
                 .background(background)
@@ -302,16 +350,23 @@ private fun EmptyEntries(
     }
 }
 
-/** Moves the selection with the arrows and puts the focus on the detail with Enter. */
+/** Moves the selection with the arrows, deletes with the Delete key and puts the focus on the detail with Enter. */
+@Suppress("LongParameterList", "ReturnCount")
 private fun moveSelection(
     event: KeyEvent,
     rows: List<EntryRow>,
+    vault: Vault,
     view: DesktopVaultState,
     listState: LazyListState,
     scope: CoroutineScope,
 ): Boolean {
     if (event.type != KeyEventType.KeyDown) return false
     val current = rows.indexOfFirst { it.entry.id == view.selectedEntry }
+    if (event.key == Key.Delete) {
+        val entry = rows.getOrNull(current)?.entry ?: return false
+        if (!isInsideBin(vault, entry.id)) view.ask(VaultPrompt.MoveToBin(entry.id))
+        return true
+    }
     val wanted =
         when (event.key) {
             Key.DirectionDown -> current + 1

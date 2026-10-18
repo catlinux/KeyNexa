@@ -33,7 +33,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import io.github.catlinux.keynexa.desktop.app.generated.resources.Res
-import io.github.catlinux.keynexa.desktop.app.generated.resources.detail_coming_soon
 import io.github.catlinux.keynexa.desktop.app.generated.resources.detail_empty
 import io.github.catlinux.keynexa.desktop.app.generated.resources.entry_detail_attachments
 import io.github.catlinux.keynexa.desktop.app.generated.resources.entry_detail_copy
@@ -114,6 +113,7 @@ internal fun EntryDetailPanel(
             entry?.history?.getOrNull(mode.index)?.let { version ->
                 EntryReadView(
                     entry = version,
+                    onDelete = null,
                     groupPath = entryPath(vault, entry),
                     view = view,
                     withHistory = false,
@@ -127,6 +127,7 @@ internal fun EntryDetailPanel(
             } else {
                 EntryReadView(
                     entry = entry,
+                    onDelete = { view.ask(VaultPrompt.MoveToBin(entry.id)) },
                     groupPath = entryPath(vault, entry),
                     view = view,
                     withHistory = true,
@@ -152,6 +153,7 @@ private fun EntryReadView(
     view: DesktopVaultState,
     withHistory: Boolean,
     onEdit: (() -> Unit)?,
+    onDelete: (() -> Unit)?,
     modifier: Modifier = Modifier,
 ) {
     var revealed by remember(entry.id) { mutableStateOf(false) }
@@ -175,7 +177,7 @@ private fun EntryReadView(
         if (withHistory) {
             EntryHistorySection(entry = entry, view = view)
         }
-        DetailActions(onEdit = onEdit, modifier = Modifier.fillMaxWidth())
+        DetailActions(onEdit = onEdit, onDelete = onDelete, modifier = Modifier.fillMaxWidth())
     }
 }
 
@@ -417,10 +419,11 @@ private fun AttachmentsField(
     }
 }
 
-/** Edit and Delete: Edit opens the form in place, and Delete waits for the step that moves entries to the bin. */
+/** Edit and Delete: Edit opens the form in place, and Delete asks to move the entry to the recycle bin. */
 @Composable
 private fun DetailActions(
     onEdit: (() -> Unit)?,
+    onDelete: (() -> Unit)?,
     modifier: Modifier = Modifier,
 ) {
     Row(
@@ -439,19 +442,8 @@ private fun DetailActions(
                 Text(text = stringResource(Res.string.entry_detail_edit))
             }
         }
-        DisabledAction(text = stringResource(Res.string.entry_detail_delete))
-    }
-}
-
-/** A button of an action that still has no screen behind it. */
-@Composable
-private fun DisabledAction(
-    text: String,
-    modifier: Modifier = Modifier,
-) {
-    ShortcutTooltip(text = stringResource(Res.string.detail_coming_soon), modifier = modifier) {
-        TextButton(onClick = {}, enabled = false) {
-            Text(text = text)
+        OutlinedButton(onClick = { onDelete?.invoke() }, enabled = onDelete != null) {
+            Text(text = stringResource(Res.string.entry_detail_delete))
         }
     }
 }

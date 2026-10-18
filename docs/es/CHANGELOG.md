@@ -6,6 +6,15 @@ Todos los cambios notables de este proyecto se documentan en este archivo. El fo
 
 ## [Sin publicar]
 
+## [1.3.3] - 2026-10-18
+
+La app de Android no cambia.
+
+### Añadido
+
+- Escritorio: menús de clic derecho en grupos (nuevo subgrupo, renombrar, mover a la papelera) y en entradas (editar, mover a otro grupo, mover a la papelera), una acción Nuevo grupo, la tecla Supr y, en la papelera, restaurar, borrar definitivamente y vaciar, cada una con confirmación.
+- Núcleo: `VaultEditor.renameGroup`, que también pone ahora la fecha de modificación del grupo, para que al fusionar con otra copia de la bóveda se conserve el nombre más reciente.
+
 ## [1.3.2] - 2026-10-18
 
 La app de Android no cambia.
