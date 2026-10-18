@@ -49,7 +49,7 @@ core-kdbx            adapter implementing KdbxEngine on top of kotpass (the only
 - **`platform-cloud`** is the network client of the `cloud` variant: an S3-compatible backend signed with AWS SigV4, over the JDK HTTP client and with no external dependency. The `offline` variant never includes it.
 - **`app-android`** is the UI and the Android services.
 
-A future `app-desktop` would reuse `core-*` and add a `platform-desktop` with a plain-file `StoragePort` and OS-specific secret storage.
+**Next layout (accepted, [ADR-0011](decisions/0011-repository-layout.md)):** for the Windows client ([ADR-0012](decisions/0012-windows-desktop-client.md)) and later Linux, the modules move into `core/`, `platform/`, `ui/` and `apps/` (`apps/android`, `apps/desktop`); the vault session moves to `core/session`, the private file stores to `platform/jvm`, the theme and keypad to `ui/shared` (Compose Multiplatform), and device synchronisation ([ADR-0013](decisions/0013-device-sync.md)) gets `core/peer`. This section describes the current layout until that move is done.
 
 ## Data flow: opening and saving
 
@@ -110,7 +110,7 @@ It lives in `core-sync` as `ConflictMerger` (with the `MergedCopies` port for th
 | Kotlin Multiplatform (KMP) shared core | Not possible today without rewriting the engine: no KMP KDBX library was found; kotpass is JVM-only. Desktop JVM makes it unnecessary. |
 | Flutter / React Native | Rejected: weaker access to Android security APIs (Keystore, autofill, credential provider) and no mature KDBX library in those ecosystems with verified licensing. |
 
-Desktop clients will add their own secret storage (Windows DPAPI or Credential Manager, Linux Secret Service). That is a security design of its own and will get a separate ADR.
+Desktop clients add their own secret storage: Windows uses DPAPI for the current user ([ADR-0012](decisions/0012-windows-desktop-client.md)); Linux will use the Secret Service under its own record.
 
 ## Internationalization
 

@@ -13,7 +13,8 @@ Leyenda: ✅ hecho · 🔄 en curso · ⏳ planificado. Nada está «hecho» has
 | C — Base del proyecto | Esqueleto multimódulo de Gradle, CI, lint/formato, i18n, sistema de diseño, flujo de publicación | 0.2.0 – 0.4.0 | ✅ |
 | D — MVP seguro | Abrir/bloquear/editar bóvedas, guardado seguro, cambios externos y fusión, copias de conflicto, desbloqueo biométrico, bloqueo automático y protección de pantalla, copias opcionales en la nube, el teclado de KeyNexa para las contraseñas maestras | 0.5.0 – 0.33.x | ✅ |
 | E — Revisión | Revisión de dependencias y de seguridad, pruebas de interoperabilidad, documentación, primera pre-release (0.10.2); revisión final en [SECURITY_REVIEW](SECURITY_REVIEW.md) (2026-10-18) | 0.10.2 – 0.33.x | ✅ |
-| Más adelante | Autorrelleno, proveedor de credenciales, configurar TOTP (mostrar los códigos existentes en solo lectura ya funciona), clientes de Windows y Linux (cuando la app de Android sea funcional) | 1.0.0+ | ⏳ |
+| F — Escritorio y sincronización propia | Repositorio reorganizado por funciones, cliente para Windows 10/11 con las mismas funciones y el mismo aspecto que Android, modos solo local / copias en la nube / sincronización entre dispositivos, sincronización por la nube y entre dispositivos sin Syncthing ([ADR-0011](decisions/0011-repository-layout.md), [ADR-0012](decisions/0012-windows-desktop-client.md), [ADR-0013](decisions/0013-device-sync.md)) | 1.0.1 – 1.11.x | 🔄 |
+| Más adelante | Autorrelleno, proveedor de credenciales, configurar TOTP (mostrar los códigos existentes en solo lectura ya funciona), cliente de Linux | 1.x | ⏳ |
 
 ## MVP (Android)
 

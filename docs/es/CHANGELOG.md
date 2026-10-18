@@ -6,6 +6,19 @@ Todos los cambios notables de este proyecto se documentan en este archivo. El fo
 
 ## [Sin publicar]
 
+## [1.0.1] - 2026-10-18
+
+Solo documentación; la app de Android no cambia.
+
+### Añadido
+
+- Decisiones para el cliente de escritorio y la sincronización propia de KeyNexa: [ADR-0011](decisions/0011-repository-layout.md) (repositorio agrupado por funciones, una sola versión del producto), [ADR-0012](decisions/0012-windows-desktop-client.md) (cliente para Windows 10/11 con Compose Multiplatform, modos solo local / copias en la nube / sincronización entre dispositivos, DPAPI, protección de capturas y del portapapeles) y [ADR-0013](decisions/0013-device-sync.md) (sincronización entre dispositivos emparejados por TLS mutuo, sin Syncthing).
+- Modelo de amenazas: amenazas T23–T27 del escritorio y de la sincronización, y sus riesgos residuales.
+
+### Cambiado
+
+- [ADR-0009](decisions/0009-cloud-sync.md): queda resuelto el id común de la bóveda (`KeyNexa.SyncId` en los datos personalizados de la bóveda). Arquitectura, hoja de ruta (nueva fase F) y lista de pendientes al día; se descarta incluir Syncthing como plugin.
+
 ## [1.0.0] - 2026-10-18
 
 Primera versión estable de la app de Android, en dos compilaciones firmadas con la misma clave: `keynexa-1.0.0.apk` (offline, sin permiso de Internet) y `keynexa-cloud-1.0.0.apk` (añade las copias cifradas opcionales en la nube). Instalar una sobre la otra conserva las bóvedas y los ajustes. Desde la última versión preliminar publicada (0.10.3):

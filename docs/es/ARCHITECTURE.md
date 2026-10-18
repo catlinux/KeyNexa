@@ -49,7 +49,7 @@ core-kdbx            adapter implementing KdbxEngine on top of kotpass (the only
 - **`platform-cloud`** es el cliente de red de la variante `cloud`: un backend compatible con S3 firmado con AWS SigV4, sobre el cliente HTTP del JDK y sin dependencias externas. La variante `offline` nunca lo incluye.
 - **`app-android`** es la IU y los servicios de Android.
 
-Un futuro `app-desktop` reutilizaría `core-*` y añadiría un `platform-desktop` con un `StoragePort` de archivos simples y un almacenamiento de secretos específico del sistema operativo.
+**Próxima estructura (aceptada, [ADR-0011](decisions/0011-repository-layout.md)):** para el cliente de Windows ([ADR-0012](decisions/0012-windows-desktop-client.md)) y después Linux, los módulos pasan a `core/`, `platform/`, `ui/` y `apps/` (`apps/android`, `apps/desktop`); la sesión de la bóveda pasa a `core/session`, los almacenes privados de archivos a `platform/jvm`, el tema y el teclado a `ui/shared` (Compose Multiplatform), y la sincronización entre dispositivos ([ADR-0013](decisions/0013-device-sync.md)) tiene `core/peer`. Esta sección describe la estructura actual hasta que se haga ese traslado.
 
 ## Flujo de datos: apertura y guardado
 
@@ -110,7 +110,7 @@ Vive en `core-sync` como `ConflictMerger` (con el puerto `MergedCopies` para el 
 | Núcleo compartido con Kotlin Multiplatform (KMP) | No es posible hoy sin reescribir el motor: no se encontró ninguna biblioteca KDBX para KMP; kotpass es solo JVM. La JVM de escritorio lo hace innecesario. |
 | Flutter / React Native | Rechazadas: peor acceso a las API de seguridad de Android (Keystore, autorrelleno, proveedor de credenciales) y ninguna biblioteca KDBX madura en esos ecosistemas con licencia verificada. |
 
-Los clientes de escritorio añadirán su propio almacenamiento de secretos (Windows DPAPI o Credential Manager, Linux Secret Service). Es un diseño de seguridad en sí mismo y tendrá un ADR aparte.
+Los clientes de escritorio añaden su propio almacenamiento de secretos: Windows usa DPAPI para el usuario actual ([ADR-0012](decisions/0012-windows-desktop-client.md)); Linux usará el Secret Service, con su propio registro.
 
 ## Internacionalización
 

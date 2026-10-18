@@ -6,6 +6,19 @@ All notable changes to this project are documented in this file. The format is b
 
 ## [Unreleased]
 
+## [1.0.1] - 2026-10-18
+
+Documentation only; the Android app does not change.
+
+### Added
+
+- Decisions for the desktop client and KeyNexa's own synchronisation: [ADR-0011](docs/decisions/0011-repository-layout.md) (repository grouped by role, one product version), [ADR-0012](docs/decisions/0012-windows-desktop-client.md) (Windows 10/11 client with Compose Multiplatform, local-only / cloud copies / device sync modes, DPAPI, capture and clipboard protection) and [ADR-0013](docs/decisions/0013-device-sync.md) (synchronisation between paired devices over mutual TLS, without Syncthing).
+- Threat model: desktop and synchronisation threats T23–T27 and their residual risks.
+
+### Changed
+
+- [ADR-0009](docs/decisions/0009-cloud-sync.md): the shared vault id is settled (`KeyNexa.SyncId` in the vault's custom data). Architecture, roadmap (new phase F) and to-do list updated; bundling Syncthing as a plugin is discarded.
+
 ## [1.0.0] - 2026-10-18
 
 First stable release of the Android app, in two builds signed with the same key: `keynexa-1.0.0.apk` (offline, no Internet permission) and `keynexa-cloud-1.0.0.apk` (adds the optional encrypted cloud copies). Installing one over the other keeps vaults and settings. Since the last published pre-release (0.10.3):

@@ -48,6 +48,6 @@ What a shared remote file needs that a local file does not: two devices can both
 ## Open points (to verify before they are promised)
 
 - Which services honour a conditional write reliably: Dropbox (`update` mode with a `rev`), OneDrive (`If-Match` with the entity tag, answered with 412), Google Drive (not found in the documentation), and each S3-compatible provider (Backblaze B2, Cloudflare R2, Amazon S3, MinIO) with `If-Match` on an upload. See `.agents/plans/cloud-backup/oauth-providers.RESEARCH.md` for what is and is not confirmed.
-- How the vault id is chosen so two devices agree on it (the SAF location differs per device): probably a random id stored in the vault's own custom data, or the user's choice at first connection.
+- ~~How the vault id is chosen so two devices agree on it~~ Settled by [ADR-0013](0013-device-sync.md) (2026-10-18): a random synchronisation id stored in the vault's own custom data (`KeyNexa.SyncId`), shared by cloud and device synchronisation. The desktop client ([ADR-0012](0012-windows-desktop-client.md)) uses this record unchanged.
 - Whether a background sync is worth its battery cost, and with which Android mechanism, once the foreground version has been measured.
 - What happens on two devices with different master passwords after one changed it (reuse of the F1 flow, or a dedicated message).

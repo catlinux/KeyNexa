@@ -13,7 +13,8 @@ Legend: ✅ done · 🔄 in progress · ⏳ planned. Nothing is "done" until its
 | C — Project foundation | Gradle multi-module skeleton, CI, lint/format, i18n, design system, release workflow | 0.2.0 – 0.4.0 | ✅ |
 | D — Secure MVP | Open/lock/edit vaults, safe save, external changes and merge, conflict copies, biometric unlock, auto-lock and screen protection, optional cloud copies, the KeyNexa keypad for master passwords | 0.5.0 – 0.33.x | ✅ |
 | E — Review | Dependency and security review, interoperability tests, docs, first pre-release (0.10.2); final review in [SECURITY_REVIEW](SECURITY_REVIEW.md) (2026-10-18) | 0.10.2 – 0.33.x | ✅ |
-| Later | Autofill, credential provider, TOTP setup (showing existing codes read-only already works), Windows and Linux clients (once the Android app is functional) | 1.0.0+ | ⏳ |
+| F — Desktop and own sync | Repository reorganised by role, Windows 10/11 client with the same functions and look as Android, local-only / cloud copies / device sync modes, synchronisation through the cloud and between devices without Syncthing ([ADR-0011](decisions/0011-repository-layout.md), [ADR-0012](decisions/0012-windows-desktop-client.md), [ADR-0013](decisions/0013-device-sync.md)) | 1.0.1 – 1.11.x | 🔄 |
+| Later | Autofill, credential provider, TOTP setup (showing existing codes read-only already works), Linux client | 1.x | ⏳ |
 
 ## MVP (Android)
 

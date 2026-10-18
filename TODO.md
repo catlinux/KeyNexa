@@ -6,6 +6,8 @@ Detailed steps: see the [roadmap](docs/ROADMAP.md).
 
 ## High priority (phase C — project foundation)
 
+- [ ] **Windows desktop client and KeyNexa's own synchronisation** (owner's priority, decided on 2026-10-18 in [ADR-0011](docs/decisions/0011-repository-layout.md), [ADR-0012](docs/decisions/0012-windows-desktop-client.md) and [ADR-0013](docs/decisions/0013-device-sync.md)): repository reorganised by role, shared theme and session, Windows 10/11 app with the same functions and look as Android, local-only / cloud copies / device sync modes, and synchronisation between devices that replaces Syncthing-Fork. Steps in `.agents/plans/escritorio/escritorio.PLAN.md`. Linux follows in the same desktop module.
+
 - [ ] **A far more attractive README** (requested by the owner on 2026-10-18): screenshots of the main screens in light and dark (taken with a fictitious vault and the screenshot setting turned on only for the moment), a clear hero with the mark and the tagline, badges (release, license, CI), a short feature list with icons, and the install steps for both builds; same structure in `README.es.md`. The screenshots also go to `fastlane/metadata/android/*/images/phoneScreenshots/`.
 
 - [ ] Biometric unlock: the ADR-0006 matrix is checked on a Pixel 10 Pro (enable, unlock, new fingerprint invalidates, password due after the chosen days, password changed on another device). Still open: phones without StrongBox and API 26-29.
@@ -38,17 +40,13 @@ Detailed steps: see the [roadmap](docs/ROADMAP.md).
 ## Low priority (later)
 
 - [ ] Move to the next major lines of the build tools (stable releases only): Gradle 9.x, Android Gradle plugin 9.x (it changes how Kotlin is integrated) and Kotlin 2.3 or 2.4, and with them `compileSdk`/`targetSdk` 37 (Android 17): the CI's lint already reports `OldTargetApi` for 36, made informational in 1.0.0 so it does not block. Also update `actions/cache@v4` in `ci.yml` (Node.js 20 warning). It is a migration, not maintenance: do it in its own step with the CI scan (104 findings on 2026-10-14, all in build tools, none in the APK) as the measure. Patch updates inside the current lines (Gradle 8.14.6, AGP 8.13.2) are done; Kotlin 2.2.21 has no newer patch.
-- [ ] Windows and Linux clients, once the Android app is functional (they reuse the `core-*` modules).
 - [ ] Autofill service and credential provider (passkeys).
 - [ ] Configure and edit TOTP from the app (scan a QR code or paste an `otpauth` URI) and show the codes in autofill; the entry screen already shows existing TOTP codes read-only.
-- [ ] Desktop clients (Windows, Linux).
 
 ## Under evaluation (decision pending)
 
 - Showing changes not yet uploaded requires the Syncthing add-on (KeyNexa does not use its REST API).
-- Built-in synchronisation that does not depend on Syncthing (for example a desktop client acting as the relay), keeping Syncthing as an option.
 - Bringing the cryptographic primitives fully inside the project (they are already vendored with kotpass) instead of depending on external binaries. Writing new cipher algorithms is not planned: only audited implementations, pinned and tested against official vectors.
-- Syncthing as an optional plugin on every platform, never required: a single device needs no synchronisation (the vault is local; cloud backup copies are a separate, recommended option). Reason: when synchronisation is a separate app it is easy to forget to start it, and then nothing syncs; with the plugin, opening KeyNexa starts it, shows the state ("synchronised a few seconds ago") and prevents setup mistakes such as sharing the wrong folder. Offered when a second device is added, paired with a QR code. Modes: built-in (recommended) / use an external Syncthing / none. On Android it needs a foreground service that stays alive until the pending upload finishes after the app is left. Ship Syncthing (MPL-2.0, compatible with GPL-3.0) managed through its REST API (local only, random key). Needs an ADR (size per architecture, background process rules, update policy, coexistence with Syncthing-Fork). Cheap interim step to check: ask an installed Syncthing-Fork to start when KeyNexa opens.
 - Setting up a new device from a seed phrase: an encrypted bundle with the settings and the synchronisation pairing (never the master password), protected with a key derived from the phrase, kept in the synchronised folder or shown as a QR code. Needs an ADR.
 - Backup copies to the cloud: first to any folder the system exposes (Drive, Dropbox, Mega and others through their own apps, with no extra SDK), later WebDAV and S3-compatible storage; no proprietary SDKs with telemetry. The app must strongly recommend it (first-run prompt and a persistent reminder until a copy exists, never forced): a lost or broken phone with no copy means losing every password. Needs an ADR. Now proposed in [ADR-0008](docs/decisions/0008-cloud-backup.md); the step plan is in `.agents/plans/cloud-backup/`.
 - Keep kotpass strong: offer to help maintain it upstream, add coverage-guided fuzzing there and the keepass-rs comparison (already listed above), and re-evaluate alternatives yearly (ADR-0005).
@@ -62,3 +60,4 @@ Detailed steps: see the [roadmap](docs/ROADMAP.md).
 - Rust core with UniFFI: KDBX writing in keepass-rs is experimental and UniFFI adds an NDK toolchain; re-evaluated before 1.0 ([ARCHITECTURE](docs/ARCHITECTURE.md#multiplatform-strategy)).
 - `MANAGE_EXTERNAL_STORAGE` permission: not needed with SAF and not allowed on Google Play for this use.
 - Depending on Syncthing's REST API: requires an API key and Syncthing may not be installed.
+- Shipping Syncthing inside KeyNexa as a plugin (decided on 2026-10-18): replaced by KeyNexa's own synchronisation between devices ([ADR-0013](docs/decisions/0013-device-sync.md)), which needs no extra binary, process or foreground service.

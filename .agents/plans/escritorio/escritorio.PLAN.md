@@ -6,7 +6,9 @@ Cada paso: archivos, criterio de terminado, ejecutor (modelo y esfuerzo), versi�
 
 Reglas fijas (AGENTS.md): docs bilingües en el mismo commit (`bash scripts/check-docs-i18n.sh`), `VERSION` + CHANGELOG en/es en cada paso, dependencias nuevas con licencia registrada en `docs/DEPENDENCIES_AND_LICENSES.md`, `CREDITS.md` y sus traducciones (Skill `licencias`), nada de secretos ni bóvedas reales (solo `testdata/`), validar con `.\gradlew.bat check`, sin push ni tag sin permiso. AgentRelay en Windows: `agentrelay.cmd run $env:TEMP\tarea.json`, árbol limpio, revisar SIEMPRE el diff. Todo cambio que toque Android se prueba desbloqueando en el móvil (lección de 0.33.11).
 
-## Decisiones (propuestas por Opus; el usuario confirma antes del paso 1)
+## Decisiones (confirmadas por el usuario el 2026-10-18; por escrito en ADR-0011, 0012 y 0013)
+
+> **Cambio respecto a D6 al redactar ADR-0013:** se descarta el «avance rápido». Un dispositivo bloqueado **nunca** sustituye el archivo de su bóveda: guarda lo recibido como copia pendiente (una por dispositivo y bóveda) y la reenvía a los demás, que la fusionan; él la fusiona al desbloquearse. Manda ADR-0013.
 
 - **D1. Windows soportado:** Windows 10 22H2 y Windows 11, x64. Windows 7/8.1 descartados (sin parches de seguridad desde 2020/2023 y sin soporte del JDK actual: un gestor de contraseñas en un sistema sin parches no es razonable). Windows 10 se mantiene mientras el JDK empaquetado y Compose Desktop funcionen en él (sus parches gratuitos para particulares acaban en octubre de 2026 o 2027, según la fuente; comprobarlo en la página de Microsoft). ARM64 de Windows: más adelante, si el JDK y Skiko lo dan sin trabajo extra.
 - **D2. Tecnología:** Compose Multiplatform for Desktop sobre la JVM (ADR-0003, ya decidido), con el runtime del JDK incluido en el paquete (jpackage). Reutiliza `core-*`, `platform-cloud` y gran parte de la lógica de la app sin cambios.
@@ -38,7 +40,7 @@ Reglas fijas (AGENTS.md): docs bilingües en el mismo commit (`bash scripts/chec
 
 ## Paso 0: decisiones por escrito (Opus, en esta sesión o la siguiente)
 
-- [ ] **0.** Tras confirmar D1–D9: ADR-0011 (estructura del repo y versión única), ADR-0012 (cliente de escritorio para Windows: tecnología, versiones soportadas, modos, secretos, teclado, captura de pantalla), ADR-0013 (sincronización entre dispositivos, D6) y ADR-0009 actualizado con el identificador común de bóveda (UUID aleatorio en los `CustomData` de la propia bóveda). `ARCHITECTURE`, `THREAT_MODEL` (escritorio: malware con la sesión del usuario, otros usuarios del PC; sincronización: dispositivo emparejado comprometido, red local hostil), `ROADMAP` y `TODO`, todo en/es. · 1.0.1 (parche, solo docs) · Opus, esfuerzo alto.
+- [x] **0.** (hecho 2026-10-18, 1.0.1) Tras confirmar D1–D9: ADR-0011 (estructura del repo y versión única), ADR-0012 (cliente de escritorio para Windows: tecnología, versiones soportadas, modos, secretos, teclado, captura de pantalla), ADR-0013 (sincronización entre dispositivos, D6) y ADR-0009 actualizado con el identificador común de bóveda (UUID aleatorio en los `CustomData` de la propia bóveda). `ARCHITECTURE`, `THREAT_MODEL` (escritorio: malware con la sesión del usuario, otros usuarios del PC; sincronización: dispositivo emparejado comprometido, red local hostil), `ROADMAP` y `TODO`, todo en/es. · 1.0.1 (parche, solo docs) · Opus, esfuerzo alto.
 
 ## Bloque 1: reorganizar sin cambiar nada de Android
 

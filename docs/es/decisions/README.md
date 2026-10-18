@@ -16,5 +16,8 @@ Cada registro explica una decisión importante: contexto, opciones, decisión y 
 | [0008](0008-cloud-backup.md) | Copias de la bóveda en la nube: asistente opcional, variante `cloud` y servicios | Aceptada |
 | [0009](0009-cloud-sync.md) | Sincronización a través de la nube: primero local, escrituras condicionales | Propuesta |
 | [0010](0010-in-app-password-keypad.md) | Teclado propio de la app para la contraseña maestra: activado por defecto, junto al del sistema | Aceptada |
+| [0011](0011-repository-layout.md) | Estructura del repositorio para varios clientes y una sola versión del producto | Aceptada |
+| [0012](0012-windows-desktop-client.md) | Cliente de escritorio para Windows | Aceptada |
+| [0013](0013-device-sync.md) | Sincronización entre dispositivos sin Syncthing | Aceptada |
 
 Plantilla para nuevos registros: `docs/decisions/NNNN-short-title.md` y su traducción `docs/es/decisions/NNNN-short-title.md`, con las secciones *Contexto*, *Opciones*, *Decisión*, *Consecuencias*.

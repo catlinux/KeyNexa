@@ -48,6 +48,6 @@ Lo que necesita un archivo remoto compartido y no un archivo local: dos disposit
 ## Puntos abiertos (a verificar antes de prometerlos)
 
 - Qué servicios respetan de forma fiable una escritura condicional: Dropbox (modo `update` con un `rev`), OneDrive (`If-Match` con la etiqueta de entidad, que responde 412), Google Drive (no se encontró en la documentación) y cada proveedor compatible con S3 (Backblaze B2, Cloudflare R2, Amazon S3, MinIO) con `If-Match` en una subida. Lo confirmado y lo no confirmado está en `.agents/plans/cloud-backup/oauth-providers.RESEARCH.md`.
-- Cómo se elige el id de la bóveda para que dos dispositivos coincidan (la ubicación SAF difiere en cada uno): probablemente un id aleatorio guardado en los datos personalizados de la propia bóveda, o la elección del usuario en la primera conexión.
+- ~~Cómo se elige el id de la bóveda para que dos dispositivos coincidan~~ Resuelto por el [ADR-0013](0013-device-sync.md) (2026-10-18): un id de sincronización aleatorio guardado en los datos personalizados de la propia bóveda (`KeyNexa.SyncId`), común a la sincronización por la nube y entre dispositivos. El cliente de escritorio ([ADR-0012](0012-windows-desktop-client.md)) usa este registro sin cambios.
 - Si una sincronización en segundo plano compensa su coste de batería y con qué mecanismo de Android, una vez medida la versión en primer plano.
 - Qué ocurre con dos dispositivos con contraseñas maestras distintas cuando uno la ha cambiado (reutilizar el flujo F1 o un mensaje propio).
