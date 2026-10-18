@@ -10,6 +10,12 @@ Todos los cambios notables de este proyecto se documentan en este archivo. El fo
 
 - ADR-0008 (propuesta) y el plan de las copias opcionales de la bóveda en la nube con un asistente: una compilación `offline` sin acceso a la red y una `cloud`, primero S3 y después Dropbox, OneDrive y Google Drive.
 
+## [0.33.12] - 2026-10-18
+
+### Cambiado
+
+- Revisión de seguridad: resultados de las comprobaciones en el móvil (matar la app durante un guardado, una variante sobre la otra, borrar historial, lector de pantalla) y las que siguen pendientes. Solo documentación (parche).
+
 ## [0.33.11] - 2026-10-18
 
 ### Corregido

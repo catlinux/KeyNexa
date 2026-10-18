@@ -41,17 +41,20 @@ Además, en los mismos días y antes de esta revisión: se ignoran los toques ba
 | A6 | Baja | `BiometricStore.save` no es atómico (de la revisión de la 0.10.2). | Aceptado: un blob roto acaba en la petición de contraseña y se borra. |
 | A7 | Residual | Un servicio de accesibilidad o un sistema comprometido todavía pueden leer lo que se escribe o se muestra (T22). | Fuera del alcance de una app; mitigado con el aviso discreto, la opción de archivo de clave y la 2FA. |
 
-## Comprobaciones pendientes en un móvil
+## Comprobaciones en el móvil
 
-Pendientes porque se cortó la conexión adb, o porque necesitan condiciones que la revisión no pudo crear. Todas están cubiertas por pruebas unitarias.
+Hechas el 2026-10-18 al volver la conexión (versión 0.33.11):
 
-- Matar la app en mitad de un guardado y volver a abrir (recuperación del guardado interrumpido).
-- El teclado propio en el diálogo de «otra contraseña» de una copia de conflicto.
-- Instalar una variante sobre la otra.
-- Que un lector de pantalla pase los campos de contraseña maestra al teclado del sistema.
-- Desbloqueo biométrico en un móvil sin StrongBox y con API 26–29; Argon2 en un móvil modesto.
-- Borrar el historial de una entrada.
+- **Matar la app durante un guardado:** 13 cierres forzados entre 0,4 y 4,4 segundos después de *Guardar*. Antes de la escritura se pierde la edición en curso y el archivo no se toca; después, la edición queda guardada. El archivo nunca quedó dañado. La escritura en sí dura pocos milisegundos y no se pudo acertar desde adb; la recuperación tras una escritura cortada sigue cubierta por las pruebas de inyección de fallos (AC3).
+- **Una variante sobre la otra:** la `offline` instalada sobre la `cloud` conserva bóvedas y ajustes y no muestra la opción de nube; la `cloud` instalada de nuevo conserva la configuración de la nube, y una copia se sube a Backblaze B2 con la carpeta nueva de R1.
+- **Borrar el historial de una entrada:** de 10 versiones anteriores a 0, y siguen en 0 tras bloquear y volver a abrir.
+- **Lector de pantalla:** con TalkBack activo, la pantalla de desbloqueo ofrece el teclado del sistema y no el teclado propio. TalkBack se desactivó de nuevo y se restauraron los ajustes de accesibilidad.
+
+Pendiente (cubierto por pruebas unitarias):
+
+- El teclado propio en el diálogo de «otra contraseña» de una copia de conflicto (necesita una copia falsa en la carpeta sincronizada, que llegaría a los otros equipos del titular).
+- Desbloqueo biométrico en un móvil sin StrongBox y con API 26–29; Argon2 en un móvil modesto (aplazado por el titular).
 
 ## Veredicto
 
-No queda abierto ningún hallazgo de gravedad alta. Antes de la 1.0: hacer las comprobaciones en el móvil de arriba, subir la primera etiqueta para comprobar el nuevo flujo de publicación y conseguir la revisión independiente que pide la hoja de ruta.
+No queda abierto ningún hallazgo de gravedad alta. Antes de la 1.0: subir la primera etiqueta para comprobar el nuevo flujo de publicación y conseguir la revisión independiente que pide la hoja de ruta.

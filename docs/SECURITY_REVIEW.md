@@ -41,17 +41,20 @@ Also hardened during the same days, before this review: touches are ignored unde
 | A6 | Low | `BiometricStore.save` is not atomic (from the 0.10.2 review). | Accepted: a broken blob ends in the password prompt and is deleted. |
 | A7 | Residual | An accessibility service or a compromised system can still read what is typed or shown (T22). | Out of scope for an app; mitigated by the quiet notice, the key file option and 2FA. |
 
-## Checks still to do on a phone
+## Checks on the phone
 
-Pending because the adb connection dropped, or because they need conditions the review could not create. Each is covered by unit tests.
+Done on 2026-10-18 after the connection came back (version 0.33.11):
 
-- Killing the app in the middle of a save, then reopening (recovery of the interrupted save).
-- The keypad in the "other password" dialog of a conflict copy.
-- Installing one build variant over the other.
-- That a screen reader switches the master password fields to the system keyboard.
-- Biometric unlock on a phone without StrongBox and on API 26–29; Argon2 on a modest phone.
-- Clearing an entry's history.
+- **Killing the app during a save:** 13 forced stops between 0.4 and 4.4 seconds after *Save*. Before the write the edit in progress is lost and the file is untouched; after it the edit is saved. The file was never damaged. The write itself lasts a few milliseconds and could not be hit from adb; recovery after a torn write stays covered by the fault-injection tests (AC3).
+- **One variant over the other:** `offline` installed over `cloud` keeps vaults and settings and shows no cloud option; `cloud` installed back keeps the cloud setup, and a copy uploads to Backblaze B2 with the new folder of R1.
+- **Clearing an entry's history:** 10 previous versions to 0, still 0 after locking and opening again.
+- **Screen reader:** with TalkBack on, the unlock screen offers the system keyboard and no keypad. TalkBack was turned off again and the accessibility settings restored.
+
+Still to do (each covered by unit tests):
+
+- The keypad in the "other password" dialog of a conflict copy (it needs a fake copy in the synchronised folder, which would reach the owner's other devices).
+- Biometric unlock on a phone without StrongBox and on API 26–29; Argon2 on a modest phone (postponed by the owner).
 
 ## Verdict
 
-No high-severity finding is open. Before 1.0: run the phone checks above, push the first tag to prove the new release workflow, and get the independent review the roadmap asks for.
+No high-severity finding is open. Before 1.0: push the first tag to prove the new release workflow, and get the independent review the roadmap asks for.
