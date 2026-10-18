@@ -4,7 +4,11 @@ import org.w3c.dom.Document
 import org.xml.sax.InputSource
 import java.io.File
 import java.io.InputStream
+import javax.xml.XMLConstants
+import javax.xml.parsers.DocumentBuilder
 import javax.xml.parsers.DocumentBuilderFactory
+import javax.xml.parsers.ParserConfigurationException
+import org.xml.sax.SAXException
 import kotlin.math.min
 import org.w3c.dom.Node as W3CNode
 
@@ -58,25 +62,53 @@ fun node(name: String, namespace: Namespace? = null, init: (Node.() -> Unit)? = 
     return node
 }
 
+/**
+ * KeyNexa: a document builder that never resolves external entities or DTDs (XXE). Key files are arbitrary files
+ * the user picks, so their XML is untrusted. The features are set one by one because Android's parser rejects the
+ * Apache ones; the entity resolver blocks external entities on every platform.
+ */
+private fun secureDocumentBuilder(): DocumentBuilder {
+    val factory = DocumentBuilderFactory.newInstance()
+    val features = listOf(
+        "http://apache.org/xml/features/disallow-doctype-decl" to true,
+        "http://xml.org/sax/features/external-general-entities" to false,
+        "http://xml.org/sax/features/external-parameter-entities" to false,
+        "http://apache.org/xml/features/nonvalidating/load-external-dtd" to false,
+        XMLConstants.FEATURE_SECURE_PROCESSING to true,
+    )
+    for ((feature, value) in features) {
+        try {
+            factory.setFeature(feature, value)
+        } catch (_: ParserConfigurationException) {
+            // This parser does not have the feature; the entity resolver below still holds.
+        }
+    }
+    factory.isExpandEntityReferences = false
+    factory.isXIncludeAware = false
+    return factory.newDocumentBuilder().apply {
+        setEntityResolver { _, _ -> throw SAXException("External entities are not allowed") }
+    }
+}
+
 fun parse(f: File): Node {
-    return parse(DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(f))
+    return parse(secureDocumentBuilder().parse(f))
 }
 
 fun parse(uri: String): Node {
-    return parse(DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(uri))
+    return parse(secureDocumentBuilder().parse(uri))
 }
 
 fun parse(inputSource: InputSource): Node {
-    return parse(DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(inputSource))
+    return parse(secureDocumentBuilder().parse(inputSource))
 }
 
 fun parse(inputStream: InputStream): Node {
-    return parse(DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(inputStream))
+    return parse(secureDocumentBuilder().parse(inputStream))
 }
 
 fun parse(inputStream: InputStream, systemId: String): Node {
     return parse(
-        DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(inputStream, systemId)
+        secureDocumentBuilder().parse(inputStream, systemId)
     )
 }
 

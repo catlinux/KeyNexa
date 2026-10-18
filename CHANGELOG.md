@@ -10,6 +10,16 @@ All notable changes to this project are documented in this file. The format is b
 
 - ADR-0008 (proposed) and the plan for optional cloud copies of the vault with an assistant: an `offline` build with no network access and a `cloud` build, S3 first and then Dropbox, OneDrive and Google Drive.
 
+## [0.33.7] - 2026-10-18
+
+### Security
+
+- The XML parser bundled with kotpass resolved external entities on the JVM (XXE): a hostile XML key file, which is any file the user picks, could read a local file into the key or reach the network. It now refuses external entities and DTDs on every platform (Android's parser did not load them, but the desktop clients will run on the JVM). Found in the final audit, with a test that failed before the fix. Patch.
+
+### Changed
+
+- The Spanish README of the bundled kotpass lacked the entry for credentials from pre-hashed components; added.
+
 ## [0.33.6] - 2026-10-18
 
 ### Security

@@ -10,6 +10,16 @@ Todos los cambios notables de este proyecto se documentan en este archivo. El fo
 
 - ADR-0008 (propuesta) y el plan de las copias opcionales de la bóveda en la nube con un asistente: una compilación `offline` sin acceso a la red y una `cloud`, primero S3 y después Dropbox, OneDrive y Google Drive.
 
+## [0.33.7] - 2026-10-18
+
+### Seguridad
+
+- El analizador XML incluido con kotpass resolvía entidades externas en la JVM (XXE): un archivo de clave XML hostil, que es cualquier archivo que elige el usuario, podía meter un archivo local en la clave o conectarse a la red. Ahora rechaza las entidades externas y las DTD en todas las plataformas (el analizador de Android no las cargaba, pero los clientes de escritorio funcionarán en la JVM). Encontrado en la auditoría final, con una prueba que fallaba antes del arreglo. Parche.
+
+### Cambiado
+
+- Al README en español del kotpass incluido le faltaba la entrada de las credenciales a partir de componentes ya cifrados; añadida.
+
 ## [0.33.6] - 2026-10-18
 
 ### Seguridad
