@@ -10,6 +10,12 @@ All notable changes to this project are documented in this file. The format is b
 
 - ADR-0008 (proposed) and the plan for optional cloud copies of the vault with an assistant: an `offline` build with no network access and a `cloud` build, S3 first and then Dropbox, OneDrive and Google Drive.
 
+## [0.31.3] - 2026-10-18
+
+### Added
+
+- Groundwork for the KeyNexa keypad (ADR-0010, step E1): a password buffer that can be wiped and never becomes a `String`, and the fixed keypad layout (letters, digits and symbols, accents), with tests. Not visible yet (patch: internal).
+
 ## [0.31.2] - 2026-10-18
 
 ### Changed
