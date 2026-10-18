@@ -6,6 +6,14 @@ Todos los cambios notables de este proyecto se documentan en este archivo. El fo
 
 ## [Sin publicar]
 
+## [1.1.1] - 2026-10-18
+
+La app de Android no cambia.
+
+### Añadido
+
+- Primera ventana de escritorio (`apps/desktop`, Compose for Desktop, Windows): el aspecto y los textos de KeyNexa en inglés y español, una sola instancia a la vez y la pantalla de inicio con la lista de bóvedas conocidas, abrir un `.kdbx` existente con el diálogo nativo de archivos y quitar una bóveda de la lista (el archivo nunca se borra). Se arranca con `.\gradlew.bat :apps:desktop:run`; desbloquear y crear bóvedas llegan a continuación.
+
 ## [1.1.0] - 2026-10-18
 
 La app de Android no cambia. El cliente de escritorio recibe su capa de plataforma de Windows (la app llega en el paso siguiente).

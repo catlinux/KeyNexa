@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">KeyNexa</string>
+    <string name="home_title">Tus bóvedas</string>
+    <string name="home_empty_message">Todavía no hay ninguna bóveda en la lista. Abre un archivo KDBX que ya tengas, o crea una bóveda nueva.</string>
+    <string name="home_open_existing">Abrir una bóveda existente</string>
+    <string name="home_remove">Quitar de la lista</string>
+    <string name="home_remove_dialog_title">¿Quitar de la lista?</string>
+    <string name="home_remove_dialog_message">KeyNexa dejará de mostrar «%1$s» en esta lista. El archivo de la bóveda no se borra: se queda donde está.</string>
+    <string name="home_remove_confirm">Quitar</string>
+    <string name="home_cancel">Cancelar</string>
+    <string name="instance_already_open">KeyNexa ya está abierto</string>
+    <string name="dialog_ok">Aceptar</string>
+</resources>

@@ -31,6 +31,7 @@ Dependencies point downwards only. Core modules are pure Kotlin/JVM, with no And
 
 ```text
 apps/android          Compose UI, navigation, Android services (autofill, biometric, clipboard)
+apps/desktop          Compose Desktop client for Windows (home screen, one instance at a time)
   │
 ui/shared             Compose Multiplatform theme, brand mark and password keypad (Android + desktop)
   │
@@ -59,6 +60,7 @@ core/kdbx            adapter implementing KdbxEngine on top of kotpass (the only
 - **`platform/android`** implements `StoragePort` with SAF and wraps the Android Keystore.
 - **`platform/cloud`** is the network client of the `cloud` variant: an S3-compatible backend signed with AWS SigV4, over the JDK HTTP client and with no external dependency. The `offline` variant never includes it.
 - **`apps/android`** is the UI and the Android services.
+- **`apps/desktop`** is the desktop UI: a Compose Desktop window for Windows with the shared theme and the home screen, one instance at a time.
 - **`ui/shared`** holds the pieces every client draws the same way — the Material 3 theme with the fixed brand palette, the brand mark and the password keypad — built with Compose Multiplatform for Android and desktop; `apps/android` depends on it.
 
 **Next layout (accepted, [ADR-0011](decisions/0011-repository-layout.md)):** for the Windows client ([ADR-0012](decisions/0012-windows-desktop-client.md)) and later Linux, the modules move into `core/`, `platform/`, `ui/` and `apps/` (`apps/android`, `apps/desktop`); the vault session moves to `core/session`, the private file stores to `platform/jvm`, the theme and keypad to `ui/shared` (Compose Multiplatform), and device synchronisation ([ADR-0013](decisions/0013-device-sync.md)) gets `core/peer`. This section describes the current layout until that move is done.

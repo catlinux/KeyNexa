@@ -33,6 +33,7 @@ Run these from the repository root. On Windows use `gradlew.bat` instead of `./g
 | `./gradlew :core:kdbx:test` | Runs the KDBX engine tests against the vault corpus in `testdata/` |
 | `./gradlew :apps:android:assembleOfflineDebug` | Builds the offline debug APK at `apps/android/build/outputs/apk/offline/debug/keynexa-android-offline-debug.apk` |
 | `./gradlew :apps:android:assembleCloudDebug` | Builds the cloud debug APK at `apps/android/build/outputs/apk/cloud/debug/keynexa-android-cloud-debug.apk` |
+| `.\gradlew.bat :apps:desktop:run` | Runs the Windows desktop app: the home screen with the vaults this computer knows |
 
 The app has two `distribution` flavors: `offline` (no `INTERNET`, the one published) and `cloud` (declares `INTERNET` for the cloud copies still to come). The merged offline manifest is checked on `check` (`:apps:android:verifyOfflineHasNoInternet`), and the cloud one is checked the other way round. Installing one flavor over the other is not verified.
 

@@ -33,6 +33,7 @@ Ejecuta estos comandos desde la raíz del repositorio. En Windows usa `gradlew.b
 | `./gradlew :core:kdbx:test` | Ejecuta las pruebas del motor KDBX contra el corpus de bóvedas de `testdata/` |
 | `./gradlew :apps:android:assembleOfflineDebug` | Genera el APK de depuración offline en `apps/android/build/outputs/apk/offline/debug/keynexa-android-offline-debug.apk` |
 | `./gradlew :apps:android:assembleCloudDebug` | Genera el APK de depuración cloud en `apps/android/build/outputs/apk/cloud/debug/keynexa-android-cloud-debug.apk` |
+| `.\gradlew.bat :apps:desktop:run` | Ejecuta la aplicación de escritorio de Windows: la pantalla de inicio con las bóvedas que conoce este equipo |
 
 La aplicación tiene dos sabores de la dimensión `distribution`: `offline` (sin `INTERNET`, el que se publica) y `cloud` (declara `INTERNET` para las copias en la nube que aún están por llegar). El manifiesto fusionado de offline se comprueba en `check` (`:apps:android:verifyOfflineHasNoInternet`) y el de cloud a la inversa. Instalar un sabor sobre el otro no está verificado.
 

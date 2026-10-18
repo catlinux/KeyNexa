@@ -31,6 +31,7 @@ Las dependencias apuntan solo hacia abajo. Los módulos de núcleo son Kotlin/JV
 
 ```text
 apps/android          Compose UI, navigation, Android services (autofill, biometric, clipboard)
+apps/desktop          Compose Desktop client for Windows (home screen, one instance at a time)
   │
 ui/shared             Compose Multiplatform theme, brand mark and password keypad (Android + desktop)
   │
@@ -59,6 +60,7 @@ core/kdbx            adapter implementing KdbxEngine on top of kotpass (the only
 - **`platform/android`** implementa `StoragePort` con SAF y envuelve el Android Keystore.
 - **`platform/cloud`** es el cliente de red de la variante `cloud`: un backend compatible con S3 firmado con AWS SigV4, sobre el cliente HTTP del JDK y sin dependencias externas. La variante `offline` nunca lo incluye.
 - **`apps/android`** es la IU y los servicios de Android.
+- **`apps/desktop`** es la IU de escritorio: una ventana de Compose Desktop para Windows con el tema compartido y la pantalla de inicio, con una sola instancia a la vez.
 - **`ui/shared`** reúne las piezas que todos los clientes dibujan igual —el tema de Material 3 con la paleta de marca fija, la marca y el teclado de contraseñas—, construidas con Compose Multiplatform para Android y escritorio; `apps/android` depende de él.
 
 **Próxima estructura (aceptada, [ADR-0011](decisions/0011-repository-layout.md)):** para el cliente de Windows ([ADR-0012](decisions/0012-windows-desktop-client.md)) y después Linux, los módulos pasan a `core/`, `platform/`, `ui/` y `apps/` (`apps/android`, `apps/desktop`); la sesión de la bóveda pasa a `core/session`, los almacenes privados de archivos a `platform/jvm`, el tema y el teclado a `ui/shared` (Compose Multiplatform), y la sincronización entre dispositivos ([ADR-0013](decisions/0013-device-sync.md)) tiene `core/peer`. Esta sección describe la estructura actual hasta que se haga ese traslado.

@@ -6,6 +6,14 @@ All notable changes to this project are documented in this file. The format is b
 
 ## [Unreleased]
 
+## [1.1.1] - 2026-10-18
+
+The Android app does not change.
+
+### Added
+
+- First desktop window (`apps/desktop`, Compose for Desktop, Windows): KeyNexa's look and texts in English and Spanish, one instance at a time, and the home screen with the list of known vaults, opening an existing `.kdbx` with the native file dialog and removing a vault from the list (the file is never deleted). It starts with `.\gradlew.bat :apps:desktop:run`; unlocking and creating vaults come next.
+
 ## [1.1.0] - 2026-10-18
 
 The Android app does not change. The desktop client gets its Windows platform layer (the app itself comes next).

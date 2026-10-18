@@ -154,6 +154,7 @@ jobs:
             --lockfile=platform/android/gradle.lockfile
             --lockfile=ui/shared/gradle.lockfile
             --lockfile=apps/android/gradle.lockfile
+            --lockfile=apps/desktop/gradle.lockfile
             --lockfile=third_party/kotpass/gradle.lockfile
 
   # Informational only: build tools are not distributed with the app.
