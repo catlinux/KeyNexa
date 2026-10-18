@@ -35,7 +35,10 @@ jobs:
           sudo apt-get install -y --no-install-recommends keepassxc
           keepassxc-cli --version
       - name: Build and check
-        run: ./gradlew build check :app-android:assembleOfflineRelease :app-android:assembleCloudRelease 2>&1 | tee gradle.log
+        # pipefail: without it the step takes tee's exit code and a failed build looks green.
+        run: |
+          set -o pipefail
+          ./gradlew build check :app-android:assembleOfflineRelease :app-android:assembleCloudRelease 2>&1 | tee gradle.log
       - name: Publish the Gradle error as an annotation
         if: failure()
         run: bash scripts/ci-gradle-error.sh gradle.log
@@ -120,7 +123,10 @@ jobs:
           yes | "$sdkmanager" --licenses > /dev/null || true
           "$sdkmanager" 'platforms;android-36' 'build-tools;36.0.0'
       - name: License report
-        run: ./gradlew generateLicenseReport 2>&1 | tee gradle.log
+        # pipefail: without it the step takes tee's exit code and a failed build looks green.
+        run: |
+          set -o pipefail
+          ./gradlew generateLicenseReport 2>&1 | tee gradle.log
       - name: Publish the Gradle error as an annotation
         if: failure()
         run: bash scripts/ci-gradle-error.sh gradle.log
