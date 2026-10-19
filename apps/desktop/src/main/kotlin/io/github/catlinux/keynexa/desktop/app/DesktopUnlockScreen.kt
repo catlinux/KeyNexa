@@ -26,6 +26,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -40,6 +41,9 @@ import io.github.catlinux.keynexa.desktop.app.generated.resources.entry_detail_h
 import io.github.catlinux.keynexa.desktop.app.generated.resources.entry_detail_show
 import io.github.catlinux.keynexa.desktop.app.generated.resources.unlock_action
 import io.github.catlinux.keynexa.desktop.app.generated.resources.unlock_back_to_list
+import io.github.catlinux.keynexa.desktop.app.generated.resources.unlock_hello
+import io.github.catlinux.keynexa.desktop.app.generated.resources.unlock_hello_changed
+import io.github.catlinux.keynexa.desktop.app.generated.resources.unlock_hello_unavailable
 import io.github.catlinux.keynexa.desktop.app.generated.resources.unlock_opening
 import io.github.catlinux.keynexa.desktop.app.generated.resources.unlock_password_label
 import io.github.catlinux.keynexa.desktop.app.generated.resources.unlock_show_password
@@ -87,6 +91,7 @@ fun DesktopUnlockScreen(
     useKeypad: Boolean = false,
     modifier: Modifier = Modifier,
     onEdited: () -> Unit = {},
+    quickUnlock: QuickUnlockUi = QuickUnlockUi(),
 ) {
     val password = remember { DesktopPassword(useKeypad = useKeypad) }
     val keyFile = remember { KeyFileHolder() }
@@ -101,10 +106,15 @@ fun DesktopUnlockScreen(
     val enabled = (password.length() > 0 || keyFile.chosen) && !loading
     val submit: () -> Unit = {
         if (enabled) {
+            quickUnlock.onPasswordUnlock()
             onUnlock(Credentials.of(password = password.take(), keyFile = keyFile.copyOut()))
         }
     }
     val revealDescription = stringResource(Res.string.unlock_show_password)
+    // The prompt starts once when the screen appears with a valid arming; a cancel leaves the button for a retry.
+    LaunchedEffect(quickUnlock.available) {
+        if (quickUnlock.available) quickUnlock.onQuickUnlock(vault)
+    }
     Box(modifier = modifier.fillMaxSize(), contentAlignment = Alignment.TopCenter) {
         Column(
             modifier =
@@ -118,6 +128,16 @@ fun DesktopUnlockScreen(
             Column(verticalArrangement = Arrangement.spacedBy(BlockGap)) {
                 VaultCard(vault = vault)
                 if (loading) ProgressPanel()
+                if (quickUnlock.available && !loading) {
+                    Button(
+                        onClick = { quickUnlock.onQuickUnlock(vault) },
+                        shape = FieldShape,
+                        modifier = Modifier.fillMaxWidth().heightIn(min = PrimaryHeight),
+                    ) {
+                        Text(text = stringResource(Res.string.unlock_hello))
+                    }
+                }
+                quickUnlock.notice?.let { QuickNoticePanel(it) }
                 DesktopPasswordField(
                     password = password,
                     label = stringResource(Res.string.unlock_password_label),
@@ -285,4 +305,23 @@ private fun ErrorPanel(
             modifier = Modifier.padding(12.dp),
         )
     }
+}
+
+/** Tells why the Windows Hello unlock did not open the vault. */
+@Composable
+private fun QuickNoticePanel(
+    notice: QuickNotice,
+    modifier: Modifier = Modifier,
+) {
+    val text =
+        when (notice) {
+            QuickNotice.PasswordChanged -> Res.string.unlock_hello_changed
+            QuickNotice.Unavailable -> Res.string.unlock_hello_unavailable
+        }
+    Text(
+        text = stringResource(text),
+        style = MaterialTheme.typography.bodyMedium,
+        color = MaterialTheme.colorScheme.onSurfaceVariant,
+        modifier = modifier.fillMaxWidth(),
+    )
 }

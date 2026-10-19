@@ -6,6 +6,15 @@ Todos los cambios notables de este proyecto se documentan en este archivo. El fo
 
 ## [Sin publicar]
 
+## [1.10.0] - 2026-10-19
+
+La app de Android no cambia.
+
+### Añadido
+
+- Escritorio: desbloqueo rápido opcional con Windows Hello ([ADR-0014](decisions/0014-windows-hello-quick-unlock.md)). Con la opción activada en los ajustes (solo se muestra si Hello está configurado), desbloquear con la contraseña maestra también arma el desbloqueo rápido: los componentes de la clave anteriores a la KDF se guardan solo en memoria, cifrados con una clave derivada de una firma de Hello, y la pantalla de desbloqueo de esa bóveda ofrece «Desbloquear con Windows Hello». Caduca a las 1, 4, 8 o 24 horas contadas desde el desbloqueo con la contraseña maestra (desbloquear con Hello no lo alarga), y se borra al cerrar la app, al apagar la opción, al desbloquear otra bóveda o si la contraseña ha cambiado. El primer desbloqueo tras abrir la app siempre pide la contraseña maestra.
+- Escritorio: el prompt de Hello se trae al frente de las demás ventanas mientras espera el PIN.
+
 ## [1.9.4] - 2026-10-19
 
 La app de Android no cambia.

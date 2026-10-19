@@ -393,4 +393,7 @@
     <string name="cloud_sync_error_other_password">la copia de la nube usa otra contraseña maestra</string>
     <string name="cloud_sync_error_other_vault">la copia de la nube pertenece a otra bóveda</string>
     <string name="cloud_sync_error_save_failed">no se pudo guardar la bóveda</string>
+    <string name="unlock_hello">Desbloquear con Windows Hello</string>
+    <string name="unlock_hello_changed">La contraseña maestra ha cambiado; escríbela de nuevo.</string>
+    <string name="unlock_hello_unavailable">Windows Hello no ha podido abrir la bóveda; escribe la contraseña maestra.</string>
 </resources>

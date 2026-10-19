@@ -16,6 +16,7 @@ Un gestor de contraseñas multiplataforma que prioriza la seguridad, construido 
 - Local primero: tu bóveda es un archivo que te pertenece. Sin cuentas, sin servidores de KeyNexa, sin telemetría.
 - Diseñado para vivir en una carpeta sincronizada con [Syncthing](https://syncthing.net/), detectando los cambios externos y fusionando los conflictos en lugar de perder datos en silencio.
 - Interfaz bilingüe: inglés (`en-US`) y español (`es-ES`).
+- En Windows, desbloqueo rápido opcional con Windows Hello (PIN, cara o huella) tras bloquearse la app por sí sola; desactivado por defecto, guardado solo en memoria y con caducidad de 1 a 24 horas ([ADR-0014](docs/decisions/0014-windows-hello-quick-unlock.md)).
 
 Consulta la [hoja de ruta](docs/es/ROADMAP.md) para ver qué está planificado en cada fase.
 

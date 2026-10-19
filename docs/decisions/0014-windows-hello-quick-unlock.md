@@ -2,7 +2,7 @@
 
 [English](0014-windows-hello-quick-unlock.md) | [Español](../es/decisions/0014-windows-hello-quick-unlock.md)
 
-- **Status:** Proposed (accepted after the spike of step 0 and the owner's test with the real PIN)
+- **Status:** Accepted (spike and hand test with the real PIN passed on 2026-10-19; implemented in 1.9.2–1.10.0)
 - **Date:** 2026-10-19
 - **Extends:** [ADR-0006](0006-biometric-unlock.md) (biometric unlock on Android), [ADR-0012](0012-windows-desktop-client.md) (Windows desktop client)
 - **Implements:** threat T28 of the [threat model](../THREAT_MODEL.md)

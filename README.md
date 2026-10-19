@@ -16,6 +16,7 @@ A security-first, cross-platform password manager built around established crypt
 - Local-first: your vault is a file you own. No accounts, no KeyNexa servers, no telemetry.
 - Designed to live in a folder synchronized by [Syncthing](https://syncthing.net/), detecting external changes and merging conflicts instead of silently losing data.
 - Bilingual interface: English (`en-US`) and Spanish (`es-ES`).
+- On Windows, an optional quick unlock with Windows Hello (PIN, face or fingerprint) after the app locks itself; off by default, kept only in memory and expiring after 1 to 24 hours ([ADR-0014](docs/decisions/0014-windows-hello-quick-unlock.md)).
 
 See the [roadmap](docs/ROADMAP.md) for what is planned in each phase.
 

@@ -6,6 +6,7 @@ import com.sun.jna.Native
 import com.sun.jna.Pointer
 import com.sun.jna.WString
 import com.sun.jna.platform.win32.Guid
+import com.sun.jna.platform.win32.Kernel32
 import com.sun.jna.platform.win32.Ole32
 import com.sun.jna.platform.win32.User32
 import com.sun.jna.platform.win32.WinDef
@@ -79,6 +80,10 @@ private class HelloException(
 class WindowsHello(
     private val credentialName: String = DEFAULT_CREDENTIAL_NAME,
 ) {
+    /** The native handle of [window], to bring it in front of the Hello prompt; null if it has none yet. */
+    fun handleOf(window: java.awt.Window): Long? =
+        runCatching { Native.getComponentID(window) }.getOrNull()?.takeIf { it != 0L }
+
     /** True when this Windows user has Hello (PIN, face or fingerprint) set up. A failure is answered with false. */
     fun isSupported(): Boolean =
         runCatching {
@@ -133,7 +138,7 @@ class WindowsHello(
                 input.write(0, challenge, 0, challenge.size)
                 val buffer = com.out { buffers.call(SLOT_CREATE_FROM_BYTE_ARRAY, challenge.size, input, it) }
                 val operation = com.out { credential.call(SLOT_REQUEST_SIGN_ASYNC, buffer, it) }
-                com.await(operation, SIGN_TIMEOUT_MS)
+                com.await(operation, SIGN_TIMEOUT_MS, front = true)
                 val result = com.out { operation.call(SLOT_GET_RESULTS, it) }
                 val status = IntByReference()
                 check(result.call(SLOT_RESULT_STATUS, status) >= 0) { "Status" }
@@ -213,7 +218,7 @@ class WindowsHello(
                     if (create) statics.call(slot, name, CREATION_FAIL_IF_EXISTS, it) else statics.call(slot, name, it)
                 }
             }
-        await(operation, timeoutMs)
+        await(operation, timeoutMs, front = create)
         val result = out { operation.call(SLOT_GET_RESULTS, it) }
         val status = IntByReference()
         check(result.call(SLOT_RESULT_STATUS, status) >= 0) { "Status" }
@@ -278,10 +283,12 @@ class WindowsHello(
         fun await(
             operation: Pointer,
             timeoutMs: Long,
+            front: Boolean = false,
         ) {
             val info = out { operation.call(0, Guid.GUID.fromString(IID_ASYNC_INFO), it) }
             val deadline = System.nanoTime() + timeoutMs * NANOS_PER_MS
             val status = IntByReference()
+            var ticks = 0
             while (true) {
                 check(info.call(SLOT_ASYNC_STATUS, status) >= 0) { "IAsyncInfo.Status" }
                 when (status.value) {
@@ -293,6 +300,7 @@ class WindowsHello(
                     info.call(SLOT_ASYNC_CANCEL)
                     throw HelloException("timeout")
                 }
+                if (front && ticks++ % FRONT_EVERY_TICKS == 0) frontHelloDialog()
                 Thread.sleep(POLL_MS)
             }
         }
@@ -355,6 +363,7 @@ class WindowsHello(
         private const val SHORT_TIMEOUT_MS = 30_000L
         private const val SIGN_TIMEOUT_MS = 5 * 60_000L
         private const val POLL_MS = 25L
+        private const val FRONT_EVERY_TICKS = 6
 
         private fun statusName(status: Int): String =
             when (status) {
@@ -374,4 +383,45 @@ private fun Pointer.call(
     val vtable = getPointer(0)
     val function = Function.getFunction(vtable.getPointer(slot.toLong() * Native.POINTER_SIZE))
     return function.invokeInt(arrayOf<Any?>(this, *args))
+}
+
+private const val HELLO_BROKER = "CredentialUIBroker.exe"
+private const val PROCESS_QUERY_LIMITED_INFORMATION = 0x1000
+private const val IMAGE_NAME_CHARS = 1024
+
+/**
+ * Brings the Hello prompt in front. It belongs to CredentialUIBroker.exe, not to us, so Windows often opens it behind
+ * the window that asked; the window is found by its process and, when it is not already in front, raised.
+ */
+private fun frontHelloDialog() {
+    val user32 = User32.INSTANCE
+    var dialog: WinDef.HWND? = null
+    user32.EnumWindows({ hwnd, _ ->
+        if (user32.IsWindowVisible(hwnd) && isHelloBroker(hwnd)) dialog = hwnd
+        true
+    }, null)
+    val target = dialog ?: return
+    if (user32.GetForegroundWindow() == target) return
+    val keys = AllowSetForegroundWindow32.INSTANCE
+    keys.keybd_event(VK_MENU_KEY, 0, 0, null)
+    keys.keybd_event(VK_MENU_KEY, 0, KEYEVENTF_KEY_UP, null)
+    user32.BringWindowToTop(target)
+    user32.SetForegroundWindow(target)
+}
+
+private const val VK_MENU_KEY: Byte = 0x12
+private const val KEYEVENTF_KEY_UP = 0x2
+
+private fun isHelloBroker(hwnd: WinDef.HWND): Boolean {
+    val pid = IntByReference()
+    User32.INSTANCE.GetWindowThreadProcessId(hwnd, pid)
+    val process = Kernel32.INSTANCE.OpenProcess(PROCESS_QUERY_LIMITED_INFORMATION, false, pid.value) ?: return false
+    return try {
+        val name = CharArray(IMAGE_NAME_CHARS)
+        val size = IntByReference(name.size)
+        Kernel32.INSTANCE.QueryFullProcessImageName(process, 0, name, size) &&
+            String(name, 0, size.value).endsWith(HELLO_BROKER, ignoreCase = true)
+    } finally {
+        Kernel32.INSTANCE.CloseHandle(process)
+    }
 }

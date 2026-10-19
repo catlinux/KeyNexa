@@ -2,7 +2,7 @@
 
 [English](../../decisions/0014-windows-hello-quick-unlock.md) | [Español](0014-windows-hello-quick-unlock.md)
 
-- **Estado:** Propuesta (se acepta tras la prueba técnica del paso 0 y la prueba del titular con su PIN real)
+- **Estado:** Aceptada (prueba técnica y prueba a mano con el PIN real superadas el 2026-10-19; implementada en 1.9.2–1.10.0)
 - **Fecha:** 2026-10-19
 - **Amplía:** [ADR-0006](0006-biometric-unlock.md) (desbloqueo biométrico en Android), [ADR-0012](0012-windows-desktop-client.md) (cliente de escritorio para Windows)
 - **Implementa:** la amenaza T28 del [modelo de amenazas](../THREAT_MODEL.md)

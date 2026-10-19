@@ -12,6 +12,8 @@ import io.github.catlinux.keynexa.desktop.DesktopSettings
 import io.github.catlinux.keynexa.desktop.DesktopSettingsStore
 import io.github.catlinux.keynexa.desktop.DesktopStores
 import io.github.catlinux.keynexa.desktop.FileStoragePort
+import io.github.catlinux.keynexa.desktop.HelloSigner
+import io.github.catlinux.keynexa.desktop.QuickUnlock
 import io.github.catlinux.keynexa.desktop.SystemEvents
 import io.github.catlinux.keynexa.kdbx.KotpassKdbxEngine
 import io.github.catlinux.keynexa.session.KnownVaults
@@ -29,6 +31,7 @@ import io.github.catlinux.keynexa.windows.DpapiSecretBox
 import io.github.catlinux.keynexa.windows.WindowsCaptureGuard
 import io.github.catlinux.keynexa.windows.WindowsClipboard
 import io.github.catlinux.keynexa.windows.WindowsDirs
+import io.github.catlinux.keynexa.windows.WindowsHello
 import io.github.catlinux.keynexa.windows.WindowsSystemEvents
 import java.nio.file.Files
 import java.util.concurrent.Executors
@@ -62,6 +65,17 @@ class DesktopContainer {
 
     /** Asks Windows to keep the window out of screen captures. */
     val captureGuard = WindowsCaptureGuard()
+
+    /** Windows Hello, behind the quick unlock of ADR-0014. */
+    val hello = WindowsHello()
+
+    /** The native handle of the main window, so the Hello prompt can be brought in front of it. */
+    @Volatile
+    var windowHandle: Long? = null
+
+    /** The quick-unlock policy: it holds the vault components, encrypted, only in memory. */
+    val quickUnlock =
+        QuickUnlock(signer = HelloSigner { hello.sign(it, windowHandle) }, clock = System::currentTimeMillis)
 
     /** The cloud queue: it copies a vault to the configured account after a save and on demand. */
     val cloud: DesktopCloudBackup

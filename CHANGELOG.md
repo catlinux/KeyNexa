@@ -6,6 +6,15 @@ All notable changes to this project are documented in this file. The format is b
 
 ## [Unreleased]
 
+## [1.10.0] - 2026-10-19
+
+The Android app does not change.
+
+### Added
+
+- Desktop: optional quick unlock with Windows Hello ([ADR-0014](docs/decisions/0014-windows-hello-quick-unlock.md)). With the option on in the settings (shown only when Hello is set up), unlocking with the master password also arms the quick unlock: the pre-KDF key components are kept only in memory, encrypted under a key derived from a Hello signature, and the unlock screen of that vault offers "Unlock with Windows Hello". It expires after 1, 4, 8 or 24 hours counted from the master-password unlock (unlocking with Hello does not extend it), and is wiped when the app closes, the option is turned off, another vault is unlocked, or the password has changed. The first unlock after starting the app always asks for the master password.
+- Desktop: the Hello prompt is brought in front of other windows while it waits for the PIN.
+
 ## [1.9.4] - 2026-10-19
 
 The Android app does not change.

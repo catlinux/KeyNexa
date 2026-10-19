@@ -32,6 +32,7 @@ import androidx.compose.ui.window.ApplicationScope
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
 import androidx.compose.ui.window.rememberWindowState
+import io.github.catlinux.keynexa.desktop.OpenResult
 import io.github.catlinux.keynexa.desktop.Theme
 import io.github.catlinux.keynexa.desktop.app.generated.resources.Res
 import io.github.catlinux.keynexa.desktop.app.generated.resources.app_name
@@ -44,6 +45,7 @@ import io.github.catlinux.keynexa.session.CloudBackupSource
 import io.github.catlinux.keynexa.session.KnownVault
 import io.github.catlinux.keynexa.session.KnownVaults
 import io.github.catlinux.keynexa.session.SessionState
+import io.github.catlinux.keynexa.session.UnlockError
 import io.github.catlinux.keynexa.session.VaultSession
 import io.github.catlinux.keynexa.ui.theme.KeyNexaTheme
 import io.github.catlinux.keynexa.vault.NewVault
@@ -75,6 +77,9 @@ private const val SYNC_FOCUS_MIN_MILLIS = 60_000L
 
 /** How often the top bar's synchronisation state line is refreshed. */
 private const val SYNC_TICK_MILLIS = 30_000L
+
+/** How often the unlock screen checks whether the quick unlock has expired. */
+private const val QUICK_UNLOCK_CHECK_MILLIS = 60_000L
 
 private val WindowSize = DpSize(1360.dp, 780.dp)
 private val AlreadyOpenWindowSize = DpSize(380.dp, 190.dp)
@@ -144,6 +149,13 @@ private fun ApplicationScope.KeyNexaWindow(
         }
     }
     val view = remember { DesktopVaultState(container.clipboard, session) }
+    var quickUnlockSupported by remember { mutableStateOf(false) }
+    var quickArmed by remember { mutableStateOf(false) }
+    var quickBusy by remember { mutableStateOf(false) }
+    var quickNotice by remember { mutableStateOf<QuickNotice?>(null) }
+    var unlockSource by remember { mutableStateOf(UnlockSource.None) }
+    val quickUnlock = container.quickUnlock
+    val quickEnabled = quickUnlockSupported && settings.quickUnlock
     val openState = state as? SessionState.Open
     val openVault = openState?.vault
     val cloudSource =
@@ -217,6 +229,96 @@ private fun ApplicationScope.KeyNexaWindow(
         val content = (state as? SessionState.Open)?.current
         if (content != null) view.open(content) else view.reset()
     }
+    val unlockTarget =
+        when (val current = state) {
+            is SessionState.Unlocking -> current.vault
+            is SessionState.Failed -> current.vault
+            else -> selected
+        }
+    // Hello is asked once, at start-up and off the interface thread; without it the option is never shown.
+    LaunchedEffect(Unit) { quickUnlockSupported = withContext(Dispatchers.IO) { container.hello.isSupported() } }
+    // Turning the option off, or losing Hello, forgets what was armed.
+    LaunchedEffect(quickEnabled) {
+        if (!quickEnabled) {
+            quickArmed = false
+            withContext(Dispatchers.IO) { quickUnlock.disarm() }
+        }
+    }
+    // The unlock screen offers Hello only while the arming is valid; the check also catches the time limit.
+    LaunchedEffect(unlockTarget, quickEnabled) {
+        val target = unlockTarget
+        while (true) {
+            quickArmed =
+                if (target != null && quickEnabled) {
+                    withContext(Dispatchers.IO) { quickUnlock.isArmedFor(target.location.value) }
+                } else {
+                    false
+                }
+            delay(QUICK_UNLOCK_CHECK_MILLIS)
+        }
+    }
+    // Only an unlock that came from the master password arms the quick unlock, so the time limit is never extended.
+    LaunchedEffect(openVault) {
+        val vault = openVault ?: return@LaunchedEffect
+        val source = unlockSource
+        unlockSource = UnlockSource.None
+        if (source != UnlockSource.Password) return@LaunchedEffect
+        withContext(Dispatchers.IO) {
+            val components = if (quickEnabled) session.hashedCredentials() else null
+            if (components == null) {
+                quickUnlock.disarm()
+            } else {
+                try {
+                    quickUnlock.arm(vault.location.value, components, settings.quickUnlockHours)
+                } finally {
+                    components.wipe()
+                }
+            }
+        }
+    }
+    // Held components that no longer open the vault mean the password changed elsewhere.
+    LaunchedEffect(state) {
+        val failed = state as? SessionState.Failed ?: return@LaunchedEffect
+        if (unlockSource != UnlockSource.Hello) return@LaunchedEffect
+        unlockSource = UnlockSource.None
+        if (failed.error == UnlockError.WrongCredentials) {
+            quickArmed = false
+            quickNotice = QuickNotice.PasswordChanged
+            withContext(Dispatchers.IO) { quickUnlock.disarm() }
+        }
+    }
+    val unlockWithHello: (KnownVault) -> Unit = { vault ->
+        if (!quickBusy) {
+            quickBusy = true
+            quickNotice = null
+            scope.launch {
+                val result = withContext(Dispatchers.IO) { quickUnlock.open(vault.location.value) }
+                quickBusy = false
+                when (result) {
+                    is OpenResult.Opened -> {
+                        unlockSource = UnlockSource.Hello
+                        selected = vault
+                        session.unlock(vault, result.credentials)
+                    }
+                    OpenResult.Cancelled -> Unit
+                    is OpenResult.Failed -> {
+                        quickArmed = false
+                        quickNotice = QuickNotice.Unavailable
+                    }
+                }
+            }
+        }
+    }
+    val quickUnlockUi =
+        QuickUnlockUi(
+            available = quickArmed,
+            notice = quickNotice,
+            onQuickUnlock = unlockWithHello,
+            onPasswordUnlock = {
+                quickNotice = null
+                unlockSource = UnlockSource.Password
+            },
+        )
     val userNameLabel = stringResource(Res.string.entry_detail_user_name)
     val passwordLabel = stringResource(Res.string.entry_detail_password)
     val lockNow: () -> Unit = {
@@ -228,6 +330,8 @@ private fun ApplicationScope.KeyNexaWindow(
     Window(
         onCloseRequest = {
             container.systemEvents.close()
+            // Off the interface thread: it waits if a Hello prompt is open, and leaving wipes memory anyway.
+            Thread { container.quickUnlock.disarm() }.apply { isDaemon = true }.start()
             container.clipboard.clearNow()
             container.clipboard.close()
             session.lock()
@@ -250,6 +354,7 @@ private fun ApplicationScope.KeyNexaWindow(
         icon = windowIcon,
     ) {
         window.minimumSize = Dimension(MIN_WINDOW_WIDTH, MIN_WINDOW_HEIGHT)
+        LaunchedEffect(window) { container.windowHandle = container.hello.handleOf(window) }
         val windowInfo = LocalWindowInfo.current
         LaunchedEffect(windowInfo) {
             snapshotFlow { windowInfo.isWindowFocused }.collect { windowFocused = it }
@@ -310,6 +415,7 @@ private fun ApplicationScope.KeyNexaWindow(
                             cloudConfigured = cloudConfigured,
                             onOpenCloud = { cloudOpen = true },
                             cloudSyncState = cloudSyncState,
+                            quickUnlockSupported = quickUnlockSupported,
                         )
                     } else {
                         KeyNexaScreen(
@@ -328,6 +434,7 @@ private fun ApplicationScope.KeyNexaWindow(
                             syncIndicator = syncIndicator,
                             onSyncNow = syncNow,
                             onBringFromCloud = if (canBringFromCloud) ({ cloudPickerOpen = true }) else null,
+                            quickUnlock = quickUnlockUi,
                         )
                     }
                 }
@@ -375,6 +482,7 @@ private fun KeyNexaScreen(
     syncIndicator: SyncIndicator,
     onSyncNow: () -> Unit,
     onBringFromCloud: (() -> Unit)?,
+    quickUnlock: QuickUnlockUi,
 ) {
     val unlockVault =
         when (state) {
@@ -406,6 +514,7 @@ private fun KeyNexaScreen(
                 vault = unlockVault,
                 state = state,
                 useKeypad = useKeypad,
+                quickUnlock = quickUnlock,
                 onUnlock = { credentials ->
                     onSelect(unlockVault)
                     session.unlock(unlockVault, credentials)
