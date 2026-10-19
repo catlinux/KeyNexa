@@ -119,7 +119,7 @@
     <string name="conflict_password_show">Mostrar la contraseña</string>
     <string name="conflict_password_merge">Fusionar</string>
     <string name="conflict_password_cancel">Cancelar</string>
-    <string name="status_shortcuts">Ctrl+F buscar · Ctrl+B copiar usuario · Ctrl+C copiar contraseña · Ctrl+U abrir URL · Ctrl+N entrada nueva · Ctrl+E editar · Ctrl+L bloquear</string>
+    <string name="status_shortcuts">Ctrl+F buscar · Ctrl+B copiar usuario · Ctrl+C copiar contraseña · Ctrl+U abrir URL · Ctrl+N entrada nueva · Ctrl+E editar · Ctrl+L bloquear · Ctrl+R sincronizar ahora</string>
     <string name="tooltip_shortcut">%1$s (%2$s)</string>
 
     <string name="edit_title_new">Entrada nueva</string>
@@ -325,6 +325,10 @@
     <string name="cloud_sync_explain">La nube guarda una copia cifrada de cada bóveda. KeyNexa la descarga, la fusiona con tu bóveda local y sube el resultado solo cuando nada más la ha cambiado, así dos dispositivos que nunca están encendidos a la vez acaban iguales. El archivo va cifrado igual que las copias: el servicio solo ve el archivo cifrado. Las versiones antiguas de una entrada se quedan en su historial, y borrar la bóveda en un dispositivo la borra en todos tras la siguiente sincronización.</string>
     <string name="cloud_sync_checking">Comprobando el servicio…</string>
     <string name="cloud_sync_on">Sincronización activada</string>
+    <string name="cloud_sync_now">Sincronizar ahora</string>
+    <string name="cloud_sync_syncing">Sincronizando…</string>
+    <string name="cloud_sync_synced">Sincronizada %1$s</string>
+    <string name="cloud_sync_failed">No se pudo sincronizar: %1$s</string>
     <string name="cloud_sync_unsupported">Este servicio o contenedor no admite las escrituras condicionales que necesita la sincronización, así que el interruptor se queda apagado. Las copias siguen funcionando. Algunos servicios, como Backblaze B2, puede que no las admitan.</string>
     <string name="cloud_sync_error_auth">El servicio rechazó las claves. Revísalas y vuelve a intentarlo.</string>
     <string name="cloud_sync_error_network">No se pudo conectar. Revisa la red y vuelve a intentarlo.</string>

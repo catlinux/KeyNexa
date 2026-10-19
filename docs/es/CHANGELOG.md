@@ -6,6 +6,14 @@ Todos los cambios notables de este proyecto se documentan en este archivo. El fo
 
 ## [Sin publicar]
 
+## [1.7.2] - 2026-10-19
+
+La app de Android no cambia.
+
+### Añadido
+
+- Escritorio: estado de sincronización en la barra superior y un botón «Sincronizar ahora» (Ctrl+R).
+
 ## [1.7.1] - 2026-10-19
 
 La app de Android no cambia.

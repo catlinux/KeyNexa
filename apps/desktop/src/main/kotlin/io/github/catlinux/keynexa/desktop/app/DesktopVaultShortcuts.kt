@@ -12,7 +12,7 @@ import io.github.catlinux.keynexa.vault.Entry
 import io.github.catlinux.keynexa.vault.Vault
 
 /** What a keyboard shortcut of the open vault asks for. */
-internal enum class VaultShortcut { Search, CopyUserName, CopyPassword, OpenUrl, Lock, NewEntry, EditEntry }
+internal enum class VaultShortcut { Search, CopyUserName, CopyPassword, OpenUrl, Lock, NewEntry, EditEntry, Sync }
 
 /** The shortcut labels, as the tooltips and the status bar show them. */
 internal const val CTRL_F = "Ctrl+F"
@@ -22,6 +22,7 @@ internal const val CTRL_U = "Ctrl+U"
 internal const val CTRL_L = "Ctrl+L"
 internal const val CTRL_N = "Ctrl+N"
 internal const val CTRL_E = "Ctrl+E"
+internal const val CTRL_R = "Ctrl+R"
 
 /**
  * The shortcut [key] stands for while Ctrl is held, or null when it is not one of them. Every one of them is also
@@ -40,6 +41,7 @@ internal fun shortcutFor(
         Key.L -> VaultShortcut.Lock
         Key.N -> VaultShortcut.NewEntry
         Key.E -> VaultShortcut.EditEntry
+        Key.R -> VaultShortcut.Sync
         else -> null
     }
 }
@@ -63,10 +65,12 @@ internal fun runShortcut(
     userNameLabel: String,
     passwordLabel: String,
     onLock: () -> Unit,
+    onSyncNow: () -> Unit,
 ) {
     when (shortcut) {
         VaultShortcut.Search -> view.focusSearch()
         VaultShortcut.Lock -> onLock()
+        VaultShortcut.Sync -> onSyncNow()
         VaultShortcut.NewEntry -> view.startNewEntry(vault)
         VaultShortcut.EditEntry -> view.startEdit()
         VaultShortcut.CopyUserName ->

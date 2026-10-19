@@ -58,12 +58,23 @@ internal fun DesktopVaultScreen(
     onDeleteConflictCopies: () -> Unit,
     onMergeOtherPassword: (Credentials) -> Unit,
     onDismissConflicts: () -> Unit,
+    syncEnabled: Boolean,
+    syncIndicator: SyncIndicator,
+    onSyncNow: () -> Unit,
     parent: Frame,
     modifier: Modifier = Modifier,
 ) {
     var askingOtherPassword by remember { mutableStateOf(false) }
     Column(modifier = modifier.fillMaxSize()) {
-        VaultTopBar(state = state, view = view, onLock = onLock, onSettings = onSettings)
+        VaultTopBar(
+            state = state,
+            view = view,
+            onLock = onLock,
+            onSettings = onSettings,
+            syncEnabled = syncEnabled,
+            syncIndicator = syncIndicator,
+            onSyncNow = onSyncNow,
+        )
         VaultNotices(
             state = state,
             onRetrySave = onRetrySave,

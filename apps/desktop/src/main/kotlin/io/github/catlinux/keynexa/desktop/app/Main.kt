@@ -70,6 +70,9 @@ private const val IDLE_CHECK_MILLIS = 15_000L
 /** The least time between two synchronisations asked for by regaining the window's focus (ADR-0009 §4). */
 private const val SYNC_FOCUS_MIN_MILLIS = 60_000L
 
+/** How often the top bar's synchronisation state line is refreshed. */
+private const val SYNC_TICK_MILLIS = 30_000L
+
 private val WindowSize = DpSize(1100.dp, 750.dp)
 private val AlreadyOpenWindowSize = DpSize(380.dp, 190.dp)
 private val PanelPadding = 24.dp
@@ -109,6 +112,7 @@ private fun ApplicationScope.KeyNexaWindow(
     var cloudSyncState by remember { mutableStateOf(CloudSyncCardState()) }
     var reminderState by remember { mutableStateOf<ReminderState?>(null) }
     var reminderNow by remember { mutableStateOf(Instant.now()) }
+    var syncNowAt by remember { mutableStateOf(Instant.now()) }
     val reminder: @Composable () -> Unit = {
         val shown = reminderState
         if (shown != null && reminderVisible(shown, reminderNow)) {
@@ -134,6 +138,20 @@ private fun ApplicationScope.KeyNexaWindow(
         openState?.let { open ->
             CloudBackupSource(open.vault) { container.readVault(open.vault.location) }
         }
+    val syncEnabled = cloudSyncState.enabled
+    val syncIndicator = syncIndicator(syncStatus, syncNowAt)
+    val syncNow: () -> Unit = {
+        val vault = openVault
+        if (syncEnabled && vault != null) container.cloudSync.trigger(vault, container.syncLocal())
+    }
+    // While synchronisation is on and a vault is open, the state line keeps its "ago" up to date.
+    LaunchedEffect(openVault, syncEnabled) {
+        if (openVault == null || !syncEnabled) return@LaunchedEffect
+        while (true) {
+            delay(SYNC_TICK_MILLIS)
+            syncNowAt = Instant.now()
+        }
+    }
     // The window info only exists inside the Window content, so the focus is read there and kept here.
     var windowFocused by remember { mutableStateOf(true) }
     // Regaining the focus asks for a synchronisation at most once a minute; the gate holds that rule.
@@ -208,7 +226,7 @@ private fun ApplicationScope.KeyNexaWindow(
             val open = state as? SessionState.Open
             val shortcut = shortcutOf(event)
             if (open != null && shortcut != null) {
-                runShortcut(shortcut, view, open.current, userNameLabel, passwordLabel, lockNow)
+                runShortcut(shortcut, view, open.current, userNameLabel, passwordLabel, lockNow, syncNow)
                 true
             } else {
                 false
@@ -292,6 +310,9 @@ private fun ApplicationScope.KeyNexaWindow(
                             view = view,
                             useKeypad = settings.useKeypad,
                             parent = window,
+                            syncEnabled = syncEnabled,
+                            syncIndicator = syncIndicator,
+                            onSyncNow = syncNow,
                         )
                     }
                 }
@@ -323,6 +344,9 @@ private fun KeyNexaScreen(
     view: DesktopVaultState,
     useKeypad: Boolean,
     parent: Frame,
+    syncEnabled: Boolean,
+    syncIndicator: SyncIndicator,
+    onSyncNow: () -> Unit,
 ) {
     val unlockVault =
         when (state) {
@@ -343,6 +367,9 @@ private fun KeyNexaScreen(
                 onDeleteConflictCopies = session::deleteConflictCopies,
                 onMergeOtherPassword = session::mergeOtherPasswordCopies,
                 onDismissConflicts = session::dismissConflicts,
+                syncEnabled = syncEnabled,
+                syncIndicator = syncIndicator,
+                onSyncNow = onSyncNow,
                 parent = parent,
             )
         unlockVault != null ->

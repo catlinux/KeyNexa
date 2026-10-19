@@ -116,7 +116,7 @@
     <string name="conflict_password_show">Show the password</string>
     <string name="conflict_password_merge">Merge</string>
     <string name="conflict_password_cancel">Cancel</string>
-    <string name="status_shortcuts">Ctrl+F search · Ctrl+B copy user name · Ctrl+C copy password · Ctrl+U open URL · Ctrl+N new entry · Ctrl+E edit · Ctrl+L lock</string>
+    <string name="status_shortcuts">Ctrl+F search · Ctrl+B copy user name · Ctrl+C copy password · Ctrl+U open URL · Ctrl+N new entry · Ctrl+E edit · Ctrl+L lock · Ctrl+R sync now</string>
     <string name="tooltip_shortcut">%1$s (%2$s)</string>
 
     <string name="edit_title_new">New entry</string>
@@ -320,6 +320,10 @@
     <string name="cloud_sync_explain">The cloud keeps one encrypted copy of each vault. KeyNexa downloads it, merges it with your local vault and uploads the result only when nothing else changed it, so two devices that are never on at the same time end up the same. The file is encrypted exactly like the copies: the service only sees the encrypted file. Older versions of an entry stay in its history, and deleting the vault on one device deletes it everywhere after the next synchronisation.</string>
     <string name="cloud_sync_checking">Checking the service…</string>
     <string name="cloud_sync_on">Synchronisation turned on</string>
+    <string name="cloud_sync_now">Sync now</string>
+    <string name="cloud_sync_syncing">Synchronising…</string>
+    <string name="cloud_sync_synced">Synchronised %1$s</string>
+    <string name="cloud_sync_failed">Could not synchronise: %1$s</string>
     <string name="cloud_sync_unsupported">This service or bucket does not support the conditional writes synchronisation needs, so the switch stays off. Copies keep working. Some services, such as Backblaze B2, may not support them.</string>
     <string name="cloud_sync_error_auth">The service rejected the keys. Check them and try again.</string>
     <string name="cloud_sync_error_network">Could not connect. Check the network and try again.</string>

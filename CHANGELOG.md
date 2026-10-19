@@ -6,6 +6,14 @@ All notable changes to this project are documented in this file. The format is b
 
 ## [Unreleased]
 
+## [1.7.2] - 2026-10-19
+
+The Android app does not change.
+
+### Added
+
+- Desktop: synchronisation state in the top bar and a Sync now button (Ctrl+R).
+
 ## [1.7.1] - 2026-10-19
 
 The Android app does not change.

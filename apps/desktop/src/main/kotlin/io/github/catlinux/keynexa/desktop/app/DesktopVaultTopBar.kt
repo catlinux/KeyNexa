@@ -28,6 +28,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import io.github.catlinux.keynexa.desktop.app.generated.resources.Res
+import io.github.catlinux.keynexa.desktop.app.generated.resources.cloud_sync_now
 import io.github.catlinux.keynexa.desktop.app.generated.resources.edit_title_new
 import io.github.catlinux.keynexa.desktop.app.generated.resources.group_lock
 import io.github.catlinux.keynexa.desktop.app.generated.resources.group_settings
@@ -58,14 +59,19 @@ private const val TOOLTIP_DELAY_MILLIS = 500
 
 /**
  * The band at the top of the browser: the vault name with its save status, the search box over the whole vault, the
- * settings button, which still has no screen, and Lock. Ctrl+F puts the focus in the search box.
+ * settings button, which still has no screen, and Lock. Ctrl+F puts the focus in the search box. When synchronisation
+ * is on, a discreet state line and "Sync now" (Ctrl+R) sit between the search box and the actions.
  */
+@Suppress("LongParameterList")
 @Composable
 internal fun VaultTopBar(
     state: SessionState.Open,
     view: DesktopVaultState,
     onLock: () -> Unit,
     onSettings: () -> Unit,
+    syncEnabled: Boolean,
+    syncIndicator: SyncIndicator,
+    onSyncNow: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Surface(modifier = modifier.fillMaxWidth(), color = MaterialTheme.colorScheme.primary) {
@@ -90,6 +96,10 @@ internal fun VaultTopBar(
                 )
             }
             SearchField(view = view, modifier = Modifier.weight(1f))
+            if (syncEnabled) {
+                SyncIndicatorLabel(indicator = syncIndicator)
+                SyncNowButton(onSyncNow = onSyncNow)
+            }
             NewEntryButton(vault = state.current, view = view)
             SettingsButton(onSettings = onSettings)
             LockButton(onLock = onLock)
@@ -174,6 +184,26 @@ private fun NewEntryButton(
     ShortcutTooltip(text = stringResource(Res.string.tooltip_shortcut, label, CTRL_N), modifier = modifier) {
         OutlinedButton(
             onClick = { view.startNewEntry(vault) },
+            shape = ControlShape,
+            colors = ButtonDefaults.outlinedButtonColors(contentColor = MaterialTheme.colorScheme.onPrimary),
+            border = BorderStroke(1.dp, MaterialTheme.colorScheme.onPrimary.copy(alpha = BORDER_ALPHA)),
+            modifier = Modifier.heightIn(min = ControlHeight),
+        ) {
+            Text(text = label)
+        }
+    }
+}
+
+/** Asking for a synchronisation round now, with the shortcut that does the same. */
+@Composable
+private fun SyncNowButton(
+    onSyncNow: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    val label = stringResource(Res.string.cloud_sync_now)
+    ShortcutTooltip(text = stringResource(Res.string.tooltip_shortcut, label, CTRL_R), modifier = modifier) {
+        OutlinedButton(
+            onClick = onSyncNow,
             shape = ControlShape,
             colors = ButtonDefaults.outlinedButtonColors(contentColor = MaterialTheme.colorScheme.onPrimary),
             border = BorderStroke(1.dp, MaterialTheme.colorScheme.onPrimary.copy(alpha = BORDER_ALPHA)),

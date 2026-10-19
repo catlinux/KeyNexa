@@ -16,6 +16,7 @@ class DesktopVaultShortcutTest {
         assertEquals(VaultShortcut.Lock, shortcutFor(ctrl = true, key = Key.L))
         assertEquals(VaultShortcut.NewEntry, shortcutFor(ctrl = true, key = Key.N))
         assertEquals(VaultShortcut.EditEntry, shortcutFor(ctrl = true, key = Key.E))
+        assertEquals(VaultShortcut.Sync, shortcutFor(ctrl = true, key = Key.R))
     }
 
     @Test
