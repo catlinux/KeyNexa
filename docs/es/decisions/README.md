@@ -14,7 +14,7 @@ Cada registro explica una decisión importante: contexto, opciones, decisión y 
 | [0006](0006-biometric-unlock.md) | Desbloqueo biométrico: clave compuesta envuelta por el Keystore, biometría en cada uso | Aceptada |
 | [0007](0007-conflict-copies.md) | Fusión de copias de conflicto de Syncthing: fusión automática, borrado solo con consentimiento | Aceptada |
 | [0008](0008-cloud-backup.md) | Copias de la bóveda en la nube: asistente opcional, variante `cloud` y servicios | Aceptada |
-| [0009](0009-cloud-sync.md) | Sincronización a través de la nube: primero local, escrituras condicionales | Propuesta |
+| [0009](0009-cloud-sync.md) | Sincronización a través de la nube: primero local, escrituras condicionales | Aceptada |
 | [0010](0010-in-app-password-keypad.md) | Teclado propio de la app para la contraseña maestra: activado por defecto, junto al del sistema | Aceptada |
 | [0011](0011-repository-layout.md) | Estructura del repositorio para varios clientes y una sola versión del producto | Aceptada |
 | [0012](0012-windows-desktop-client.md) | Cliente de escritorio para Windows | Aceptada |

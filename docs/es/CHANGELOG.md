@@ -6,6 +6,14 @@ Todos los cambios notables de este proyecto se documentan en este archivo. El fo
 
 ## [Sin publicar]
 
+## [1.8.6] - 2026-10-19
+
+Las aplicaciones no cambian.
+
+### Cambiado
+
+- Docs: la sincronización por la nube está verificada con Cloudflare R2 entre el escritorio y la edición cloud de Android, en los dos sentidos. El [ADR-0009](decisions/0009-cloud-sync.md) pasa a Aceptada, la amenaza T27 se marca como hecha y la guía de la nube dice lo que se verificó. Backblaze B2 no se ha probado.
+
 ## [1.8.5] - 2026-10-19
 
 La aplicación de Android no cambia.

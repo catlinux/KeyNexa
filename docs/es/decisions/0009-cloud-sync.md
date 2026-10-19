@@ -2,7 +2,7 @@
 
 [English](../../decisions/0009-cloud-sync.md) | [Español](0009-cloud-sync.md)
 
-- **Estado:** Propuesta
+- **Estado:** Aceptada (2026-10-19)
 - **Fecha:** 2026-10-15
 - **Amplía:** [ADR-0004](0004-storage-sync-and-safe-save.md) y [ADR-0008](0008-cloud-backup.md), cuya decisión 9 dejó este paso para su propio registro
 
@@ -57,6 +57,16 @@ Cómo se construye la decisión anterior para los servicios compatibles con S3 q
 6. **Otra contraseña maestra** (punto 5 y último punto abierto): en esta versión, un objeto remoto que no se descifra con las credenciales de la bóveda abierta se notifica («la copia de la nube usa otra contraseña maestra») y no se escribe nada en ningún lado. Fusionarlo con la otra contraseña queda para más adelante.
 7. **Un dispositivo sin copia local** descarga un objeto de `KeyNexa/sync/` a un archivo que elige el usuario, lo añade a las bóvedas conocidas y lo desbloquea como siempre.
 8. **Errores sin contenido:** el estado que se guarda por id de sincronización (última etiqueta de entidad vista, huella del archivo local sincronizado por última vez, último éxito, último error) no contiene ningún secreto ni contenido de la bóveda.
+
+## Verificación (2026-10-19)
+
+Aceptada tras probarla de verdad. Con un bucket de Cloudflare R2 y una bóveda de prueba (nunca una real):
+
+- **La sonda pasa en R2**: una subida de solo creación sobre un objeto existente se rechaza, una subida con una etiqueta de entidad vieja se rechaza, y ambas dejan el objeto igual. R2 respeta por tanto `If-None-Match` e `If-Match` en `PutObject`, como dice su documentación.
+- **El escritorio y el móvil sincronizan en los dos sentidos**: la bóveda se creó en el escritorio, se trajo al móvil con *Traer una bóveda de la nube* (app de Android, edición cloud) y las entradas hechas en un lado aparecieron en el otro.
+- **Con dos instancias de escritorio** frente a un servicio local compatible con S3 y la misma semántica: guardar en una, *Sincronizar ahora* en la otra, y una ronda sin novedades no escribe nada en ninguno de los dos lados. Una prueba con dos sesiones reales y el motor KDBX real detectó, y corrigió, un bucle en el que cada lado se subía archivos al otro porque las entradas salían en otro orden.
+
+**Backblaze B2 no se ha probado.** Su documentación no menciona las escrituras condicionales, así que no se promete nada: la sonda decide por bucket al activar el interruptor, y donde falle el servicio sigue sirviendo solo para copias.
 
 ## Puntos abiertos (a verificar antes de prometerlos)
 

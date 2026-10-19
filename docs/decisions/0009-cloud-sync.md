@@ -2,7 +2,7 @@
 
 [English](0009-cloud-sync.md) | [Español](../es/decisions/0009-cloud-sync.md)
 
-- **Status:** Proposed
+- **Status:** Accepted (2026-10-19)
 - **Date:** 2026-10-15
 - **Extends:** [ADR-0004](0004-storage-sync-and-safe-save.md) and [ADR-0008](0008-cloud-backup.md), whose decision 9 left this step for its own record
 
@@ -57,6 +57,16 @@ How the decision above is built, for the S3-compatible services KeyNexa already 
 6. **Another master password** (point 5 and the last open point): in this version, a remote object that does not decrypt with the open vault's credentials is reported ("the cloud copy uses another master password") and nothing is written on either side. Merging it with the other password is left for later.
 7. **A device without a local copy** downloads an object from `KeyNexa/sync/` into a file the user chooses, adds it to the known vaults and unlocks it as usual.
 8. **Errors without content:** the state kept per synchronisation id (last entity tag seen, fingerprint of the local file last synchronised, last success, last error) holds no secret and no vault content.
+
+## Verification (2026-10-19)
+
+Accepted after trying it for real. With a Cloudflare R2 bucket and a test vault (never a real one):
+
+- **The probe passes on R2**: a create-only upload over an existing object is refused, an upload with a stale entity tag is refused, and both leave the object unchanged. R2 therefore honours `If-None-Match` and `If-Match` on `PutObject`, as its documentation says.
+- **Desktop and phone synchronise in both directions**: the vault was created on the desktop, brought to the phone with *Bring a vault from the cloud* (Android app, cloud edition), and the entries made on one side showed up on the other.
+- **With two desktop instances** against a local S3-compatible service with the same semantics: save in one, *Sync now* in the other, and a round with nothing new writes nothing on either side. A test with two real sessions and the real KDBX engine caught, and fixed, a loop where each side uploaded to the other because the entries came out in a different order.
+
+**Backblaze B2 has not been tried.** Its documentation does not mention conditional writes, so nothing is promised for it: the probe decides per bucket when the switch is turned on, and where it fails the service keeps working for copies only.
 
 ## Open points (to verify before they are promised)
 

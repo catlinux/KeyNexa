@@ -6,6 +6,14 @@ All notable changes to this project are documented in this file. The format is b
 
 ## [Unreleased]
 
+## [1.8.6] - 2026-10-19
+
+The apps do not change.
+
+### Changed
+
+- Docs: synchronisation through the cloud is verified with Cloudflare R2 between the desktop and the Android cloud edition, in both directions. [ADR-0009](docs/decisions/0009-cloud-sync.md) is now Accepted, threat T27 is marked done, and the cloud guide says what was verified. Backblaze B2 has not been tried.
+
 ## [1.8.5] - 2026-10-19
 
 The Android app does not change.

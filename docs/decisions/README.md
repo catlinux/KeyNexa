@@ -14,7 +14,7 @@ Each record explains one important decision: context, options, decision and cons
 | [0006](0006-biometric-unlock.md) | Biometric unlock: Keystore-wrapped composite key, per-use biometrics | Accepted |
 | [0007](0007-conflict-copies.md) | Merging Syncthing conflict copies: automatic merge, deletion only with consent | Accepted |
 | [0008](0008-cloud-backup.md) | Cloud copies of the vault: optional wizard, `cloud` build variant, providers | Accepted |
-| [0009](0009-cloud-sync.md) | Synchronisation through the cloud: local-first, conditional writes | Proposed |
+| [0009](0009-cloud-sync.md) | Synchronisation through the cloud: local-first, conditional writes | Accepted |
 | [0010](0010-in-app-password-keypad.md) | In-app keypad for the master password: on by default, beside the system keyboard | Accepted |
 | [0011](0011-repository-layout.md) | Repository layout for several clients and a single product version | Accepted |
 | [0012](0012-windows-desktop-client.md) | Windows desktop client | Accepted |
