@@ -43,6 +43,7 @@ import io.github.catlinux.keynexa.app.R
 import io.github.catlinux.keynexa.app.settings.SettingsValues
 import io.github.catlinux.keynexa.app.settings.ThemeMode
 import io.github.catlinux.keynexa.session.CloudBackupSource
+import io.github.catlinux.keynexa.sync.SyncLocal
 import io.github.catlinux.keynexa.ui.theme.LocalDarkTheme
 
 /** Spacing and touch targets of the design grid (docs/DESIGN.md). */
@@ -85,7 +86,7 @@ private const val TWO_MINUTES = 2
  * A stateless screen: it shows [values] and reports every change through [onChange], and it stores nothing itself.
  * Every switch and every option is a row of at least 48 dp whose label is its accessible text.
  */
-@Suppress("LongMethod")
+@Suppress("LongMethod", "LongParameterList")
 @Composable
 fun SettingsScreen(
     values: SettingsValues,
@@ -93,6 +94,7 @@ fun SettingsScreen(
     onBack: () -> Unit,
     modifier: Modifier = Modifier,
     cloudSource: CloudBackupSource? = null,
+    syncLocal: SyncLocal? = null,
 ) {
     Surface(modifier = modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
         Column(modifier = Modifier.fillMaxSize()) {
@@ -199,7 +201,7 @@ fun SettingsScreen(
                         )
                     }
                 }
-                CloudSettingsEntry(cloudSource)
+                CloudSettingsEntry(cloudSource, syncLocal)
             }
         }
     }

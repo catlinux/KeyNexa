@@ -6,6 +6,14 @@ All notable changes to this project are documented in this file. The format is b
 
 ## [Unreleased]
 
+## [1.8.1] - 2026-10-19
+
+The desktop app does not change. The offline edition does not change either.
+
+### Added
+
+- Android (cloud edition): switch to synchronise vaults through the cloud service, with a check that the service supports conditional writes, and the synchronisation state in the cloud settings.
+
 ## [1.8.0] - 2026-10-19
 
 The desktop app does not change. The offline edition does not change either.

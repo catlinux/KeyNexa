@@ -74,6 +74,42 @@
     <string name="cloud_status_copy_now_needs_vault">To copy now, open a vault first and then come back to Settings.</string>
     <string name="cloud_status_change_service">Change service</string>
 
+    <string name="cloud_sync_section">Synchronisation</string>
+    <string name="cloud_sync_switch">Synchronise my vaults through this service</string>
+    <string name="cloud_sync_explain">The cloud keeps one encrypted copy of each vault. KeyNexa downloads it, merges it with your local vault and uploads the result only when nothing else changed it, so two devices that are never on at the same time end up the same. The file is encrypted exactly like the copies: the service only sees the encrypted file. Older versions of an entry stay in its history, and deleting an entry on one device deletes it everywhere after the next synchronisation.</string>
+    <string name="cloud_sync_checking">Checking the service…</string>
+    <string name="cloud_sync_on">Synchronisation turned on</string>
+    <string name="cloud_sync_unsupported">This service or bucket does not support the conditional writes synchronisation needs, so the switch stays off. Copies keep working. Some services, such as Backblaze B2, may not support them.</string>
+    <string name="cloud_sync_error_auth">The service rejected the keys. Check them and try again.</string>
+    <string name="cloud_sync_error_network">Could not connect. Check the network and try again.</string>
+    <string name="cloud_sync_state_off">Off.</string>
+    <string name="cloud_sync_state_on">On.</string>
+    <string name="cloud_sync_state_pending">Not synchronised yet.</string>
+    <string name="cloud_sync_state_last">Last synchronisation: %1$s.</string>
+    <string name="cloud_sync_state_error">Could not synchronise: %1$s.</string>
+    <string name="cloud_sync_ago_now">just now</string>
+    <plurals name="cloud_sync_ago_minutes">
+        <item quantity="one">%1$d minute ago</item>
+        <item quantity="other">%1$d minutes ago</item>
+    </plurals>
+    <plurals name="cloud_sync_ago_hours">
+        <item quantity="one">%1$d hour ago</item>
+        <item quantity="other">%1$d hours ago</item>
+    </plurals>
+    <plurals name="cloud_sync_ago_days">
+        <item quantity="one">%1$d day ago</item>
+        <item quantity="other">%1$d days ago</item>
+    </plurals>
+    <string name="cloud_sync_error_busy">the service changed at the same time</string>
+    <string name="cloud_sync_error_not_authorized">the keys no longer work</string>
+    <string name="cloud_sync_error_unavailable">there was no connection</string>
+    <string name="cloud_sync_error_not_supported">the service does not support conditional writes</string>
+    <string name="cloud_sync_error_unreadable">the cloud copy could not be read</string>
+    <string name="cloud_sync_error_invalid_id">the vault\'s synchronisation id is not valid</string>
+    <string name="cloud_sync_error_other_password">the cloud copy uses another master password</string>
+    <string name="cloud_sync_error_other_vault">the cloud copy belongs to another vault</string>
+    <string name="cloud_sync_error_save_failed">the vault could not be saved</string>
+
     <string name="cloud_reminder_title">Protect your vault: keep a copy in the cloud</string>
     <string name="cloud_reminder_configure">Set up</string>
     <string name="cloud_reminder_later">Later</string>

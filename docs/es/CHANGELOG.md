@@ -6,6 +6,14 @@ Todos los cambios notables de este proyecto se documentan en este archivo. El fo
 
 ## [Sin publicar]
 
+## [1.8.1] - 2026-10-19
+
+La app de escritorio no cambia. La edición offline tampoco.
+
+### Añadido
+
+- Android (edición cloud): interruptor para sincronizar las bóvedas a través del servicio de la nube, con una comprobación de que el servicio admite escrituras condicionales, y el estado de la sincronización en los ajustes de la nube.
+
 ## [1.8.0] - 2026-10-19
 
 La app de escritorio no cambia. La edición offline tampoco.

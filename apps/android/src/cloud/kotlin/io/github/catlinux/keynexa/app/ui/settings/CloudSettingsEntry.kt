@@ -60,7 +60,14 @@ import io.github.catlinux.keynexa.app.cloud.CloudBackupStatus
 import io.github.catlinux.keynexa.app.cloud.CloudConsentStore
 import io.github.catlinux.keynexa.app.cloud.CloudStores
 import io.github.catlinux.keynexa.app.cloud.CloudSyncService
+import io.github.catlinux.keynexa.app.cloud.SyncCardState
+import io.github.catlinux.keynexa.app.cloud.syncCardNote
+import io.github.catlinux.keynexa.app.cloud.ui.settings.CloudSyncSection
+import io.github.catlinux.keynexa.app.cloud.ui.settings.SyncProbeOutcome
+import io.github.catlinux.keynexa.app.cloud.ui.settings.syncProbeOutcome
+import io.github.catlinux.keynexa.cloud.ConditionalWriteProbe
 import io.github.catlinux.keynexa.cloud.ConnectionResult
+import io.github.catlinux.keynexa.cloud.ProbeResult
 import io.github.catlinux.keynexa.cloud.S3Setup
 import io.github.catlinux.keynexa.cloud.regionAfterEndpointChange
 import io.github.catlinux.keynexa.cloud.regionFromEndpoint
@@ -68,10 +75,12 @@ import io.github.catlinux.keynexa.cloud.testConnection
 import io.github.catlinux.keynexa.cloud.vaultIdOf
 import io.github.catlinux.keynexa.session.CloudBackupSource
 import io.github.catlinux.keynexa.sync.BackupError
+import io.github.catlinux.keynexa.sync.SyncLocal
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.io.IOException
 import java.time.Instant
 
 private val CloudPadding = 16.dp
@@ -105,7 +114,10 @@ private enum class CloudStep { Consent, Service, Needs, Form, Status }
  */
 @Suppress("LongMethod")
 @Composable
-fun CloudSettingsEntry(source: CloudBackupSource?) {
+fun CloudSettingsEntry(
+    source: CloudBackupSource?,
+    syncLocal: SyncLocal?,
+) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
     var showing by remember { mutableStateOf(false) }
@@ -118,6 +130,10 @@ fun CloudSettingsEntry(source: CloudBackupSource?) {
     var copyMessage by remember { mutableStateOf<CopyMessage?>(null) }
     var awaitingCopy by remember { mutableStateOf(false) }
     var sawCopyRunning by remember { mutableStateOf(false) }
+    val syncStatus by CloudSyncService.status.collectAsState()
+    var syncBusy by remember { mutableStateOf(false) }
+    var syncNotice by remember { mutableStateOf<SyncProbeOutcome?>(null) }
+    var syncCard by remember { mutableStateOf(SyncCardState()) }
 
     LaunchedEffect(showing) {
         if (!showing) return@LaunchedEffect
@@ -153,6 +169,22 @@ fun CloudSettingsEntry(source: CloudBackupSource?) {
             withContext(Dispatchers.IO) {
                 val bucket = (setup ?: CloudStores.credentials(context).load()?.let(S3Setup::fromValues))?.bucket
                 RowStatus(bucket)
+            }
+    }
+    LaunchedEffect(showing, step, setup, syncLocal, syncStatus) {
+        if (!showing) return@LaunchedEffect
+        syncCard =
+            withContext(Dispatchers.IO) {
+                if (syncLocal == null) {
+                    SyncCardState()
+                } else {
+                    val state = CloudSyncService.statusOf(context, syncLocal)
+                    SyncCardState(
+                        hasVault = true,
+                        lastSuccess = state.lastSuccess,
+                        lastError = state.lastError,
+                    )
+                }
             }
     }
     // The copy message lives only while the state screen is on.
@@ -268,6 +300,9 @@ fun CloudSettingsEntry(source: CloudBackupSource?) {
                                     source = source,
                                     status = status,
                                     copyMessage = copyMessage,
+                                    syncBusy = syncBusy,
+                                    syncNotice = syncNotice,
+                                    syncCard = syncCard,
                                     onKeep = { newKeep -> changeKeep(saved, newKeep, scope, context) { setup = it } },
                                     onCopyNow = {
                                         source?.let {
@@ -275,6 +310,17 @@ fun CloudSettingsEntry(source: CloudBackupSource?) {
                                             awaitingCopy = true
                                             CloudBackupService.backupNow(context, it.vault, it.read)
                                         }
+                                    },
+                                    onToggleSync = { turnOn ->
+                                        toggleSync(
+                                            setup = saved,
+                                            turnOn = turnOn,
+                                            scope = scope,
+                                            context = context,
+                                            onBusy = { syncBusy = it },
+                                            onNotice = { syncNotice = it },
+                                            onSetup = { setup = it },
+                                        )
                                     },
                                     onChangeService = {
                                         form.reset()
@@ -475,6 +521,53 @@ private fun changeKeep(
     scope.launch {
         withContext(Dispatchers.IO) { CloudStores.credentials(context).save(updated.toValues()) }
         onChanged(updated)
+    }
+}
+
+/**
+ * Turns synchronisation off at once, or, when turning it on, runs the conditional-write probe off the interface
+ * thread and stores the switch as on only when the service honours it (ADR-0009 §3).
+ */
+private fun toggleSync(
+    setup: S3Setup,
+    turnOn: Boolean,
+    scope: CoroutineScope,
+    context: Context,
+    onBusy: (Boolean) -> Unit,
+    onNotice: (SyncProbeOutcome?) -> Unit,
+    onSetup: (S3Setup) -> Unit,
+) {
+    if (!turnOn) {
+        scope.launch {
+            val updated = setup.copy(sync = false)
+            withContext(Dispatchers.IO) { CloudStores.credentials(context).save(updated.toValues()) }
+            onSetup(updated)
+            onNotice(null)
+        }
+        return
+    }
+    onBusy(true)
+    scope.launch {
+        var enabled: S3Setup? = null
+        val outcome =
+            withContext(Dispatchers.IO) {
+                val result =
+                    try {
+                        ConditionalWriteProbe(setup.backend()).run()
+                    } catch (failure: IOException) {
+                        ProbeResult.Failed(failure)
+                    }
+                val mapped = syncProbeOutcome(result)
+                if (mapped == SyncProbeOutcome.Enabled) {
+                    val updated = setup.copy(sync = true, syncProbe = S3Setup.probeKey(setup.endpoint, setup.bucket))
+                    CloudStores.credentials(context).save(updated.toValues())
+                    enabled = updated
+                }
+                mapped
+            }
+        enabled?.let(onSetup)
+        onNotice(outcome)
+        onBusy(false)
     }
 }
 
@@ -816,8 +909,12 @@ private fun StatusBody(
     source: CloudBackupSource?,
     status: CloudBackupStatus?,
     copyMessage: CopyMessage?,
+    syncBusy: Boolean,
+    syncNotice: SyncProbeOutcome?,
+    syncCard: SyncCardState,
     onKeep: (Int) -> Unit,
     onCopyNow: () -> Unit,
+    onToggleSync: (Boolean) -> Unit,
     onChangeService: () -> Unit,
     onDisconnect: () -> Unit,
     onClose: () -> Unit,
@@ -872,6 +969,20 @@ private fun StatusBody(
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
     }
+    CloudSyncSection(
+        enabled = setup.syncEnabled,
+        busy = syncBusy,
+        notice = syncNotice,
+        note =
+            syncCardNote(
+                enabled = setup.syncEnabled,
+                hasVault = syncCard.hasVault,
+                lastSuccess = syncCard.lastSuccess,
+                lastError = syncCard.lastError,
+                now = Instant.now(),
+            ),
+        onToggle = onToggleSync,
+    )
     OutlinedButton(
         onClick = onChangeService,
         modifier = Modifier.fillMaxWidth().heightIn(min = CloudTouchTarget),

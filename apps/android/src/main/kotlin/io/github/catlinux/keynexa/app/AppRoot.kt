@@ -423,6 +423,7 @@ private fun AppScreens(
                     (state as? SessionState.Open)?.let { open ->
                         CloudBackupSource(open.vault) { container.storage.read(open.vault.location) }
                     },
+                syncLocal = (state as? SessionState.Open)?.let { container.syncLocal() },
             )
         Screen.CreateVault ->
             CreateVaultScreen(
