@@ -8,6 +8,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import io.github.catlinux.keynexa.app.cloud.CloudBackupHook
+import io.github.catlinux.keynexa.app.cloud.CloudSyncHook
 import io.github.catlinux.keynexa.app.nav.Navigator
 import io.github.catlinux.keynexa.app.security.AutoLock
 import io.github.catlinux.keynexa.app.security.BiometricKeys
@@ -23,12 +24,14 @@ import io.github.catlinux.keynexa.platform.FileSaveJournal
 import io.github.catlinux.keynexa.platform.SafStoragePort
 import io.github.catlinux.keynexa.platform.SafVaultAccess
 import io.github.catlinux.keynexa.session.SessionState
+import io.github.catlinux.keynexa.session.SessionSyncLocal
 import io.github.catlinux.keynexa.session.VaultReaders
 import io.github.catlinux.keynexa.session.VaultSession
 import io.github.catlinux.keynexa.sync.ConflictMerger
 import io.github.catlinux.keynexa.sync.KeePassMerger
 import io.github.catlinux.keynexa.sync.SafeSaver
 import io.github.catlinux.keynexa.sync.SaveRecovery
+import io.github.catlinux.keynexa.sync.SyncLocal
 import io.github.catlinux.keynexa.sync.VaultReader
 import java.io.File
 import java.util.concurrent.Executors
@@ -108,11 +111,17 @@ class AppContainer(
                 backups = backups,
                 vaultMerger = keeper,
                 conflicts = ConflictMerger(storage, engine, keeper, mergedCopies),
-                afterSave = { CloudBackupHook.onSaved(appContext, it) { storage.read(it.location) } },
+                afterSave = {
+                    CloudBackupHook.onSaved(appContext, it) { storage.read(it.location) }
+                    CloudSyncHook.onSaved(appContext, it, syncLocal())
+                },
                 executor = worker,
                 now = System::currentTimeMillis,
             )
     }
+
+    /** The open vault as the cloud reconciler sees it; the screens' triggers pass it to [CloudSyncHook]. */
+    fun syncLocal(): SyncLocal = SessionSyncLocal(session, storage)
 
     /** Locks an open vault: clears the clipboard, wipes the credentials and returns to the home screen. */
     fun lockNow() {

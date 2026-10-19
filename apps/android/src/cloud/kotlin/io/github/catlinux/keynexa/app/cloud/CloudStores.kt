@@ -16,6 +16,7 @@ private const val CLOUD_DIRECTORY = "cloud"
 private const val CREDENTIALS_FILE = "credentials.bin"
 private const val CONSENT_FILE = "consent"
 private const val BACKUP_STATE_FILE = "backup-state.properties"
+private const val SYNC_STATE_FILE = "sync-state.properties"
 private const val REMINDER_FILE = "reminder"
 
 /** Where the cloud credentials and the consent mark live: app-private storage excluded from backup. */
@@ -25,6 +26,9 @@ object CloudStores {
 
     /** The file that keeps the last success and error of each vault's backup. */
     fun backupStateFile(context: Context): File = File(directory(context), BACKUP_STATE_FILE)
+
+    /** The file that keeps the last synchronisation state of each vault, keyed by synchronisation id. */
+    fun syncStateFile(context: Context): File = File(directory(context), SYNC_STATE_FILE)
 
     internal fun directory(context: Context): File = File(context.noBackupFilesDir, CLOUD_DIRECTORY)
 }

@@ -12,6 +12,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.fragment.app.FragmentActivity
+import io.github.catlinux.keynexa.app.cloud.CloudSyncHook
+import io.github.catlinux.keynexa.app.cloud.SyncTriggerGate
 import io.github.catlinux.keynexa.app.nav.Screen
 import io.github.catlinux.keynexa.app.security.BiometricProblem
 import io.github.catlinux.keynexa.app.security.BiometricTexts
@@ -36,6 +38,7 @@ import kotlinx.coroutines.delay
 private const val VAULT_EXTENSION = ".kdbx"
 private const val CONFLICT_MARKER = ".sync-conflict-"
 private const val REFRESH_MILLIS = 5_000L
+private const val SYNC_TRIGGER_MIN_MILLIS = 60_000L
 
 /**
  * What the user does with vault files: adding, creating, reconnecting and removing. Vaults are always reached
@@ -326,16 +329,28 @@ fun AppRoot(container: AppContainer) {
     val context = LocalContext.current
     val actions = remember { VaultFileActions(container) }
     val biometric = remember { BiometricActions(container) }
+    // Returning to the foreground asks for a synchronisation at most once a minute; the gate holds that rule.
+    val syncGate = remember { SyncTriggerGate(SYNC_TRIGGER_MIN_MILLIS) }
     val activity = context as? FragmentActivity
     val openPicker = rememberLauncherForActivityResult(OpenVaultFolder(), actions::folderChosenToOpen)
     val createPicker = rememberLauncherForActivityResult(OpenVaultFolder(), actions::folderChosenToCreate)
 
     LaunchedEffect(state) {
-        if (state is SessionState.Open && navigator.current is Screen.Unlock) navigator.push(Screen.Group(null))
+        val open = state
+        if (open is SessionState.Open && navigator.current is Screen.Unlock) {
+            navigator.push(Screen.Group(null))
+            // Unlocking always asks for a synchronisation round, whatever the foreground rule says.
+            syncGate.mark()
+            CloudSyncHook.onTrigger(context, open.vault, container.syncLocal())
+        }
     }
     LaunchedEffect(state) { biometric.onState(state) }
     val isOpen = state is SessionState.Open
     LaunchedEffect(isOpen, container.visible) {
+        // Coming back to the front asks for one too, at most once a minute; the unlock above already asked.
+        foregroundSyncVault(isOpen, container.visible, state, syncGate)?.let {
+            CloudSyncHook.onTrigger(context, it, container.syncLocal())
+        }
         // Another device or program may have changed the file: look every few seconds while the app is in front.
         while (isOpen && container.visible) {
             delay(REFRESH_MILLIS)
@@ -361,6 +376,18 @@ fun AppRoot(container: AppContainer) {
         )
     }
     actions.notice?.let { HomeNoticeDialog(it, onDismiss = actions::dismissNotice) }
+}
+
+/** The open vault to synchronise when the app returns to the front, or null when the gate holds it back. */
+private fun foregroundSyncVault(
+    isOpen: Boolean,
+    visible: Boolean,
+    state: SessionState,
+    gate: SyncTriggerGate,
+): KnownVault? {
+    if (!isOpen || !visible) return null
+    val open = state as? SessionState.Open ?: return null
+    return open.vault.takeIf { gate.due() }
 }
 
 /** The screen for the current navigation state, connected to the session and the file actions. */

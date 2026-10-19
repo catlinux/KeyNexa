@@ -59,6 +59,7 @@ import io.github.catlinux.keynexa.app.cloud.CloudBackupService
 import io.github.catlinux.keynexa.app.cloud.CloudBackupStatus
 import io.github.catlinux.keynexa.app.cloud.CloudConsentStore
 import io.github.catlinux.keynexa.app.cloud.CloudStores
+import io.github.catlinux.keynexa.app.cloud.CloudSyncService
 import io.github.catlinux.keynexa.cloud.ConnectionResult
 import io.github.catlinux.keynexa.cloud.S3Setup
 import io.github.catlinux.keynexa.cloud.regionAfterEndpointChange
@@ -303,6 +304,7 @@ fun CloudSettingsEntry(source: CloudBackupSource?) {
                                 CloudStores.credentials(context).clear()
                                 CloudConsentStore(context).revoke()
                                 CloudBackupService.reset(context)
+                                CloudSyncService.reset(context)
                             }
                             setup = null
                             step = CloudStep.Consent
