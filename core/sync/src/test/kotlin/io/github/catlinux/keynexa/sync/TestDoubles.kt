@@ -411,12 +411,18 @@ internal class InMemoryCloudBackend(
     /** A failure injected into the next call of that operation; a [CloudAuthException] is also an [IOException]. */
     var failPut: IOException? = null
     var failGet: IOException? = null
+    var failHead: IOException? = null
+    var failFetch: IOException? = null
     var failList: IOException? = null
     var failDelete: IOException? = null
 
     var puts: Int = 0
         private set
     var gets: Int = 0
+        private set
+    var heads: Int = 0
+        private set
+    var fetches: Int = 0
         private set
     var lists: Int = 0
         private set
@@ -427,16 +433,34 @@ internal class InMemoryCloudBackend(
         name: String,
         content: ByteArray,
         ifMatch: String?,
+        ifNoneMatch: Boolean,
     ): CloudObject {
         puts++
         failPut?.let { throw it }
+        if (capabilities.conditionalWrites && ifNoneMatch && objects.containsKey(name)) {
+            throw CloudPreconditionFailed("an object already exists for $name")
+        }
         if (capabilities.conditionalWrites && ifMatch != null && etags[name] != ifMatch) {
-            throw IOException("conditional write rejected for $name")
+            throw CloudPreconditionFailed("conditional write rejected for $name")
         }
         objects[name] = content.copyOf()
         val etag = "etag-$puts"
         etags[name] = etag
         return CloudObject(name, content.size.toLong(), null, etag)
+    }
+
+    override fun head(name: String): CloudObject? {
+        heads++
+        failHead?.let { throw it }
+        val bytes = objects[name] ?: return null
+        return CloudObject(name, bytes.size.toLong(), null, etags[name])
+    }
+
+    override fun fetch(name: String): CloudContent? {
+        fetches++
+        failFetch?.let { throw it }
+        val bytes = objects[name] ?: return null
+        return CloudContent(bytes.copyOf(), etags[name])
     }
 
     override fun get(name: String): ByteArray {

@@ -3,6 +3,7 @@ package io.github.catlinux.keynexa.cloud
 import io.github.catlinux.keynexa.sync.CloudAuthException
 import io.github.catlinux.keynexa.sync.CloudBackend
 import io.github.catlinux.keynexa.sync.CloudCapabilities
+import io.github.catlinux.keynexa.sync.CloudContent
 import io.github.catlinux.keynexa.sync.CloudObject
 import org.w3c.dom.Element
 import org.xml.sax.SAXException
@@ -45,11 +46,16 @@ class S3Backend(
         name: String,
         content: ByteArray,
         ifMatch: String?,
+        ifNoneMatch: Boolean,
     ): CloudObject {
         val response = send("PUT", objectUrl(name), emptyMap(), content)
         expectSuccess(response)
         return CloudObject(name, content.size.toLong(), null, etagOf(response.headers["etag"]))
     }
+
+    override fun head(name: String): CloudObject? = throw UnsupportedOperationException("10b")
+
+    override fun fetch(name: String): CloudContent? = throw UnsupportedOperationException("10b")
 
     override fun get(name: String): ByteArray {
         val response = send("GET", objectUrl(name), emptyMap(), null)

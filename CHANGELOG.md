@@ -6,6 +6,14 @@ All notable changes to this project are documented in this file. The format is b
 
 ## [Unreleased]
 
+## [1.6.7] - 2026-10-19
+
+The apps do not change.
+
+### Changed
+
+- Internal: cloud contract with conditional writes, head and fetch, and the sync reconciler (not yet wired into the apps).
+
 ## [1.6.6] - 2026-10-19
 
 The apps do not change.

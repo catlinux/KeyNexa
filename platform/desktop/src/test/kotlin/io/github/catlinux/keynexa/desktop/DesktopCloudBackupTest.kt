@@ -7,6 +7,7 @@ import io.github.catlinux.keynexa.session.KnownVault
 import io.github.catlinux.keynexa.sync.BackupError
 import io.github.catlinux.keynexa.sync.CloudBackend
 import io.github.catlinux.keynexa.sync.CloudCapabilities
+import io.github.catlinux.keynexa.sync.CloudContent
 import io.github.catlinux.keynexa.sync.CloudObject
 import io.github.catlinux.keynexa.vault.VaultLocation
 import org.junit.Assert.assertEquals
@@ -175,10 +176,15 @@ private class RecordingBackend : CloudBackend {
         name: String,
         content: ByteArray,
         ifMatch: String?,
+        ifNoneMatch: Boolean,
     ): CloudObject {
         puts += content.copyOf()
         return CloudObject(name, content.size.toLong(), null, "etag-${puts.size}")
     }
+
+    override fun head(name: String): CloudObject? = null
+
+    override fun fetch(name: String): CloudContent? = null
 
     override fun get(name: String): ByteArray = throw IOException("not stored")
 

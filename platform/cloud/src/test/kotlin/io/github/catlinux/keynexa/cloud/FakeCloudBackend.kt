@@ -4,6 +4,7 @@ package io.github.catlinux.keynexa.cloud
 
 import io.github.catlinux.keynexa.sync.CloudBackend
 import io.github.catlinux.keynexa.sync.CloudCapabilities
+import io.github.catlinux.keynexa.sync.CloudContent
 import io.github.catlinux.keynexa.sync.CloudObject
 import java.io.IOException
 
@@ -12,6 +13,7 @@ internal class FakeCloudBackend(
     override val capabilities: CloudCapabilities = CloudCapabilities(conditionalWrites = false),
 ) : CloudBackend {
     val objects: MutableMap<String, ByteArray> = LinkedHashMap()
+    private val etags = HashMap<String, String>()
 
     var failList: IOException? = null
     var failPut: IOException? = null
@@ -28,11 +30,24 @@ internal class FakeCloudBackend(
         name: String,
         content: ByteArray,
         ifMatch: String?,
+        ifNoneMatch: Boolean,
     ): CloudObject {
         puts++
         failPut?.let { throw it }
         objects[name] = content.copyOf()
-        return CloudObject(name, content.size.toLong(), null, "etag-$puts")
+        val etag = "etag-$puts"
+        etags[name] = etag
+        return CloudObject(name, content.size.toLong(), null, etag)
+    }
+
+    override fun head(name: String): CloudObject? {
+        val bytes = objects[name] ?: return null
+        return CloudObject(name, bytes.size.toLong(), null, etags[name])
+    }
+
+    override fun fetch(name: String): CloudContent? {
+        val bytes = objects[name] ?: return null
+        return CloudContent(bytes.copyOf(), etags[name])
     }
 
     override fun get(name: String): ByteArray = objects[name]?.copyOf() ?: throw IOException("missing")
@@ -49,5 +64,6 @@ internal class FakeCloudBackend(
         deletes++
         failDelete?.let { throw it }
         objects.remove(name) ?: throw IOException("missing")
+        etags.remove(name)
     }
 }
