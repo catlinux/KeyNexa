@@ -6,6 +6,14 @@ All notable changes to this project are documented in this file. The format is b
 
 ## [Unreleased]
 
+## [1.6.9] - 2026-10-19
+
+The apps do not change.
+
+### Changed
+
+- Internal: the open vault session can absorb a remote copy and carry the synchronisation id; not yet wired into the apps.
+
 ## [1.6.8] - 2026-10-19
 
 The apps do not change.

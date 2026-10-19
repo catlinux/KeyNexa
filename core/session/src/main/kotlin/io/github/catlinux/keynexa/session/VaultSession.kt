@@ -1,5 +1,6 @@
 package io.github.catlinux.keynexa.session
 
+import io.github.catlinux.keynexa.sync.Absorbed
 import io.github.catlinux.keynexa.sync.BackupKind
 import io.github.catlinux.keynexa.sync.BackupRef
 import io.github.catlinux.keynexa.sync.BackupStore
@@ -7,6 +8,7 @@ import io.github.catlinux.keynexa.sync.ConflictCopy
 import io.github.catlinux.keynexa.sync.ConflictMerger
 import io.github.catlinux.keynexa.sync.ConflictScan
 import io.github.catlinux.keynexa.sync.CopyProblem
+import io.github.catlinux.keynexa.sync.Expect
 import io.github.catlinux.keynexa.sync.Fingerprint
 import io.github.catlinux.keynexa.sync.LoadedVault
 import io.github.catlinux.keynexa.sync.MergeResult
@@ -15,9 +17,12 @@ import io.github.catlinux.keynexa.sync.SafeSaver
 import io.github.catlinux.keynexa.sync.SaveFailure
 import io.github.catlinux.keynexa.sync.SaveOutcome
 import io.github.catlinux.keynexa.sync.SaveRecovery
+import io.github.catlinux.keynexa.sync.SyncFile
+import io.github.catlinux.keynexa.sync.SyncIds
 import io.github.catlinux.keynexa.sync.VaultMerger
 import io.github.catlinux.keynexa.sync.VaultReader
 import io.github.catlinux.keynexa.vault.Credentials
+import io.github.catlinux.keynexa.vault.CustomDataValue
 import io.github.catlinux.keynexa.vault.FileMetadata
 import io.github.catlinux.keynexa.vault.KdbxEngine
 import io.github.catlinux.keynexa.vault.SiblingFile
@@ -30,7 +35,12 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import java.io.IOException
+import java.time.Instant
+import java.util.concurrent.CompletableFuture
+import java.util.concurrent.ExecutionException
 import java.util.concurrent.Executor
+import java.util.concurrent.TimeUnit
+import java.util.concurrent.TimeoutException
 
 /** Why a vault could not be opened, in terms the screen can explain. */
 enum class UnlockError {
@@ -128,8 +138,11 @@ class VaultReaders(
  *
  * [conflicts] folds in the Syncthing conflict copies of the vault: on open, and whenever a version written
  * elsewhere is loaded. When it is null the whole feature is off and nothing changes.
+ *
+ * [absorbRemote] and [assignSyncId] hand work to [executor] and wait for it at most [executorWaitMillis]; a caller
+ * already running on [executor] never waits (that would deadlock) and is answered as unavailable instead.
  */
-@Suppress("LongParameterList", "TooManyFunctions")
+@Suppress("LargeClass", "LongParameterList", "TooManyFunctions")
 class VaultSession(
     private val storage: StoragePort,
     private val engine: KdbxEngine,
@@ -142,12 +155,16 @@ class VaultSession(
     private val conflicts: ConflictMerger? = null,
     private val afterSave: (KnownVault) -> Unit = {},
     private val now: () -> Long = { System.currentTimeMillis() },
+    private val executorWaitMillis: Long = DEFAULT_EXECUTOR_WAIT_MILLIS,
 ) {
     private val mutableState = MutableStateFlow<SessionState>(SessionState.Closed)
     val state: StateFlow<SessionState> = mutableState.asStateFlow()
 
     @Volatile
     private var credentials: Credentials? = null
+
+    /** Whether the current thread is inside a task running on [executor]; waiting for the executor there deadlocks. */
+    private val onExecutor = ThreadLocal.withInitial { false }
 
     /** When the last full read of the vault file happened, so a full check runs at least once a minute. */
     private var lastFullCheckMillis = 0L
@@ -171,7 +188,7 @@ class VaultSession(
         credentials: Credentials,
     ) {
         mutableState.value = SessionState.Unlocking(vault)
-        executor.execute {
+        submit {
             val recovered = recovery.recover(vault.location).takeUnless { it == RecoveryOutcome.NothingPending }
             openAfter(vault, credentials, recovered) { }
         }
@@ -187,7 +204,7 @@ class VaultSession(
         credentials: Credentials,
     ) {
         mutableState.value = SessionState.Unlocking(vault)
-        executor.execute {
+        submit {
             openAfter(vault, credentials, recovered = null, created = true) {
                 val bytes = engine.encode(content, credentials)
                 storage.write(vault.location, bytes)
@@ -212,7 +229,7 @@ class VaultSession(
                 state
             }
         }
-        if (accepted) executor.execute(::saveNow)
+        if (accepted) submit(::saveNow)
         return accepted
     }
 
@@ -227,7 +244,7 @@ class VaultSession(
      * seconds while the app is in front.
      */
     fun refreshIfChanged() {
-        executor.execute {
+        submit {
             val open = mutableState.value as? SessionState.Open
             val secrets = credentials
             if (open != null &&
@@ -244,10 +261,10 @@ class VaultSession(
      * goes away once there is nothing left to delete or to tell.
      */
     fun deleteConflictCopies() {
-        executor.execute {
-            val merger = conflicts ?: return@execute
-            val open = mutableState.value as? SessionState.Open ?: return@execute
-            val report = open.conflicts ?: return@execute
+        submit {
+            val merger = conflicts ?: return@submit
+            val open = mutableState.value as? SessionState.Open ?: return@submit
+            val report = open.conflicts ?: return@submit
             merger.delete(open.vault.location, report.deletable)
             publishReport(
                 location = open.vault.location,
@@ -267,7 +284,7 @@ class VaultSession(
      * ledger is written only when that save reports `Saved`. Nothing here is logged, and the password is never stored.
      */
     fun mergeOtherPasswordCopies(extra: Credentials) {
-        executor.execute {
+        submit {
             try {
                 mergeOtherPasswordCopiesNow(extra)
             } finally {
@@ -285,7 +302,7 @@ class VaultSession(
 
     /** Closes the vault, wipes the credentials and forgets everything in memory. */
     fun lock() {
-        executor.execute {
+        submit {
             credentials?.wipe()
             credentials = null
             mutableState.value = SessionState.Closed
@@ -303,7 +320,7 @@ class VaultSession(
      * session, and retries the pending save through the normal safe-save pipeline.
      */
     fun relocate(newLocation: VaultLocation) {
-        executor.execute { relocateNow(newLocation) }
+        submit { relocateNow(newLocation) }
     }
 
     /**
@@ -311,12 +328,40 @@ class VaultSession(
      * vault and saving through the normal pipeline. The copy is deleted only when the save succeeds.
      */
     fun restoreUnsaved() {
-        executor.execute { restoreUnsavedNow() }
+        submit { restoreUnsavedNow() }
     }
 
     /** Discards the unsaved copy recorded for the previous interrupted save and clears the recovery notice. */
     fun discardUnsaved() {
-        executor.execute { discardRecoveredNow() }
+        submit { discardRecoveredNow() }
+    }
+
+    /**
+     * Merges a remote copy of this vault into the open one and saves the result if the merge changes anything
+     * (ADR-0009). The work runs on [executor] and the caller waits for it, at most [executorWaitMillis].
+     *
+     * A caller that is itself running on [executor] is answered [Absorbed.Postponed] without waiting: waiting there
+     * for the executor's own thread would deadlock, and the next trigger will try again.
+     */
+    fun absorbRemote(
+        bytes: ByteArray,
+        expect: Expect,
+    ): Absorbed = askExecutor(Absorbed.Postponed) { absorbRemoteNow(bytes, expect) }
+
+    /**
+     * Stores [id] in the open vault's custom data (`KeyNexa.SyncId`) and saves it (ADR-0009 §5), answering whether
+     * the save finished. Runs on [executor] like [absorbRemote], with the same deadline and the same rule for a
+     * caller on [executor], which is answered false.
+     */
+    fun assignSyncId(id: String): Boolean = askExecutor(false) { assignSyncIdNow(id) }
+
+    /**
+     * The synchronisation id in the open vault's custom data, or null when no vault is open, it has none, or the
+     * value is malformed (a malformed id is never synchronised).
+     */
+    fun syncId(): String? {
+        val open = mutableState.value as? SessionState.Open ?: return null
+        return SyncIds.readCustomData(customDataOf(open.current))
     }
 
     private fun relocateNow(newLocation: VaultLocation) {
@@ -419,6 +464,113 @@ class VaultSession(
             }
         }
     }
+
+    /**
+     * The body of [absorbRemote], on the executor. The remote bytes are decrypted with the open vault's credentials
+     * and merged into it; the merged vault is saved only when the merge changed it, and [Absorbed.Merged] then says
+     * whether the remote still lacks part of the result, which is what has to be uploaded (ADR-0009 §2 and §3).
+     */
+    @Suppress("CyclomaticComplexMethod", "ReturnCount")
+    private fun absorbRemoteNow(
+        bytes: ByteArray,
+        expect: Expect,
+    ): Absorbed {
+        val open = mutableState.value as? SessionState.Open ?: return Absorbed.Postponed
+        val secrets = credentials ?: return Absorbed.Postponed
+        if (!open.isIdle) return Absorbed.Postponed
+        val remote =
+            try {
+                engine.decode(bytes, secrets)
+            } catch (_: VaultException.WrongCredentials) {
+                return Absorbed.OtherPassword
+            } catch (_: VaultException) {
+                return Absorbed.Unreadable
+            }
+        if (!sameVault(open.current, remote, expect)) return Absorbed.NotSameVault
+        val merged =
+            when (val result = vaultMerger.merge(open.current, remote)) {
+                is MergeResult.Merged -> result.vault
+                is MergeResult.Unmergeable -> return Absorbed.Unreadable
+            }
+        if (merged == open.current) {
+            val file = readLocalFile(open.vault.location) ?: return Absorbed.SaveFailed
+            return Absorbed.Merged(file, remoteLacksLocal = merged != remote)
+        }
+        val (savedState, outcome) = claimAndSave(open.current, merged, secrets) ?: return Absorbed.Postponed
+        if (outcome !is SaveOutcome.Saved) return Absorbed.SaveFailed
+        // Reuses the notice the apps already show for a version written elsewhere.
+        mutableState.update { state ->
+            if (state is SessionState.Open) state.copy(lastExternalChangeMillis = now()) else state
+        }
+        val file = readLocalFile(savedState.vault.location) ?: return Absorbed.SaveFailed
+        return Absorbed.Merged(file, remoteLacksLocal = outcome.loaded.vault != remote)
+    }
+
+    /**
+     * The body of [assignSyncId], on the executor: it writes the id into the open vault's custom data and saves it
+     * through the normal pipeline. False when the vault is closed, busy or the save does not finish.
+     */
+    private fun assignSyncIdNow(id: String): Boolean {
+        val open = mutableState.value as? SessionState.Open ?: return false
+        val secrets = credentials ?: return false
+        if (!open.isIdle) return false
+        if (SyncIds.readCustomData(customDataOf(open.current)) == id) return true
+        val updated =
+            open.current.copy(
+                meta =
+                    open.current.meta.copy(
+                        customData =
+                            open.current.meta.customData +
+                                (SyncIds.KEY to CustomDataValue(id, Instant.ofEpochMilli(now()))),
+                    ),
+            )
+        val (_, outcome) = claimAndSave(open.current, updated, secrets) ?: return false
+        return outcome is SaveOutcome.Saved
+    }
+
+    /** Whether the remote vault is the one [expect] describes, so it may be merged into the open one. */
+    private fun sameVault(
+        current: Vault,
+        remote: Vault,
+        expect: Expect,
+    ): Boolean =
+        when (expect) {
+            is Expect.SyncId -> SyncIds.readCustomData(customDataOf(remote)) == expect.id
+            Expect.SameRoot -> remote.root.id == current.root.id
+        }
+
+    // Claims the vault for a save like saveAndReport does, then saves; null when the vault stopped being idle or an
+    // edit landed since [base] was read, so a merge computed from stale content never overwrites it.
+    private fun claimAndSave(
+        base: Vault,
+        merged: Vault,
+        secrets: Credentials,
+    ): Pair<SessionState.Open, SaveOutcome>? {
+        var target: SessionState.Open? = null
+        mutableState.update { state ->
+            if (state is SessionState.Open && state.isIdle && state.current == base) {
+                val next = state.copy(current = merged, saving = true, saveProblem = null)
+                target = next
+                next
+            } else {
+                state
+            }
+        }
+        val toSave = target ?: return null
+        val outcome = saver.save(toSave.loaded, merged, secrets)
+        mutableState.update { state -> if (state is SessionState.Open) state.after(outcome) else state }
+        notifySaved(outcome, toSave.vault)
+        return toSave to outcome
+    }
+
+    private fun readLocalFile(location: VaultLocation): SyncFile? =
+        try {
+            SyncFile(storage.read(location))
+        } catch (_: IOException) {
+            null
+        }
+
+    private fun customDataOf(vault: Vault): Map<String, String> = vault.meta.customData.mapValues { it.value.value }
 
     private fun unsavedCopyOf(recovered: RecoveryOutcome?): BackupRef? =
         when (recovered) {
@@ -543,6 +695,51 @@ class VaultSession(
             afterSave(vault)
         } catch (failure: Throwable) {
             // The hook is best effort: a failure there must never reach the save.
+        }
+    }
+
+    // Runs a task on the executor, marking the thread so a task can tell it must not wait for the executor itself.
+    private fun submit(task: () -> Unit) {
+        executor.execute {
+            onExecutor.set(true)
+            try {
+                task()
+            } finally {
+                onExecutor.remove()
+            }
+        }
+    }
+
+    /**
+     * Runs [task] on [executor] and waits for its answer, at most [executorWaitMillis]. [ifUnavailable] is answered
+     * when the call comes from the executor's own thread (waiting there would deadlock), when the wait times out, or
+     * when the task fails unexpectedly; nothing is thrown at the caller and the next trigger can try again.
+     */
+    @Suppress("SwallowedException", "TooGenericExceptionCaught")
+    private fun <T : Any> askExecutor(
+        ifUnavailable: T,
+        task: () -> T,
+    ): T {
+        if (onExecutor.get()) return ifUnavailable
+        val answer = CompletableFuture<T>()
+        submit {
+            answer.complete(
+                try {
+                    task()
+                } catch (_: Exception) {
+                    ifUnavailable
+                },
+            )
+        }
+        return try {
+            answer.get(executorWaitMillis, TimeUnit.MILLISECONDS)
+        } catch (_: TimeoutException) {
+            ifUnavailable
+        } catch (_: InterruptedException) {
+            Thread.currentThread().interrupt()
+            ifUnavailable
+        } catch (_: ExecutionException) {
+            ifUnavailable
         }
     }
 
@@ -771,6 +968,9 @@ class VaultSession(
 
 /** How often the cheap metadata comparison is backed by a full read of the vault file. */
 private const val FULL_CHECK_INTERVAL_MILLIS = 60_000L
+
+/** How long the calls that hand work to the session's executor wait for their answer (ADR-0009). */
+private const val DEFAULT_EXECUTOR_WAIT_MILLIS = 2L * 60L * 1_000L
 
 private fun VaultException.toUnlockError(): UnlockError =
     when (this) {

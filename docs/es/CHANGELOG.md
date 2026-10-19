@@ -6,6 +6,14 @@ Todos los cambios notables de este proyecto se documentan en este archivo. El fo
 
 ## [Sin publicar]
 
+## [1.6.9] - 2026-10-19
+
+Las apps no cambian.
+
+### Cambiado
+
+- Interno: la sesión de la bóveda abierta puede absorber una copia remota y llevar el identificador de sincronización; aún sin conectar en las apps.
+
 ## [1.6.8] - 2026-10-19
 
 Las apps no cambian.
