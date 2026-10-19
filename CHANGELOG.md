@@ -6,6 +6,14 @@ All notable changes to this project are documented in this file. The format is b
 
 ## [Unreleased]
 
+## [1.8.4] - 2026-10-19
+
+Synchronisation is still off until it is turned on in the cloud assistant.
+
+### Fixed
+
+- Synchronisation: two devices no longer upload to each other forever. After merging the same two vaults, each side held the same things in a different order, and the order alone made KeyNexa think the cloud copy lacked something. Found by a new test with two real devices and the real KDBX engine; a quiet round now writes nothing on either side.
+
 ## [1.8.3] - 2026-10-19
 
 Synchronisation is still off until it is turned on in the cloud assistant.

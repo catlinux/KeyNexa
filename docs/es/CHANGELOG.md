@@ -6,6 +6,14 @@ Todos los cambios notables de este proyecto se documentan en este archivo. El fo
 
 ## [Sin publicar]
 
+## [1.8.4] - 2026-10-19
+
+La sincronización sigue apagada hasta que se activa en el asistente de la nube.
+
+### Corregido
+
+- Sincronización: dos dispositivos ya no se suben archivos el uno al otro sin parar. Tras fusionar las mismas dos bóvedas, cada lado tenía lo mismo en distinto orden, y solo por el orden KeyNexa creía que a la copia de la nube le faltaba algo. Lo encontró una prueba nueva con dos dispositivos reales y el motor KDBX real; una vuelta sin cambios ya no escribe nada en ninguno de los dos lados.
+
 ## [1.8.3] - 2026-10-19
 
 La sincronización sigue apagada hasta que se activa en el asistente de la nube.

@@ -30,6 +30,7 @@ import io.github.catlinux.keynexa.vault.StoragePort
 import io.github.catlinux.keynexa.vault.Vault
 import io.github.catlinux.keynexa.vault.VaultException
 import io.github.catlinux.keynexa.vault.VaultLocation
+import io.github.catlinux.keynexa.vault.sameContentAs
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -492,11 +493,11 @@ class VaultSession(
                 is MergeResult.Merged -> result.vault
                 is MergeResult.Unmergeable -> return Absorbed.Unreadable
             }
-        if (merged == open.current) {
+        if (merged.sameContentAs(open.current)) {
             // Only the file this session last loaded or saved may be uploaded; one changed by another program is
             // folded in by the next look for outside changes first.
             val file = ownFile(open.vault.location, open.loaded.fingerprint) ?: return Absorbed.Postponed
-            return Absorbed.Merged(file, remoteLacksLocal = merged != remote)
+            return Absorbed.Merged(file, remoteLacksLocal = !merged.sameContentAs(remote))
         }
         val (savedState, outcome) = claimAndSave(open.current, merged, secrets) ?: return Absorbed.Postponed
         if (outcome !is SaveOutcome.Saved) return Absorbed.SaveFailed
@@ -522,7 +523,7 @@ class VaultSession(
                 state
             }
         }
-        return Absorbed.Merged(file, remoteLacksLocal = (written ?: outcome.loaded.vault) != remote)
+        return Absorbed.Merged(file, remoteLacksLocal = !(written ?: outcome.loaded.vault).sameContentAs(remote))
     }
 
     /**
