@@ -98,6 +98,7 @@ private fun ApplicationScope.KeyNexaWindow(
 ) {
     val session = container.session
     val state by session.state.collectAsState()
+    val syncStatus by container.cloudSync.status.collectAsState()
     val settings = container.settings
     val idle = remember { IdleTimer() }
     val scope = rememberCoroutineScope()
@@ -105,6 +106,7 @@ private fun ApplicationScope.KeyNexaWindow(
     var settingsOpen by remember { mutableStateOf(false) }
     var cloudOpen by remember { mutableStateOf(false) }
     var cloudConfigured by remember { mutableStateOf(false) }
+    var cloudSyncState by remember { mutableStateOf(CloudSyncCardState()) }
     var reminderState by remember { mutableStateOf<ReminderState?>(null) }
     var reminderNow by remember { mutableStateOf(Instant.now()) }
     val reminder: @Composable () -> Unit = {
@@ -147,6 +149,13 @@ private fun ApplicationScope.KeyNexaWindow(
         cloudConfigured = read.first
         reminderNow = Instant.now()
         reminderState = read.second
+    }
+    // The synchronisation card reads the setup and the open vault; refreshed when the dialog closes or a round ends.
+    LaunchedEffect(cloudOpen, openVault, syncStatus) {
+        cloudSyncState =
+            withContext(Dispatchers.IO) {
+                cloudSyncCardState(container.cloud, container.cloudSync, openVault?.let { container.syncLocal() })
+            }
     }
     LaunchedEffect(windowFocused, openVault) {
         if (!windowFocused || openState == null) return@LaunchedEffect
@@ -268,6 +277,7 @@ private fun ApplicationScope.KeyNexaWindow(
                             onBack = { settingsOpen = false },
                             cloudConfigured = cloudConfigured,
                             onOpenCloud = { cloudOpen = true },
+                            cloudSyncState = cloudSyncState,
                         )
                     } else {
                         KeyNexaScreen(

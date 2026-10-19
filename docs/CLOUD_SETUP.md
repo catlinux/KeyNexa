@@ -64,6 +64,14 @@ Nothing is saved until the test works.
 - If the keys stop working, configure the service again with **Change service**.
 - Android does not let an app use the system *Downloads* folder as the location of a vault; keep vaults in another folder.
 
+## Synchronisation
+
+The last step of the assistant, **the state of the copies**, has a **Synchronisation** switch: *Synchronise my vaults through this service*. It is off by default. When you turn it on, KeyNexa first checks against your own bucket that the service honours conditional writes; only if the check passes does the switch stay on. Some services, such as Backblaze B2, may not support them: in that case synchronisation stays off and the service keeps working for copies.
+
+With synchronisation on, the cloud keeps one encrypted object per vault. KeyNexa downloads it, merges it with your local vault and uploads the result only when nothing else changed it, so two devices that are never on at the same time end up the same. Offline use is unaffected: the local file is always the one you work with, and the remote object is always merged before anything is uploaded. The service only sees the encrypted file, exactly as with the copies. Older versions of an entry stay in its history, and deleting the vault on one device deletes it everywhere after the next synchronisation.
+
+Synchronisation runs after a save, when a vault is unlocked and when the window regains the focus, at most once a minute.
+
 ## Delete the copies
 
 **Disconnect and delete** removes the credentials and the consent mark from this device, but it does not delete the copies already uploaded: delete them from the service itself (in its web console or its own tool). The guide to each provider explains where.

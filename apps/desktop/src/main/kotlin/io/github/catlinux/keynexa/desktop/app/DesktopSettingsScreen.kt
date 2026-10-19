@@ -46,6 +46,7 @@ import io.github.catlinux.keynexa.desktop.app.generated.resources.settings_minut
 import io.github.catlinux.keynexa.desktop.app.generated.resources.settings_mode_cloud
 import io.github.catlinux.keynexa.desktop.app.generated.resources.settings_mode_cloud_configure
 import io.github.catlinux.keynexa.desktop.app.generated.resources.settings_mode_cloud_configured
+import io.github.catlinux.keynexa.desktop.app.generated.resources.settings_mode_cloud_sync
 import io.github.catlinux.keynexa.desktop.app.generated.resources.settings_mode_cloud_unconfigured
 import io.github.catlinux.keynexa.desktop.app.generated.resources.settings_mode_local
 import io.github.catlinux.keynexa.desktop.app.generated.resources.settings_mode_local_note
@@ -66,6 +67,7 @@ import io.github.catlinux.keynexa.desktop.app.generated.resources.settings_theme
 import io.github.catlinux.keynexa.desktop.app.generated.resources.settings_theme_system
 import org.jetbrains.compose.resources.pluralStringResource
 import org.jetbrains.compose.resources.stringResource
+import java.time.Instant
 
 private val ScreenPadding = 20.dp
 private val BlockGap = 16.dp
@@ -101,6 +103,7 @@ internal fun DesktopSettingsScreen(
     modifier: Modifier = Modifier,
     cloudConfigured: Boolean = false,
     onOpenCloud: (() -> Unit)? = null,
+    cloudSyncState: CloudSyncCardState = CloudSyncCardState(),
 ) {
     Column(
         modifier =
@@ -128,7 +131,7 @@ internal fun DesktopSettingsScreen(
         AppearanceSection(settings = settings, onUpdate = onUpdate)
         SecuritySection(settings = settings, onUpdate = onUpdate)
         ClipboardSection(settings = settings, onUpdate = onUpdate)
-        ModesSection(cloudConfigured = cloudConfigured, onOpenCloud = onOpenCloud)
+        ModesSection(cloudConfigured = cloudConfigured, cloudSyncState = cloudSyncState, onOpenCloud = onOpenCloud)
     }
 }
 
@@ -216,6 +219,7 @@ private fun ClipboardSection(
 @Composable
 private fun ModesSection(
     cloudConfigured: Boolean,
+    cloudSyncState: CloudSyncCardState,
     onOpenCloud: (() -> Unit)?,
 ) {
     SettingsCard(title = stringResource(Res.string.settings_section_modes)) {
@@ -234,6 +238,22 @@ private fun ModesSection(
                     } else {
                         Res.string.settings_mode_cloud_unconfigured
                     },
+                ),
+            action = stringResource(Res.string.settings_mode_cloud_configure),
+            enabled = onOpenCloud != null,
+            onAction = onOpenCloud,
+        )
+        ModeCard(
+            title = stringResource(Res.string.settings_mode_cloud_sync),
+            note =
+                syncNoteText(
+                    syncCardNote(
+                        cloudSyncState.enabled,
+                        cloudSyncState.hasVault,
+                        cloudSyncState.lastSuccess,
+                        cloudSyncState.lastError,
+                        Instant.now(),
+                    ),
                 ),
             action = stringResource(Res.string.settings_mode_cloud_configure),
             enabled = onOpenCloud != null,

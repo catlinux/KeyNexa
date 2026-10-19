@@ -64,6 +64,14 @@ No se guarda nada hasta que la prueba funcione.
 - Si las claves dejan de valer, vuelve a configurar el servicio con **Cambiar de servicio**.
 - Android no deja que una aplicación use la carpeta *Descargas* del sistema como ubicación de una bóveda; guarda las bóvedas en otra carpeta.
 
+## Sincronización
+
+El último paso del asistente, **el estado de las copias**, tiene un interruptor **Sincronización**: *Sincronizar mis bóvedas a través de este servicio*. Viene desactivado. Al activarlo, KeyNexa comprueba antes contra tu propio contenedor que el servicio respeta las escrituras condicionales; solo si la comprobación pasa, el interruptor se queda activado. Puede que algunos servicios, como Backblaze B2, no las admitan: en ese caso la sincronización se queda apagada y el servicio sigue funcionando para las copias.
+
+Con la sincronización activada, la nube guarda un objeto cifrado por bóveda. KeyNexa lo descarga, lo fusiona con tu bóveda local y sube el resultado solo cuando nada más lo ha cambiado, así dos dispositivos que nunca están encendidos a la vez acaban iguales. El uso sin conexión no cambia: el archivo local sigue siendo el que usas, y el objeto remoto siempre se fusiona antes de subir nada. El servicio solo ve el archivo cifrado, igual que con las copias. Las versiones antiguas de una entrada se quedan en su historial, y borrar la bóveda en un dispositivo la borra en todos tras la siguiente sincronización.
+
+La sincronización se ejecuta tras un guardado, al desbloquear una bóveda y al recuperar el foco la ventana, como mucho una vez por minuto.
+
 ## Borrar las copias
 
 **Desconectar y borrar** quita las credenciales y la marca del consentimiento de este dispositivo, pero no borra las copias ya subidas: bórralas desde el propio servicio (en su consola web o su herramienta). La guía de cada proveedor explica dónde.

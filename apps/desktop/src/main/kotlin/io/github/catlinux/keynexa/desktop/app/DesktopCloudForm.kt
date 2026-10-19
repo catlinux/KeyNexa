@@ -3,7 +3,9 @@ package io.github.catlinux.keynexa.desktop.app
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import io.github.catlinux.keynexa.cloud.ConditionalWriteProbe
 import io.github.catlinux.keynexa.cloud.ConnectionResult
+import io.github.catlinux.keynexa.cloud.ProbeResult
 import io.github.catlinux.keynexa.cloud.S3Setup
 import io.github.catlinux.keynexa.cloud.regionAfterEndpointChange
 import io.github.catlinux.keynexa.cloud.regionFromEndpoint
@@ -14,6 +16,7 @@ import io.github.catlinux.keynexa.desktop.DesktopCloudSync
 import io.github.catlinux.keynexa.sync.BackupError
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import java.io.IOException
 
 /** The steps of the cloud assistant, in the order they are shown. */
 internal enum class CloudStep { Consent, Service, Needs, Form, Status }
@@ -241,6 +244,44 @@ internal suspend fun changeKeep(
     val updated = setup.copy(keep = newKeep)
     withContext(Dispatchers.IO) { stores.credentials.save(updated.toValues()) }
     onChanged(updated)
+}
+
+/** Saves [setup] with synchronisation [sync] (keeping the rest, probe included), off the caller's thread. */
+internal suspend fun changeSync(
+    setup: S3Setup,
+    sync: Boolean,
+    stores: DesktopCloudStores,
+    onChanged: (S3Setup) -> Unit,
+) {
+    val updated = setup.copy(sync = sync)
+    withContext(Dispatchers.IO) { stores.credentials.save(updated.toValues()) }
+    onChanged(updated)
+}
+
+/**
+ * Runs the conditional-write probe against the user's bucket and, only when it passes, turns synchronisation on,
+ * off the caller's thread. The probe never throws; anything unexpected from it is reported as a failure.
+ */
+internal suspend fun enableSync(
+    setup: S3Setup,
+    stores: DesktopCloudStores,
+    onChanged: (S3Setup) -> Unit,
+): SyncSwitchOutcome {
+    val result =
+        withContext(Dispatchers.IO) {
+            try {
+                ConditionalWriteProbe(setup.backend()).run()
+            } catch (failure: IOException) {
+                ProbeResult.Failed(failure)
+            }
+        }
+    val outcome = syncSwitchOutcome(result)
+    if (outcome == SyncSwitchOutcome.Enabled) {
+        val updated = setup.copy(sync = true, syncProbe = S3Setup.probeKey(setup.endpoint, setup.bucket))
+        withContext(Dispatchers.IO) { stores.credentials.save(updated.toValues()) }
+        onChanged(updated)
+    }
+    return outcome
 }
 
 /** Deletes the credentials and the consent and forgets every backup and synchronisation, off the caller's thread. */

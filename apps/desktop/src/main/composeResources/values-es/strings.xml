@@ -319,4 +319,44 @@
     <string name="cloud_reminder_title">Protege tu bóveda: guarda una copia en la nube</string>
     <string name="cloud_reminder_configure">Configurar</string>
     <string name="cloud_reminder_later">Más tarde</string>
+
+    <string name="cloud_sync_section">Sincronización</string>
+    <string name="cloud_sync_switch">Sincronizar mis bóvedas a través de este servicio</string>
+    <string name="cloud_sync_explain">La nube guarda una copia cifrada de cada bóveda. KeyNexa la descarga, la fusiona con tu bóveda local y sube el resultado solo cuando nada más la ha cambiado, así dos dispositivos que nunca están encendidos a la vez acaban iguales. El archivo va cifrado igual que las copias: el servicio solo ve el archivo cifrado. Las versiones antiguas de una entrada se quedan en su historial, y borrar la bóveda en un dispositivo la borra en todos tras la siguiente sincronización.</string>
+    <string name="cloud_sync_checking">Comprobando el servicio…</string>
+    <string name="cloud_sync_on">Sincronización activada</string>
+    <string name="cloud_sync_unsupported">Este servicio o contenedor no admite las escrituras condicionales que necesita la sincronización, así que el interruptor se queda apagado. Las copias siguen funcionando. Algunos servicios, como Backblaze B2, puede que no las admitan.</string>
+    <string name="cloud_sync_error_auth">El servicio rechazó las claves. Revísalas y vuelve a intentarlo.</string>
+    <string name="cloud_sync_error_network">No se pudo conectar. Revisa la red y vuelve a intentarlo.</string>
+    <string name="settings_mode_cloud_sync">Sincronización con la nube</string>
+    <string name="settings_mode_cloud_sync_off">Desactivada.</string>
+    <string name="settings_mode_cloud_sync_on">Activada.</string>
+    <string name="settings_mode_cloud_sync_pending">Activada. Aún sin sincronizar.</string>
+    <string name="settings_mode_cloud_sync_last">Activada. Última sincronización: %1$s.</string>
+    <string name="settings_mode_cloud_sync_error">Activada. No se pudo sincronizar: %1$s.</string>
+    <string name="cloud_sync_ago_now">ahora mismo</string>
+    <plurals name="cloud_sync_ago_minutes">
+        <item quantity="one">hace %1$d minuto</item>
+        <item quantity="many">hace %1$d minutos</item>
+        <item quantity="other">hace %1$d minutos</item>
+    </plurals>
+    <plurals name="cloud_sync_ago_hours">
+        <item quantity="one">hace %1$d hora</item>
+        <item quantity="many">hace %1$d horas</item>
+        <item quantity="other">hace %1$d horas</item>
+    </plurals>
+    <plurals name="cloud_sync_ago_days">
+        <item quantity="one">hace %1$d día</item>
+        <item quantity="many">hace %1$d días</item>
+        <item quantity="other">hace %1$d días</item>
+    </plurals>
+    <string name="cloud_sync_error_busy">el servicio cambió a la vez</string>
+    <string name="cloud_sync_error_not_authorized">las claves ya no valen</string>
+    <string name="cloud_sync_error_unavailable">no hubo conexión</string>
+    <string name="cloud_sync_error_not_supported">el servicio no admite escrituras condicionales</string>
+    <string name="cloud_sync_error_unreadable">no se pudo leer la copia de la nube</string>
+    <string name="cloud_sync_error_invalid_id">el identificador de sincronización de la bóveda no es válido</string>
+    <string name="cloud_sync_error_other_password">la copia de la nube usa otra contraseña maestra</string>
+    <string name="cloud_sync_error_other_vault">la copia de la nube pertenece a otra bóveda</string>
+    <string name="cloud_sync_error_save_failed">no se pudo guardar la bóveda</string>
 </resources>

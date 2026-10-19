@@ -6,6 +6,14 @@ Todos los cambios notables de este proyecto se documentan en este archivo. El fo
 
 ## [Sin publicar]
 
+## [1.7.1] - 2026-10-19
+
+La app de Android no cambia.
+
+### Añadido
+
+- Escritorio: interruptor para sincronizar las bóvedas a través del servicio de la nube, con una comprobación de que el servicio admite escrituras condicionales, y una tarjeta de sincronización en Ajustes.
+
 ## [1.7.0] - 2026-10-19
 
 La app de Android no cambia.

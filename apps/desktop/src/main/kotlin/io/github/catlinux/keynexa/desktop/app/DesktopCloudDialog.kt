@@ -182,6 +182,8 @@ internal fun ApplicationScope.DesktopCloudDialog(
     var copyMessage by remember { mutableStateOf<CopyMessage?>(null) }
     var awaitingCopy by remember { mutableStateOf(false) }
     var sawCopyRunning by remember { mutableStateOf(false) }
+    var syncBusy by remember { mutableStateOf(false) }
+    var syncNotice by remember { mutableStateOf<SyncSwitchOutcome?>(null) }
 
     LaunchedEffect(Unit) {
         val loaded =
@@ -209,9 +211,12 @@ internal fun ApplicationScope.DesktopCloudDialog(
                 }
             }
     }
-    // The copy message lives only while the status step is on.
+    // The copy message and the probe notice live only while the status step is on.
     LaunchedEffect(step) {
-        if (step != CloudStep.Status) copyMessage = null
+        if (step != CloudStep.Status) {
+            copyMessage = null
+            syncNotice = null
+        }
     }
     // A "Copy now" is over when the service stops running: show its outcome until the dialog is left.
     LaunchedEffect(serviceStatus.running) {
@@ -283,6 +288,8 @@ internal fun ApplicationScope.DesktopCloudDialog(
                                         source = source,
                                         status = status,
                                         copyMessage = copyMessage,
+                                        syncBusy = syncBusy,
+                                        syncNotice = syncNotice,
                                         onKeep = { newKeep ->
                                             scope.launch { changeKeep(saved, newKeep, stores) { setup = it } }
                                         },
@@ -291,6 +298,20 @@ internal fun ApplicationScope.DesktopCloudDialog(
                                                 sawCopyRunning = false
                                                 awaitingCopy = true
                                                 cloud.backupNow(it.vault, it.read)
+                                            }
+                                        },
+                                        onToggleSync = { wanted ->
+                                            scope.launch {
+                                                if (!wanted) {
+                                                    changeSync(saved, false, stores) { setup = it }
+                                                    syncNotice = null
+                                                } else {
+                                                    syncBusy = true
+                                                    syncNotice = null
+                                                    val outcome = enableSync(saved, stores) { setup = it }
+                                                    syncNotice = outcome
+                                                    syncBusy = false
+                                                }
                                             }
                                         },
                                         onChangeService = {
@@ -677,8 +698,11 @@ private fun StatusBody(
     source: CloudBackupSource?,
     status: CloudBackupStatus?,
     copyMessage: CopyMessage?,
+    syncBusy: Boolean,
+    syncNotice: SyncSwitchOutcome?,
     onKeep: (Int) -> Unit,
     onCopyNow: () -> Unit,
+    onToggleSync: (Boolean) -> Unit,
     onChangeService: () -> Unit,
     onDisconnect: () -> Unit,
     onClose: () -> Unit,
@@ -737,6 +761,12 @@ private fun StatusBody(
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
     }
+    CloudSyncSection(
+        enabled = setup.syncEnabled,
+        busy = syncBusy,
+        notice = syncNotice,
+        onToggle = onToggleSync,
+    )
     OutlinedButton(
         onClick = onChangeService,
         modifier = Modifier.fillMaxWidth().heightIn(min = TouchTarget),
