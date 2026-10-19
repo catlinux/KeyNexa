@@ -6,6 +6,14 @@ Todos los cambios notables de este proyecto se documentan en este archivo. El fo
 
 ## [Sin publicar]
 
+## [1.6.10] - 2026-10-19
+
+Las aplicaciones no cambian.
+
+### Corregido
+
+- Interno: tras fusionar una copia remota, la bóveda abierta pasa a ser exactamente lo escrito, para que la siguiente sincronización no vea una diferencia solo de resolución de fechas y vuelva a reescribir el archivo.
+
 ## [1.6.9] - 2026-10-19
 
 Las apps no cambian.

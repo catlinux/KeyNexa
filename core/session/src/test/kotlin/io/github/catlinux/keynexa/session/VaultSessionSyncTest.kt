@@ -152,6 +152,23 @@ class VaultSessionSyncTest {
     }
 
     @Test
+    fun theFileJustUploadedComesBackWithNothingToUploadOrSave() {
+        val session = openSession()
+        val base = openVault(session)
+        session.apply { VaultEditor().addEntry(it, base.root.id, "Local") }
+        val remote = withId(VaultEditor().addEntry(base, base.root.id, "Remote"), id)
+        val uploaded = (session.absorbRemote(encode(remote), Expect.SyncId(id)) as Absorbed.Merged).file.bytes
+        val writesBefore = writes
+
+        // The other device merges what was uploaded and, having nothing new, uploads the same content back.
+        val result = session.absorbRemote(uploaded, Expect.SyncId(id))
+
+        val merged = result as Absorbed.Merged
+        assertFalse(merged.remoteLacksLocal)
+        assertEquals(writesBefore, writes)
+    }
+
+    @Test
     fun aRemoteCopyThatHoldsEverythingIsMergedWithoutUploadingAnything() {
         val session = openSession()
         val base = openVault(session)

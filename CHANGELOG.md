@@ -6,6 +6,14 @@ All notable changes to this project are documented in this file. The format is b
 
 ## [Unreleased]
 
+## [1.6.10] - 2026-10-19
+
+The apps do not change.
+
+### Fixed
+
+- Internal: after merging a remote copy, the open vault becomes exactly what was written, so the next synchronisation does not see a difference in time resolution alone and rewrite the file again.
+
 ## [1.6.9] - 2026-10-19
 
 The apps do not change.

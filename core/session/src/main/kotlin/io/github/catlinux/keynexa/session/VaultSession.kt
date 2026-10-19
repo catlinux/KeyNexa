@@ -498,12 +498,29 @@ class VaultSession(
         }
         val (savedState, outcome) = claimAndSave(open.current, merged, secrets) ?: return Absorbed.Postponed
         if (outcome !is SaveOutcome.Saved) return Absorbed.SaveFailed
-        // Reuses the notice the apps already show for a version written elsewhere.
-        mutableState.update { state ->
-            if (state is SessionState.Open) state.copy(lastExternalChangeMillis = now()) else state
-        }
         val file = readLocalFile(savedState.vault.location) ?: return Absorbed.SaveFailed
-        return Absorbed.Merged(file, remoteLacksLocal = outcome.loaded.vault != remote)
+        // The open vault becomes what the file now holds (it keeps whole seconds), otherwise the next absorb would see
+        // a difference in the time resolution alone and rewrite the file again. Reuses the notice the apps already
+        // show for a version written elsewhere.
+        val written = decodeQuietly(file.bytes, secrets)
+        mutableState.update { state ->
+            if (state is SessionState.Open && state.isIdle && state.current == merged) {
+                if (written == null) {
+                    state.copy(lastExternalChangeMillis = now())
+                } else {
+                    state.copy(
+                        current = written,
+                        loaded = state.loaded.copy(vault = written),
+                        lastExternalChangeMillis = now(),
+                    )
+                }
+            } else if (state is SessionState.Open) {
+                state.copy(lastExternalChangeMillis = now())
+            } else {
+                state
+            }
+        }
+        return Absorbed.Merged(file, remoteLacksLocal = (written ?: outcome.loaded.vault) != remote)
     }
 
     /**
@@ -562,6 +579,16 @@ class VaultSession(
         notifySaved(outcome, toSave.vault)
         return toSave to outcome
     }
+
+    private fun decodeQuietly(
+        bytes: ByteArray,
+        secrets: Credentials,
+    ): Vault? =
+        try {
+            engine.decode(bytes, secrets)
+        } catch (_: VaultException) {
+            null
+        }
 
     private fun readLocalFile(location: VaultLocation): SyncFile? =
         try {
