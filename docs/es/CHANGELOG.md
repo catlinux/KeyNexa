@@ -6,6 +6,14 @@ Todos los cambios notables de este proyecto se documentan en este archivo. El fo
 
 ## [Sin publicar]
 
+## [1.6.8] - 2026-10-19
+
+Las apps no cambian.
+
+### Cambiado
+
+- Interno: escrituras condicionales en S3 (If-Match / If-None-Match), `head` y `fetch`, sonda de escritura condicional, estado y ejecutor de sincronización; aún sin conectar en las apps.
+
 ## [1.6.7] - 2026-10-19
 
 Las apps no cambian.

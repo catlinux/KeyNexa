@@ -47,6 +47,35 @@ class S3SetupTest {
     }
 
     @Test
+    fun synchronisationRoundTrips() {
+        val setup = setup().copy(sync = true, syncProbe = S3Setup.probeKey(ENDPOINT, BUCKET))
+
+        val restored = S3Setup.fromValues(setup.toValues())
+
+        assertEquals(setup, restored)
+        assertEquals(true, restored?.syncEnabled)
+    }
+
+    @Test
+    fun changingTheServiceVoidsSynchronisation() {
+        val otherEndpoint =
+            setup().copy(sync = true, syncProbe = S3Setup.probeKey("https://s3.other.example.com", BUCKET))
+        val otherBucket = setup().copy(sync = true, syncProbe = S3Setup.probeKey(ENDPOINT, "other-bucket"))
+
+        assertFalse(S3Setup.fromValues(otherEndpoint.toValues())!!.syncEnabled)
+        assertFalse(S3Setup.fromValues(otherBucket.toValues())!!.syncEnabled)
+    }
+
+    @Test
+    fun oldDataLoadsWithSynchronisationOff() {
+        val restored = S3Setup.fromValues(setup().toValues() - "sync" - "syncProbe")
+
+        assertFalse(restored!!.sync)
+        assertNull(restored.syncProbe)
+        assertFalse(restored.syncEnabled)
+    }
+
+    @Test
     fun aBackblazeEndpointGivesItsRegion() {
         assertEquals("eu-central-003", regionFromEndpoint("https://s3.eu-central-003.backblazeb2.com"))
     }
@@ -156,5 +185,7 @@ class S3SetupTest {
     private companion object {
         const val ACCESS_KEY = "AKIAIOSFODNN7EXAMPLE"
         const val SECRET_KEY = "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"
+        const val ENDPOINT = "https://s3.example.com"
+        const val BUCKET = "mybucket"
     }
 }

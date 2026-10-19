@@ -2,8 +2,10 @@ package io.github.catlinux.keynexa.cloud
 
 import io.github.catlinux.keynexa.sync.CloudAuthException
 import io.github.catlinux.keynexa.sync.CloudObject
+import io.github.catlinux.keynexa.sync.CloudPreconditionFailed
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
+import org.junit.Assert.assertNull
 import org.junit.Assert.assertThrows
 import org.junit.Assert.assertTrue
 import org.junit.Test
@@ -180,6 +182,102 @@ class S3BackendTest {
 
         assertTrue(failure.message.orEmpty().contains("500"))
         assertFalse(failure.message.orEmpty().contains("https"))
+    }
+
+    @Test
+    fun putSignsAndSendsTheIfMatchHeader() {
+        val transport = RecordingTransport { HttpResponse(200, mapOf("etag" to "\"new\""), ByteArray(0)) }
+
+        backend(transport).put("KeyNexa/vault.kdbx", byteArrayOf(1), ifMatch = "abc")
+
+        val request = transport.requests.single()
+        assertEquals("\"abc\"", request.headers["if-match"])
+        assertTrue(request.headers.getValue("authorization").contains("if-match"))
+    }
+
+    @Test
+    fun putDoesNotDoubleTheQuotesOfAQuotedEtag() {
+        val transport = RecordingTransport { HttpResponse(200, emptyMap(), ByteArray(0)) }
+
+        backend(transport).put("KeyNexa/vault.kdbx", byteArrayOf(1), ifMatch = "\"abc\"")
+
+        assertEquals("\"abc\"", transport.requests.single().headers["if-match"])
+    }
+
+    @Test
+    fun putSignsAndSendsTheIfNoneMatchHeader() {
+        val transport = RecordingTransport { HttpResponse(200, emptyMap(), ByteArray(0)) }
+
+        backend(transport).put("KeyNexa/vault.kdbx", byteArrayOf(1), ifNoneMatch = true)
+
+        val request = transport.requests.single()
+        assertEquals("*", request.headers["if-none-match"])
+        assertTrue(request.headers.getValue("authorization").contains("if-none-match"))
+    }
+
+    @Test
+    fun aPreconditionFailureOnPutIsMapped() {
+        val transport =
+            RecordingTransport {
+                HttpResponse(412, emptyMap(), errorXml("PreconditionFailed").toByteArray())
+            }
+
+        assertThrows(CloudPreconditionFailed::class.java) {
+            backend(transport).put("KeyNexa/vault.kdbx", byteArrayOf(1), ifMatch = "old")
+        }
+    }
+
+    @Test
+    fun aConditionalConflictOnPutIsMapped() {
+        val transport =
+            RecordingTransport {
+                HttpResponse(409, emptyMap(), errorXml("ConditionalRequestConflict").toByteArray())
+            }
+
+        assertThrows(CloudPreconditionFailed::class.java) {
+            backend(transport).put("KeyNexa/vault.kdbx", byteArrayOf(1), ifNoneMatch = true)
+        }
+    }
+
+    @Test
+    fun headAnswersNullWhenTheObjectIsMissing() {
+        val transport = RecordingTransport { HttpResponse(404, emptyMap(), ByteArray(0)) }
+
+        assertNull(backend(transport).head("KeyNexa/vault.kdbx"))
+
+        assertEquals("HEAD", transport.requests.single().method)
+    }
+
+    @Test
+    fun headReadsTheUnquotedEtagAndSize() {
+        val transport =
+            RecordingTransport {
+                HttpResponse(200, mapOf("etag" to "\"abc\"", "content-length" to "10"), ByteArray(0))
+            }
+
+        val objectInfo = backend(transport).head("KeyNexa/vault.kdbx")
+
+        assertEquals(CloudObject("KeyNexa/vault.kdbx", 10, null, "abc"), objectInfo)
+    }
+
+    @Test
+    fun fetchAnswersNullWhenTheObjectIsMissing() {
+        val transport = RecordingTransport { HttpResponse(404, emptyMap(), ByteArray(0)) }
+
+        assertNull(backend(transport).fetch("KeyNexa/vault.kdbx"))
+
+        assertEquals("GET", transport.requests.single().method)
+    }
+
+    @Test
+    fun fetchReadsTheBytesAndTheUnquotedEtag() {
+        val content = byteArrayOf(1, 2, 3)
+        val transport = RecordingTransport { HttpResponse(200, mapOf("etag" to "\"abc\""), content) }
+
+        val fetched = backend(transport).fetch("KeyNexa/vault.kdbx")
+
+        assertEquals(content.toList(), fetched?.bytes?.toList())
+        assertEquals("abc", fetched?.etag)
     }
 
     private fun backend(

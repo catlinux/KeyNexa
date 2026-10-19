@@ -6,6 +6,14 @@ All notable changes to this project are documented in this file. The format is b
 
 ## [Unreleased]
 
+## [1.6.8] - 2026-10-19
+
+The apps do not change.
+
+### Changed
+
+- Internal: conditional S3 writes (If-Match / If-None-Match), head and fetch, conditional-write probe, sync state and runner; not yet wired into the apps.
+
 ## [1.6.7] - 2026-10-19
 
 The apps do not change.

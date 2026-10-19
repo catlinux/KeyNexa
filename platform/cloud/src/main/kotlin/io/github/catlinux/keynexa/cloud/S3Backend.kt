@@ -5,6 +5,7 @@ import io.github.catlinux.keynexa.sync.CloudBackend
 import io.github.catlinux.keynexa.sync.CloudCapabilities
 import io.github.catlinux.keynexa.sync.CloudContent
 import io.github.catlinux.keynexa.sync.CloudObject
+import io.github.catlinux.keynexa.sync.CloudPreconditionFailed
 import org.w3c.dom.Element
 import org.xml.sax.SAXException
 import java.io.ByteArrayInputStream
@@ -48,14 +49,28 @@ class S3Backend(
         ifMatch: String?,
         ifNoneMatch: Boolean,
     ): CloudObject {
-        val response = send("PUT", objectUrl(name), emptyMap(), content)
+        val response = send("PUT", objectUrl(name), conditionalHeaders(ifMatch, ifNoneMatch), content)
+        if (response.status == PRECONDITION_FAILED || response.status == CONFLICT) {
+            throw CloudPreconditionFailed("S3 refused the conditional write: HTTP ${response.status}")
+        }
         expectSuccess(response)
         return CloudObject(name, content.size.toLong(), null, etagOf(response.headers["etag"]))
     }
 
-    override fun head(name: String): CloudObject? = throw UnsupportedOperationException("10b")
+    override fun head(name: String): CloudObject? {
+        val response = send("HEAD", objectUrl(name), emptyMap(), null)
+        if (response.status == NOT_FOUND) return null
+        expectSuccess(response)
+        val size = response.headers["content-length"]?.toLongOrNull() ?: 0L
+        return CloudObject(name, size, null, etagOf(response.headers["etag"]))
+    }
 
-    override fun fetch(name: String): CloudContent? = throw UnsupportedOperationException("10b")
+    override fun fetch(name: String): CloudContent? {
+        val response = send("GET", objectUrl(name), emptyMap(), null)
+        if (response.status == NOT_FOUND) return null
+        expectSuccess(response)
+        return CloudContent(response.body, etagOf(response.headers["etag"]))
+    }
 
     override fun get(name: String): ByteArray {
         val response = send("GET", objectUrl(name), emptyMap(), null)
@@ -112,6 +127,24 @@ class S3Backend(
     }
 
     private fun objectUrl(name: String): String = "${bucketUrl()}/${uriEncode(name, encodeSlash = false)}"
+
+    private fun conditionalHeaders(
+        ifMatch: String?,
+        ifNoneMatch: Boolean,
+    ): Map<String, String> =
+        buildMap {
+            ifMatch?.let { put("If-Match", quoted(it)) }
+            if (ifNoneMatch) put("If-None-Match", "*")
+        }
+
+    private fun quoted(etag: String): String {
+        val trimmed = etag.trim()
+        return if (trimmed.length >= 2 && trimmed.startsWith("\"") && trimmed.endsWith("\"")) {
+            trimmed
+        } else {
+            "\"$trimmed\""
+        }
+    }
 
     private fun bucketUrl(): String {
         val endpoint = config.endpoint.trimEnd('/')
@@ -195,6 +228,8 @@ class S3Backend(
         const val UNAUTHORIZED = 401
         const val FORBIDDEN = 403
         const val NOT_FOUND = 404
+        const val CONFLICT = 409
+        const val PRECONDITION_FAILED = 412
         val AUTH_CODES = setOf("InvalidAccessKeyId", "SignatureDoesNotMatch", "AccessDenied")
         val HARDENING_FEATURES =
             listOf(

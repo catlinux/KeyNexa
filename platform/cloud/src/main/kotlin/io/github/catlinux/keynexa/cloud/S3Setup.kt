@@ -18,21 +18,29 @@ data class S3Setup(
     val accessKeyId: String,
     val secretAccessKey: String,
     val keep: Int = DEFAULT_KEEP,
+    val sync: Boolean = false,
+    val syncProbe: String? = null,
 ) {
+    /** True only when synchronisation was turned on and the probe still matches this service. */
+    val syncEnabled: Boolean
+        get() = sync && syncProbe == probeKey(endpoint, bucket)
+
     override fun toString(): String =
         "S3Setup(endpoint=$endpoint, region=$region, bucket=$bucket, " +
             "pathStyle=$pathStyle, keep=$keep, credentials=redacted)"
 
     fun toValues(): Map<String, String> =
-        mapOf(
-            KEY_ENDPOINT to endpoint,
-            KEY_REGION to region,
-            KEY_BUCKET to bucket,
-            KEY_PATH_STYLE to pathStyle.toString(),
-            KEY_ACCESS to accessKeyId,
-            KEY_SECRET to secretAccessKey,
-            KEY_KEEP to keep.toString(),
-        )
+        buildMap {
+            put(KEY_ENDPOINT, endpoint)
+            put(KEY_REGION, region)
+            put(KEY_BUCKET, bucket)
+            put(KEY_PATH_STYLE, pathStyle.toString())
+            put(KEY_ACCESS, accessKeyId)
+            put(KEY_SECRET, secretAccessKey)
+            put(KEY_KEEP, keep.toString())
+            put(KEY_SYNC, sync.toString())
+            syncProbe?.let { put(KEY_SYNC_PROBE, it) }
+        }
 
     /** The backend this setup describes, over [transport] and [clock] (the defaults are the production ones). */
     fun backend(
@@ -56,9 +64,17 @@ data class S3Setup(
         private const val KEY_ACCESS = "accessKeyId"
         private const val KEY_SECRET = "secretAccessKey"
         private const val KEY_KEEP = "keep"
+        private const val KEY_SYNC = "sync"
+        private const val KEY_SYNC_PROBE = "syncProbe"
         private const val MIN_KEEP = 1
         private const val MAX_KEEP = 100
         private const val HTTPS_PREFIX = "https://"
+
+        /** The `endpoint|bucket` string a passing probe stores, so a change of service voids synchronisation. */
+        fun probeKey(
+            endpoint: String,
+            bucket: String,
+        ): String = "$endpoint|$bucket"
 
         /** Reads a stored setup; null when a required value is missing or invalid. */
         fun fromValues(values: Map<String, String>): S3Setup? {
@@ -70,7 +86,9 @@ data class S3Setup(
             val keep = values[KEY_KEEP]?.toIntOrNull() ?: DEFAULT_KEEP
             if (keep !in MIN_KEEP..MAX_KEEP) return null
             val pathStyle = values[KEY_PATH_STYLE]?.toBooleanStrictOrNull() ?: true
-            return S3Setup(endpoint, region, bucket, pathStyle, access, secret, keep)
+            val sync = values[KEY_SYNC]?.toBooleanStrictOrNull() ?: false
+            val syncProbe = values[KEY_SYNC_PROBE]?.takeIf { it.isNotBlank() }
+            return S3Setup(endpoint, region, bucket, pathStyle, access, secret, keep, sync, syncProbe)
         }
     }
 }
