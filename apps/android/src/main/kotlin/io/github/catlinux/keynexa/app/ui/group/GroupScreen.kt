@@ -186,6 +186,7 @@ fun GroupScreen(
     onRestoreUnsaved: () -> Unit = {},
     onDiscardUnsaved: () -> Unit = {},
     onOpenSettings: () -> Unit = {},
+    onSyncNow: () -> Unit = {},
 ) {
     var askingForName by remember { mutableStateOf(false) }
     var showSyncStatus by remember { mutableStateOf(false) }
@@ -224,6 +225,7 @@ fun GroupScreen(
                     onSyncStatus = { showSyncStatus = true },
                     onNewGroup = { askingForName = true },
                     onSearch = commands.onSearch,
+                    onSyncNow = onSyncNow,
                 )
                 Column(
                     modifier =
@@ -292,7 +294,7 @@ fun GroupScreen(
 }
 
 /** The coloured band at the top: the group name, its save state, the ways out, and the search field. */
-@Suppress("LongParameterList")
+@Suppress("LongParameterList", "LongMethod")
 @Composable
 private fun GroupHeaderBand(
     title: String,
@@ -303,6 +305,7 @@ private fun GroupHeaderBand(
     onSyncStatus: () -> Unit,
     onNewGroup: () -> Unit,
     onSearch: () -> Unit,
+    onSyncNow: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val dark = LocalDarkTheme.current
@@ -353,7 +356,12 @@ private fun GroupHeaderBand(
                     description = stringResource(R.string.group_lock),
                     onClick = commands.onLock,
                 )
-                GroupMenu(commands = commands, onSyncStatus = onSyncStatus, onNewGroup = onNewGroup)
+                GroupMenu(
+                    commands = commands,
+                    onSyncStatus = onSyncStatus,
+                    onNewGroup = onNewGroup,
+                    onSyncNow = onSyncNow,
+                )
             }
             BandSearchField(title = title, onClick = onSearch)
         }
@@ -476,6 +484,7 @@ private fun GroupMenu(
     commands: GroupCommands,
     onSyncStatus: () -> Unit,
     onNewGroup: () -> Unit,
+    onSyncNow: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     var open by remember { mutableStateOf(false) }
@@ -498,6 +507,12 @@ private fun GroupMenu(
                 onClick = {
                     open = false
                     onSyncStatus()
+                },
+            )
+            CloudSyncNowMenuItem(
+                onSyncNow = {
+                    open = false
+                    onSyncNow()
                 },
             )
             DropdownMenuItem(

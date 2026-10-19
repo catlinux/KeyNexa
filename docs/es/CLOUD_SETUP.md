@@ -74,6 +74,8 @@ La sincronización se ejecuta tras un guardado, al desbloquear una bóveda y al 
 
 Un dispositivo sin copia local usa **Traer una bóveda de la nube** en la pantalla de inicio (aparece cuando la sincronización está activada), elige una bóveda sincronizada de la lista (el nombre está cifrado, así que solo se muestran el principio de su identificador, su tamaño y su fecha), elige dónde guardarla y la desbloquea como siempre; nunca se sobrescribe un archivo que ya exista.
 
+En Android, la edición cloud tiene las mismas dos vías: su menú de grupo tiene **Sincronizar ahora** con la línea de estado debajo, y su pantalla de inicio tiene **Traer una bóveda de la nube** (un dispositivo sin copia local elige una bóveda sincronizada, elige dónde guardarla con el selector del sistema y la desbloquea como siempre; nunca se sobrescribe un archivo que ya exista).
+
 ## Borrar las copias
 
 **Desconectar y borrar** quita las credenciales y la marca del consentimiento de este dispositivo, pero no borra las copias ya subidas: bórralas desde el propio servicio (en su consola web o su herramienta). La guía de cada proveedor explica dónde.

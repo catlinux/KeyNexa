@@ -6,6 +6,14 @@ All notable changes to this project are documented in this file. The format is b
 
 ## [Unreleased]
 
+## [1.8.2] - 2026-10-19
+
+The desktop app does not change. The offline edition does not change either.
+
+### Added
+
+- Android (cloud edition): Sync now in the group menu and Bring a vault from the cloud on the home screen.
+
 ## [1.8.1] - 2026-10-19
 
 The desktop app does not change. The offline edition does not change either.

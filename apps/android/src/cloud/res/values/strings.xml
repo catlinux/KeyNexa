@@ -110,6 +110,18 @@
     <string name="cloud_sync_error_other_vault">the cloud copy belongs to another vault</string>
     <string name="cloud_sync_error_save_failed">the vault could not be saved</string>
 
+    <string name="cloud_sync_now">Sync now</string>
+    <string name="cloud_sync_syncing">Synchronising…</string>
+    <string name="cloud_bring_action">Bring a vault from the cloud</string>
+    <string name="cloud_bring_loading">Loading…</string>
+    <string name="cloud_bring_empty">There is no synchronised vault in this service</string>
+    <string name="cloud_bring_list_failed">Could not read the list. Check the network and try again.</string>
+    <string name="cloud_bring_row">Vault %1$s</string>
+    <string name="cloud_bring_details">%1$s · %2$s</string>
+    <string name="cloud_bring_known">That file is already one of your vaults; choose another name</string>
+    <string name="cloud_bring_gone">That vault is no longer in the service</string>
+    <string name="cloud_bring_failed">The vault could not be downloaded. Check the network and try again.</string>
+
     <string name="cloud_reminder_title">Protect your vault: keep a copy in the cloud</string>
     <string name="cloud_reminder_configure">Set up</string>
     <string name="cloud_reminder_later">Later</string>

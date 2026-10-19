@@ -33,12 +33,17 @@ import io.github.catlinux.keynexa.session.SessionState
 import io.github.catlinux.keynexa.session.UnlockError
 import io.github.catlinux.keynexa.vault.Credentials
 import io.github.catlinux.keynexa.vault.NewVault
+import io.github.catlinux.keynexa.vault.VaultLocation
 import kotlinx.coroutines.delay
+import java.io.IOException
 
 private const val VAULT_EXTENSION = ".kdbx"
 private const val CONFLICT_MARKER = ".sync-conflict-"
 private const val REFRESH_MILLIS = 5_000L
 private const val SYNC_TRIGGER_MIN_MILLIS = 60_000L
+
+/** The name a brought vault gets when the provider gives none. */
+private const val BROUGHT_VAULT_NAME = "KeyNexa"
 
 /**
  * What the user does with vault files: adding, creating, reconnecting and removing. Vaults are always reached
@@ -161,6 +166,29 @@ private class VaultFileActions(
     fun remove(vault: KnownVault) {
         container.knownVaults.remove(vault.location)
         vaults = container.knownVaults.all()
+    }
+
+    /**
+     * The user saved a vault brought from the cloud: keep the grant, add it to the known vaults and go unlock it. The
+     * name comes from the provider's display name without the extension; a provider that gives none gets a generic one.
+     */
+    fun openBroughtVault(document: Uri) {
+        val location =
+            try {
+                container.access.persistFile(document)
+            } catch (ignored: SecurityException) {
+                VaultLocation(document.toString())
+            }
+        val name =
+            try {
+                val display = container.storage.name(location)
+                display.removeSuffix(VAULT_EXTENSION).ifBlank { BROUGHT_VAULT_NAME }
+            } catch (ignored: IOException) {
+                BROUGHT_VAULT_NAME
+            }
+        val vault = KnownVault(name, location)
+        add(vault)
+        container.navigator.push(Screen.Unlock(vault))
     }
 
     private fun add(vault: KnownVault) {
@@ -413,6 +441,7 @@ private fun AppScreens(
                 onSelect = { navigator.push(Screen.Unlock(it)) },
                 onRemove = actions::remove,
                 onOpenSettings = { navigator.push(Screen.Settings) },
+                onBringVault = actions::openBroughtVault,
             )
         Screen.Settings ->
             SettingsScreen(
@@ -457,6 +486,11 @@ private fun AppScreens(
                     onReconnect = {
                         actions.beginReconnectOpenVault()
                         onOpenFolder()
+                    },
+                    onSyncNow = {
+                        (state as? SessionState.Open)?.let { open ->
+                            CloudSyncHook.onTrigger(context, open.vault, container.syncLocal())
+                        }
                     },
                 )
             }

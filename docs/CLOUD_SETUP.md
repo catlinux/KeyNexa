@@ -74,6 +74,8 @@ Synchronisation runs after a save, when a vault is unlocked and when the window 
 
 A device with no local copy uses **Bring a vault from the cloud** on the home screen (it appears when synchronisation is on), picks a synchronised vault from the list (the name is encrypted, so only the beginning of its identifier, its size and its date are shown), chooses where to save it and unlocks it as usual; an existing file is never overwritten.
 
+On Android, the cloud edition has the same two ways: its group menu has **Sync now** with the state line under it, and its home screen has **Bring a vault from the cloud** (a device with no local copy picks a synchronised vault, chooses where to save it with the system picker and unlocks it as usual; an existing file is never overwritten).
+
 ## Delete the copies
 
 **Disconnect and delete** removes the credentials and the consent mark from this device, but it does not delete the copies already uploaded: delete them from the service itself (in its web console or its own tool). The guide to each provider explains where.

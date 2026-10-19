@@ -6,6 +6,14 @@ Todos los cambios notables de este proyecto se documentan en este archivo. El fo
 
 ## [Sin publicar]
 
+## [1.8.2] - 2026-10-19
+
+La app de escritorio no cambia. La edición offline tampoco.
+
+### Añadido
+
+- Android (edición cloud): «Sincronizar ahora» en el menú del grupo y «Traer una bóveda de la nube» en la pantalla de inicio.
+
 ## [1.8.1] - 2026-10-19
 
 La app de escritorio no cambia. La edición offline tampoco.

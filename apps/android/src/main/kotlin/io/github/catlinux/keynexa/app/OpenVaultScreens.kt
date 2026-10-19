@@ -44,6 +44,7 @@ fun OpenVaultScreens(
     container: AppContainer,
     open: SessionState.Open,
     onReconnect: () -> Unit,
+    onSyncNow: () -> Unit = {},
 ) {
     val navigator = container.navigator
     val session = container.session
@@ -104,6 +105,7 @@ fun OpenVaultScreens(
                 onBack = if (isRoot) lock else back,
                 onRetrySave = session::retrySave,
                 onReconnect = onReconnect,
+                onSyncNow = onSyncNow,
                 onRestoreUnsaved = session::restoreUnsaved,
                 onDiscardUnsaved = session::discardUnsaved,
                 onDeleteConflictCopies = session::deleteConflictCopies,

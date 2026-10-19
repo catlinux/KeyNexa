@@ -113,6 +113,18 @@
     <string name="cloud_sync_error_other_vault">la copia de la nube pertenece a otra bóveda</string>
     <string name="cloud_sync_error_save_failed">no se pudo guardar la bóveda</string>
 
+    <string name="cloud_sync_now">Sincronizar ahora</string>
+    <string name="cloud_sync_syncing">Sincronizando…</string>
+    <string name="cloud_bring_action">Traer una bóveda de la nube</string>
+    <string name="cloud_bring_loading">Cargando…</string>
+    <string name="cloud_bring_empty">No hay bóvedas sincronizadas en este servicio</string>
+    <string name="cloud_bring_list_failed">No se pudo leer la lista. Revisa la red y vuelve a intentarlo.</string>
+    <string name="cloud_bring_row">Bóveda %1$s</string>
+    <string name="cloud_bring_details">%1$s · %2$s</string>
+    <string name="cloud_bring_known">Ese archivo ya es una de tus bóvedas; elige otro nombre</string>
+    <string name="cloud_bring_gone">Esa bóveda ya no está en el servicio</string>
+    <string name="cloud_bring_failed">No se pudo descargar la bóveda. Revisa la red y vuelve a intentarlo.</string>
+
     <string name="cloud_reminder_title">Protege tu bóveda: guarda una copia en la nube</string>
     <string name="cloud_reminder_configure">Configurar</string>
     <string name="cloud_reminder_later">Más tarde</string>

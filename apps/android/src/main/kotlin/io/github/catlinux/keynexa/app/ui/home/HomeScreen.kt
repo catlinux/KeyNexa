@@ -89,6 +89,7 @@ fun HomeScreen(
     onRemove: (KnownVault) -> Unit,
     onOpenSettings: () -> Unit,
     modifier: Modifier = Modifier,
+    onBringVault: (Uri) -> Unit = {},
 ) {
     var askedToRemove by remember { mutableStateOf<KnownVault?>(null) }
     Surface(modifier = modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
@@ -115,7 +116,12 @@ fun HomeScreen(
                 }
             }
             CloudReminder(onOpenSettings = onOpenSettings)
-            HomeActions(onOpenExisting = onOpenExisting, onCreateNew = onCreateNew)
+            HomeActions(
+                onOpenExisting = onOpenExisting,
+                onCreateNew = onCreateNew,
+                onBringVault = onBringVault,
+                isKnownVault = { uri -> vaults.any { it.location.value == uri } },
+            )
         }
     }
     askedToRemove?.let { vault ->
@@ -282,6 +288,8 @@ private fun EmptyVaults(modifier: Modifier = Modifier) {
 private fun HomeActions(
     onOpenExisting: () -> Unit,
     onCreateNew: () -> Unit,
+    onBringVault: (Uri) -> Unit,
+    isKnownVault: (String) -> Boolean,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -302,6 +310,7 @@ private fun HomeActions(
         ) {
             Text(text = stringResource(R.string.home_create_new))
         }
+        CloudBringVault(isKnownVault = isKnownVault, onSaved = onBringVault)
     }
 }
 
