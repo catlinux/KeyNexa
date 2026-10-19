@@ -6,6 +6,14 @@ All notable changes to this project are documented in this file. The format is b
 
 ## [Unreleased]
 
+## [1.9.3] - 2026-10-19
+
+The apps do not change.
+
+### Added
+
+- Internal: the quick-unlock policy of [ADR-0014](docs/decisions/0014-windows-hello-quick-unlock.md) (arming, expiry, opening and disarming, with HKDF-SHA256 and AES-256-GCM over a fake Hello signer in the tests). Step 1; nothing uses it yet.
+
 ## [1.9.2] - 2026-10-19
 
 The apps do not change.

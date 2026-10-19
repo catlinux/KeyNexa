@@ -13,23 +13,8 @@ import com.sun.jna.ptr.ByteByReference
 import com.sun.jna.ptr.IntByReference
 import com.sun.jna.ptr.PointerByReference
 import com.sun.jna.win32.StdCallLibrary
+import io.github.catlinux.keynexa.desktop.HelloResult
 import java.util.concurrent.atomic.AtomicReference
-
-/** Outcome of asking Windows Hello to sign a challenge. */
-sealed interface HelloResult {
-    /** The signature. The caller owns the array and must wipe it. */
-    class Signed(
-        val bytes: ByteArray,
-    ) : HelloResult
-
-    /** The user dismissed the prompt or chose the password instead. */
-    object Cancelled : HelloResult
-
-    /** Hello is unavailable or reported an error; [reason] never carries secrets. */
-    class Failed(
-        val reason: String,
-    ) : HelloResult
-}
 
 /** combase.dll entry points for the Windows Runtime, which jna-platform does not expose. */
 @Suppress("FunctionNaming", "ktlint:standard:function-naming")

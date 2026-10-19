@@ -1,6 +1,7 @@
 package io.github.catlinux.keynexa.windows
 
 import com.sun.jna.Native
+import io.github.catlinux.keynexa.desktop.HelloResult
 import java.awt.EventQueue
 import java.awt.Frame
 import java.awt.Label

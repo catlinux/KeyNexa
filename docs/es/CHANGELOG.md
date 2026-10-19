@@ -6,6 +6,14 @@ Todos los cambios notables de este proyecto se documentan en este archivo. El fo
 
 ## [Sin publicar]
 
+## [1.9.3] - 2026-10-19
+
+Las apps no cambian.
+
+### Añadido
+
+- Interno: la política del desbloqueo rápido del [ADR-0014](decisions/0014-windows-hello-quick-unlock.md) (armado, caducidad, apertura y desarmado, con HKDF-SHA256 y AES-256-GCM, probada con un firmante de Hello falso). Paso 1; aún no lo usa nada.
+
 ## [1.9.2] - 2026-10-19
 
 Las apps no cambian.
