@@ -6,6 +6,18 @@ Todos los cambios notables de este proyecto se documentan en este archivo. El fo
 
 ## [Sin publicar]
 
+## [1.6.4] - 2026-10-19
+
+La app de Android no cambia.
+
+### Corregido
+
+- Escritorio: pulsar Intro en los diálogos «Grupo nuevo» y de renombrar confirma ahora el nombre (aún sin comprobar a mano).
+
+### Cambiado
+
+- Licencias: Skia (BSD-3-Clause) e ICU (Licencia Unicode v3) verificadas en sus fuentes; las bibliotecas que incluye la propia Skia siguen por verificar.
+
 ## [1.6.3] - 2026-10-19
 
 La app de Android no cambia.

@@ -6,6 +6,18 @@ All notable changes to this project are documented in this file. The format is b
 
 ## [Unreleased]
 
+## [1.6.4] - 2026-10-19
+
+The Android app does not change.
+
+### Fixed
+
+- Desktop: pressing Enter in the "New group" and rename dialogs now confirms the name (not yet checked by hand).
+
+### Changed
+
+- Licenses: Skia (BSD-3-Clause) and ICU (Unicode License v3) verified at their sources; the libraries Skia itself bundles are still to be verified.
+
 ## [1.6.3] - 2026-10-19
 
 The Android app does not change.
