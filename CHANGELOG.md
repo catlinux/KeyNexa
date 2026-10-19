@@ -6,6 +6,14 @@ All notable changes to this project are documented in this file. The format is b
 
 ## [Unreleased]
 
+## [1.8.7] - 2026-10-19
+
+The Android app does not change.
+
+### Changed
+
+- Desktop: the entry detail panel now has a clearly defined layout: cards with separated rows, small-caps labels, shortcut chips and square icon buttons.
+
 ## [1.8.6] - 2026-10-19
 
 The apps do not change.

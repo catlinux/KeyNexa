@@ -16,7 +16,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
 import io.github.catlinux.keynexa.desktop.app.generated.resources.Res
-import io.github.catlinux.keynexa.desktop.app.generated.resources.entry_detail_history
 import io.github.catlinux.keynexa.desktop.app.generated.resources.entry_detail_history_back
 import io.github.catlinux.keynexa.desktop.app.generated.resources.entry_detail_untitled
 import io.github.catlinux.keynexa.vault.Entry
@@ -24,12 +23,14 @@ import org.jetbrains.compose.resources.stringResource
 import java.time.ZoneId
 import java.util.Locale
 
+private val HistoryRowPaddingHorizontal = 14.dp
+private val HistoryRowPaddingVertical = 10.dp
 private val HistoryGap = 6.dp
 private const val DIVIDER_ALPHA = 0.25f
 
 /**
- * The previous versions of the entry, newest first, with the way back to the entry itself. Clicking one shows it
- * read-only in the same panel.
+ * The previous versions of the entry, newest first, as the rows of the history card; the card supplies the title and
+ * the edges. Clicking one shows it read-only in the same panel.
  */
 @Composable
 internal fun EntryHistorySection(
@@ -37,14 +38,13 @@ internal fun EntryHistorySection(
     view: DesktopVaultState,
     modifier: Modifier = Modifier,
 ) {
-    Column(modifier = modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(HistoryGap)) {
-        Text(
-            text = stringResource(Res.string.entry_detail_history, entry.history.size),
-            style = MaterialTheme.typography.titleMedium,
-        )
-        val zone = ZoneId.systemDefault()
-        val locale = Locale.getDefault()
-        entry.history.indices.reversed().forEach { index ->
+    val zone = ZoneId.systemDefault()
+    val locale = Locale.getDefault()
+    Column(modifier = modifier.fillMaxWidth()) {
+        entry.history.indices.reversed().forEachIndexed { position, index ->
+            if (position > 0) {
+                HorizontalDivider(color = MaterialTheme.colorScheme.outline.copy(alpha = DIVIDER_ALPHA))
+            }
             val version = entry.history[index]
             val date = shortDate(version.times.lastModified, zone, locale)
             Row(
@@ -52,7 +52,10 @@ internal fun EntryHistorySection(
                     Modifier
                         .fillMaxWidth()
                         .clickable(role = Role.Button, onClick = { view.showVersion(index) })
-                        .padding(vertical = HistoryGap),
+                        .padding(
+                            horizontal = HistoryRowPaddingHorizontal,
+                            vertical = HistoryRowPaddingVertical,
+                        ),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(HistoryGap),
             ) {
@@ -69,7 +72,6 @@ internal fun EntryHistorySection(
                     )
                 }
             }
-            HorizontalDivider(color = MaterialTheme.colorScheme.outline.copy(alpha = DIVIDER_ALPHA))
         }
     }
 }

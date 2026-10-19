@@ -6,6 +6,14 @@ Todos los cambios notables de este proyecto se documentan en este archivo. El fo
 
 ## [Sin publicar]
 
+## [1.8.7] - 2026-10-19
+
+La app de Android no cambia.
+
+### Cambiado
+
+- Escritorio: el panel de detalle de la entrada tiene ahora una disposición claramente definida: tarjetas con filas separadas, etiquetas en versalitas, chips de atajos y botones de icono cuadrados.
+
 ## [1.8.6] - 2026-10-19
 
 Las aplicaciones no cambian.
