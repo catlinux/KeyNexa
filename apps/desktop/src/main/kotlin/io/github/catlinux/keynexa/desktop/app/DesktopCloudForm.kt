@@ -10,6 +10,7 @@ import io.github.catlinux.keynexa.cloud.regionFromEndpoint
 import io.github.catlinux.keynexa.cloud.testConnection
 import io.github.catlinux.keynexa.desktop.DesktopCloudBackup
 import io.github.catlinux.keynexa.desktop.DesktopCloudStores
+import io.github.catlinux.keynexa.desktop.DesktopCloudSync
 import io.github.catlinux.keynexa.sync.BackupError
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -242,11 +243,15 @@ internal suspend fun changeKeep(
     onChanged(updated)
 }
 
-/** Deletes the credentials and the consent and forgets every backup, off the caller's thread. */
-internal suspend fun disconnect(cloud: DesktopCloudBackup) {
+/** Deletes the credentials and the consent and forgets every backup and synchronisation, off the caller's thread. */
+internal suspend fun disconnect(
+    cloud: DesktopCloudBackup,
+    cloudSync: DesktopCloudSync,
+) {
     withContext(Dispatchers.IO) {
         cloud.stores.credentials.clear()
         cloud.stores.consent.revoke()
         cloud.reset()
+        cloudSync.reset()
     }
 }

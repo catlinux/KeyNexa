@@ -6,6 +6,7 @@ import androidx.compose.runtime.setValue
 import io.github.catlinux.keynexa.desktop.ClipboardTimer
 import io.github.catlinux.keynexa.desktop.DesktopCloudBackup
 import io.github.catlinux.keynexa.desktop.DesktopCloudStores
+import io.github.catlinux.keynexa.desktop.DesktopCloudSync
 import io.github.catlinux.keynexa.desktop.DesktopDirs
 import io.github.catlinux.keynexa.desktop.DesktopSettings
 import io.github.catlinux.keynexa.desktop.DesktopSettingsStore
@@ -14,12 +15,14 @@ import io.github.catlinux.keynexa.desktop.FileStoragePort
 import io.github.catlinux.keynexa.desktop.SystemEvents
 import io.github.catlinux.keynexa.kdbx.KotpassKdbxEngine
 import io.github.catlinux.keynexa.session.KnownVaults
+import io.github.catlinux.keynexa.session.SessionSyncLocal
 import io.github.catlinux.keynexa.session.VaultReaders
 import io.github.catlinux.keynexa.session.VaultSession
 import io.github.catlinux.keynexa.sync.ConflictMerger
 import io.github.catlinux.keynexa.sync.KeePassMerger
 import io.github.catlinux.keynexa.sync.SafeSaver
 import io.github.catlinux.keynexa.sync.SaveRecovery
+import io.github.catlinux.keynexa.sync.SyncLocal
 import io.github.catlinux.keynexa.sync.VaultReader
 import io.github.catlinux.keynexa.vault.VaultLocation
 import io.github.catlinux.keynexa.windows.DpapiSecretBox
@@ -63,6 +66,9 @@ class DesktopContainer {
     /** The cloud queue: it copies a vault to the configured account after a save and on demand. */
     val cloud: DesktopCloudBackup
 
+    /** The cloud synchronisation queue: it reconciles a vault with its object in the account, on the same triggers. */
+    val cloudSync: DesktopCloudSync
+
     private val settingsStore: DesktopSettingsStore
 
     /** Stores what [change] answers and publishes it, so the interface follows the new settings. */
@@ -74,6 +80,9 @@ class DesktopContainer {
 
     /** Reads a vault's encrypted bytes, for the cloud copy the settings ask for. */
     fun readVault(location: VaultLocation): ByteArray = storage.read(location)
+
+    /** The open vault as the cloud reconciler sees it; the window's triggers pass it to [cloudSync]. */
+    fun syncLocal(): SyncLocal = SessionSyncLocal(session, storage)
 
     init {
         Files.createDirectories(dirs.data)
@@ -90,6 +99,7 @@ class DesktopContainer {
             DesktopCloudBackup(
                 stores = DesktopCloudStores(dirs, DpapiSecretBox()),
             )
+        cloudSync = DesktopCloudSync(stores = cloud.stores)
         val keeper = KeePassMerger()
         val worker =
             Executors.newSingleThreadExecutor { task ->
@@ -111,7 +121,10 @@ class DesktopContainer {
                 conflicts = ConflictMerger(storage, engine, keeper, stores.mergedCopies),
                 executor = worker,
                 now = System::currentTimeMillis,
-                afterSave = { cloud.onSaved(it) { storage.read(it.location) } },
+                afterSave = {
+                    cloud.onSaved(it) { storage.read(it.location) }
+                    cloudSync.trigger(it, syncLocal())
+                },
             )
     }
 }

@@ -55,6 +55,7 @@ import io.github.catlinux.keynexa.cloud.S3Setup
 import io.github.catlinux.keynexa.cloud.vaultIdOf
 import io.github.catlinux.keynexa.desktop.CloudBackupStatus
 import io.github.catlinux.keynexa.desktop.DesktopCloudBackup
+import io.github.catlinux.keynexa.desktop.DesktopCloudSync
 import io.github.catlinux.keynexa.desktop.app.generated.resources.Res
 import io.github.catlinux.keynexa.desktop.app.generated.resources.cloud_cancel
 import io.github.catlinux.keynexa.desktop.app.generated.resources.cloud_close
@@ -166,6 +167,7 @@ private const val CLOUDFLARE_URL = "https://developers.cloudflare.com/r2/"
 @Suppress("LongMethod", "CyclomaticComplexMethod")
 internal fun ApplicationScope.DesktopCloudDialog(
     cloud: DesktopCloudBackup,
+    cloudSync: DesktopCloudSync,
     source: CloudBackupSource?,
     onDismiss: () -> Unit,
 ) {
@@ -313,7 +315,7 @@ internal fun ApplicationScope.DesktopCloudDialog(
                             onClick = {
                                 confirmingDisconnect = false
                                 scope.launch {
-                                    disconnect(cloud)
+                                    disconnect(cloud, cloudSync)
                                     setup = null
                                     step = CloudStep.Consent
                                     onDismiss()

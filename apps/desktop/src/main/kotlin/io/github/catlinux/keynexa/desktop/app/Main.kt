@@ -67,6 +67,9 @@ private const val REFRESH_MILLIS = 5_000L
 /** How often the idle time is looked at while a vault is open. */
 private const val IDLE_CHECK_MILLIS = 15_000L
 
+/** The least time between two synchronisations asked for by regaining the window's focus (ADR-0009 §4). */
+private const val SYNC_FOCUS_MIN_MILLIS = 60_000L
+
 private val WindowSize = DpSize(1100.dp, 750.dp)
 private val AlreadyOpenWindowSize = DpSize(380.dp, 190.dp)
 private val PanelPadding = 24.dp
@@ -131,6 +134,8 @@ private fun ApplicationScope.KeyNexaWindow(
         }
     // The window info only exists inside the Window content, so the focus is read there and kept here.
     var windowFocused by remember { mutableStateOf(true) }
+    // Regaining the focus asks for a synchronisation at most once a minute; the gate holds that rule.
+    val syncGate = remember { SyncTriggerGate(SYNC_FOCUS_MIN_MILLIS) }
     // The cloud is configured when its credentials load and its consent is accepted; refreshed when the dialog closes.
     LaunchedEffect(cloudOpen) {
         val read =
@@ -149,6 +154,20 @@ private fun ApplicationScope.KeyNexaWindow(
         while (true) {
             delay(REFRESH_MILLIS)
             session.refreshIfChanged()
+        }
+    }
+    // Unlocking always asks for a synchronisation round, whatever the focus rule says.
+    LaunchedEffect(openVault) {
+        if (openVault != null) {
+            syncGate.mark()
+            container.cloudSync.trigger(openVault, container.syncLocal())
+        }
+    }
+    // Regaining the focus asks for one too, at most once a minute; the unlock above already asked for the first.
+    LaunchedEffect(windowFocused) {
+        val vault = openVault
+        if (windowFocused && vault != null && syncGate.due()) {
+            container.cloudSync.trigger(vault, container.syncLocal())
         }
     }
     LaunchedEffect(openState?.lastExternalChangeMillis) {
@@ -269,6 +288,7 @@ private fun ApplicationScope.KeyNexaWindow(
                 if (cloudOpen) {
                     DesktopCloudDialog(
                         cloud = container.cloud,
+                        cloudSync = container.cloudSync,
                         source = cloudSource,
                         onDismiss = { cloudOpen = false },
                     )

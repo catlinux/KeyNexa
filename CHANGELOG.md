@@ -6,6 +6,14 @@ All notable changes to this project are documented in this file. The format is b
 
 ## [Unreleased]
 
+## [1.7.0] - 2026-10-19
+
+The Android app does not change.
+
+### Added
+
+- Desktop: synchronisation queue and triggers (after a save, on unlock, on regaining focus at most once a minute); inactive until the switch arrives in a later version.
+
 ## [1.6.10] - 2026-10-19
 
 The apps do not change.

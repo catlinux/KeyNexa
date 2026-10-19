@@ -6,6 +6,14 @@ Todos los cambios notables de este proyecto se documentan en este archivo. El fo
 
 ## [Sin publicar]
 
+## [1.7.0] - 2026-10-19
+
+La app de Android no cambia.
+
+### Añadido
+
+- Escritorio: cola de sincronización y disparadores (tras un guardado, al desbloquear y al recuperar el foco como mucho una vez por minuto); inactiva hasta que llegue el interruptor en una versión posterior.
+
 ## [1.6.10] - 2026-10-19
 
 Las aplicaciones no cambian.

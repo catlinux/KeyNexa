@@ -2,6 +2,7 @@ package io.github.catlinux.keynexa.desktop
 
 import io.github.catlinux.keynexa.cloud.CloudCredentialStore
 import io.github.catlinux.keynexa.cloud.FileBackupState
+import io.github.catlinux.keynexa.cloud.FileSyncState
 import io.github.catlinux.keynexa.platform.SecretBox
 import java.io.File
 import java.io.IOException
@@ -17,6 +18,7 @@ private const val CREDENTIALS_FILE = "credentials.bin"
 private const val CONSENT_FILE = "consent"
 private const val REMINDER_FILE = "reminder"
 private const val BACKUP_STATE_FILE = "backup-state.properties"
+private const val SYNC_STATE_FILE = "sync-state.properties"
 
 /**
  * Where a desktop client keeps what the cloud needs: the credentials, the consent mark, the reminder and the state of
@@ -39,6 +41,9 @@ class DesktopCloudStores(
 
     /** The last success and error of every vault's backup. */
     val backupState: FileBackupState = FileBackupState(File(directory, BACKUP_STATE_FILE))
+
+    /** The last entity tag, fingerprint, success and error of every synchronised vault (ADR-0009 §8). */
+    val syncState: FileSyncState = FileSyncState(File(directory, SYNC_STATE_FILE))
 
     /** The folder everything here lives in, for the screens that show where it is. */
     val path: Path = directory.toPath()
