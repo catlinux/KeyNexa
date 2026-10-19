@@ -6,6 +6,14 @@ Todos los cambios notables de este proyecto se documentan en este archivo. El fo
 
 ## [Sin publicar]
 
+## [1.9.2] - 2026-10-19
+
+Las apps no cambian.
+
+### Añadido
+
+- Interno: acceso a Windows Hello desde el escritorio (firma de un reto con la credencial de clave de Hello, mediante JNA sobre la ABI de WinRT), con una sonda manual (`:platform:windows:helloProbe`). Paso 0 del [ADR-0014](decisions/0014-windows-hello-quick-unlock.md); aún no lo usa nada.
+
 ## [1.9.1] - 2026-10-19
 
 Las apps no cambian.

@@ -6,6 +6,14 @@ All notable changes to this project are documented in this file. The format is b
 
 ## [Unreleased]
 
+## [1.9.2] - 2026-10-19
+
+The apps do not change.
+
+### Added
+
+- Internal: access to Windows Hello from the desktop (signing a challenge with the Hello key credential, through JNA on the WinRT ABI), with a manual probe (`:platform:windows:helloProbe`). Step 0 of [ADR-0014](docs/decisions/0014-windows-hello-quick-unlock.md); nothing uses it yet.
+
 ## [1.9.1] - 2026-10-19
 
 The apps do not change.
