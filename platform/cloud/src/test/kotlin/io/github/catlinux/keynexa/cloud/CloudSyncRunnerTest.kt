@@ -73,6 +73,17 @@ class CloudSyncRunnerTest {
     }
 
     @Test
+    fun anIdThatCouldNotBeSavedIsNeverUsedForAnUpload() {
+        val backend = FakeCloudBackend()
+        val local = FakeSyncLocal(setOf("base"), canAssign = false)
+
+        val result = runner(backend).run(VAULT_ID, local)
+
+        assertEquals(SyncResult.Postponed, result)
+        assertTrue(backend.objects.keys.none { it.startsWith("KeyNexa/sync/") })
+    }
+
+    @Test
     fun anExistingObjectWithTheSameRootIsAdopted() {
         val backend = FakeCloudBackend()
         backend.put(SyncIds.objectName(SYNC_ID), encode(setOf("base", "remote")), null, false)
@@ -152,6 +163,7 @@ private class FakeSyncLocal(
     var tokens: Set<String>,
     private var id: String? = null,
     var sameRoot: Boolean = true,
+    private val canAssign: Boolean = true,
 ) : SyncLocal {
     var assigned: String? = null
         private set
@@ -170,9 +182,11 @@ private class FakeSyncLocal(
         return Absorbed.Merged(SyncFile(encode(tokens)), remoteLacksLocal = tokens != remote)
     }
 
-    override fun assignSyncId(id: String) {
+    override fun assignSyncId(id: String): Boolean {
+        if (!canAssign) return false
         this.id = id
         assigned = id
+        return true
     }
 }
 

@@ -152,6 +152,58 @@ class VaultSessionSyncTest {
     }
 
     @Test
+    fun aLocalEditComingBackFromTheCloudAddsNoHistoryAndWritesNothing() {
+        val session = openSession()
+        val base = withId(openVault(session), id)
+        session.apply { base }
+        session.apply { VaultEditor().addEntry(it, base.root.id, "Local") }
+        // The other device downloaded this file and uploads it back unchanged.
+        val sameContent = requireNotNull(files[location])
+        val writesBefore = writes
+
+        val merged = session.absorbRemote(sameContent, Expect.SyncId(id)) as Absorbed.Merged
+
+        assertFalse(merged.remoteLacksLocal)
+        assertEquals(writesBefore, writes)
+        assertTrue(
+            openVault(session)
+                .root.entries
+                .single()
+                .history
+                .isEmpty(),
+        )
+    }
+
+    @Test
+    fun aFileReplacedByAnotherProgramIsNeverHandedOverForUpload() {
+        val session = openSession()
+        assertTrue(session.assignSyncId(id))
+        val remote = openVault(session)
+        // Another program (Syncthing, say) replaces the file before the session has looked at it again; the remote
+        // adds nothing, so the local file itself would be what goes up.
+        files[location] = encode(VaultEditor().addEntry(remote, remote.root.id, "Elsewhere"))
+        val writesBefore = writes
+
+        val result = session.absorbRemote(encode(remote), Expect.SyncId(id))
+
+        assertEquals(Absorbed.Postponed, result)
+        assertEquals(writesBefore, writes)
+    }
+
+    @Test
+    fun anIdAlreadyThereIsNeverReplaced() {
+        val session = openSession()
+        val other = "fedcba9876543210fedcba9876543210"
+        assertTrue(session.assignSyncId(other))
+        val writesBefore = writes
+
+        assertFalse(session.assignSyncId(id))
+
+        assertEquals(other, session.syncId())
+        assertEquals(writesBefore, writes)
+    }
+
+    @Test
     fun theFileJustUploadedComesBackWithNothingToUploadOrSave() {
         val session = openSession()
         val base = openVault(session)

@@ -61,8 +61,11 @@ interface SyncLocal {
         expect: Expect,
     ): Absorbed
 
-    /** Stores [id] in the vault's custom data. */
-    fun assignSyncId(id: String)
+    /**
+     * Stores [id] in the vault's custom data and saves it; false when it could not (the vault was busy or closed, or
+     * already carries an id). Nothing may be uploaded under [id] unless this answered true.
+     */
+    fun assignSyncId(id: String): Boolean
 }
 
 /** What went wrong in a synchronisation step; none of them carries vault content. */

@@ -1,6 +1,8 @@
 package io.github.catlinux.keynexa.vault
 
 import java.time.Clock
+import java.time.Instant
+import java.time.temporal.ChronoUnit
 import java.util.UUID
 
 /**
@@ -11,12 +13,16 @@ class NewVault(
     private val clock: Clock = Clock.systemUTC(),
     private val newId: () -> UUID = UUID::randomUUID,
 ) {
+    // KDBX stores whole seconds; times kept finer in memory would differ from the same vault read back from its file,
+    // and a merge would then take one version for two.
+    private fun wholeSecondsNow(): Instant = clock.instant().truncatedTo(ChronoUnit.SECONDS)
+
     /** Creates the vault. [kdf] replaces the default key-derivation parameters with the ones it carries. */
     fun create(
         name: String,
         kdf: Kdf.Argon2 = defaultKdf(),
     ): Vault {
-        val now = clock.instant()
+        val now = wholeSecondsNow()
         val rootId = newId()
         val bin =
             Group(

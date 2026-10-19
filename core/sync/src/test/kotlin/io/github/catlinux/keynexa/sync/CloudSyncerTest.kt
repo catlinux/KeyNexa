@@ -305,8 +305,9 @@ private class FakeSyncLocal(
         return Absorbed.Merged(SyncFile(encode(merged)), remoteLacksLocal = merged != remote)
     }
 
-    override fun assignSyncId(id: String) {
+    override fun assignSyncId(id: String): Boolean {
         assigned = id
+        return true
     }
 }
 

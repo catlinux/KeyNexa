@@ -48,7 +48,11 @@ class CloudSyncRunner(
         val current = local.syncId()
         if (current != null) return syncer.sync(current, local)
         return try {
-            val id = adopt(backend, local) ?: SyncIds.newId().also(local::assignSyncId)
+            // A file without the id is never uploaded under it: the other devices would refuse it as another vault.
+            val id =
+                adopt(backend, local)
+                    ?: SyncIds.newId().takeIf(local::assignSyncId)
+                    ?: return SyncResult.Postponed
             syncer.sync(id, local)
         } catch (failure: IOException) {
             SyncResult.Failed(SyncError.Unavailable)

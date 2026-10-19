@@ -35,7 +35,5 @@ class SessionSyncLocal(
         expect: Expect,
     ): Absorbed = session.absorbRemote(bytes, expect)
 
-    override fun assignSyncId(id: String) {
-        session.assignSyncId(id)
-    }
+    override fun assignSyncId(id: String): Boolean = session.assignSyncId(id)
 }

@@ -5,6 +5,7 @@ package io.github.catlinux.keynexa.vault
 import java.security.MessageDigest
 import java.time.Clock
 import java.time.Instant
+import java.time.temporal.ChronoUnit
 import java.util.UUID
 
 /** Name the recycle bin group gets when the editor has to create it. */
@@ -40,6 +41,10 @@ class VaultEditor(
     private val clock: Clock = Clock.systemUTC(),
     private val newId: () -> UUID = UUID::randomUUID,
 ) {
+    // KDBX stores whole seconds; times kept finer in memory would differ from the same vault read back from its file,
+    // and a merge would then take one version for two.
+    private fun wholeSecondsNow(): Instant = clock.instant().truncatedTo(ChronoUnit.SECONDS)
+
     /** Adds an empty group named [name] inside the group [parentId]. */
     fun addGroup(
         vault: Vault,
@@ -47,7 +52,7 @@ class VaultEditor(
         name: String,
     ): Vault {
         val parent = requireGroup(vault, parentId)
-        val group = Group(id = newId(), name = name, times = creationTimes(clock.instant()))
+        val group = Group(id = newId(), name = name, times = creationTimes(wholeSecondsNow()))
         return vault.copy(root = vault.root.mapGroup(parent.id) { it.copy(groups = it.groups + group) })
     }
 
@@ -62,7 +67,7 @@ class VaultEditor(
     ): Vault {
         val group = requireGroup(vault, groupId)
         if (group.name == name) return vault
-        val now = clock.instant()
+        val now = wholeSecondsNow()
         return vault.copy(
             root =
                 vault.root.mapGroup(group.id) {
@@ -79,7 +84,7 @@ class VaultEditor(
     ): Vault {
         val group = requireGroup(vault, groupId)
         val fields = mapOf(Entry.TITLE to FieldValue(title))
-        val entry = Entry(id = newId(), times = creationTimes(clock.instant()), fields = fields)
+        val entry = Entry(id = newId(), times = creationTimes(wholeSecondsNow()), fields = fields)
         return vault.copy(root = vault.root.mapGroup(group.id) { it.copy(entries = it.entries + entry) })
     }
 
@@ -107,7 +112,7 @@ class VaultEditor(
         val versions = before.history + before.copy(history = emptyList())
         val limit = vault.meta.historyMaxItems
         val history = if (limit >= 0 && versions.size > limit) versions.takeLast(limit) else versions
-        val edited = changed.copy(times = before.times.copy(lastModified = clock.instant()), history = history)
+        val edited = changed.copy(times = before.times.copy(lastModified = wholeSecondsNow()), history = history)
         val holder = requireNotNull(vault.root.pathTo(entryId).lastOrNull()).id
         val root =
             vault.root.mapGroup(holder) { parent ->
@@ -198,7 +203,7 @@ class VaultEditor(
         val group = vault.root.findGroup(objectId)
         if (group != null) require(target.id !in group.allGroupIds()) { MOVE_INTO_ITSELF }
         val remembered = vault.root.findEntry(objectId)?.previousParentGroup ?: group?.previousParentGroup
-        return place(vault, objectId, target.id, clock.instant(), remembered)
+        return place(vault, objectId, target.id, wholeSecondsNow(), remembered)
     }
 
     /**
@@ -214,7 +219,7 @@ class VaultEditor(
         val bin = vault.meta.recycleBinGroup?.let { vault.root.findGroup(it) }
         val path = vault.root.pathTo(objectId)
         val insideBin = bin != null && (bin.id == objectId || path.any { it.id == bin.id })
-        val at = clock.instant()
+        val at = wholeSecondsNow()
         if (vault.meta.recycleBinEnabled && !insideBin) {
             val destination = withRecycleBin(vault, newId, at)
             return place(destination.vault, objectId, destination.id, at, path.lastOrNull()?.id)
@@ -239,7 +244,7 @@ class VaultEditor(
         val insideTheObject = group?.allGroupIds().orEmpty()
         val remembered = vault.root.findEntry(objectId)?.previousParentGroup ?: group?.previousParentGroup
         val target = remembered?.takeIf { it !in insideTheObject && vault.root.findGroup(it) != null } ?: vault.root.id
-        return place(vault, objectId, target, clock.instant(), previous = null)
+        return place(vault, objectId, target, wholeSecondsNow(), previous = null)
     }
 
     /** Erases everything inside the recycle bin for good, keeping the bin group itself. */
@@ -247,7 +252,7 @@ class VaultEditor(
         val bin = vault.meta.recycleBinGroup?.let { vault.root.findGroup(it) } ?: return vault
         val objects = bin.allIds()
         if (objects.size == 1) return vault
-        val at = clock.instant()
+        val at = wholeSecondsNow()
         val emptied = bin.copy(groups = emptyList(), entries = emptyList())
         val records = objects.filter { it != bin.id }.map { DeletedObject(it, at) }
         return vault.copy(

@@ -6,6 +6,16 @@ All notable changes to this project are documented in this file. The format is b
 
 ## [Unreleased]
 
+## [1.8.3] - 2026-10-19
+
+Synchronisation is still off until it is turned on in the cloud assistant.
+
+### Fixed
+
+- Vaults: new and edited items get times in whole seconds, as the KDBX file stores them; before, the same version read back from the cloud looked different and a merge kept a duplicate of it in the entry's history.
+- Synchronisation: a local file replaced by another program (Syncthing, say) before KeyNexa looked at it again is no longer uploaded as it is; the round waits until it has been merged.
+- Synchronisation: when the synchronisation id cannot be saved in the vault, nothing is uploaded (before, the file could go up under an id it did not carry, and the other devices would refuse it as another vault); an id already in the vault is never replaced.
+
 ## [1.8.2] - 2026-10-19
 
 The desktop app does not change. The offline edition does not change either.

@@ -493,12 +493,14 @@ class VaultSession(
                 is MergeResult.Unmergeable -> return Absorbed.Unreadable
             }
         if (merged == open.current) {
-            val file = readLocalFile(open.vault.location) ?: return Absorbed.SaveFailed
+            // Only the file this session last loaded or saved may be uploaded; one changed by another program is
+            // folded in by the next look for outside changes first.
+            val file = ownFile(open.vault.location, open.loaded.fingerprint) ?: return Absorbed.Postponed
             return Absorbed.Merged(file, remoteLacksLocal = merged != remote)
         }
         val (savedState, outcome) = claimAndSave(open.current, merged, secrets) ?: return Absorbed.Postponed
         if (outcome !is SaveOutcome.Saved) return Absorbed.SaveFailed
-        val file = readLocalFile(savedState.vault.location) ?: return Absorbed.SaveFailed
+        val file = ownFile(savedState.vault.location, outcome.loaded.fingerprint) ?: return Absorbed.Postponed
         // The open vault becomes what the file now holds (it keeps whole seconds), otherwise the next absorb would see
         // a difference in the time resolution alone and rewrite the file again. Reuses the notice the apps already
         // show for a version written elsewhere.
@@ -531,14 +533,18 @@ class VaultSession(
         val open = mutableState.value as? SessionState.Open ?: return false
         val secrets = credentials ?: return false
         if (!open.isIdle) return false
-        if (SyncIds.readCustomData(customDataOf(open.current)) == id) return true
+        // An id already there (one an adoption just brought, or a malformed one) is never replaced.
+        val existing =
+            open.current.meta.customData[SyncIds.KEY]
+                ?.value
+        if (existing != null) return existing == id
         val updated =
             open.current.copy(
                 meta =
                     open.current.meta.copy(
                         customData =
                             open.current.meta.customData +
-                                (SyncIds.KEY to CustomDataValue(id, Instant.ofEpochMilli(now()))),
+                                (SyncIds.KEY to CustomDataValue(id, Instant.ofEpochSecond(now() / MILLIS_PER_SECOND))),
                     ),
             )
         val (_, outcome) = claimAndSave(open.current, updated, secrets) ?: return false
@@ -590,9 +596,14 @@ class VaultSession(
             null
         }
 
-    private fun readLocalFile(location: VaultLocation): SyncFile? =
+    // The file at [location] when it still holds exactly the bytes with [fingerprint]; null when it cannot be read or
+    // another program replaced it in the meantime.
+    private fun ownFile(
+        location: VaultLocation,
+        fingerprint: Fingerprint,
+    ): SyncFile? =
         try {
-            SyncFile(storage.read(location))
+            SyncFile(storage.read(location)).takeIf { it.fingerprint == fingerprint }
         } catch (_: IOException) {
             null
         }
@@ -995,6 +1006,8 @@ class VaultSession(
 
 /** How often the cheap metadata comparison is backed by a full read of the vault file. */
 private const val FULL_CHECK_INTERVAL_MILLIS = 60_000L
+
+private const val MILLIS_PER_SECOND = 1_000L
 
 /** How long the calls that hand work to the session's executor wait for their answer (ADR-0009). */
 private const val DEFAULT_EXECUTOR_WAIT_MILLIS = 2L * 60L * 1_000L

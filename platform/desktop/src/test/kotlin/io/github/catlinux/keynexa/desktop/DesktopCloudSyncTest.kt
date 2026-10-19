@@ -234,7 +234,7 @@ private class CountingLocal(
         expect: Expect,
     ): Absorbed = Absorbed.Merged(SyncFile(bytes), remoteLacksLocal = false)
 
-    override fun assignSyncId(id: String) = Unit
+    override fun assignSyncId(id: String): Boolean = true
 
     /** Lets the first round finish. */
     fun release() = gate.countDown()

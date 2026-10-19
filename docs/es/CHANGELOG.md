@@ -6,6 +6,16 @@ Todos los cambios notables de este proyecto se documentan en este archivo. El fo
 
 ## [Sin publicar]
 
+## [1.8.3] - 2026-10-19
+
+La sincronización sigue apagada hasta que se activa en el asistente de la nube.
+
+### Corregido
+
+- Bóvedas: los elementos nuevos y editados reciben horas en segundos enteros, como las guarda el archivo KDBX; antes, la misma versión leída de vuelta desde la nube parecía distinta y una fusión dejaba un duplicado en el historial de la entrada.
+- Sincronización: un archivo local que otro programa (Syncthing, por ejemplo) ha sustituido antes de que KeyNexa lo vuelva a mirar ya no se sube tal cual; la vuelta espera a que se haya fusionado.
+- Sincronización: si el id de sincronización no se puede guardar en la bóveda, no se sube nada (antes el archivo podía subir con un id que no llevaba y los demás dispositivos lo rechazarían como otra bóveda); un id que ya está en la bóveda nunca se sustituye.
+
 ## [1.8.2] - 2026-10-19
 
 La app de escritorio no cambia. La edición offline tampoco.
