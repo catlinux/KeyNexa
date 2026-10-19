@@ -82,7 +82,7 @@ internal val TrashIcon: ImageVector by lazy {
 }
 
 /** One icon of the panel, on the 24 dp grid, drawn with round strokes and no fill. */
-private fun icon(
+internal fun icon(
     name: String,
     paths: List<String>,
 ): ImageVector {

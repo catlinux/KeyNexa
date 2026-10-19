@@ -50,12 +50,13 @@ import io.github.catlinux.keynexa.desktop.app.generated.resources.entry_move_to
 import io.github.catlinux.keynexa.desktop.app.generated.resources.group_delete_confirm
 import io.github.catlinux.keynexa.desktop.app.generated.resources.group_delete_message
 import io.github.catlinux.keynexa.desktop.app.generated.resources.group_delete_title
+import io.github.catlinux.keynexa.desktop.app.generated.resources.group_edit
+import io.github.catlinux.keynexa.desktop.app.generated.resources.group_edit_confirm
+import io.github.catlinux.keynexa.desktop.app.generated.resources.group_edit_title
 import io.github.catlinux.keynexa.desktop.app.generated.resources.group_new_group
 import io.github.catlinux.keynexa.desktop.app.generated.resources.group_new_group_create
 import io.github.catlinux.keynexa.desktop.app.generated.resources.group_new_group_name
 import io.github.catlinux.keynexa.desktop.app.generated.resources.group_new_group_title
-import io.github.catlinux.keynexa.desktop.app.generated.resources.group_rename
-import io.github.catlinux.keynexa.desktop.app.generated.resources.group_rename_title
 import io.github.catlinux.keynexa.desktop.app.generated.resources.move_to_bin
 import io.github.catlinux.keynexa.desktop.app.generated.resources.move_to_empty
 import io.github.catlinux.keynexa.desktop.app.generated.resources.move_to_title
@@ -78,7 +79,7 @@ internal fun actionLabel(action: NodeAction): String =
     stringResource(
         when (action) {
             NodeAction.NewSubgroup -> Res.string.group_new_group
-            NodeAction.Rename -> Res.string.group_rename
+            NodeAction.Rename -> Res.string.group_edit
             NodeAction.MoveTo -> Res.string.entry_move_to
             NodeAction.MoveToBin -> Res.string.move_to_bin
             NodeAction.Edit -> Res.string.entry_detail_edit
@@ -145,9 +146,10 @@ internal fun VaultPromptDialogs(
                 title = stringResource(Res.string.group_new_group_title),
                 confirm = stringResource(Res.string.group_new_group_create),
                 initial = "",
-                onConfirm = { name ->
+                initialIcon = DEFAULT_GROUP_ICON,
+                onConfirm = { name, icon ->
                     view.dismissPrompt()
-                    view.save { current -> VaultEditor().addGroup(current, prompt.parentId, name) }
+                    view.save { current -> VaultEditor().addGroup(current, prompt.parentId, name, icon) }
                 },
                 onDismiss = view::dismissPrompt,
                 modifier = modifier,
@@ -155,12 +157,13 @@ internal fun VaultPromptDialogs(
         is VaultPrompt.RenameGroup -> {
             val group = vault.root.findGroup(prompt.groupId)
             NameGroupDialog(
-                title = stringResource(Res.string.group_rename_title),
-                confirm = stringResource(Res.string.group_rename),
+                title = stringResource(Res.string.group_edit_title),
+                confirm = stringResource(Res.string.group_edit_confirm),
                 initial = group?.name.orEmpty(),
-                onConfirm = { name ->
+                initialIcon = group?.icon?.standardId ?: DEFAULT_GROUP_ICON,
+                onConfirm = { name, icon ->
                     view.dismissPrompt()
-                    view.save { current -> VaultEditor().renameGroup(current, prompt.groupId, name) }
+                    view.save { current -> VaultEditor().editGroup(current, prompt.groupId, name, icon) }
                 },
                 onDismiss = view::dismissPrompt,
                 modifier = modifier,
@@ -253,35 +256,40 @@ private fun nameOf(
             ?.title
             .orEmpty()
 
-/** A dialog that asks for the name of a group. */
+/** A dialog that asks for the name and the icon of a group. */
 @Composable
 @Suppress("LongParameterList")
 private fun NameGroupDialog(
     title: String,
     confirm: String,
     initial: String,
-    onConfirm: (String) -> Unit,
+    initialIcon: Int,
+    onConfirm: (String, Int) -> Unit,
     onDismiss: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     var name by remember { mutableStateOf(initial) }
+    var icon by remember { mutableStateOf(initialIcon) }
     AlertDialog(
         onDismissRequest = onDismiss,
         modifier = modifier,
         title = { Text(text = title) },
         text = {
-            OutlinedTextField(
-                value = name,
-                onValueChange = { name = it },
-                label = { Text(text = stringResource(Res.string.group_new_group_name)) },
-                singleLine = true,
-                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
-                keyboardActions = KeyboardActions(onDone = { if (name.isNotBlank()) onConfirm(name.trim()) }),
-                modifier = Modifier.fillMaxWidth(),
-            )
+            Column(verticalArrangement = Arrangement.spacedBy(PromptGap * 2)) {
+                OutlinedTextField(
+                    value = name,
+                    onValueChange = { name = it },
+                    label = { Text(text = stringResource(Res.string.group_new_group_name)) },
+                    singleLine = true,
+                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+                    keyboardActions = KeyboardActions(onDone = { if (name.isNotBlank()) onConfirm(name.trim(), icon) }),
+                    modifier = Modifier.fillMaxWidth(),
+                )
+                GroupIconPicker(selected = icon, onSelect = { icon = it })
+            }
         },
         confirmButton = {
-            TextButton(onClick = { onConfirm(name.trim()) }, enabled = name.isNotBlank()) {
+            TextButton(onClick = { onConfirm(name.trim(), icon) }, enabled = name.isNotBlank()) {
                 Text(text = confirm)
             }
         },

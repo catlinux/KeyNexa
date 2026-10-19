@@ -68,10 +68,12 @@
     <string name="search_clear">Clear</string>
     <string name="search_no_results">Nothing matches that search.</string>
     <string name="entries_empty">No entries in this group.</string>
-    <string name="entries_column_title">Title</string>
-    <string name="entries_column_user">User name</string>
-    <string name="entries_column_web">Web</string>
-    <string name="entries_column_modified">Modified</string>
+    <plurals name="entries_header">
+        <item quantity="one">%1$s · %2$d entry</item>
+        <item quantity="other">%1$s · %2$d entries</item>
+    </plurals>
+    <string name="entries_sort_title">By name</string>
+    <string name="entries_sort_modified">By date</string>
 
     <string name="entry_detail_user_name">User name</string>
     <string name="entry_detail_password">Password</string>
@@ -161,11 +163,20 @@
     <string name="entry_detail_delete_title">Delete this entry?</string>
     <string name="entry_detail_delete_message">The entry moves to the recycle bin; you can restore it from there.</string>
     <string name="entry_detail_delete_confirm">Delete</string>
-    <string name="group_rename">Rename</string>
-    <string name="group_rename_title">Rename group</string>
+    <string name="group_edit">Edit group</string>
+    <string name="group_edit_title">Edit group</string>
+    <string name="group_edit_confirm">Save</string>
     <string name="group_new_group">New group</string>
     <string name="group_new_group_title">New group</string>
     <string name="group_new_group_name">Group name</string>
+    <string name="group_icon_label">Icon</string>
+    <string name="group_icon_option">Icon %1$d</string>
+    <string name="group_icon_category_general">General</string>
+    <string name="group_icon_category_security">Security</string>
+    <string name="group_icon_category_internet">Internet</string>
+    <string name="group_icon_category_finance">Finance</string>
+    <string name="group_icon_category_devices">Devices</string>
+    <string name="group_icon_category_work">Work</string>
     <string name="group_new_group_create">Create</string>
     <string name="move_to_bin">Move to recycle bin</string>
     <string name="group_delete_title">Move this group to the recycle bin?</string>

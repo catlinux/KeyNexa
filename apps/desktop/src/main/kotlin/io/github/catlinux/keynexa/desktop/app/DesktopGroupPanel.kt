@@ -10,10 +10,12 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -46,10 +48,11 @@ private val RowPaddingStart = 8.dp
 private val RowPaddingEnd = 10.dp
 private val RowGap = 6.dp
 private val FoldWidth = 14.dp
+private val GroupIconSize = 20.dp
 private val PanelGap = 6.dp
 private const val DIVIDER_ALPHA = 0.3f
 
-/** The marks that say whether a group shows its subgroups; there are no icons on the desktop yet. */
+/** The marks that say whether a group shows its subgroups. */
 private const val FOLDED = "▸"
 private const val UNFOLDED = "▾"
 
@@ -104,7 +107,7 @@ private fun GroupBranch(
     treeChildren(group, recycleBin).forEach { child -> GroupBranch(child, depth + 1, vault, recycleBin, view) }
 }
 
-/** One row of the tree: the fold control, the name and how many entries the group holds. */
+/** One row of the tree: the fold control, the icon, the name and how many entries the group holds. */
 @Composable
 private fun GroupRow(
     group: Group,
@@ -142,6 +145,12 @@ private fun GroupRowContent(
             hasChildren = group.groups.isNotEmpty(),
             collapsed = group.id in view.collapsed,
             onClick = { view.toggleGroup(group.id) },
+        )
+        Icon(
+            imageVector = groupIconVector(group.icon.standardId),
+            contentDescription = null,
+            tint = if (selected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant,
+            modifier = Modifier.size(GroupIconSize),
         )
         Text(
             text = group.name,

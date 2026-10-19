@@ -77,6 +77,43 @@ class VaultEditorTest {
     }
 
     @Test
+    fun addingAGroupWithAnIconGivesItThatStandardIcon() {
+        val edited = editor().addGroup(editorVault(), INTERNET_ID, "Bank", iconId = BANK_ICON)
+
+        assertEquals(Icon(BANK_ICON), requireNotNull(edited.root.findGroup(id(FIRST_GENERATED_ID))).icon)
+    }
+
+    @Test
+    fun editingAGroupChangesItsNameAndIconAndModificationTime() {
+        val vault = editorVault()
+
+        val edited = editor().editGroup(vault, INTERNET_ID, "Web", BANK_ICON)
+
+        val group = requireNotNull(edited.root.findGroup(INTERNET_ID))
+        assertEquals("Web", group.name)
+        assertEquals(Icon(BANK_ICON), group.icon)
+        assertEquals(EDITED_AT, group.times.lastModified)
+    }
+
+    @Test
+    fun editingAGroupWithoutAnIconKeepsItsIcon() {
+        val vault = editorVault()
+        val before = requireNotNull(vault.root.findGroup(INTERNET_ID)).icon
+
+        val edited = editor().editGroup(vault, INTERNET_ID, "Web", iconId = null)
+
+        assertEquals(before, requireNotNull(edited.root.findGroup(INTERNET_ID)).icon)
+    }
+
+    @Test
+    fun editingAGroupToWhatItAlreadyIsChangesNothing() {
+        val vault = editorVault()
+        val group = requireNotNull(vault.root.findGroup(INTERNET_ID))
+
+        assertEquals(vault, editor().editGroup(vault, INTERNET_ID, group.name, group.icon.standardId))
+    }
+
+    @Test
     fun addingAnEntryCreatesItWithItsTitleAndTimes() {
         val vault = editorVault()
 
@@ -804,3 +841,4 @@ private const val KDBX_MINOR = 1
 private const val AES_ROUNDS = 1_000L
 private const val GITHUB_URL = "https://github.com"
 private const val CERT_ID = "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
+private const val BANK_ICON = 37

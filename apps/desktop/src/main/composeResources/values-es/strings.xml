@@ -69,10 +69,13 @@
     <string name="search_clear">Limpiar</string>
     <string name="search_no_results">Nada coincide con esa búsqueda.</string>
     <string name="entries_empty">No hay entradas en este grupo.</string>
-    <string name="entries_column_title">Título</string>
-    <string name="entries_column_user">Usuario</string>
-    <string name="entries_column_web">Web</string>
-    <string name="entries_column_modified">Modificada</string>
+    <plurals name="entries_header">
+        <item quantity="one">%1$s · %2$d entrada</item>
+        <item quantity="many">%1$s · %2$d entradas</item>
+        <item quantity="other">%1$s · %2$d entradas</item>
+    </plurals>
+    <string name="entries_sort_title">Por nombre</string>
+    <string name="entries_sort_modified">Por fecha</string>
 
     <string name="entry_detail_user_name">Usuario</string>
     <string name="entry_detail_password">Contraseña</string>
@@ -164,11 +167,20 @@
     <string name="entry_detail_delete_title">¿Eliminar esta entrada?</string>
     <string name="entry_detail_delete_message">La entrada se mueve a la papelera; puedes restaurarla desde ahí.</string>
     <string name="entry_detail_delete_confirm">Eliminar</string>
-    <string name="group_rename">Renombrar</string>
-    <string name="group_rename_title">Renombrar grupo</string>
+    <string name="group_edit">Editar grupo</string>
+    <string name="group_edit_title">Editar grupo</string>
+    <string name="group_edit_confirm">Guardar</string>
     <string name="group_new_group">Nuevo grupo</string>
     <string name="group_new_group_title">Grupo nuevo</string>
     <string name="group_new_group_name">Nombre del grupo</string>
+    <string name="group_icon_label">Icono</string>
+    <string name="group_icon_option">Icono %1$d</string>
+    <string name="group_icon_category_general">General</string>
+    <string name="group_icon_category_security">Seguridad</string>
+    <string name="group_icon_category_internet">Internet</string>
+    <string name="group_icon_category_finance">Finanzas</string>
+    <string name="group_icon_category_devices">Dispositivos</string>
+    <string name="group_icon_category_work">Trabajo</string>
     <string name="group_new_group_create">Crear</string>
     <string name="move_to_bin">Mover a la papelera</string>
     <string name="group_delete_title">¿Mover este grupo a la papelera?</string>

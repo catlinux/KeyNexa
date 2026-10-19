@@ -6,6 +6,21 @@ Todos los cambios notables de este proyecto se documentan en este archivo. El fo
 
 ## [Sin publicar]
 
+## [1.9.0] - 2026-10-19
+
+La app de Android no cambia.
+
+### Añadido
+
+- Escritorio: los grupos pueden tener un icono, a elegir entre 48 en seis categorías (general, seguridad, internet, finanzas, dispositivos, trabajo) al crear o editar un grupo. El icono se guarda como el número de icono estándar de KDBX del grupo, así que viaja con la bóveda.
+
+### Cambiado
+
+- Escritorio: la ventana se abre un 24 % más ancha (1360 dp) y los paneles laterales tienen más sitio: el árbol de grupos cabe con los iconos y el panel de detalle es más ancho.
+- Escritorio: la lista de entradas es ahora una columna de tarjetas (avatar, título y usuario, fecha) bajo una línea que dice el grupo, cuántas entradas tiene y el orden, que un clic alterna entre nombre y fecha. Sustituye a la tabla densa.
+- Escritorio: la barra de título y la barra de tareas muestran la marca de KeyNexa en lugar del icono de Java por defecto.
+- Escritorio: la opción «Renombrar» del menú de grupo pasa a ser «Editar grupo», y su diálogo también cambia el icono.
+
 ## [1.8.7] - 2026-10-19
 
 La app de Android no cambia.

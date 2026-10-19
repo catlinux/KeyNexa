@@ -20,6 +20,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.painter.BitmapPainter
+import androidx.compose.ui.graphics.toComposeImageBitmap
 import androidx.compose.ui.input.key.onPreviewKeyEvent
 import androidx.compose.ui.input.pointer.PointerEventType
 import androidx.compose.ui.input.pointer.onPointerEvent
@@ -56,6 +58,7 @@ import java.awt.FileDialog
 import java.awt.Frame
 import java.io.File
 import java.time.Instant
+import javax.imageio.ImageIO
 import javax.swing.SwingUtilities
 
 /** The file the first instance locks, so a second one knows KeyNexa is already running. */
@@ -73,12 +76,20 @@ private const val SYNC_FOCUS_MIN_MILLIS = 60_000L
 /** How often the top bar's synchronisation state line is refreshed. */
 private const val SYNC_TICK_MILLIS = 30_000L
 
-private val WindowSize = DpSize(1100.dp, 750.dp)
+private val WindowSize = DpSize(1360.dp, 780.dp)
 private val AlreadyOpenWindowSize = DpSize(380.dp, 190.dp)
 private val PanelPadding = 24.dp
 private val PanelGap = 16.dp
 private const val MIN_WINDOW_WIDTH = 800
 private const val MIN_WINDOW_HEIGHT = 560
+private const val WINDOW_ICON = "keynexa-icon.png"
+
+/** The KeyNexa mark the title bar and the taskbar show, instead of the default Java one. */
+private val windowIcon: BitmapPainter by lazy {
+    val stream =
+        checkNotNull(Thread.currentThread().contextClassLoader.getResourceAsStream(WINDOW_ICON)) { WINDOW_ICON }
+    BitmapPainter(stream.use { ImageIO.read(it) }.toComposeImageBitmap())
+}
 
 fun main() =
     application {
@@ -236,6 +247,7 @@ private fun ApplicationScope.KeyNexaWindow(
         },
         state = rememberWindowState(size = WindowSize),
         title = stringResource(Res.string.app_name),
+        icon = windowIcon,
     ) {
         window.minimumSize = Dimension(MIN_WINDOW_WIDTH, MIN_WINDOW_HEIGHT)
         val windowInfo = LocalWindowInfo.current
@@ -481,6 +493,7 @@ private fun ApplicationScope.AlreadyOpenWindow() {
         onCloseRequest = { exitApplication() },
         state = rememberWindowState(size = AlreadyOpenWindowSize),
         title = stringResource(Res.string.app_name),
+        icon = windowIcon,
     ) {
         KeyNexaTheme(darkTheme = isSystemInDarkTheme()) {
             Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {

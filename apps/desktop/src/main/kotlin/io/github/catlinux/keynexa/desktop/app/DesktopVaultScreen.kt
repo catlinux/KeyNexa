@@ -32,7 +32,7 @@ import org.jetbrains.compose.resources.stringResource
 import java.awt.Frame
 
 /** The room of the left panel, the rhythm of the status bar and how long a copy is confirmed for. */
-private val GroupPanelWidth = 240.dp
+private val GroupPanelWidth = 280.dp
 private val StatusPadding = 8.dp
 private val StatusGap = 12.dp
 private const val COPIED_MILLIS = 2_500L

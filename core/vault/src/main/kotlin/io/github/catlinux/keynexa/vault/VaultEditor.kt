@@ -45,14 +45,16 @@ class VaultEditor(
     // and a merge would then take one version for two.
     private fun wholeSecondsNow(): Instant = clock.instant().truncatedTo(ChronoUnit.SECONDS)
 
-    /** Adds an empty group named [name] inside the group [parentId]. */
+    /** Adds an empty group named [name] inside the group [parentId], with the standard icon [iconId] when given. */
     fun addGroup(
         vault: Vault,
         parentId: UUID,
         name: String,
+        iconId: Int? = null,
     ): Vault {
         val parent = requireGroup(vault, parentId)
-        val group = Group(id = newId(), name = name, times = creationTimes(wholeSecondsNow()))
+        val created = Group(id = newId(), name = name, times = creationTimes(wholeSecondsNow()))
+        val group = if (iconId == null) created else created.copy(icon = Icon(iconId))
         return vault.copy(root = vault.root.mapGroup(parent.id) { it.copy(groups = it.groups + group) })
     }
 
@@ -64,14 +66,26 @@ class VaultEditor(
         vault: Vault,
         groupId: UUID,
         name: String,
+    ): Vault = editGroup(vault, groupId, name, iconId = null)
+
+    /**
+     * Gives the group [groupId] the name [name] and, when [iconId] is not null, that standard icon (which replaces a
+     * custom icon the group had). Nothing changes, and the modification time stays, when both are already so.
+     */
+    fun editGroup(
+        vault: Vault,
+        groupId: UUID,
+        name: String,
+        iconId: Int?,
     ): Vault {
         val group = requireGroup(vault, groupId)
-        if (group.name == name) return vault
+        val icon = if (iconId == null) group.icon else Icon(iconId)
+        if (group.name == name && group.icon == icon) return vault
         val now = wholeSecondsNow()
         return vault.copy(
             root =
                 vault.root.mapGroup(group.id) {
-                    it.copy(name = name, times = it.times.copy(lastModified = now))
+                    it.copy(name = name, icon = icon, times = it.times.copy(lastModified = now))
                 },
         )
     }

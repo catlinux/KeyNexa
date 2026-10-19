@@ -81,7 +81,7 @@ import java.util.Locale
 /** The room the detail takes and the rhythm of its cards. */
 private val DetailPadding = 16.dp
 private val CardGap = 12.dp
-private val PanelWidth = 440.dp
+private val PanelWidth = 480.dp
 private const val PATH_SEPARATOR = " › "
 
 /** What separates the group and the date in the line under the title. */

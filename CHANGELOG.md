@@ -6,6 +6,21 @@ All notable changes to this project are documented in this file. The format is b
 
 ## [Unreleased]
 
+## [1.9.0] - 2026-10-19
+
+The Android app does not change.
+
+### Added
+
+- Desktop: groups can have an icon, chosen from 48 icons in six categories (general, security, internet, finance, devices, work) when creating or editing a group. The icon is stored as the standard KDBX icon number of the group, so it travels with the vault.
+
+### Changed
+
+- Desktop: the window opens about 24 % wider (1360 dp) and the side panels have more room: the group tree fits the icons and the detail panel is wider.
+- Desktop: the entry list is now a column of cards (avatar, title and user name, date) under a line that says the group, how many entries it has and the order, which a click flips between name and date. This replaces the dense table.
+- Desktop: the title bar and the taskbar show the KeyNexa mark instead of the default Java icon.
+- Desktop: the group menu item "Rename" is now "Edit group", and its dialog also changes the icon.
+
 ## [1.8.7] - 2026-10-19
 
 The Android app does not change.
