@@ -6,6 +6,14 @@ All notable changes to this project are documented in this file. The format is b
 
 ## [Unreleased]
 
+## [1.6.6] - 2026-10-19
+
+The apps do not change.
+
+### Changed
+
+- Docs: [ADR-0009](docs/decisions/0009-cloud-sync.md) gains its implementation design for synchronising through the cloud: a conditional-write probe against the user's own bucket before synchronisation can be turned on (Cloudflare R2 documents the headers; Backblaze B2 does not), the remote copy always merged before anything is uploaded, upload only what the remote copy lacks, adoption of an existing synchronisation id by root group, and a report (never an overwrite) when the cloud copy uses another master password.
+
 ## [1.6.5] - 2026-10-19
 
 The Android app does not change.

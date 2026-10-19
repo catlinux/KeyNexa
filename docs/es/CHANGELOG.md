@@ -6,6 +6,14 @@ Todos los cambios notables de este proyecto se documentan en este archivo. El fo
 
 ## [Sin publicar]
 
+## [1.6.6] - 2026-10-19
+
+Las apps no cambian.
+
+### Cambiado
+
+- Documentación: el [ADR-0009](decisions/0009-cloud-sync.md) incorpora su diseño de la implementación de la sincronización por la nube: una sonda de escritura condicional contra el bucket del propio usuario antes de poder activar la sincronización (Cloudflare R2 documenta las cabeceras; Backblaze B2 no), el objeto remoto siempre se fusiona antes de subir nada, solo se sube lo que le falta al remoto, se adopta un id de sincronización existente por el grupo raíz y, si la copia de la nube usa otra contraseña maestra, se avisa (nunca se sobrescribe).
+
 ## [1.6.5] - 2026-10-19
 
 La app de Android no cambia.
