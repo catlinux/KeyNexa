@@ -5,6 +5,7 @@
     <string name="home_empty_message">Todavía no hay ninguna bóveda en la lista. Abre un archivo KDBX que ya tengas, o crea una bóveda nueva.</string>
     <string name="home_open_existing">Abrir una bóveda existente</string>
     <string name="home_create_new">Crear una bóveda nueva</string>
+    <string name="home_bring_from_cloud">Traer una bóveda de la nube</string>
     <string name="home_remove">Quitar de la lista</string>
     <string name="home_remove_dialog_title">¿Quitar de la lista?</string>
     <string name="home_remove_dialog_message">KeyNexa dejará de mostrar «%1$s» en esta lista. El archivo de la bóveda no se borra: se queda donde está.</string>
@@ -316,6 +317,15 @@
     <string name="cloud_disconnect_confirm">Desconectar y borrar</string>
     <string name="cloud_cancel">Cancelar</string>
     <string name="cloud_close">Cerrar</string>
+    <string name="cloud_pick_loading">Cargando…</string>
+    <string name="cloud_pick_empty">No hay bóvedas sincronizadas en este servicio</string>
+    <string name="cloud_pick_failed">No se pudo leer la lista. Revisa la red y vuelve a intentarlo.</string>
+    <string name="cloud_pick_row">Bóveda %1$s</string>
+    <string name="cloud_pick_details">%1$s · %2$s</string>
+    <string name="cloud_pick_save_title">Guardar la bóveda como</string>
+    <string name="cloud_pick_exists">Ese archivo ya existe; elige un nombre nuevo</string>
+    <string name="cloud_pick_gone">Esa bóveda ya no está en el servicio</string>
+    <string name="cloud_pick_error">No se pudo descargar la bóveda. Revisa la red y vuelve a intentarlo.</string>
     <string name="cloud_reminder_title">Protege tu bóveda: guarda una copia en la nube</string>
     <string name="cloud_reminder_configure">Configurar</string>
     <string name="cloud_reminder_later">Más tarde</string>

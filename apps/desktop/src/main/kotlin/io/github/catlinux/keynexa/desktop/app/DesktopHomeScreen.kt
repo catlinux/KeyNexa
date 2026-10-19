@@ -39,6 +39,7 @@ import androidx.compose.ui.unit.dp
 import io.github.catlinux.keynexa.desktop.app.generated.resources.Res
 import io.github.catlinux.keynexa.desktop.app.generated.resources.app_name
 import io.github.catlinux.keynexa.desktop.app.generated.resources.group_settings
+import io.github.catlinux.keynexa.desktop.app.generated.resources.home_bring_from_cloud
 import io.github.catlinux.keynexa.desktop.app.generated.resources.home_cancel
 import io.github.catlinux.keynexa.desktop.app.generated.resources.home_create_new
 import io.github.catlinux.keynexa.desktop.app.generated.resources.home_empty_message
@@ -91,6 +92,7 @@ fun DesktopHomeScreen(
     onSettings: () -> Unit,
     onRemove: (KnownVault) -> Unit,
     onOpen: (KnownVault) -> Unit,
+    onBringFromCloud: (() -> Unit)? = null,
     modifier: Modifier = Modifier,
     reminder: (@Composable () -> Unit)? = null,
 ) {
@@ -119,7 +121,12 @@ fun DesktopHomeScreen(
                 }
             }
             reminder?.invoke()
-            HomeActions(onOpenExisting = onOpenExisting, onCreateNew = onCreateNew, onSettings = onSettings)
+            HomeActions(
+                onOpenExisting = onOpenExisting,
+                onCreateNew = onCreateNew,
+                onBringFromCloud = onBringFromCloud,
+                onSettings = onSettings,
+            )
         }
     }
     askedToRemove?.let { vault ->
@@ -274,6 +281,7 @@ private fun EmptyVaults(modifier: Modifier = Modifier) {
 private fun HomeActions(
     onOpenExisting: () -> Unit,
     onCreateNew: () -> Unit,
+    onBringFromCloud: (() -> Unit)?,
     onSettings: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -294,6 +302,15 @@ private fun HomeActions(
             modifier = Modifier.fillMaxWidth().heightIn(min = ActionHeight),
         ) {
             Text(text = stringResource(Res.string.home_create_new))
+        }
+        if (onBringFromCloud != null) {
+            OutlinedButton(
+                onClick = onBringFromCloud,
+                shape = RoundedCornerShape(ActionCorner),
+                modifier = Modifier.fillMaxWidth().heightIn(min = ActionHeight),
+            ) {
+                Text(text = stringResource(Res.string.home_bring_from_cloud))
+            }
         }
         OutlinedButton(
             onClick = onSettings,

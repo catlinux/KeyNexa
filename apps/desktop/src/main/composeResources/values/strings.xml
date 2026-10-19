@@ -5,6 +5,7 @@
     <string name="home_empty_message">No vault on the list yet. Choose the folder that holds a KDBX vault you already have, or create a new vault.</string>
     <string name="home_open_existing">Open existing vault</string>
     <string name="home_create_new">Create new vault</string>
+    <string name="home_bring_from_cloud">Bring a vault from the cloud</string>
     <string name="home_remove">Remove from list</string>
     <string name="home_remove_dialog_title">Remove from the list?</string>
     <string name="home_remove_dialog_message">KeyNexa will stop showing "%1$s" in this list. The vault file is not deleted: it stays where it is.</string>
@@ -311,6 +312,15 @@
     <string name="cloud_disconnect_confirm">Disconnect and delete</string>
     <string name="cloud_cancel">Cancel</string>
     <string name="cloud_close">Close</string>
+    <string name="cloud_pick_loading">Loading…</string>
+    <string name="cloud_pick_empty">There is no synchronised vault in this service</string>
+    <string name="cloud_pick_failed">Could not read the list. Check the network and try again.</string>
+    <string name="cloud_pick_row">Vault %1$s</string>
+    <string name="cloud_pick_details">%1$s · %2$s</string>
+    <string name="cloud_pick_save_title">Save the vault as</string>
+    <string name="cloud_pick_exists">That file already exists; choose a new name</string>
+    <string name="cloud_pick_gone">That vault is no longer in the service</string>
+    <string name="cloud_pick_error">The vault could not be downloaded. Check the network and try again.</string>
     <string name="cloud_reminder_title">Protect your vault: keep a copy in the cloud</string>
     <string name="cloud_reminder_configure">Set up</string>
     <string name="cloud_reminder_later">Later</string>

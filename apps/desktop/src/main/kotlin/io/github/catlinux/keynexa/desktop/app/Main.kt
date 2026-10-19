@@ -108,6 +108,7 @@ private fun ApplicationScope.KeyNexaWindow(
     var selected by remember { mutableStateOf<KnownVault?>(null) }
     var settingsOpen by remember { mutableStateOf(false) }
     var cloudOpen by remember { mutableStateOf(false) }
+    var cloudPickerOpen by remember { mutableStateOf(false) }
     var cloudConfigured by remember { mutableStateOf(false) }
     var cloudSyncState by remember { mutableStateOf(CloudSyncCardState()) }
     var reminderState by remember { mutableStateOf<ReminderState?>(null) }
@@ -139,6 +140,7 @@ private fun ApplicationScope.KeyNexaWindow(
             CloudBackupSource(open.vault) { container.readVault(open.vault.location) }
         }
     val syncEnabled = cloudSyncState.enabled
+    val canBringFromCloud = cloudConfigured && cloudSyncState.enabled
     val syncIndicator = syncIndicator(syncStatus, syncNowAt)
     val syncNow: () -> Unit = {
         val vault = openVault
@@ -313,6 +315,7 @@ private fun ApplicationScope.KeyNexaWindow(
                             syncEnabled = syncEnabled,
                             syncIndicator = syncIndicator,
                             onSyncNow = syncNow,
+                            onBringFromCloud = if (canBringFromCloud) ({ cloudPickerOpen = true }) else null,
                         )
                     }
                 }
@@ -322,6 +325,18 @@ private fun ApplicationScope.KeyNexaWindow(
                         cloudSync = container.cloudSync,
                         source = cloudSource,
                         onDismiss = { cloudOpen = false },
+                    )
+                }
+                if (cloudPickerOpen) {
+                    CloudVaultPickerDialog(
+                        cloud = container.cloud,
+                        parent = window,
+                        onDismiss = { cloudPickerOpen = false },
+                        onPicked = { vault ->
+                            container.knownVaults.add(vault)
+                            selected = vault
+                            cloudPickerOpen = false
+                        },
                     )
                 }
             }
@@ -347,6 +362,7 @@ private fun KeyNexaScreen(
     syncEnabled: Boolean,
     syncIndicator: SyncIndicator,
     onSyncNow: () -> Unit,
+    onBringFromCloud: (() -> Unit)?,
 ) {
     val unlockVault =
         when (state) {
@@ -400,6 +416,7 @@ private fun KeyNexaScreen(
                 reminder = reminder,
                 useKeypad = useKeypad,
                 parent = parent,
+                onBringFromCloud = onBringFromCloud,
             )
     }
 }
@@ -415,6 +432,7 @@ private fun KeyNexaHome(
     reminder: (@Composable () -> Unit)?,
     useKeypad: Boolean,
     parent: Frame,
+    onBringFromCloud: (() -> Unit)?,
 ) {
     var vaults by remember { mutableStateOf(knownVaults.all()) }
     var creating by remember { mutableStateOf(false) }
@@ -451,6 +469,7 @@ private fun KeyNexaHome(
                 vaults = knownVaults.all()
             },
             onOpen = onSelect,
+            onBringFromCloud = onBringFromCloud,
         )
     }
 }

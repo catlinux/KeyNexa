@@ -6,6 +6,14 @@ Todos los cambios notables de este proyecto se documentan en este archivo. El fo
 
 ## [Sin publicar]
 
+## [1.7.3] - 2026-10-19
+
+La app de Android no cambia.
+
+### Añadido
+
+- Escritorio: traer una bóveda de la nube desde la pantalla de inicio.
+
 ## [1.7.2] - 2026-10-19
 
 La app de Android no cambia.

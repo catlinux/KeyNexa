@@ -340,7 +340,7 @@ private fun startCreating(
 }
 
 /** Asks where the new vault goes, with the file name the vault name suggests; null when the user cancels. */
-private fun chooseNewVaultFile(
+internal fun chooseNewVaultFile(
     parent: Frame,
     title: String,
     suggestedName: String,

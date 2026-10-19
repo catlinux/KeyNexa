@@ -6,6 +6,14 @@ All notable changes to this project are documented in this file. The format is b
 
 ## [Unreleased]
 
+## [1.7.3] - 2026-10-19
+
+The Android app does not change.
+
+### Added
+
+- Desktop: Bring a vault from the cloud on the home screen.
+
 ## [1.7.2] - 2026-10-19
 
 The Android app does not change.

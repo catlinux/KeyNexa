@@ -72,6 +72,8 @@ Con la sincronización activada, la nube guarda un objeto cifrado por bóveda. K
 
 La sincronización se ejecuta tras un guardado, al desbloquear una bóveda y al recuperar el foco la ventana, como mucho una vez por minuto.
 
+Un dispositivo sin copia local usa **Traer una bóveda de la nube** en la pantalla de inicio (aparece cuando la sincronización está activada), elige una bóveda sincronizada de la lista (el nombre está cifrado, así que solo se muestran el principio de su identificador, su tamaño y su fecha), elige dónde guardarla y la desbloquea como siempre; nunca se sobrescribe un archivo que ya exista.
+
 ## Borrar las copias
 
 **Desconectar y borrar** quita las credenciales y la marca del consentimiento de este dispositivo, pero no borra las copias ya subidas: bórralas desde el propio servicio (en su consola web o su herramienta). La guía de cada proveedor explica dónde.
