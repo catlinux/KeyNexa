@@ -225,49 +225,54 @@ private fun ApplicationScope.KeyNexaWindow(
                     Theme.Dark -> true
                 },
         ) {
-            Surface(
-                modifier =
-                    Modifier
-                        .fillMaxSize()
-                        .onPointerEvent(PointerEventType.Move) { idle.restart() }
-                        .onPointerEvent(PointerEventType.Press) { idle.restart() }
-                        .onPointerEvent(PointerEventType.Scroll) { idle.restart() }
-                        .onPreviewKeyEvent {
-                            idle.restart()
-                            false
-                        },
-                color = MaterialTheme.colorScheme.background,
+            // Material's default dialog surface is lilac; the desktop dialogs use KeyNexa's own surface colour.
+            MaterialTheme(
+                colorScheme = MaterialTheme.colorScheme.copy(surfaceContainerHigh = MaterialTheme.colorScheme.surface),
             ) {
-                if (settingsOpen) {
-                    DesktopSettingsScreen(
-                        settings = settings,
-                        onUpdate = container::updateSettings,
-                        onBack = { settingsOpen = false },
-                        cloudConfigured = cloudConfigured,
-                        onOpenCloud = { cloudOpen = true },
-                    )
-                } else {
-                    KeyNexaScreen(
-                        session = session,
-                        state = state,
-                        knownVaults = container.knownVaults,
-                        selected = selected,
-                        onSelect = { selected = it },
-                        onLock = lockNow,
-                        onSettings = { settingsOpen = true },
-                        reminder = reminder,
-                        view = view,
-                        useKeypad = settings.useKeypad,
-                        parent = window,
+                Surface(
+                    modifier =
+                        Modifier
+                            .fillMaxSize()
+                            .onPointerEvent(PointerEventType.Move) { idle.restart() }
+                            .onPointerEvent(PointerEventType.Press) { idle.restart() }
+                            .onPointerEvent(PointerEventType.Scroll) { idle.restart() }
+                            .onPreviewKeyEvent {
+                                idle.restart()
+                                false
+                            },
+                    color = MaterialTheme.colorScheme.background,
+                ) {
+                    if (settingsOpen) {
+                        DesktopSettingsScreen(
+                            settings = settings,
+                            onUpdate = container::updateSettings,
+                            onBack = { settingsOpen = false },
+                            cloudConfigured = cloudConfigured,
+                            onOpenCloud = { cloudOpen = true },
+                        )
+                    } else {
+                        KeyNexaScreen(
+                            session = session,
+                            state = state,
+                            knownVaults = container.knownVaults,
+                            selected = selected,
+                            onSelect = { selected = it },
+                            onLock = lockNow,
+                            onSettings = { settingsOpen = true },
+                            reminder = reminder,
+                            view = view,
+                            useKeypad = settings.useKeypad,
+                            parent = window,
+                        )
+                    }
+                }
+                if (cloudOpen) {
+                    DesktopCloudDialog(
+                        cloud = container.cloud,
+                        source = cloudSource,
+                        onDismiss = { cloudOpen = false },
                     )
                 }
-            }
-            if (cloudOpen) {
-                DesktopCloudDialog(
-                    cloud = container.cloud,
-                    source = cloudSource,
-                    onDismiss = { cloudOpen = false },
-                )
             }
         }
     }

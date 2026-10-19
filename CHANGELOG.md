@@ -6,6 +6,14 @@ All notable changes to this project are documented in this file. The format is b
 
 ## [Unreleased]
 
+## [1.6.5] - 2026-10-19
+
+The Android app does not change.
+
+### Changed
+
+- Desktop: dialogs use KeyNexa's surface colour instead of Material's default lilac (compiled and checked by the tests, not yet seen on screen).
+
 ## [1.6.4] - 2026-10-19
 
 The Android app does not change.

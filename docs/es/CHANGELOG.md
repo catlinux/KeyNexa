@@ -6,6 +6,14 @@ Todos los cambios notables de este proyecto se documentan en este archivo. El fo
 
 ## [Sin publicar]
 
+## [1.6.5] - 2026-10-19
+
+La app de Android no cambia.
+
+### Cambiado
+
+- Escritorio: los diálogos usan el color de superficie de KeyNexa en lugar del lila por defecto de Material (compilado y con las pruebas en verde, aún sin verlo en pantalla).
+
 ## [1.6.4] - 2026-10-19
 
 La app de Android no cambia.
