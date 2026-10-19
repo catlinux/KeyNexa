@@ -6,6 +6,14 @@ Todos los cambios notables de este proyecto se documentan en este archivo. El fo
 
 ## [Sin publicar]
 
+## [1.9.4] - 2026-10-19
+
+La app de Android no cambia.
+
+### Añadido
+
+- Escritorio: el modelo y la pantalla de ajustes incorporan las opciones del desbloqueo rápido del [ADR-0014](decisions/0014-windows-hello-quick-unlock.md) (activado o no, y 1, 4, 8 o 24 horas). La sección queda oculta hasta que la próxima versión la conecte.
+
 ## [1.9.3] - 2026-10-19
 
 Las apps no cambian.

@@ -231,6 +231,9 @@
     <string name="settings_allow_screenshots_help">Si está desactivado, la ventana no se puede capturar ni grabar. Recomendado.</string>
     <string name="settings_password_keypad">Escribir las contraseñas con el teclado de KeyNexa</string>
     <string name="settings_password_keypad_help">La contraseña maestra se escribe con un teclado dibujado por KeyNexa, así que el teclado del sistema nunca la ve. Puedes pasar al teclado del sistema en la pantalla de desbloqueo cuando quieras.</string>
+    <string name="settings_quick_unlock">Desbloquear con Windows Hello</string>
+    <string name="settings_quick_unlock_help">Quien sepa tu PIN de Windows podrá abrir la bóveda hasta que pase este tiempo.</string>
+    <string name="settings_quick_unlock_after">Pedir de nuevo la contraseña maestra tras</string>
     <string name="settings_section_clipboard">Portapapeles</string>
     <string name="settings_clipboard_delay">Tiempo que un secreto copiado queda en el portapapeles</string>
     <string name="settings_clipboard_note">Al bloquear la bóveda o al salir de la aplicación el portapapeles se borra siempre.</string>
@@ -244,6 +247,11 @@
         <item quantity="one">%1$d segundo</item>
         <item quantity="many">%1$d segundos</item>
         <item quantity="other">%1$d segundos</item>
+    </plurals>
+    <plurals name="settings_hours">
+        <item quantity="one">%1$d hora</item>
+        <item quantity="many">%1$d horas</item>
+        <item quantity="other">%1$d horas</item>
     </plurals>
     <string name="settings_section_modes">Modos</string>
     <string name="settings_mode_local">Solo local</string>

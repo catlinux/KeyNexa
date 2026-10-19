@@ -21,6 +21,10 @@ data class DesktopSettings(
     /** Use the KeyNexa keypad instead of the system keyboard. */
     val useKeypad: Boolean = false,
     val theme: Theme = Theme.System,
+    /** Let the Windows Hello PIN open the vault again while the app keeps running (ADR-0014). */
+    val quickUnlock: Boolean = false,
+    /** Hours a quick unlock stays valid after it was armed; unlocking again does not extend it. */
+    val quickUnlockHours: Int = DEFAULT_QUICK_UNLOCK_HOURS,
 ) {
     companion object {
         /** The idle minutes a client offers, 0 meaning never. */
@@ -29,7 +33,11 @@ data class DesktopSettings(
         /** The seconds a copied secret may stay, 0 meaning never. */
         val CLIPBOARD_CLEAR_CHOICES = listOf(10, 30, 60, 120, 0)
 
+        /** The hours a quick unlock may stay valid. */
+        val QUICK_UNLOCK_HOURS_CHOICES = listOf(1, 4, 8, 24)
+
         const val DEFAULT_LOCK_AFTER_IDLE = 5
         const val DEFAULT_CLIPBOARD_CLEAR = 30
+        const val DEFAULT_QUICK_UNLOCK_HOURS = 8
     }
 }

@@ -6,6 +6,14 @@ All notable changes to this project are documented in this file. The format is b
 
 ## [Unreleased]
 
+## [1.9.4] - 2026-10-19
+
+The Android app does not change.
+
+### Added
+
+- Desktop: the settings model and screen gain the quick-unlock options of [ADR-0014](docs/decisions/0014-windows-hello-quick-unlock.md) (on or off, and 1, 4, 8 or 24 hours). The section stays hidden until the next version connects it.
+
 ## [1.9.3] - 2026-10-19
 
 The apps do not change.

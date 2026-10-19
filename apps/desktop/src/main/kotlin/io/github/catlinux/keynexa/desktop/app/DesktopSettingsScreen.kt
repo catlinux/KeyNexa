@@ -40,6 +40,7 @@ import io.github.catlinux.keynexa.desktop.app.generated.resources.settings_auto_
 import io.github.catlinux.keynexa.desktop.app.generated.resources.settings_back
 import io.github.catlinux.keynexa.desktop.app.generated.resources.settings_clipboard_delay
 import io.github.catlinux.keynexa.desktop.app.generated.resources.settings_clipboard_note
+import io.github.catlinux.keynexa.desktop.app.generated.resources.settings_hours
 import io.github.catlinux.keynexa.desktop.app.generated.resources.settings_lock_on_suspend
 import io.github.catlinux.keynexa.desktop.app.generated.resources.settings_lock_on_windows_lock
 import io.github.catlinux.keynexa.desktop.app.generated.resources.settings_minutes
@@ -56,6 +57,9 @@ import io.github.catlinux.keynexa.desktop.app.generated.resources.settings_never
 import io.github.catlinux.keynexa.desktop.app.generated.resources.settings_no_lock_warning
 import io.github.catlinux.keynexa.desktop.app.generated.resources.settings_password_keypad
 import io.github.catlinux.keynexa.desktop.app.generated.resources.settings_password_keypad_help
+import io.github.catlinux.keynexa.desktop.app.generated.resources.settings_quick_unlock
+import io.github.catlinux.keynexa.desktop.app.generated.resources.settings_quick_unlock_after
+import io.github.catlinux.keynexa.desktop.app.generated.resources.settings_quick_unlock_help
 import io.github.catlinux.keynexa.desktop.app.generated.resources.settings_seconds
 import io.github.catlinux.keynexa.desktop.app.generated.resources.settings_section_appearance
 import io.github.catlinux.keynexa.desktop.app.generated.resources.settings_section_clipboard
@@ -104,6 +108,7 @@ internal fun DesktopSettingsScreen(
     cloudConfigured: Boolean = false,
     onOpenCloud: (() -> Unit)? = null,
     cloudSyncState: CloudSyncCardState = CloudSyncCardState(),
+    quickUnlockSupported: Boolean = false,
 ) {
     Column(
         modifier =
@@ -129,7 +134,7 @@ internal fun DesktopSettingsScreen(
             }
         }
         AppearanceSection(settings = settings, onUpdate = onUpdate)
-        SecuritySection(settings = settings, onUpdate = onUpdate)
+        SecuritySection(settings = settings, onUpdate = onUpdate, quickUnlockSupported = quickUnlockSupported)
         ClipboardSection(settings = settings, onUpdate = onUpdate)
         ModesSection(cloudConfigured = cloudConfigured, cloudSyncState = cloudSyncState, onOpenCloud = onOpenCloud)
     }
@@ -158,6 +163,7 @@ private fun AppearanceSection(
 private fun SecuritySection(
     settings: DesktopSettings,
     onUpdate: ((DesktopSettings) -> DesktopSettings) -> Unit,
+    quickUnlockSupported: Boolean,
 ) {
     SettingsCard(title = stringResource(Res.string.settings_section_security)) {
         SectionLabel(text = stringResource(Res.string.settings_auto_lock))
@@ -192,6 +198,32 @@ private fun SecuritySection(
             help = stringResource(Res.string.settings_password_keypad_help),
             checked = settings.useKeypad,
             onCheckedChange = { value -> onUpdate { it.copy(useKeypad = value) } },
+        )
+        if (quickUnlockSupported) {
+            QuickUnlockChoices(settings = settings, onUpdate = onUpdate)
+        }
+    }
+}
+
+/** The Windows Hello quick unlock, shown only on machines where the signer reports support (ADR-0014). */
+@Composable
+private fun QuickUnlockChoices(
+    settings: DesktopSettings,
+    onUpdate: ((DesktopSettings) -> DesktopSettings) -> Unit,
+) {
+    SwitchRow(
+        label = stringResource(Res.string.settings_quick_unlock),
+        help = stringResource(Res.string.settings_quick_unlock_help),
+        checked = settings.quickUnlock,
+        onCheckedChange = { value -> onUpdate { it.copy(quickUnlock = value) } },
+    )
+    if (!settings.quickUnlock) return
+    SectionLabel(text = stringResource(Res.string.settings_quick_unlock_after))
+    DesktopSettings.QUICK_UNLOCK_HOURS_CHOICES.forEach { hours ->
+        ChoiceRow(
+            label = hoursLabel(hours),
+            selected = settings.quickUnlockHours == hours,
+            onSelect = { onUpdate { it.copy(quickUnlockHours = hours) } },
         )
     }
 }
@@ -430,6 +462,10 @@ private fun amountLabel(
             pluralStringResource(unit, label.value, label.value)
         }
     }
+
+/** The label of an amount of hours. */
+@Composable
+private fun hoursLabel(hours: Int): String = pluralStringResource(Res.plurals.settings_hours, hours, hours)
 
 /** The label of one theme. */
 @Composable

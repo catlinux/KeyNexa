@@ -98,4 +98,51 @@ class DesktopSettingsStoreTest {
         assertEquals(0, loaded.lockAfterIdleMinutes)
         assertEquals(0, loaded.clipboardClearSeconds)
     }
+
+    @Test
+    fun quickUnlockSurvivesTheRoundTrip() {
+        val store = store()
+
+        store.save(DesktopSettings(quickUnlock = true, quickUnlockHours = 24))
+
+        val loaded = store.load()
+        assertEquals(true, loaded.quickUnlock)
+        assertEquals(24, loaded.quickUnlockHours)
+    }
+
+    @Test
+    fun anInvalidQuickUnlockHoursFallsBackOnItsOwn() {
+        val file = folder.root.toPath().resolve("settings.properties")
+        Files.write(
+            file,
+            listOf(
+                "quickUnlock=true",
+                "quickUnlockHours=7",
+            ).joinToString("\n").toByteArray(),
+        )
+
+        val loaded = DesktopSettingsStore(file).load()
+
+        assertEquals(true, loaded.quickUnlock)
+        assertEquals(DesktopSettings.DEFAULT_QUICK_UNLOCK_HOURS, loaded.quickUnlockHours)
+    }
+
+    @Test
+    fun anOldFileWithoutTheQuickUnlockKeysGivesTheirDefaults() {
+        val file = folder.root.toPath().resolve("settings.properties")
+        Files.write(
+            file,
+            listOf(
+                "lockAfterIdleMinutes=30",
+                "theme=Dark",
+            ).joinToString("\n").toByteArray(),
+        )
+
+        val loaded = DesktopSettingsStore(file).load()
+
+        assertEquals(30, loaded.lockAfterIdleMinutes)
+        assertEquals(Theme.Dark, loaded.theme)
+        assertEquals(false, loaded.quickUnlock)
+        assertEquals(DesktopSettings.DEFAULT_QUICK_UNLOCK_HOURS, loaded.quickUnlockHours)
+    }
 }

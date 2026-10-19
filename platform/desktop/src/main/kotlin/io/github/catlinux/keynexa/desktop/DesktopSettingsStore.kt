@@ -14,6 +14,8 @@ private const val ALLOW_SCREENSHOTS = "allowScreenshots"
 private const val CLIPBOARD_CLEAR_SECONDS = "clipboardClearSeconds"
 private const val USE_KEYPAD = "useKeypad"
 private const val THEME = "theme"
+private const val QUICK_UNLOCK = "quickUnlock"
+private const val QUICK_UNLOCK_HOURS = "quickUnlockHours"
 
 /**
  * The desktop settings, kept as a plain properties file written in UTF-8 and put in place atomically.
@@ -55,6 +57,14 @@ class DesktopSettingsStore(
                 ),
             useKeypad = flag(properties, USE_KEYPAD, default = false),
             theme = theme(properties),
+            quickUnlock = flag(properties, QUICK_UNLOCK, default = false),
+            quickUnlockHours =
+                choice(
+                    properties,
+                    QUICK_UNLOCK_HOURS,
+                    DesktopSettings.QUICK_UNLOCK_HOURS_CHOICES,
+                    DesktopSettings.DEFAULT_QUICK_UNLOCK_HOURS,
+                ),
         )
     }
 
@@ -69,6 +79,8 @@ class DesktopSettingsStore(
                 CLIPBOARD_CLEAR_SECONDS to settings.clipboardClearSeconds.toString(),
                 USE_KEYPAD to settings.useKeypad.toString(),
                 THEME to settings.theme.name,
+                QUICK_UNLOCK to settings.quickUnlock.toString(),
+                QUICK_UNLOCK_HOURS to settings.quickUnlockHours.toString(),
             )
         val text =
             buildString {

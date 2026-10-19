@@ -227,6 +227,9 @@
     <string name="settings_allow_screenshots_help">If it is off, the window cannot be captured or recorded. Recommended.</string>
     <string name="settings_password_keypad">Type passwords with the KeyNexa keypad</string>
     <string name="settings_password_keypad_help">The master password is typed with a keypad drawn by KeyNexa, so the system keyboard never sees it. You can switch to the system keyboard on the unlock screen at any time.</string>
+    <string name="settings_quick_unlock">Unlock with Windows Hello</string>
+    <string name="settings_quick_unlock_help">Anyone who knows your Windows PIN can open the vault until this time passes.</string>
+    <string name="settings_quick_unlock_after">Ask for the master password again after</string>
     <string name="settings_section_clipboard">Clipboard</string>
     <string name="settings_clipboard_delay">How long a copied secret stays on the clipboard</string>
     <string name="settings_clipboard_note">Locking the vault or leaving the app always clears the clipboard.</string>
@@ -238,6 +241,10 @@
     <plurals name="settings_seconds">
         <item quantity="one">%1$d second</item>
         <item quantity="other">%1$d seconds</item>
+    </plurals>
+    <plurals name="settings_hours">
+        <item quantity="one">%1$d hour</item>
+        <item quantity="other">%1$d hours</item>
     </plurals>
     <string name="settings_section_modes">Modes</string>
     <string name="settings_mode_local">Local only</string>
