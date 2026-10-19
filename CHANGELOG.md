@@ -6,6 +6,14 @@ All notable changes to this project are documented in this file. The format is b
 
 ## [Unreleased]
 
+## [1.9.1] - 2026-10-19
+
+The apps do not change.
+
+### Added
+
+- Docs: [ADR-0014](docs/decisions/0014-windows-hello-quick-unlock.md) (proposed) designs the quick unlock with Windows Hello on the desktop: a documented Hello key credential (`KeyCredentialManager`) through JNA, the pre-KDF key components kept only in memory and encrypted under a key derived from a Hello signature, a limit of 1 to 24 hours, and the master password always asked for at the first unlock after starting the app. Threat T28 is added to the threat model.
+
 ## [1.9.0] - 2026-10-19
 
 The Android app does not change.

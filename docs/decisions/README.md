@@ -19,5 +19,6 @@ Each record explains one important decision: context, options, decision and cons
 | [0011](0011-repository-layout.md) | Repository layout for several clients and a single product version | Accepted |
 | [0012](0012-windows-desktop-client.md) | Windows desktop client | Accepted |
 | [0013](0013-device-sync.md) | Synchronisation between devices without Syncthing | Accepted |
+| [0014](0014-windows-hello-quick-unlock.md) | Quick unlock with Windows Hello on the desktop: secret only in memory, documented Hello key | Proposed |
 
 Template for new records: `docs/decisions/NNNN-short-title.md` and its translation `docs/es/decisions/NNNN-short-title.md`, with the sections *Context*, *Options*, *Decision*, *Consequences*.

@@ -6,6 +6,14 @@ Todos los cambios notables de este proyecto se documentan en este archivo. El fo
 
 ## [Sin publicar]
 
+## [1.9.1] - 2026-10-19
+
+Las apps no cambian.
+
+### Añadido
+
+- Docs: el [ADR-0014](decisions/0014-windows-hello-quick-unlock.md) (propuesta) diseña el desbloqueo rápido con Windows Hello en el escritorio: una credencial de clave de Hello documentada (`KeyCredentialManager`) mediante JNA, los componentes de la clave anteriores a la KDF guardados solo en memoria y cifrados con una clave derivada de una firma de Hello, un límite de 1 a 24 horas y la contraseña maestra siempre en el primer desbloqueo tras abrir la app. Se añade la amenaza T28 al modelo de amenazas.
+
 ## [1.9.0] - 2026-10-19
 
 La app de Android no cambia.
