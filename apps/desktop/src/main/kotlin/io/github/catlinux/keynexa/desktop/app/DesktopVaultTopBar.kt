@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
@@ -49,6 +50,9 @@ private val TopBarPadding = 10.dp
 private val BarPadding = 12.dp
 private val BarGap = 10.dp
 private val VaultNameWidth = 220.dp
+
+/** The narrowest the search box gets, so the buttons beside it never squeeze its hint onto two lines. */
+private val SearchMinWidth = 160.dp
 private val ControlHeight = 44.dp
 private val ControlShape = RoundedCornerShape(12.dp)
 private const val QUIET_ALPHA = 0.85f
@@ -94,12 +98,10 @@ internal fun VaultTopBar(
                     hasUnsavedChanges = state.hasUnsavedChanges,
                     problem = state.saveProblem,
                 )
+                if (syncEnabled) SyncIndicatorLabel(indicator = syncIndicator)
             }
-            SearchField(view = view, modifier = Modifier.weight(1f))
-            if (syncEnabled) {
-                SyncIndicatorLabel(indicator = syncIndicator)
-                SyncNowButton(onSyncNow = onSyncNow)
-            }
+            SearchField(view = view, modifier = Modifier.weight(1f).widthIn(min = SearchMinWidth))
+            if (syncEnabled) SyncNowButton(onSyncNow = onSyncNow)
             NewEntryButton(vault = state.current, view = view)
             SettingsButton(onSettings = onSettings)
             LockButton(onLock = onLock)

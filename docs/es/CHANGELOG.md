@@ -6,6 +6,14 @@ Todos los cambios notables de este proyecto se documentan en este archivo. El fo
 
 ## [Sin publicar]
 
+## [1.8.5] - 2026-10-19
+
+La aplicación de Android no cambia.
+
+### Corregido
+
+- Escritorio: con la sincronización activada, el campo de búsqueda de la barra superior quedaba comprimido y «Buscar» se partía en dos líneas. El estado de la sincronización va ahora bajo el nombre de la bóveda y el campo de búsqueda tiene un ancho mínimo. Lo encontró probar la app con dos instancias y un servicio S3 local: el interruptor y su comprobación, traer una bóveda de la nube, y guardar en una instancia y verlo en la otra con «Sincronizar ahora» funcionaron.
+
 ## [1.8.4] - 2026-10-19
 
 La sincronización sigue apagada hasta que se activa en el asistente de la nube.

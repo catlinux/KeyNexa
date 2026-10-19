@@ -6,6 +6,14 @@ All notable changes to this project are documented in this file. The format is b
 
 ## [Unreleased]
 
+## [1.8.5] - 2026-10-19
+
+The Android app does not change.
+
+### Fixed
+
+- Desktop: with synchronisation on, the search box in the top bar was squeezed so that "Search" broke onto two lines. The synchronisation state now sits under the vault name and the search box keeps a minimum width. Found by trying the app with two instances and a local S3 service: the switch and its check, bringing a vault from the cloud, saving in one instance and seeing it in the other with Sync now, all worked.
+
 ## [1.8.4] - 2026-10-19
 
 Synchronisation is still off until it is turned on in the cloud assistant.
