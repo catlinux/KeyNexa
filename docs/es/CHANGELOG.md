@@ -6,6 +6,12 @@ Todos los cambios notables de este proyecto se documentan en este archivo. El fo
 
 ## [Sin publicar]
 
+## [1.11.0] - 2026-10-20
+
+### Añadido
+
+- El campo Usuario del editor de entradas (escritorio y Android) sugiere en un desplegable los nombres de usuario que ya se usan en la bóveda, los más usados primero y filtrados a medida que escribes; al elegir uno se rellena el campo. Útil cuando muchas entradas comparten correo o teléfono. Solo se lee el campo Usuario; la papelera se deja fuera.
+
 ## [1.10.0] - 2026-10-19
 
 La app de Android no cambia.

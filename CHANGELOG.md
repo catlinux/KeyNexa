@@ -6,6 +6,12 @@ All notable changes to this project are documented in this file. The format is b
 
 ## [Unreleased]
 
+## [1.11.0] - 2026-10-20
+
+### Added
+
+- The User name field of the entry editor (desktop and Android) suggests the user names already used in the vault in a dropdown, most used first and filtered as you type; choosing one fills the field. Useful when many entries share an e-mail or a phone number. Only the User name field is read; the recycle bin is left out.
+
 ## [1.10.0] - 2026-10-19
 
 The Android app does not change.

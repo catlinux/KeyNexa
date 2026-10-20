@@ -29,6 +29,7 @@ import io.github.catlinux.keynexa.vault.Credentials
 import io.github.catlinux.keynexa.vault.Entry
 import io.github.catlinux.keynexa.vault.FieldValue
 import io.github.catlinux.keynexa.vault.Group
+import io.github.catlinux.keynexa.vault.UserNameSuggestions
 import io.github.catlinux.keynexa.vault.Vault
 import io.github.catlinux.keynexa.vault.VaultEditor
 import io.github.catlinux.keynexa.vault.VaultSearch
@@ -180,6 +181,7 @@ private fun EntryEdit(
         initial = existing?.fields,
         isNew = screen.entryId == null,
         initialAttachments = existing?.attachments.orEmpty(),
+        userNameSuggestions = remember(screen) { UserNameSuggestions.of(vault) },
         onSave = { fields, attachments, newBinaries ->
             val saved =
                 if (screen.entryId != null) {

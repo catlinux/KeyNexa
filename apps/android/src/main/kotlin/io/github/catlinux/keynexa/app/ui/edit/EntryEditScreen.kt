@@ -58,6 +58,7 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import io.github.catlinux.keynexa.app.R
+import io.github.catlinux.keynexa.ui.fields.UserNameField
 import io.github.catlinux.keynexa.vault.Attachment
 import io.github.catlinux.keynexa.vault.BinaryId
 import io.github.catlinux.keynexa.vault.Entry
@@ -312,6 +313,7 @@ fun EntryEditScreen(
     ) -> Unit,
     onCancel: () -> Unit,
     modifier: Modifier = Modifier,
+    userNameSuggestions: List<String> = emptyList(),
 ) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
@@ -401,7 +403,11 @@ fun EntryEditScreen(
                     verticalArrangement = Arrangement.spacedBy(CardGap),
                 ) {
                     EditCard(titleRes = R.string.edit_basic_title) {
-                        BasicSection(form = form, onGenerate = { generating = true })
+                        BasicSection(
+                            form = form,
+                            userNameSuggestions = userNameSuggestions,
+                            onGenerate = { generating = true },
+                        )
                     }
                     EditCard(titleRes = R.string.edit_custom_title) {
                         CustomSection(form = form)
@@ -531,6 +537,7 @@ private fun EditCard(
 @Composable
 private fun BasicSection(
     form: EntryForm,
+    userNameSuggestions: List<String>,
     onGenerate: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -555,10 +562,12 @@ private fun BasicSection(
                 color = MaterialTheme.colorScheme.error,
             )
         }
-        EditTextField(
-            label = stringResource(R.string.edit_user_name_label),
+        UserNameField(
             value = form.userName,
             onValueChange = { form.userName = it },
+            suggestions = userNameSuggestions,
+            label = { Text(text = stringResource(R.string.edit_user_name_label)) },
+            modifier = Modifier.fillMaxWidth(),
         )
         SecretField(form = form)
         TextButton(onClick = onGenerate) {

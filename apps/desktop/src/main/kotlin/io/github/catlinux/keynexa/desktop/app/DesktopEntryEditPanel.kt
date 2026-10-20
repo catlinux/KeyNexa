@@ -78,11 +78,13 @@ import io.github.catlinux.keynexa.desktop.app.generated.resources.entry_detail_p
 import io.github.catlinux.keynexa.desktop.app.generated.resources.entry_detail_save_attachment
 import io.github.catlinux.keynexa.desktop.app.generated.resources.entry_detail_show
 import io.github.catlinux.keynexa.session.mapEntry
+import io.github.catlinux.keynexa.ui.fields.UserNameField
 import io.github.catlinux.keynexa.vault.Attachment
 import io.github.catlinux.keynexa.vault.BinaryId
 import io.github.catlinux.keynexa.vault.Entry
 import io.github.catlinux.keynexa.vault.FieldValue
 import io.github.catlinux.keynexa.vault.MAX_ATTACHMENT_BYTES
+import io.github.catlinux.keynexa.vault.UserNameSuggestions
 import io.github.catlinux.keynexa.vault.Vault
 import io.github.catlinux.keynexa.vault.VaultEditor
 import io.github.catlinux.keynexa.vault.binaryIdOf
@@ -171,7 +173,11 @@ internal fun EntryEditPanel(
             text = stringResource(if (isNew) Res.string.edit_title_new else Res.string.edit_title_edit),
             style = MaterialTheme.typography.titleLarge,
         )
-        BasicFields(form = form, onGenerate = { generating = true })
+        BasicFields(
+            form = form,
+            userNameSuggestions = remember(vault) { UserNameSuggestions.of(vault) },
+            onGenerate = { generating = true },
+        )
         CustomFieldsSection(form = form)
         AttachmentsSection(
             attachments = attachments,
@@ -258,6 +264,7 @@ private fun formShortcut(
 @Composable
 private fun BasicFields(
     form: EntryForm,
+    userNameSuggestions: List<String>,
     onGenerate: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -283,11 +290,11 @@ private fun BasicFields(
                 },
             modifier = Modifier.fillMaxWidth(),
         )
-        OutlinedTextField(
+        UserNameField(
             value = form.userName,
             onValueChange = { form.userName = it },
+            suggestions = userNameSuggestions,
             label = { Text(text = stringResource(Res.string.edit_user_name_label)) },
-            singleLine = true,
             modifier = Modifier.fillMaxWidth(),
         )
         PasswordField(form = form, onGenerate = onGenerate)
