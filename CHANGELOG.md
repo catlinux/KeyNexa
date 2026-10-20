@@ -6,6 +6,12 @@ All notable changes to this project are documented in this file. The format is b
 
 ## [Unreleased]
 
+## [1.11.1] - 2026-10-20
+
+### Fixed
+
+- The user name suggestions of the entry editor no longer take the keyboard away from the field: the list is drawn under the field and you can keep typing with it open. A small arrow at the end of the field opens the list with every user name already used.
+
 ## [1.11.0] - 2026-10-20
 
 ### Added

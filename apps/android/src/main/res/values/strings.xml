@@ -200,6 +200,7 @@
     <string name="edit_title_label">Title</string>
     <string name="edit_title_required">An entry needs a title.</string>
     <string name="edit_user_name_label">User name</string>
+    <string name="edit_user_name_suggestions">Show user names already used</string>
     <string name="edit_password_label">Password</string>
     <string name="edit_show_password">Show the password</string>
     <string name="edit_generate">Generate</string>

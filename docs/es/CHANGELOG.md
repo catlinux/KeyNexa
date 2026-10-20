@@ -6,6 +6,12 @@ Todos los cambios notables de este proyecto se documentan en este archivo. El fo
 
 ## [Sin publicar]
 
+## [1.11.1] - 2026-10-20
+
+### Corregido
+
+- Las sugerencias de usuario del editor de entradas ya no le quitan el teclado al campo: la lista se dibuja bajo el campo y puedes seguir escribiendo con ella abierta. Una flechita al final del campo abre la lista con todos los usuarios ya usados.
+
 ## [1.11.0] - 2026-10-20
 
 ### Añadido

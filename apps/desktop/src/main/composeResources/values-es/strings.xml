@@ -131,6 +131,7 @@
     <string name="edit_title_label">Título</string>
     <string name="edit_title_required">Una entrada necesita un título.</string>
     <string name="edit_user_name_label">Usuario</string>
+    <string name="edit_user_name_suggestions">Mostrar usuarios ya usados</string>
     <string name="edit_show_password">Mostrar la contraseña</string>
     <string name="edit_generate">Generar</string>
     <string name="edit_generate_title">Generar una contraseña</string>

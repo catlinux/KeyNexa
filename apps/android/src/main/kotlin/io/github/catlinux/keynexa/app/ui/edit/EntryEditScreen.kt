@@ -567,6 +567,7 @@ private fun BasicSection(
             onValueChange = { form.userName = it },
             suggestions = userNameSuggestions,
             label = { Text(text = stringResource(R.string.edit_user_name_label)) },
+            toggleDescription = stringResource(R.string.edit_user_name_suggestions),
             modifier = Modifier.fillMaxWidth(),
         )
         SecretField(form = form)

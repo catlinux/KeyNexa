@@ -69,6 +69,7 @@ import io.github.catlinux.keynexa.desktop.app.generated.resources.edit_title_new
 import io.github.catlinux.keynexa.desktop.app.generated.resources.edit_title_required
 import io.github.catlinux.keynexa.desktop.app.generated.resources.edit_url_label
 import io.github.catlinux.keynexa.desktop.app.generated.resources.edit_user_name_label
+import io.github.catlinux.keynexa.desktop.app.generated.resources.edit_user_name_suggestions
 import io.github.catlinux.keynexa.desktop.app.generated.resources.entry_detail_attachment_missing
 import io.github.catlinux.keynexa.desktop.app.generated.resources.entry_detail_attachment_save_failed
 import io.github.catlinux.keynexa.desktop.app.generated.resources.entry_detail_attachment_saved
@@ -295,6 +296,7 @@ private fun BasicFields(
             onValueChange = { form.userName = it },
             suggestions = userNameSuggestions,
             label = { Text(text = stringResource(Res.string.edit_user_name_label)) },
+            toggleDescription = stringResource(Res.string.edit_user_name_suggestions),
             modifier = Modifier.fillMaxWidth(),
         )
         PasswordField(form = form, onGenerate = onGenerate)
