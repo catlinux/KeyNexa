@@ -6,6 +6,14 @@ Todos los cambios notables de este proyecto se documentan en este archivo. El fo
 
 ## [Sin publicar]
 
+## [1.11.9] - 2026-10-27
+
+Las apps no cambian.
+
+### Añadido
+
+- Publicación: cuando existe el secreto `UPDATE_SIGNING_KEY`, el flujo de publicación escribe y firma el manifiesto de actualizaciones del [ADR-0015](decisions/0015-automatic-updates.md), comprueba la firma con la clave pública que lleva la app, lo publica con la publicación y apunta la rama `update-channel` a él. Una prueba comprueba que la app acepta exactamente lo que firman los comandos `openssl` del flujo.
+
 ## [1.11.8] - 2026-10-27
 
 Las apps no cambian.

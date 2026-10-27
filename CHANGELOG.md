@@ -6,6 +6,14 @@ All notable changes to this project are documented in this file. The format is b
 
 ## [Unreleased]
 
+## [1.11.9] - 2026-10-27
+
+The apps do not change.
+
+### Added
+
+- Release: when the `UPDATE_SIGNING_KEY` secret is set, the release workflow writes and signs the update manifest of [ADR-0015](docs/decisions/0015-automatic-updates.md), checks the signature against the public key built into the app, publishes it with the release and points the `update-channel` branch at it. A test checks that the app accepts exactly what the workflow's `openssl` commands sign.
+
 ## [1.11.8] - 2026-10-27
 
 The apps do not change.

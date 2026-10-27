@@ -215,6 +215,43 @@ jobs:
           done
           rm -f "$keystore"
 
+      # The signed update manifest of ADR-0015. The app trusts it only if it verifies with the public key it carries,
+      # which is pinned here too, so a wrong secret stops the release instead of publishing a manifest no app accepts.
+      # Without the secret the manifest is skipped and the release goes out as before.
+      - name: Write and sign the update manifest
+        env:
+          UPDATE_SIGNING_KEY: ${{ secrets.UPDATE_SIGNING_KEY }}
+        run: |
+          set -euo pipefail
+          if [ -z "$UPDATE_SIGNING_KEY" ]; then
+            echo "::warning::UPDATE_SIGNING_KEY is not set: no update manifest for this release"
+            exit 0
+          fi
+          out="$RUNNER_TEMP/dist"
+          manifest="$out/keynexa-update.txt"
+          {
+            printf 'keynexa-update 1\n'
+            printf 'version %s\n' "$VERSION"
+            printf 'released %s\n' "$(date -u +%Y-%m-%d)"
+            for file in "$RUNNER_TEMP/windows/KeyNexa-windows-x64-$VERSION.msi" \
+                        "$out/keynexa-$VERSION.apk" "$out/keynexa-cloud-$VERSION.apk"; do
+              printf 'file %s %s %s\n' "$(basename "$file")" "$(stat -c %s "$file")" \
+                "$(sha256sum "$file" | cut -d ' ' -f 1)"
+            done
+          } > "$manifest"
+          key="$RUNNER_TEMP/update-key.pem"
+          printf '%s\n' "$UPDATE_SIGNING_KEY" > "$key"
+          openssl pkeyutl -sign -inkey "$key" -rawin -in "$manifest" -out "$manifest.sig"
+          rm -f "$key"
+          public="$RUNNER_TEMP/update-public.pem"
+          {
+            echo '-----BEGIN PUBLIC KEY-----'
+            echo 'MCowBQYDK2VwAyEAj7N0vtEMLww0R0qybVdJPcBXjETQDGqw+R4udkbu7uA='
+            echo '-----END PUBLIC KEY-----'
+          } > "$public"
+          openssl pkeyutl -verify -pubin -inkey "$public" -rawin -in "$manifest" -sigfile "$manifest.sig"
+          cat "$manifest"
+
       - name: Extract release notes from CHANGELOG.md
         run: |
           awk -v v="$VERSION" '
@@ -235,16 +272,40 @@ jobs:
           # Before 1.0 every release is a pre-release. The Windows client is still a preview (desktop plan, decision
           # D4), so while it is, 1.x releases are pre-releases too; this changes when the owner declares it stable.
           case "$VERSION" in 0.*|1.*) flags+=(--prerelease) ;; esac
-          gh release create "$TAG"             "$RUNNER_TEMP"/windows/KeyNexa-windows-x64-"$VERSION".* \
+          manifest=()
+          if [ -f "$RUNNER_TEMP/dist/keynexa-update.txt" ]; then
+            manifest=("$RUNNER_TEMP/dist/keynexa-update.txt" "$RUNNER_TEMP/dist/keynexa-update.txt.sig")
+          fi
+          gh release create "$TAG" "$RUNNER_TEMP"/windows/KeyNexa-windows-x64-"$VERSION".* \
             "$RUNNER_TEMP/dist/keynexa-$VERSION.apk" \
             "$RUNNER_TEMP/dist/keynexa-$VERSION.apk.sha256" \
             "$RUNNER_TEMP/dist/keynexa-cloud-$VERSION.apk" \
             "$RUNNER_TEMP/dist/keynexa-cloud-$VERSION.apk.sha256" \
+            "${manifest[@]}" \
             --title "KeyNexa $VERSION" \
             --notes-file "$RUNNER_TEMP/notes.md" \
             --verify-tag \
             "${flags[@]}"
 
-      - name: Remove the keystore
+      # The fixed address the apps read (ADR-0015): a branch holding only the manifest and its signature, rewritten as
+      # a single commit after the release exists, so its files are there before any app is told about them.
+      - name: Point the update channel at this release
+        env:
+          GIT_AUTHOR_NAME: github-actions[bot]
+          GIT_AUTHOR_EMAIL: 41898282+github-actions[bot]@users.noreply.github.com
+          GIT_COMMITTER_NAME: github-actions[bot]
+          GIT_COMMITTER_EMAIL: 41898282+github-actions[bot]@users.noreply.github.com
+        run: |
+          set -euo pipefail
+          manifest="$RUNNER_TEMP/dist/keynexa-update.txt"
+          if [ ! -f "$manifest" ]; then exit 0; fi
+          text="$(git hash-object -w "$manifest")"
+          sig="$(git hash-object -w "$manifest.sig")"
+          tree="$(printf '100644 blob %s\tkeynexa-update.txt\n100644 blob %s\tkeynexa-update.txt.sig\n' \
+            "$text" "$sig" | git mktree)"
+          commit="$(git commit-tree "$tree" -m "Update channel: $VERSION")"
+          git push --force origin "$commit:refs/heads/update-channel"
+
+      - name: Remove the keys
         if: always()
-        run: rm -f "$RUNNER_TEMP/release.jks"
+        run: rm -f "$RUNNER_TEMP/release.jks" "$RUNNER_TEMP/update-key.pem"

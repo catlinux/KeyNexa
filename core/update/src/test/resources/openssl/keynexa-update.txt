@@ -1,0 +1,6 @@
+keynexa-update 1
+version 9.8.7
+released 2026-10-27
+file KeyNexa-windows-x64-9.8.7.msi 3 7f1d49243ee662770bbdff7da2cec54eb382cd9d76dfa7b049a620ec457db57b
+file keynexa-9.8.7.apk 11 db79e001ce979291f103c52e041014ebeb7a633fa7a50900bce816c1bde7bf25
+file keynexa-cloud-9.8.7.apk 9 c69a657930d83bfed4722292a0e57d287b71a592411fd87a9e0d626367b57841
