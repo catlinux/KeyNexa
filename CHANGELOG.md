@@ -12,7 +12,7 @@ The apps do not change.
 
 ### Added
 
-- Docs: [ADR-0015](docs/decisions/0015-automatic-updates.md) (proposed) designs automatic updates: opt-in; only newer versions offered; on Windows, a manifest signed with a KeyNexa Ed25519 update key built into the app, then the SHA-256 it lists, before the installer starts; on Android, the platform's signature check plus a comparison of signing certificates before the system installer; nothing in the `offline` build. Threat T29 is added to the threat model. Three points wait for the owner.
+- Docs: [ADR-0015](docs/decisions/0015-automatic-updates.md) (accepted) designs automatic updates: opt-in; only newer versions offered; on Windows, a manifest signed with a KeyNexa Ed25519 update key built into the app, then the SHA-256 it lists, before the installer starts; on Android, the platform's signature check plus a comparison of signing certificates before the system installer; nothing in the `offline` build. Threat T29 is added to the threat model. The owner chose the recommended answer to its three open points.
 
 ### Fixed
 

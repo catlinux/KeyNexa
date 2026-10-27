@@ -1,6 +1,6 @@
 # Actualizaciones automáticas (2026-10-27)
 
-Implementa el [ADR-0015](../../../docs/decisions/0015-automatic-updates.md); manda el ADR. **No empezar el paso 1 hasta que el titular confirme los tres puntos de «Pendiente del titular» del ADR** y el ADR pase a «Aceptada». Cada paso: archivos, criterio de terminado, ejecutor, versión. El ejecutor marca `[x]` con fecha y versión y, ante un imprevisto de diseño, **para y lo anota aquí**.
+Implementa el [ADR-0015](../../../docs/decisions/0015-automatic-updates.md); manda el ADR. ADR aceptado el 2026-10-27 con las tres respuestas recomendadas (clave en el secreto `UPDATE_SIGNING_KEY`, pregunta única, instalar desde la app en Windows). El paso 1 puede empezar ya; el 2 necesita la clave del paso 0. Cada paso: archivos, criterio de terminado, ejecutor, versión. El ejecutor marca `[x]` con fecha y versión y, ante un imprevisto de diseño, **para y lo anota aquí**.
 
 Reglas fijas (AGENTS.md): docs bilingües en el mismo commit (`bash scripts/check-docs-i18n.sh`), `VERSION` + CHANGELOG en/es en cada paso, validar con `.\gradlew.bat check`, sin push ni tag sin permiso. AgentRelay: JSON de la tarea en `%TEMP%`, árbol limpio, revisar SIEMPRE el diff. Nada de registrar URL con datos del usuario, ni contenido de bóvedas.
 

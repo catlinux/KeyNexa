@@ -12,7 +12,7 @@ Las apps no cambian.
 
 ### Añadido
 
-- Docs: el [ADR-0015](decisions/0015-automatic-updates.md) (propuesta) diseña las actualizaciones automáticas: a elección del usuario; solo se ofrecen versiones más nuevas; en Windows, un manifiesto firmado con una clave Ed25519 de actualizaciones de KeyNexa que lleva la app, y después el SHA-256 que lista, antes de lanzar el instalador; en Android, la comprobación de firma de la plataforma y una comparación de certificados de firma antes del instalador del sistema; nada en la compilación `offline`. Se añade la amenaza T29 al modelo de amenazas. Tres puntos esperan al titular.
+- Docs: el [ADR-0015](decisions/0015-automatic-updates.md) (aceptado) diseña las actualizaciones automáticas: a elección del usuario; solo se ofrecen versiones más nuevas; en Windows, un manifiesto firmado con una clave Ed25519 de actualizaciones de KeyNexa que lleva la app, y después el SHA-256 que lista, antes de lanzar el instalador; en Android, la comprobación de firma de la plataforma y una comparación de certificados de firma antes del instalador del sistema; nada en la compilación `offline`. Se añade la amenaza T29 al modelo de amenazas. El titular eligió la respuesta recomendada en sus tres puntos abiertos.
 
 ### Corregido
 

@@ -2,7 +2,7 @@
 
 [English](../../decisions/0015-automatic-updates.md) | [Español](0015-automatic-updates.md)
 
-- **Estado:** Propuesta (el titular confirma los tres puntos de *Pendiente del titular* antes de empezar el paso 1)
+- **Estado:** Aceptada (el titular eligió la respuesta recomendada en los tres puntos abiertos el 2026-10-27)
 - **Fecha:** 2026-10-27
 - **Amplía:** [ADR-0012](0012-windows-desktop-client.md) (cliente de escritorio para Windows); el flujo de publicación de [DEVELOPMENT](../DEVELOPMENT.md)
 - **Implementa:** la amenaza T29 del [modelo de amenazas](../THREAT_MODEL.md)
@@ -51,11 +51,11 @@ La opción 3 en Windows, la opción 4 en Android y la opción 1 para la compilac
 6. **Ajustes:** «Buscar actualizaciones» está **desactivado** hasta que el usuario responde una pregunta única en el primer arranque tras la actualización que trae esta función. Se puede desactivar en cualquier momento.
 7. **Privacidad:** [PRIVACY](../PRIVACY.md) explica lo que ve GitHub (la dirección IP, la hora y la versión de la app en el `User-Agent`) y que no se envía nada más.
 
-### Pendiente del titular
+### Decidido por el titular (2026-10-27)
 
-1. La clave de actualizaciones: una clave Ed25519 que genera el titular en un equipo suyo y se guarda como secreto del repositorio (recomendado, el mismo modelo que la clave del APK), o guardada sin conexión y firmando a mano cada publicación (más fuerte, pero las publicaciones dejan de ser automáticas).
-2. El valor por defecto: una pregunta única (recomendado), o activado por defecto en la compilación `cloud` y en Windows.
-3. Windows: instalar desde la app como en el punto 3 (recomendado), o solo avisar (opción 1) hasta que se decida D9.
+1. La clave de actualizaciones es una clave Ed25519 que genera el titular y se guarda como el secreto del repositorio `UPDATE_SIGNING_KEY`, así las publicaciones se firman sin un paso manual.
+2. La búsqueda de actualizaciones empieza desactivada y la app pregunta una vez.
+3. En Windows la app descarga, comprueba y lanza el instalador cuando el usuario acepta.
 
 ## Consecuencias
 
