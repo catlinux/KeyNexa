@@ -1,0 +1,6 @@
+keynexa-update 1
+version 1.14.0
+released 2026-10-27
+file KeyNexa-windows-x64-1.14.0.msi 61952248 80ce9bcf6013dabdf85901785cf6ad7fe46a6bf4b20848671c70a5f03716bca2
+file keynexa-1.14.0.apk 9282577 954f2226e464ea4d18616a64b6131bab8dc391ea5c768c298efc8ed917c141af
+file keynexa-cloud-1.14.0.apk 9479185 2cc32376d5105a020628eac6d8f3ea90d02dc39bac3c5a7b29f26070c91515e5
