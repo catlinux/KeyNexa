@@ -6,6 +6,18 @@ All notable changes to this project are documented in this file. The format is b
 
 ## [Unreleased]
 
+## [1.11.5] - 2026-10-27
+
+The Android app does not change.
+
+### Fixed
+
+- Windows installer: updating now installs the new version in the folder where KeyNexa already is, also when another folder was chosen at install time, instead of proposing the default folder again. The installer stores the folder for the current user (`HKCU\Software\CatLinux\KeyNexa`, value `InstallDir`) and reads it back on the next update; uninstalling removes it. Installations made with 1.11.4 or earlier did not store it, so the first update from one of them asks once more.
+
+### Changed
+
+- Build: the MSI comes from a new task, `:apps:desktop:windowsMsi` (`apps/desktop/build/msi/`), which runs jpackage on the app image with its own template patched at build time; Compose's `packageMsi` empties jpackage's resource folder and left no way to add it. The release workflow uses the new task.
+
 ## [1.11.4] - 2026-10-27
 
 The apps do not change.

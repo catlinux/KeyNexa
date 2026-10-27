@@ -20,6 +20,8 @@ The files are **not code-signed**, so Windows SmartScreen shows "Windows protect
 
 Double-click the `.msi`, or run `msiexec /i KeyNexa-windows-x64-<version>.msi`. It installs **for your user only**: no administrator rights, no UAC prompt. The program goes to `%LOCALAPPDATA%\KeyNexa-app` and a *KeyNexa* shortcut appears in the Start menu.
 
+To update, install the newer `.msi` over it: it replaces the installed version in the folder where it is, also when you chose another folder at install time. Installations made with 1.11.4 or earlier did not record their folder, so the first update from one of them asks for it once: choose the same folder.
+
 To remove it, use *Settings > Apps* or `msiexec /x KeyNexa-windows-x64-<version>.msi`. Your vaults are never touched, and neither is the data folder described below.
 
 ## Portable ZIP

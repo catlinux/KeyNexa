@@ -118,7 +118,7 @@ jobs:
 
       - name: Check and package
         shell: bash
-        run: ./gradlew :apps:desktop:check :apps:desktop:portableZip :apps:desktop:packageMsi
+        run: ./gradlew :apps:desktop:check :apps:desktop:portableZip :apps:desktop:windowsMsi
 
       # The installer must work without administrator rights: install it for the current user, look for the program
       # and remove it again.
@@ -126,7 +126,7 @@ jobs:
         shell: pwsh
         run: |
           $version = (Get-Content VERSION).Trim()
-          $msi = (Resolve-Path "apps/desktop/build/compose/binaries/main/msi/KeyNexa-$version.msi").Path
+          $msi = (Resolve-Path "apps/desktop/build/msi/KeyNexa-$version.msi").Path
           $log = Join-Path $env:RUNNER_TEMP 'install.log'
           $install = Start-Process msiexec.exe -ArgumentList "/i `"$msi`" /qn /l*v `"$log`"" -Wait -PassThru
           if ($install.ExitCode -ne 0) { Get-Content $log -Tail 40; throw "install failed: $($install.ExitCode)" }
@@ -141,7 +141,7 @@ jobs:
         run: |
           version="$(tr -d '[:space:]' < VERSION)"
           mkdir -p "$RUNNER_TEMP/windows"
-          cp "apps/desktop/build/compose/binaries/main/msi/KeyNexa-$version.msi" "$RUNNER_TEMP/windows/KeyNexa-windows-x64-$version.msi"
+          cp "apps/desktop/build/msi/KeyNexa-$version.msi" "$RUNNER_TEMP/windows/KeyNexa-windows-x64-$version.msi"
           cp "apps/desktop/build/distributions/KeyNexa-windows-x64-$version.zip" "$RUNNER_TEMP/windows/"
           cd "$RUNNER_TEMP/windows"
           for file in *; do sha256sum "$file" > "$file.sha256"; done

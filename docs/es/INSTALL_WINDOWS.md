@@ -20,6 +20,8 @@ Los archivos **no están firmados**, así que Windows SmartScreen muestra «Wind
 
 Haz doble clic en el `.msi` o ejecuta `msiexec /i KeyNexa-windows-x64-<versión>.msi`. Se instala **solo para tu usuario**: sin permisos de administrador ni aviso de UAC. El programa va a `%LOCALAPPDATA%\KeyNexa-app` y aparece un acceso *KeyNexa* en el menú Inicio.
 
+Para actualizar, instala el `.msi` más nuevo encima: sustituye la versión instalada en la carpeta donde esté, también si elegiste otra al instalar. Las instalaciones hechas con la 1.11.4 o anteriores no guardaron su carpeta, así que la primera actualización desde una de ellas la pregunta una vez: elige la misma carpeta.
+
 Para quitarlo, usa *Configuración > Aplicaciones* o `msiexec /x KeyNexa-windows-x64-<versión>.msi`. Tus bóvedas no se tocan nunca, ni tampoco la carpeta de datos que se describe abajo.
 
 ## ZIP portable

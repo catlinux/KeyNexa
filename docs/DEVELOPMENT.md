@@ -35,7 +35,7 @@ Run these from the repository root. On Windows use `gradlew.bat` instead of `./g
 | `./gradlew :apps:android:assembleCloudDebug` | Builds the cloud debug APK at `apps/android/build/outputs/apk/cloud/debug/keynexa-android-cloud-debug.apk` |
 | `.\gradlew.bat :apps:desktop:run` | Runs the Windows desktop app: the home screen with the vaults this computer knows |
 | `.\gradlew.bat :apps:desktop:portableZip` | Builds the portable ZIP (app and Java runtime) at `apps/desktop/build/distributions/KeyNexa-windows-x64-<version>.zip` |
-| `.\gradlew.bat :apps:desktop:packageMsi` | Builds the per-user MSI at `apps/desktop/build/compose/binaries/main/msi/KeyNexa-<version>.msi`; needs the [WiX Toolset 3](https://github.com/wixtoolset/wix3/releases) tools (`candle.exe`, `light.exe`) in `PATH` |
+| `.\gradlew.bat :apps:desktop:windowsMsi` | Builds the per-user MSI at `apps/desktop/build/msi/KeyNexa-<version>.msi`, which remembers the installation folder for later upgrades; it uses the [WiX Toolset 3](https://github.com/wixtoolset/wix3/releases) tools the Compose plugin keeps in `build/wix311`, or those in `PATH` |
 
 The app has two `distribution` flavors: `offline` (no `INTERNET`, the one published) and `cloud` (declares `INTERNET` for the cloud copies still to come). The merged offline manifest is checked on `check` (`:apps:android:verifyOfflineHasNoInternet`), and the cloud one is checked the other way round. Installing one flavor over the other is not verified.
 
