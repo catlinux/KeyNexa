@@ -1,6 +1,6 @@
 package io.github.catlinux.keynexa.desktop.app
 
-import io.github.catlinux.keynexa.desktop.UpdateCheck
+import io.github.catlinux.keynexa.update.UpdateCheck
 import java.io.File
 import java.io.IOException
 import java.nio.file.Path

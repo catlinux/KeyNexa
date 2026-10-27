@@ -6,6 +6,14 @@ All notable changes to this project are documented in this file. The format is b
 
 ## [Unreleased]
 
+## [1.13.1] - 2026-10-27
+
+The apps do not change.
+
+### Changed
+
+- Internal: the update service moves out of `platform/desktop` into a new module, `platform/update`, with nothing specific to Windows, so the Android `cloud` build can use it. The caller now says which installer to look for (the Windows MSI or the Android APK).
+
 ## [1.13.0] - 2026-10-27
 
 ### Added

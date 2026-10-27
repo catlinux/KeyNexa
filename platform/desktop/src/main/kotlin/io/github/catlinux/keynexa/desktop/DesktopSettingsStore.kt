@@ -1,6 +1,7 @@
 package io.github.catlinux.keynexa.desktop
 
 import io.github.catlinux.keynexa.platform.writeAtomically
+import io.github.catlinux.keynexa.update.UpdateChoice
 import java.io.IOException
 import java.io.InputStreamReader
 import java.nio.file.Files

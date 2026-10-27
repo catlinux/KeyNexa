@@ -1,10 +1,9 @@
 package io.github.catlinux.keynexa.desktop
 
+import io.github.catlinux.keynexa.update.UpdateChoice
+
 /** The theme a desktop client shows. */
 enum class Theme { System, Light, Dark }
-
-/** Whether the app may ask GitHub for new versions: not answered yet, no, or yes (ADR-0015). */
-enum class UpdateChoice { Ask, Off, On }
 
 /**
  * What a desktop client remembers between runs: when it locks by itself, what locks the vault for it, how long a

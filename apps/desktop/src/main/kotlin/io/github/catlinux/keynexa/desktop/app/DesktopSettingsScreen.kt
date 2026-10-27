@@ -32,7 +32,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import io.github.catlinux.keynexa.desktop.DesktopSettings
 import io.github.catlinux.keynexa.desktop.Theme
-import io.github.catlinux.keynexa.desktop.UpdateChoice
 import io.github.catlinux.keynexa.desktop.app.generated.resources.Res
 import io.github.catlinux.keynexa.desktop.app.generated.resources.group_settings
 import io.github.catlinux.keynexa.desktop.app.generated.resources.settings_allow_screenshots
@@ -81,6 +80,7 @@ import io.github.catlinux.keynexa.desktop.app.generated.resources.settings_updat
 import io.github.catlinux.keynexa.desktop.app.generated.resources.settings_updates_help
 import io.github.catlinux.keynexa.desktop.app.generated.resources.settings_updates_now
 import io.github.catlinux.keynexa.desktop.app.generated.resources.settings_version
+import io.github.catlinux.keynexa.update.UpdateChoice
 import org.jetbrains.compose.resources.pluralStringResource
 import org.jetbrains.compose.resources.stringResource
 import java.time.Instant

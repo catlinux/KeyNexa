@@ -1,12 +1,5 @@
-package io.github.catlinux.keynexa.desktop
+package io.github.catlinux.keynexa.update
 
-import io.github.catlinux.keynexa.update.CheckSchedule
-import io.github.catlinux.keynexa.update.FileCheck
-import io.github.catlinux.keynexa.update.ManifestFile
-import io.github.catlinux.keynexa.update.ManifestVerifier
-import io.github.catlinux.keynexa.update.SemVer
-import io.github.catlinux.keynexa.update.UpdateDecision
-import io.github.catlinux.keynexa.update.UpdateManifest
 import java.io.IOException
 import java.nio.file.Files
 import java.nio.file.Path
@@ -20,10 +13,10 @@ sealed interface UpdateCheck {
     /** The newest published release is not newer than the running one. */
     data object UpToDate : UpdateCheck
 
-    /** A newer, signed release is available; [msi] is its installer as the manifest lists it. */
+    /** A newer, signed release is available; [installer] is its installer as the manifest lists it. */
     class Available(
         val manifest: UpdateManifest,
-        val msi: ManifestFile,
+        val installer: ManifestFile,
     ) : UpdateCheck
 
     /** The check could not be completed; [reason] is a short token, never a message from the network. */
@@ -53,12 +46,14 @@ sealed interface UpdateDownload {
  * newer version is ever offered, the installer is checked against the size and SHA-256 the manifest lists, and the
  * install itself is left to the caller, which asks the user first.
  */
+@Suppress("LongParameterList")
 class UpdateService(
     private val currentVersion: SemVer,
     private val fetcher: UpdateFetcher,
     private val verifier: ManifestVerifier,
     private val state: UpdateStateStore,
     private val downloads: Path,
+    private val installerName: (SemVer) -> String,
     private val clock: () -> Instant = Instant::now,
 ) {
     /**
@@ -79,8 +74,8 @@ class UpdateService(
         if (seen != null && manifest.version < seen) return UpdateCheck.Failed(ROLLBACK)
         recordCheck(manifest.version)
         val offered = UpdateDecision.offer(currentVersion, manifest) ?: return UpdateCheck.UpToDate
-        val msi = offered.file(installerName(offered.version)) ?: return UpdateCheck.Failed(NO_INSTALLER)
-        return UpdateCheck.Available(offered, msi)
+        val installer = offered.file(installerName(offered.version)) ?: return UpdateCheck.Failed(NO_INSTALLER)
+        return UpdateCheck.Available(offered, installer)
     }
 
     /**
@@ -89,12 +84,12 @@ class UpdateService(
      * Older installers are removed first, so the folder only ever holds the one the user is about to run.
      */
     fun download(offer: UpdateCheck.Available): UpdateDownload {
-        val target = downloads.resolve(offer.msi.name)
+        val target = downloads.resolve(offer.installer.name)
         return try {
             Files.createDirectories(downloads)
             deleteInstallers()
-            fetcher.download(urlOf(offer), target, offer.msi.size)
-            if (FileCheck.matches(target, offer.msi.size, offer.msi.sha256)) {
+            fetcher.download(urlOf(offer), target, offer.installer.size)
+            if (FileCheck.matches(target, offer.installer.size, offer.installer.sha256)) {
                 UpdateDownload.Ready(target)
             } else {
                 Files.deleteIfExists(target)
@@ -105,11 +100,11 @@ class UpdateService(
         }
     }
 
-    /** True when [path] still has the size and SHA-256 [msi] lists; the install checks it again before starting. */
+    /** True when [path] still has the size and SHA-256 [installer] lists; checked again right before installing. */
     fun verifyAgain(
         path: Path,
-        msi: ManifestFile,
-    ): Boolean = FileCheck.matches(path, msi.size, msi.sha256)
+        installer: ManifestFile,
+    ): Boolean = FileCheck.matches(path, installer.size, installer.sha256)
 
     /** Removes the installers and partial downloads of earlier runs; best effort, a missing folder is fine. */
     fun cleanup() {
@@ -117,9 +112,7 @@ class UpdateService(
     }
 
     private fun urlOf(offer: UpdateCheck.Available): String =
-        RELEASE_URL + "v${offer.manifest.version}/" + offer.msi.name
-
-    private fun installerName(version: SemVer): String = INSTALLER_PREFIX + version + INSTALLER_SUFFIX
+        RELEASE_URL + "v${offer.manifest.version}/" + offer.installer.name
 
     /** The body at [url], or null when it could not be fetched. The reason never reaches a message. */
     private fun fetchOrNull(
@@ -152,7 +145,7 @@ class UpdateService(
 
     private fun deleteInstaller(entry: Path) {
         val name = entry.fileName.toString()
-        if (!name.endsWith(INSTALLER_SUFFIX) && !name.endsWith(PART_SUFFIX)) return
+        if (REMOVABLE_SUFFIXES.none(name::endsWith)) return
         try {
             if (Files.isRegularFile(entry)) Files.deleteIfExists(entry)
         } catch (failure: IOException) {
@@ -169,10 +162,13 @@ class UpdateService(
         const val RELEASE_URL: String = "https://github.com/catlinux/KeyNexa/releases/download/"
 
         /** The installer of the Windows x64 build, as the release workflow names it. */
-        const val INSTALLER_PREFIX: String = "KeyNexa-windows-x64-"
-        const val INSTALLER_SUFFIX: String = ".msi"
+        fun windowsInstaller(version: SemVer): String = "KeyNexa-windows-x64-$version.msi"
 
-        private const val PART_SUFFIX = ".part"
+        /** The APK of the Android build with the cloud flavor, as the release workflow names it. */
+        fun androidCloudInstaller(version: SemVer): String = "keynexa-cloud-$version.apk"
+
+        /** What the downloads folder may hold: installers of either platform and the partial files of a download. */
+        private val REMOVABLE_SUFFIXES = listOf(".msi", ".apk", ".part")
         private const val SIGNATURE_URL = "$MANIFEST_URL.sig"
         private const val MANIFEST_MAX_BYTES = 16_384
         private const val SIGNATURE_MAX_BYTES = 128

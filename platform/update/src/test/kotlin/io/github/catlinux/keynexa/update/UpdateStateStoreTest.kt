@@ -1,6 +1,5 @@
-package io.github.catlinux.keynexa.desktop
+package io.github.catlinux.keynexa.update
 
-import io.github.catlinux.keynexa.update.SemVer
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
 import org.junit.Rule

@@ -1,9 +1,5 @@
-package io.github.catlinux.keynexa.desktop
+package io.github.catlinux.keynexa.update
 
-import io.github.catlinux.keynexa.update.ManifestFile
-import io.github.catlinux.keynexa.update.ManifestVerifier
-import io.github.catlinux.keynexa.update.SemVer
-import io.github.catlinux.keynexa.update.UpdateManifest
 import org.junit.Assert.assertArrayEquals
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
@@ -42,7 +38,7 @@ class UpdateServiceTest {
 
         val available = result as UpdateCheck.Available
         assertEquals(SemVer.parse(NEW_VERSION), available.manifest.version)
-        assertEquals(file, available.msi)
+        assertEquals(file, available.installer)
     }
 
     @Test
@@ -196,6 +192,7 @@ class UpdateServiceTest {
             verifier = verifier,
             state = state,
             downloads = downloads(),
+            installerName = UpdateService::windowsInstaller,
             clock = { NOW },
         )
 

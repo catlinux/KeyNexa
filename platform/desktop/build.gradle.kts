@@ -12,7 +12,7 @@ dependencies {
     api(project(":platform:jvm"))
     api(project(":platform:cloud"))
     api(project(":core:sync"))
-    api(project(":core:update"))
+    api(project(":platform:update"))
 
     testImplementation(libs.junit)
 }

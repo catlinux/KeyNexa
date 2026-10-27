@@ -1,4 +1,4 @@
-package io.github.catlinux.keynexa.desktop
+package io.github.catlinux.keynexa.update
 
 import java.io.ByteArrayOutputStream
 import java.io.IOException

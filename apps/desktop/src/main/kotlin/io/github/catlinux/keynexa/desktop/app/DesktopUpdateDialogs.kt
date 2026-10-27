@@ -8,7 +8,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.unit.dp
-import io.github.catlinux.keynexa.desktop.UpdateCheck
 import io.github.catlinux.keynexa.desktop.app.generated.resources.Res
 import io.github.catlinux.keynexa.desktop.app.generated.resources.update_offer_downloading
 import io.github.catlinux.keynexa.desktop.app.generated.resources.update_offer_failed
@@ -20,6 +19,7 @@ import io.github.catlinux.keynexa.desktop.app.generated.resources.update_questio
 import io.github.catlinux.keynexa.desktop.app.generated.resources.update_question_text
 import io.github.catlinux.keynexa.desktop.app.generated.resources.update_question_title
 import io.github.catlinux.keynexa.desktop.app.generated.resources.update_question_yes
+import io.github.catlinux.keynexa.update.UpdateCheck
 import org.jetbrains.compose.resources.stringResource
 
 private val DialogGap = 12.dp

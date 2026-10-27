@@ -1,4 +1,4 @@
-package io.github.catlinux.keynexa.desktop
+package io.github.catlinux.keynexa.update
 
 import com.sun.net.httpserver.Headers
 import com.sun.net.httpserver.HttpServer

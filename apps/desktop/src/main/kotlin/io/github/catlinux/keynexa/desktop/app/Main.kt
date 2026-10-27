@@ -34,9 +34,6 @@ import androidx.compose.ui.window.application
 import androidx.compose.ui.window.rememberWindowState
 import io.github.catlinux.keynexa.desktop.OpenResult
 import io.github.catlinux.keynexa.desktop.Theme
-import io.github.catlinux.keynexa.desktop.UpdateCheck
-import io.github.catlinux.keynexa.desktop.UpdateChoice
-import io.github.catlinux.keynexa.desktop.UpdateDownload
 import io.github.catlinux.keynexa.desktop.app.generated.resources.Res
 import io.github.catlinux.keynexa.desktop.app.generated.resources.app_name
 import io.github.catlinux.keynexa.desktop.app.generated.resources.dialog_ok
@@ -51,6 +48,9 @@ import io.github.catlinux.keynexa.session.SessionState
 import io.github.catlinux.keynexa.session.UnlockError
 import io.github.catlinux.keynexa.session.VaultSession
 import io.github.catlinux.keynexa.ui.theme.KeyNexaTheme
+import io.github.catlinux.keynexa.update.UpdateCheck
+import io.github.catlinux.keynexa.update.UpdateChoice
+import io.github.catlinux.keynexa.update.UpdateDownload
 import io.github.catlinux.keynexa.vault.NewVault
 import io.github.catlinux.keynexa.vault.VaultLocation
 import kotlinx.coroutines.Dispatchers
@@ -358,7 +358,7 @@ private fun ApplicationScope.KeyNexaWindow(
                 withContext(Dispatchers.IO) {
                     val downloaded = container.updates.download(offer)
                     downloaded is UpdateDownload.Ready &&
-                        container.updates.verifyAgain(downloaded.path, offer.msi) &&
+                        container.updates.verifyAgain(downloaded.path, offer.installer) &&
                         launchInstaller(downloaded.path)
                 }
             if (started) {

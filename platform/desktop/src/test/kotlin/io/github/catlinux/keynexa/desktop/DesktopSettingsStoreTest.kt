@@ -1,5 +1,6 @@
 package io.github.catlinux.keynexa.desktop
 
+import io.github.catlinux.keynexa.update.UpdateChoice
 import org.junit.Assert.assertEquals
 import org.junit.Rule
 import org.junit.Test

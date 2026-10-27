@@ -6,6 +6,14 @@ Todos los cambios notables de este proyecto se documentan en este archivo. El fo
 
 ## [Sin publicar]
 
+## [1.13.1] - 2026-10-27
+
+Las apps no cambian.
+
+### Cambiado
+
+- Interno: el servicio de actualizaciones sale de `platform/desktop` a un módulo nuevo, `platform/update`, sin nada propio de Windows, para que la compilación `cloud` de Android pueda usarlo. Ahora quien lo llama dice qué instalador buscar (el MSI de Windows o el APK de Android).
+
 ## [1.13.0] - 2026-10-27
 
 ### Añadido
