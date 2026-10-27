@@ -6,7 +6,7 @@ Todos los cambios notables de este proyecto se documentan en este archivo. El fo
 
 ## [Sin publicar]
 
-## [1.11.10] - 2026-10-28
+## [1.11.10] - 2026-10-27
 
 Las apps no cambian.
 
