@@ -6,6 +6,14 @@ Todos los cambios notables de este proyecto se documentan en este archivo. El fo
 
 ## [Sin publicar]
 
+## [1.11.8] - 2026-10-27
+
+Las apps no cambian.
+
+### Añadido
+
+- Interno: un módulo nuevo, `core/update`, con el manifiesto firmado de actualizaciones del [ADR-0015](decisions/0015-automatic-updates.md): su formato de texto estricto, la comprobación Ed25519 con la clave pública de actualizaciones que lleva la app, la comparación de versiones (solo se ofrecen versiones más nuevas), la consulta como mucho una vez al día y la comprobación del tamaño y el SHA-256 de una descarga. Aún no lo usa nada.
+
 ## [1.11.7] - 2026-10-27
 
 La app de Android no cambia.

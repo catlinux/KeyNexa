@@ -6,6 +6,14 @@ All notable changes to this project are documented in this file. The format is b
 
 ## [Unreleased]
 
+## [1.11.8] - 2026-10-27
+
+The apps do not change.
+
+### Added
+
+- Internal: a new module, `core/update`, with the signed update manifest of [ADR-0015](docs/decisions/0015-automatic-updates.md): its strict text format, the Ed25519 check against the public update key built into the app, version comparison (only newer versions are offered), the once-a-day schedule and the size and SHA-256 check of a download. Nothing uses it yet.
+
 ## [1.11.7] - 2026-10-27
 
 The Android app does not change.
