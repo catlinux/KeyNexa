@@ -132,4 +132,26 @@
     <string name="cloud_disconnect_confirm">Disconnect and delete</string>
     <string name="cloud_cancel">Cancel</string>
     <string name="cloud_close">Close</string>
+
+    <string name="settings_section_updates">Updates</string>
+    <string name="settings_updates_check">Look for updates</string>
+    <string name="settings_updates_help">Once a day, KeyNexa asks GitHub for the newest version. Nothing else is sent, apart from the app version; GitHub sees your IP address. It installs a new version only after you agree, and only if the project signed it.</string>
+    <string name="settings_updates_now">Look now</string>
+    <string name="settings_updates_checking">Looking…</string>
+    <string name="settings_updates_current">KeyNexa is up to date.</string>
+    <string name="settings_updates_available">Version %1$s is available. It is offered on the home screen.</string>
+    <string name="settings_updates_failed_network">Could not reach GitHub.</string>
+    <string name="settings_updates_failed_checks">The published update did not pass the checks and was ignored.</string>
+    <string name="update_question_title">Look for updates?</string>
+    <string name="update_question_text">KeyNexa can ask GitHub once a day whether there is a newer version. It installs one only after you agree, and only if the project signed it. Nothing else is sent. You can change this in Settings.</string>
+    <string name="update_question_yes">Yes, look</string>
+    <string name="update_question_no">No</string>
+    <string name="update_offer_title">Update available</string>
+    <string name="update_offer_text">Version %1$s (%2$s) is ready. Android will ask you to confirm the installation.</string>
+    <string name="update_offer_install">Install</string>
+    <string name="update_offer_later">Later</string>
+    <string name="update_offer_downloading">Downloading and checking…</string>
+    <string name="update_offer_installing">Waiting for Android to finish the installation…</string>
+    <string name="update_offer_failed">The update could not be installed. Nothing was changed.</string>
+    <string name="update_offer_needs_permission">Allow KeyNexa to install apps in the screen that opened, then press Install again.</string>
 </resources>

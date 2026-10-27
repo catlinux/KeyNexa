@@ -116,6 +116,7 @@ fun HomeScreen(
                 }
             }
             CloudReminder(onOpenSettings = onOpenSettings)
+            UpdatePrompt()
             HomeActions(
                 onOpenExisting = onOpenExisting,
                 onCreateNew = onCreateNew,

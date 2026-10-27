@@ -80,6 +80,7 @@ dependencies {
 
     // The cloud client and its credential store exist only in the cloud flavor; the offline APK must not carry them.
     "cloudImplementation"(project(":platform:cloud"))
+    "cloudImplementation"(project(":platform:update"))
 
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.activity.compose)
@@ -115,6 +116,12 @@ androidComponents {
                     val hasInternet = text.contains("android.permission.INTERNET")
                     check(hasInternet == expectInternet) {
                         "Merged ${variant.name} manifest has INTERNET=$hasInternet but expected $expectInternet."
+                    }
+                    // Installing apps goes with the network: only the build that can update itself may ask for it.
+                    val hasInstall = text.contains("android.permission.REQUEST_INSTALL_PACKAGES")
+                    check(hasInstall == expectInternet) {
+                        "Merged ${variant.name} manifest has REQUEST_INSTALL_PACKAGES=$hasInstall but expected " +
+                            "$expectInternet."
                     }
                 }
             }

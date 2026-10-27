@@ -135,4 +135,26 @@
     <string name="cloud_disconnect_confirm">Desconectar y borrar</string>
     <string name="cloud_cancel">Cancelar</string>
     <string name="cloud_close">Cerrar</string>
+
+    <string name="settings_section_updates">Actualizaciones</string>
+    <string name="settings_updates_check">Buscar actualizaciones</string>
+    <string name="settings_updates_help">Una vez al día, KeyNexa pregunta a GitHub cuál es la versión más nueva. No se envía nada más, aparte de la versión de la app; GitHub ve tu dirección IP. Instala una versión nueva solo si aceptas, y solo si el proyecto la firmó.</string>
+    <string name="settings_updates_now">Buscar ahora</string>
+    <string name="settings_updates_checking">Buscando…</string>
+    <string name="settings_updates_current">KeyNexa está al día.</string>
+    <string name="settings_updates_available">Hay una versión %1$s. Se ofrece en la pantalla de inicio.</string>
+    <string name="settings_updates_failed_network">No se ha podido contactar con GitHub.</string>
+    <string name="settings_updates_failed_checks">La actualización publicada no pasó las comprobaciones y se ha ignorado.</string>
+    <string name="update_question_title">¿Buscar actualizaciones?</string>
+    <string name="update_question_text">KeyNexa puede preguntar a GitHub una vez al día si hay una versión más nueva. Solo instala una si aceptas, y solo si el proyecto la firmó. No se envía nada más. Puedes cambiarlo en Ajustes.</string>
+    <string name="update_question_yes">Sí, buscar</string>
+    <string name="update_question_no">No</string>
+    <string name="update_offer_title">Actualización disponible</string>
+    <string name="update_offer_text">La versión %1$s (%2$s) está lista. Android te pedirá confirmar la instalación.</string>
+    <string name="update_offer_install">Instalar</string>
+    <string name="update_offer_later">Más tarde</string>
+    <string name="update_offer_downloading">Descargando y comprobando…</string>
+    <string name="update_offer_installing">Esperando a que Android termine la instalación…</string>
+    <string name="update_offer_failed">No se ha podido instalar la actualización. No se ha cambiado nada.</string>
+    <string name="update_offer_needs_permission">Permite a KeyNexa instalar apps en la pantalla que se ha abierto y vuelve a pulsar Instalar.</string>
 </resources>

@@ -6,6 +6,15 @@ All notable changes to this project are documented in this file. The format is b
 
 ## [Unreleased]
 
+## [1.14.0] - 2026-10-27
+
+The desktop app does not change.
+
+### Added
+
+- Android (`cloud` build): updates ([ADR-0015](docs/decisions/0015-automatic-updates.md)). The home screen asks once whether it may look for new versions; if yes, once per start it reads the signed manifest and, when a newer version exists, shows a card with *Install*. Installing downloads the `cloud` APK, checks its size and SHA-256, checks that it is KeyNexa itself with the promised version and the same signing certificate as the installed app, and hands it to the system installer, which asks for confirmation and checks the signature again. The first time, Android sends you to the system setting that lets KeyNexa install apps. Settings gains an *Updates* section with a switch and a *Look now* button. The `offline` build has none of this code and none of the permissions (the build checks it); its settings say how to get new versions.
+- The `cloud` APK requests `REQUEST_INSTALL_PACKAGES`, only to hand over the checked APK after you press *Install*.
+
 ## [1.13.1] - 2026-10-27
 
 The apps do not change.

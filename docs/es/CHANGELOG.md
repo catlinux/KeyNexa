@@ -6,6 +6,15 @@ Todos los cambios notables de este proyecto se documentan en este archivo. El fo
 
 ## [Sin publicar]
 
+## [1.14.0] - 2026-10-27
+
+La app de escritorio no cambia.
+
+### Añadido
+
+- Android (compilación `cloud`): actualizaciones ([ADR-0015](decisions/0015-automatic-updates.md)). La pantalla de inicio pregunta una vez si puede buscar versiones nuevas; si dices que sí, una vez por arranque lee el manifiesto firmado y, cuando hay una versión más nueva, muestra una tarjeta con *Instalar*. Instalar descarga el APK `cloud`, comprueba su tamaño y su SHA-256, comprueba que es el propio KeyNexa con la versión prometida y el mismo certificado de firma que la app instalada, y se lo pasa al instalador del sistema, que pide confirmación y vuelve a comprobar la firma. La primera vez, Android te lleva al ajuste del sistema que permite a KeyNexa instalar apps. Ajustes gana una sección *Actualizaciones* con un interruptor y un botón *Buscar ahora*. La compilación `offline` no lleva nada de este código ni ninguno de los permisos (lo comprueba la compilación); sus ajustes explican cómo conseguir las versiones nuevas.
+- El APK `cloud` pide `REQUEST_INSTALL_PACKAGES`, solo para entregar el APK ya comprobado después de pulsar *Instalar*.
+
 ## [1.13.1] - 2026-10-27
 
 Las apps no cambian.

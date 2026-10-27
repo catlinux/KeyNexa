@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="settings_section_updates">Updates</string>
+    <string name="settings_updates_offline">This build has no network access, so it cannot look for updates. Download new versions from the releases page of the project, or get them from F-Droid or IzzyOnDroid once KeyNexa is listed there.</string>
+</resources>

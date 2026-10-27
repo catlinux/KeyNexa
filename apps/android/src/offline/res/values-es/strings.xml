@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="settings_section_updates">Actualizaciones</string>
+    <string name="settings_updates_offline">Esta compilación no tiene acceso a la red, así que no puede buscar actualizaciones. Descarga las versiones nuevas de la página de publicaciones del proyecto, o consíguelas en F-Droid o IzzyOnDroid cuando KeyNexa esté en ellas.</string>
+</resources>

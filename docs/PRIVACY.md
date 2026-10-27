@@ -17,12 +17,12 @@ KeyNexa is local-first: your vault is a file you own. The project runs no server
 - Why: to keep backup copies of the vault and, later, to synchronise between your devices.
 - No statistics, no advertising identifiers and no third-party crash reporting are sent.
 
-## Looking for updates (Windows)
+## Looking for updates (Windows and the Android `cloud` build)
 
-- It is off until you answer a one-time question (and it can be turned off in Settings). The `offline` Android build never does it.
-- What it does, at most once a day: it reads a small signed text file (`keynexa-update.txt` and its signature) from the project's repository on GitHub. If there is a newer version and you agree, it downloads the installer from the project's GitHub releases.
+- It is off until you answer a one-time question (and it can be turned off in Settings). The `offline` Android build never does it: it has no network permission.
+- What it does, at most once a day: it reads a small signed text file (`keynexa-update.txt` and its signature) from the project's repository on GitHub. If there is a newer version and you agree, it downloads the installer (the MSI on Windows, the APK on Android) from the project's GitHub releases. On Android the system installer always asks you to confirm, and the app also needs the system setting that lets it install apps (the `REQUEST_INSTALL_PACKAGES` permission, only in the `cloud` build).
 - What GitHub sees: your IP address, the time and the app version (`KeyNexa/<version>` as the user agent). Nothing else is sent: no vault, no identifier, no statistics.
-- What it checks before installing: the signature of the text file against the project's update key built into the app, then the size and SHA-256 of the installer. Anything that does not match is ignored, and it never installs an older version.
+- What it checks before installing: the signature of the text file against the project's update key built into the app, then the size and SHA-256 of the installer. On Android it also checks that the downloaded APK is KeyNexa itself, with the version the signed file promised and the same signing certificate as the installed app. Anything that does not match is ignored, and it never installs an older version.
 
 ## What is stored on your device
 

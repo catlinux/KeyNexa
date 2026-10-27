@@ -26,7 +26,7 @@ Para quitarlo, usa *Configuración > Aplicaciones* o `msiexec /x KeyNexa-windows
 
 ### Actualizaciones
 
-Desde la versión 1.12.0 KeyNexa puede buscar versiones nuevas por sí sola. La primera vez pregunta; si dices que sí, una vez al día pregunta a GitHub cuál es la versión más nueva. Cuando hay una y no hay ninguna bóveda abierta, ofrece instalarla: **Instalar** bloquea la bóveda, descarga el instalador, lo comprueba y lo ejecuta, y KeyNexa se cierra mientras trabaja el instalador. Vuelve a abrir KeyNexa después. En Ajustes hay un interruptor y un botón *Buscar ahora*. Lo que se envía y se comprueba está en [PRIVACY](PRIVACY.md#buscar-actualizaciones-windows). El ZIP portable no se actualiza solo.
+Desde la versión 1.12.0 KeyNexa puede buscar versiones nuevas por sí sola. La primera vez pregunta; si dices que sí, una vez al día pregunta a GitHub cuál es la versión más nueva. Cuando hay una y no hay ninguna bóveda abierta, ofrece instalarla: **Instalar** bloquea la bóveda, descarga el instalador, lo comprueba y lo ejecuta, y KeyNexa se cierra mientras trabaja el instalador. Vuelve a abrir KeyNexa después. En Ajustes hay un interruptor y un botón *Buscar ahora*. Lo que se envía y se comprueba está en [PRIVACY](PRIVACY.md#buscar-actualizaciones-windows-y-la-variante-cloud-de-android). El ZIP portable no se actualiza solo.
 
 ## ZIP portable
 

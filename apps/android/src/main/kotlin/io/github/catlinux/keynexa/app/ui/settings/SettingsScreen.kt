@@ -206,6 +206,7 @@ fun SettingsScreen(
                     }
                 }
                 CloudSettingsEntry(cloudSource, syncLocal)
+                UpdatesSettingsEntry()
                 SettingsCard(titleRes = R.string.settings_section_about) {
                     Text(
                         text = stringResource(R.string.settings_version, installedVersion()),
@@ -264,7 +265,7 @@ private fun SettingsHeader(
 
 /** A section of the settings: a card with a title in capitals and the rows inside it. */
 @Composable
-private fun SettingsCard(
+internal fun SettingsCard(
     @StringRes titleRes: Int,
     modifier: Modifier = Modifier,
     content: @Composable ColumnScope.() -> Unit,
@@ -391,7 +392,7 @@ private fun OptionRow(
 
 /** One setting that is on or off; its label is what a screen reader reads. */
 @Composable
-private fun SwitchSetting(
+internal fun SwitchSetting(
     label: String,
     checked: Boolean,
     onCheckedChange: (Boolean) -> Unit,

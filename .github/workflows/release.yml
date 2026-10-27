@@ -64,6 +64,10 @@ jobs:
             echo '::error title=Release::the offline APK asks for the Internet permission' >&2
             exit 1
           fi
+          if grep -q 'android.permission.REQUEST_INSTALL_PACKAGES' <<< "$offline"; then
+            echo '::error title=Release::the offline APK asks to install packages' >&2
+            exit 1
+          fi
           if ! grep -q 'android.permission.INTERNET' <<< "$cloud"; then
             echo '::error title=Release::the cloud APK lacks the Internet permission it needs' >&2
             exit 1
