@@ -288,6 +288,11 @@ class WindowsHello(
             val info = out { operation.call(0, Guid.GUID.fromString(IID_ASYNC_INFO), it) }
             val deadline = System.nanoTime() + timeoutMs * NANOS_PER_MS
             val status = IntByReference()
+            // Raising stops once the prompt is in front, or after a short while: fighting for the foreground for
+            // the whole wait would pull the user back from other windows and could send their typing into the PIN
+            // box, where wrong attempts count towards the Hello lockout.
+            var raising = front
+            val raiseUntil = System.nanoTime() + RAISE_WINDOW_MS * NANOS_PER_MS
             var ticks = 0
             while (true) {
                 check(info.call(SLOT_ASYNC_STATUS, status) >= 0) { "IAsyncInfo.Status" }
@@ -300,7 +305,9 @@ class WindowsHello(
                     info.call(SLOT_ASYNC_CANCEL)
                     throw HelloException("timeout")
                 }
-                if (front && ticks++ % FRONT_EVERY_TICKS == 0) frontHelloDialog()
+                if (raising && ticks++ % FRONT_EVERY_TICKS == 0) {
+                    raising = !frontHelloDialog() && System.nanoTime() < raiseUntil
+                }
                 Thread.sleep(POLL_MS)
             }
         }
@@ -364,6 +371,7 @@ class WindowsHello(
         private const val SIGN_TIMEOUT_MS = 5 * 60_000L
         private const val POLL_MS = 25L
         private const val FRONT_EVERY_TICKS = 6
+        private const val RAISE_WINDOW_MS = 5_000L
 
         private fun statusName(status: Int): String =
             when (status) {
@@ -391,22 +399,24 @@ private const val IMAGE_NAME_CHARS = 1024
 
 /**
  * Brings the Hello prompt in front. It belongs to CredentialUIBroker.exe, not to us, so Windows often opens it behind
- * the window that asked; the window is found by its process and, when it is not already in front, raised.
+ * the window that asked; the window is found by its process and, when it is not already in front, raised. True once
+ * the prompt is the foreground window.
  */
-private fun frontHelloDialog() {
+private fun frontHelloDialog(): Boolean {
     val user32 = User32.INSTANCE
     var dialog: WinDef.HWND? = null
     user32.EnumWindows({ hwnd, _ ->
         if (user32.IsWindowVisible(hwnd) && isHelloBroker(hwnd)) dialog = hwnd
         true
     }, null)
-    val target = dialog ?: return
-    if (user32.GetForegroundWindow() == target) return
+    val target = dialog ?: return false
+    if (user32.GetForegroundWindow() == target) return true
     val keys = AllowSetForegroundWindow32.INSTANCE
     keys.keybd_event(VK_MENU_KEY, 0, 0, null)
     keys.keybd_event(VK_MENU_KEY, 0, KEYEVENTF_KEY_UP, null)
     user32.BringWindowToTop(target)
     user32.SetForegroundWindow(target)
+    return user32.GetForegroundWindow() == target
 }
 
 private const val VK_MENU_KEY: Byte = 0x12

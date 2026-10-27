@@ -6,6 +6,18 @@ Todos los cambios notables de este proyecto se documentan en este archivo. El fo
 
 ## [Sin publicar]
 
+## [1.11.2] - 2026-10-27
+
+La app de Android no cambia.
+
+### Corregido
+
+- Escritorio: mientras esperaba el PIN de Windows Hello, KeyNexa volvía a traer el prompt al frente cada pocas décimas de segundo, durante hasta cinco minutos. Si cambiabas a otra ventana te devolvía a la fuerza, y lo que escribieras allí podía acabar en el campo del PIN, donde los intentos fallidos cuentan para el bloqueo de Hello. Ahora solo lo trae al frente hasta que queda delante, como mucho cinco segundos.
+
+### Cambiado
+
+- Docs: la lista de pendientes pierde una tarea ya hecha (el flujo de publicación con las dos compilaciones de Android funciona desde la 1.0.0) y un duplicado de la de actualizaciones automáticas.
+
 ## [1.11.1] - 2026-10-20
 
 ### Corregido

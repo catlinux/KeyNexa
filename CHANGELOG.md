@@ -6,6 +6,18 @@ All notable changes to this project are documented in this file. The format is b
 
 ## [Unreleased]
 
+## [1.11.2] - 2026-10-27
+
+The Android app does not change.
+
+### Fixed
+
+- Desktop: while waiting for the Windows Hello PIN, KeyNexa kept pulling the prompt back to the front every fraction of a second, for up to five minutes. If you switched to another window you were dragged back, and what you typed there could go into the PIN box, where wrong attempts count towards the Hello lockout. It now raises the prompt only until it is in front, for five seconds at most.
+
+### Changed
+
+- Docs: the to-do list loses an item already done (the release workflow with both Android builds has run since 1.0.0) and a duplicate of the automatic updates item.
+
 ## [1.11.1] - 2026-10-20
 
 ### Fixed
