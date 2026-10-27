@@ -62,6 +62,7 @@ import io.github.catlinux.keynexa.desktop.app.generated.resources.settings_quick
 import io.github.catlinux.keynexa.desktop.app.generated.resources.settings_quick_unlock_after
 import io.github.catlinux.keynexa.desktop.app.generated.resources.settings_quick_unlock_help
 import io.github.catlinux.keynexa.desktop.app.generated.resources.settings_seconds
+import io.github.catlinux.keynexa.desktop.app.generated.resources.settings_section_about
 import io.github.catlinux.keynexa.desktop.app.generated.resources.settings_section_appearance
 import io.github.catlinux.keynexa.desktop.app.generated.resources.settings_section_clipboard
 import io.github.catlinux.keynexa.desktop.app.generated.resources.settings_section_modes
@@ -79,6 +80,7 @@ import io.github.catlinux.keynexa.desktop.app.generated.resources.settings_updat
 import io.github.catlinux.keynexa.desktop.app.generated.resources.settings_updates_failed_network
 import io.github.catlinux.keynexa.desktop.app.generated.resources.settings_updates_help
 import io.github.catlinux.keynexa.desktop.app.generated.resources.settings_updates_now
+import io.github.catlinux.keynexa.desktop.app.generated.resources.settings_version
 import org.jetbrains.compose.resources.pluralStringResource
 import org.jetbrains.compose.resources.stringResource
 import java.time.Instant
@@ -150,6 +152,12 @@ internal fun DesktopSettingsScreen(
         ClipboardSection(settings = settings, onUpdate = onUpdate)
         UpdatesSection(settings = settings, onUpdate = onUpdate, phase = updatePhase, onCheck = onCheckUpdates)
         ModesSection(cloudConfigured = cloudConfigured, cloudSyncState = cloudSyncState, onOpenCloud = onOpenCloud)
+        SettingsCard(title = stringResource(Res.string.settings_section_about)) {
+            Text(
+                text = stringResource(Res.string.settings_version, AppVersion.current.toString()),
+                style = MaterialTheme.typography.bodyLarge,
+            )
+        }
     }
 }
 

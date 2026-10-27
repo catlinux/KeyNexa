@@ -2,6 +2,8 @@
 
 package io.github.catlinux.keynexa.app.ui.settings
 
+import android.content.pm.PackageManager
+import android.os.Build
 import androidx.annotation.StringRes
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
@@ -28,8 +30,10 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
@@ -202,6 +206,13 @@ fun SettingsScreen(
                     }
                 }
                 CloudSettingsEntry(cloudSource, syncLocal)
+                SettingsCard(titleRes = R.string.settings_section_about) {
+                    Text(
+                        text = stringResource(R.string.settings_version, installedVersion()),
+                        style = MaterialTheme.typography.bodyLarge,
+                        modifier = Modifier.padding(CardPaddingHorizontal),
+                    )
+                }
             }
         }
     }
@@ -301,6 +312,27 @@ private fun SettingsLabel(
                     bottom = LabelPaddingBottom,
                 ),
     )
+}
+
+/** The version name of the installed app, read from the package manager; empty when it cannot be read. */
+@Composable
+private fun installedVersion(): String {
+    val context = LocalContext.current
+    return remember(context) {
+        try {
+            val manager = context.packageManager
+            val info =
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                    manager.getPackageInfo(context.packageName, PackageManager.PackageInfoFlags.of(0))
+                } else {
+                    @Suppress("DEPRECATION")
+                    manager.getPackageInfo(context.packageName, 0)
+                }
+            info.versionName.orEmpty()
+        } catch (_: PackageManager.NameNotFoundException) {
+            ""
+        }
+    }
 }
 
 /** A quiet explanation under a group of options. */

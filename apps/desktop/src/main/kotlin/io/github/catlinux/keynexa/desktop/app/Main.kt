@@ -390,7 +390,7 @@ private fun ApplicationScope.KeyNexaWindow(
             }
         },
         state = rememberWindowState(size = WindowSize),
-        title = stringResource(Res.string.app_name),
+        title = stringResource(Res.string.app_name) + " " + AppVersion.current,
         icon = windowIcon,
     ) {
         window.minimumSize = Dimension(MIN_WINDOW_WIDTH, MIN_WINDOW_HEIGHT)

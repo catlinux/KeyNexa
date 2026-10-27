@@ -6,6 +6,12 @@ All notable changes to this project are documented in this file. The format is b
 
 ## [Unreleased]
 
+## [1.13.0] - 2026-10-27
+
+### Added
+
+- Both apps show their version: on the desktop in the title bar and in an *About* card at the end of the settings; on Android in an *About* card at the end of the settings.
+
 ## [1.12.0] - 2026-10-27
 
 The Android app does not change.

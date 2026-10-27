@@ -416,4 +416,6 @@
     <string name="update_offer_later">Más tarde</string>
     <string name="update_offer_downloading">Descargando y comprobando…</string>
     <string name="update_offer_failed">No se ha podido instalar la actualización. No se ha cambiado nada.</string>
+    <string name="settings_section_about">Acerca de</string>
+    <string name="settings_version">Versión de KeyNexa: %1$s</string>
 </resources>

@@ -6,6 +6,12 @@ Todos los cambios notables de este proyecto se documentan en este archivo. El fo
 
 ## [Sin publicar]
 
+## [1.13.0] - 2026-10-27
+
+### Añadido
+
+- Las dos apps muestran su versión: en el escritorio, en la barra de título y en una tarjeta *Acerca de* al final de los ajustes; en Android, en una tarjeta *Acerca de* al final de los ajustes.
+
 ## [1.12.0] - 2026-10-27
 
 La app de Android no cambia.

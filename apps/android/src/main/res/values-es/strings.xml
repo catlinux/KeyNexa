@@ -329,4 +329,6 @@
     <string name="edit_attachment_remove">Quitar</string>
     <string name="edit_attachment_add">Añadir un archivo</string>
     <string name="edit_attachment_too_large">Demasiado grande (máximo 10 MB)</string>
+    <string name="settings_section_about">Acerca de</string>
+    <string name="settings_version">Versión de KeyNexa: %1$s</string>
 </resources>
