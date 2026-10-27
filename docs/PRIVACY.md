@@ -17,6 +17,13 @@ KeyNexa is local-first: your vault is a file you own. The project runs no server
 - Why: to keep backup copies of the vault and, later, to synchronise between your devices.
 - No statistics, no advertising identifiers and no third-party crash reporting are sent.
 
+## Looking for updates (Windows)
+
+- It is off until you answer a one-time question (and it can be turned off in Settings). The `offline` Android build never does it.
+- What it does, at most once a day: it reads a small signed text file (`keynexa-update.txt` and its signature) from the project's repository on GitHub. If there is a newer version and you agree, it downloads the installer from the project's GitHub releases.
+- What GitHub sees: your IP address, the time and the app version (`KeyNexa/<version>` as the user agent). Nothing else is sent: no vault, no identifier, no statistics.
+- What it checks before installing: the signature of the text file against the project's update key built into the app, then the size and SHA-256 of the installer. Anything that does not match is ignored, and it never installs an older version.
+
 ## What is stored on your device
 
 - The cloud credentials you configure, encrypted with a non-exportable AES-256-GCM key from the Android Keystore, in app-private storage excluded from Android backup.

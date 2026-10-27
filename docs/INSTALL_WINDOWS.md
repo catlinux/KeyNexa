@@ -24,6 +24,10 @@ To update, install the newer `.msi` over it: it replaces the installed version i
 
 To remove it, use *Settings > Apps* or `msiexec /x KeyNexa-windows-x64-<version>.msi`. Your vaults are never touched, and neither is the data folder described below.
 
+### Updates
+
+From version 1.12.0 KeyNexa can look for new versions by itself. The first time, it asks; if you say yes, once a day it asks GitHub for the newest version. When there is one and no vault is open, it offers to install it: **Install** locks the vault, downloads the installer, checks it and runs it, and KeyNexa closes while the installer works. Open KeyNexa again afterwards. Settings has a switch and a *Look now* button. What is sent and checked is in [PRIVACY](PRIVACY.md#looking-for-updates-windows). The portable ZIP does not update itself.
+
 ## Portable ZIP
 
 Extract the `.zip` anywhere and run `KeyNexa\KeyNexa.exe`. Nothing is installed and no shortcut is created; delete the folder to remove the program.

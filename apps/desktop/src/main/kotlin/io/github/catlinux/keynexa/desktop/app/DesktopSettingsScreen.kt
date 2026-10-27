@@ -32,6 +32,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import io.github.catlinux.keynexa.desktop.DesktopSettings
 import io.github.catlinux.keynexa.desktop.Theme
+import io.github.catlinux.keynexa.desktop.UpdateChoice
 import io.github.catlinux.keynexa.desktop.app.generated.resources.Res
 import io.github.catlinux.keynexa.desktop.app.generated.resources.group_settings
 import io.github.catlinux.keynexa.desktop.app.generated.resources.settings_allow_screenshots
@@ -65,10 +66,19 @@ import io.github.catlinux.keynexa.desktop.app.generated.resources.settings_secti
 import io.github.catlinux.keynexa.desktop.app.generated.resources.settings_section_clipboard
 import io.github.catlinux.keynexa.desktop.app.generated.resources.settings_section_modes
 import io.github.catlinux.keynexa.desktop.app.generated.resources.settings_section_security
+import io.github.catlinux.keynexa.desktop.app.generated.resources.settings_section_updates
 import io.github.catlinux.keynexa.desktop.app.generated.resources.settings_theme
 import io.github.catlinux.keynexa.desktop.app.generated.resources.settings_theme_dark
 import io.github.catlinux.keynexa.desktop.app.generated.resources.settings_theme_light
 import io.github.catlinux.keynexa.desktop.app.generated.resources.settings_theme_system
+import io.github.catlinux.keynexa.desktop.app.generated.resources.settings_updates_available
+import io.github.catlinux.keynexa.desktop.app.generated.resources.settings_updates_check
+import io.github.catlinux.keynexa.desktop.app.generated.resources.settings_updates_checking
+import io.github.catlinux.keynexa.desktop.app.generated.resources.settings_updates_current
+import io.github.catlinux.keynexa.desktop.app.generated.resources.settings_updates_failed_checks
+import io.github.catlinux.keynexa.desktop.app.generated.resources.settings_updates_failed_network
+import io.github.catlinux.keynexa.desktop.app.generated.resources.settings_updates_help
+import io.github.catlinux.keynexa.desktop.app.generated.resources.settings_updates_now
 import org.jetbrains.compose.resources.pluralStringResource
 import org.jetbrains.compose.resources.stringResource
 import java.time.Instant
@@ -109,6 +119,8 @@ internal fun DesktopSettingsScreen(
     onOpenCloud: (() -> Unit)? = null,
     cloudSyncState: CloudSyncCardState = CloudSyncCardState(),
     quickUnlockSupported: Boolean = false,
+    updatePhase: UpdatePhase = UpdatePhase.Idle,
+    onCheckUpdates: () -> Unit = {},
 ) {
     Column(
         modifier =
@@ -136,6 +148,7 @@ internal fun DesktopSettingsScreen(
         AppearanceSection(settings = settings, onUpdate = onUpdate)
         SecuritySection(settings = settings, onUpdate = onUpdate, quickUnlockSupported = quickUnlockSupported)
         ClipboardSection(settings = settings, onUpdate = onUpdate)
+        UpdatesSection(settings = settings, onUpdate = onUpdate, phase = updatePhase, onCheck = onCheckUpdates)
         ModesSection(cloudConfigured = cloudConfigured, cloudSyncState = cloudSyncState, onOpenCloud = onOpenCloud)
     }
 }
@@ -227,6 +240,60 @@ private fun QuickUnlockChoices(
         )
     }
 }
+
+/** Looking for new versions: the switch, and a button to look right now (ADR-0015). */
+@Composable
+private fun UpdatesSection(
+    settings: DesktopSettings,
+    onUpdate: ((DesktopSettings) -> DesktopSettings) -> Unit,
+    phase: UpdatePhase,
+    onCheck: () -> Unit,
+) {
+    val on = settings.updateChecks == UpdateChoice.On
+    SettingsCard(title = stringResource(Res.string.settings_section_updates)) {
+        SwitchRow(
+            label = stringResource(Res.string.settings_updates_check),
+            help = stringResource(Res.string.settings_updates_help),
+            checked = on,
+            onCheckedChange = { value ->
+                onUpdate { it.copy(updateChecks = if (value) UpdateChoice.On else UpdateChoice.Off) }
+            },
+        )
+        if (on) {
+            OutlinedButton(
+                onClick = onCheck,
+                enabled = phase != UpdatePhase.Checking,
+                modifier = Modifier.heightIn(min = TouchTarget),
+            ) {
+                Text(text = stringResource(Res.string.settings_updates_now))
+            }
+            updateStatusText(phase)?.let { HelpText(text = it) }
+        }
+    }
+}
+
+/** What the last look for updates found, in a line; null when there is nothing to say. */
+@Composable
+private fun updateStatusText(phase: UpdatePhase): String? =
+    when (phase) {
+        UpdatePhase.Checking -> stringResource(Res.string.settings_updates_checking)
+        UpdatePhase.UpToDate -> stringResource(Res.string.settings_updates_current)
+        is UpdatePhase.Offered ->
+            stringResource(
+                Res.string.settings_updates_available,
+                phase.offer.manifest.version
+                    .toString(),
+            )
+        is UpdatePhase.Failed ->
+            stringResource(
+                if (isNetworkFailure(phase.reason)) {
+                    Res.string.settings_updates_failed_network
+                } else {
+                    Res.string.settings_updates_failed_checks
+                },
+            )
+        else -> null
+    }
 
 /** How long a copied secret stays on the clipboard. */
 @Composable

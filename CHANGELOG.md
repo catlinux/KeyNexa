@@ -6,6 +6,14 @@ All notable changes to this project are documented in this file. The format is b
 
 ## [Unreleased]
 
+## [1.12.0] - 2026-10-27
+
+The Android app does not change.
+
+### Added
+
+- Desktop: automatic updates ([ADR-0015](docs/decisions/0015-automatic-updates.md)). The first time, the app asks whether it may look for new versions; if yes, once a day it reads the signed manifest from the update channel and, when a newer version exists and no vault is open, offers to install it. *Install* locks the vault, downloads the installer from the project's GitHub releases, checks the signature, size and SHA-256, runs it and closes the app. Settings gains a switch and a *Look now* button. Nothing is sent but the app version, and GitHub sees the IP address ([PRIVACY](docs/PRIVACY.md)). It works only for releases published with the update key, so the first one that can be offered to a 1.12.0 install is the next release.
+
 ## [1.11.10] - 2026-10-27
 
 The apps do not change.

@@ -14,6 +14,7 @@ private const val ALLOW_SCREENSHOTS = "allowScreenshots"
 private const val CLIPBOARD_CLEAR_SECONDS = "clipboardClearSeconds"
 private const val USE_KEYPAD = "useKeypad"
 private const val THEME = "theme"
+private const val UPDATE_CHECKS = "updateChecks"
 private const val QUICK_UNLOCK = "quickUnlock"
 private const val QUICK_UNLOCK_HOURS = "quickUnlockHours"
 
@@ -57,6 +58,7 @@ class DesktopSettingsStore(
                 ),
             useKeypad = flag(properties, USE_KEYPAD, default = false),
             theme = theme(properties),
+            updateChecks = updateChoice(properties),
             quickUnlock = flag(properties, QUICK_UNLOCK, default = false),
             quickUnlockHours =
                 choice(
@@ -79,6 +81,7 @@ class DesktopSettingsStore(
                 CLIPBOARD_CLEAR_SECONDS to settings.clipboardClearSeconds.toString(),
                 USE_KEYPAD to settings.useKeypad.toString(),
                 THEME to settings.theme.name,
+                UPDATE_CHECKS to settings.updateChecks.name,
                 QUICK_UNLOCK to settings.quickUnlock.toString(),
                 QUICK_UNLOCK_HOURS to settings.quickUnlockHours.toString(),
             )
@@ -113,6 +116,12 @@ class DesktopSettingsStore(
             "false" -> false
             else -> default
         }
+
+    /** The stored answer about update checks when it names one, and "not asked yet" otherwise. */
+    private fun updateChoice(properties: Properties): UpdateChoice {
+        val name = properties.getProperty(UPDATE_CHECKS)?.trim() ?: return UpdateChoice.Ask
+        return UpdateChoice.entries.firstOrNull { it.name.equals(name, ignoreCase = true) } ?: UpdateChoice.Ask
+    }
 
     /** The stored theme when it names one, and the system theme otherwise. */
     private fun theme(properties: Properties): Theme {

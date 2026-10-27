@@ -34,6 +34,9 @@ import androidx.compose.ui.window.application
 import androidx.compose.ui.window.rememberWindowState
 import io.github.catlinux.keynexa.desktop.OpenResult
 import io.github.catlinux.keynexa.desktop.Theme
+import io.github.catlinux.keynexa.desktop.UpdateCheck
+import io.github.catlinux.keynexa.desktop.UpdateChoice
+import io.github.catlinux.keynexa.desktop.UpdateDownload
 import io.github.catlinux.keynexa.desktop.app.generated.resources.Res
 import io.github.catlinux.keynexa.desktop.app.generated.resources.app_name
 import io.github.catlinux.keynexa.desktop.app.generated.resources.dialog_ok
@@ -319,6 +322,52 @@ private fun ApplicationScope.KeyNexaWindow(
                 unlockSource = UnlockSource.Password
             },
         )
+    // Updates (ADR-0015): looked for in the background when the user said yes, offered only while no vault is open.
+    var updatePhase by remember { mutableStateOf<UpdatePhase>(UpdatePhase.Idle) }
+    var updateOfferHidden by remember { mutableStateOf(false) }
+    val checkForUpdates: (Boolean) -> Unit = { asked ->
+        scope.launch {
+            if (asked) updatePhase = UpdatePhase.Checking
+            val found = withContext(Dispatchers.IO) { container.updates.check(force = asked) }
+            updatePhase =
+                when (found) {
+                    is UpdateCheck.Available -> UpdatePhase.Offered(found)
+                    UpdateCheck.UpToDate -> if (asked) UpdatePhase.UpToDate else UpdatePhase.Idle
+                    is UpdateCheck.Failed -> if (asked) UpdatePhase.Failed(found.reason) else UpdatePhase.Idle
+                    UpdateCheck.NotDue -> UpdatePhase.Idle
+                }
+        }
+    }
+    LaunchedEffect(settings.updateChecks) {
+        if (settings.updateChecks == UpdateChoice.On) checkForUpdates(false)
+    }
+    val closeApp: () -> Unit = {
+        container.systemEvents.close()
+        // Off the interface thread: it waits if a Hello prompt is open, and leaving wipes memory anyway.
+        Thread { container.quickUnlock.disarm() }.apply { isDaemon = true }.start()
+        container.clipboard.clearNow()
+        container.clipboard.close()
+        session.lock()
+        lock.close()
+        exitApplication()
+    }
+    val installUpdate: (UpdateCheck.Available) -> Unit = { offer ->
+        scope.launch {
+            updatePhase = UpdatePhase.Downloading
+            val started =
+                withContext(Dispatchers.IO) {
+                    val downloaded = container.updates.download(offer)
+                    downloaded is UpdateDownload.Ready &&
+                        container.updates.verifyAgain(downloaded.path, offer.msi) &&
+                        launchInstaller(downloaded.path)
+                }
+            if (started) {
+                closeApp()
+            } else {
+                updatePhase = UpdatePhase.Offered(offer, failed = true)
+            }
+        }
+    }
     val userNameLabel = stringResource(Res.string.entry_detail_user_name)
     val passwordLabel = stringResource(Res.string.entry_detail_password)
     val lockNow: () -> Unit = {
@@ -328,16 +377,7 @@ private fun ApplicationScope.KeyNexaWindow(
         session.lock()
     }
     Window(
-        onCloseRequest = {
-            container.systemEvents.close()
-            // Off the interface thread: it waits if a Hello prompt is open, and leaving wipes memory anyway.
-            Thread { container.quickUnlock.disarm() }.apply { isDaemon = true }.start()
-            container.clipboard.clearNow()
-            container.clipboard.close()
-            session.lock()
-            lock.close()
-            exitApplication()
-        },
+        onCloseRequest = closeApp,
         onKeyEvent = { event ->
             idle.restart()
             val open = state as? SessionState.Open
@@ -416,6 +456,8 @@ private fun ApplicationScope.KeyNexaWindow(
                             onOpenCloud = { cloudOpen = true },
                             cloudSyncState = cloudSyncState,
                             quickUnlockSupported = quickUnlockSupported,
+                            updatePhase = updatePhase,
+                            onCheckUpdates = { checkForUpdates(true) },
                         )
                     } else {
                         KeyNexaScreen(
@@ -437,6 +479,20 @@ private fun ApplicationScope.KeyNexaWindow(
                             quickUnlock = quickUnlockUi,
                         )
                     }
+                }
+                val noVaultOpen = state !is SessionState.Open && state !is SessionState.Unlocking
+                if (noVaultOpen && !settingsOpen && settings.updateChecks == UpdateChoice.Ask) {
+                    UpdateQuestionDialog(
+                        onYes = { container.updateSettings { it.copy(updateChecks = UpdateChoice.On) } },
+                        onNo = { container.updateSettings { it.copy(updateChecks = UpdateChoice.Off) } },
+                    )
+                }
+                if (noVaultOpen && !updateOfferHidden && settings.updateChecks == UpdateChoice.On) {
+                    UpdateOfferDialog(
+                        phase = updatePhase,
+                        onInstall = installUpdate,
+                        onLater = { updateOfferHidden = true },
+                    )
                 }
                 if (cloudOpen) {
                     DesktopCloudDialog(

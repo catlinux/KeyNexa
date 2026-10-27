@@ -397,4 +397,23 @@
     <string name="unlock_hello">Desbloquear con Windows Hello</string>
     <string name="unlock_hello_changed">La contraseña maestra ha cambiado; escríbela de nuevo.</string>
     <string name="unlock_hello_unavailable">Windows Hello no ha podido abrir la bóveda; escribe la contraseña maestra.</string>
+    <string name="settings_section_updates">Actualizaciones</string>
+    <string name="settings_updates_check">Buscar actualizaciones</string>
+    <string name="settings_updates_help">Una vez al día, KeyNexa pregunta a GitHub cuál es la versión más nueva. No se envía nada más, aparte de la versión de la app; GitHub ve tu dirección IP. Instala una versión nueva solo si aceptas, y solo si el proyecto la firmó.</string>
+    <string name="settings_updates_now">Buscar ahora</string>
+    <string name="settings_updates_checking">Buscando…</string>
+    <string name="settings_updates_current">KeyNexa está al día.</string>
+    <string name="settings_updates_available">Hay una versión %1$s. Se ofrece cuando no hay ninguna bóveda abierta.</string>
+    <string name="settings_updates_failed_network">No se ha podido contactar con GitHub.</string>
+    <string name="settings_updates_failed_checks">La actualización publicada no pasó las comprobaciones y se ha ignorado.</string>
+    <string name="update_question_title">¿Buscar actualizaciones?</string>
+    <string name="update_question_text">KeyNexa puede preguntar a GitHub una vez al día si hay una versión más nueva. Solo instala una si aceptas, y solo si el proyecto la firmó. No se envía nada más. Puedes cambiarlo en Ajustes.</string>
+    <string name="update_question_yes">Sí, buscar</string>
+    <string name="update_question_no">No</string>
+    <string name="update_offer_title">Actualización disponible</string>
+    <string name="update_offer_text">La versión %1$s (%2$s) está lista. Al instalar se cierra KeyNexa y se bloquea la bóveda; abre KeyNexa de nuevo cuando termine el instalador.</string>
+    <string name="update_offer_install">Instalar</string>
+    <string name="update_offer_later">Más tarde</string>
+    <string name="update_offer_downloading">Descargando y comprobando…</string>
+    <string name="update_offer_failed">No se ha podido instalar la actualización. No se ha cambiado nada.</string>
 </resources>

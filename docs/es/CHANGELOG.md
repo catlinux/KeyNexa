@@ -6,6 +6,14 @@ Todos los cambios notables de este proyecto se documentan en este archivo. El fo
 
 ## [Sin publicar]
 
+## [1.12.0] - 2026-10-27
+
+La app de Android no cambia.
+
+### Añadido
+
+- Escritorio: actualizaciones automáticas ([ADR-0015](decisions/0015-automatic-updates.md)). La primera vez la app pregunta si puede buscar versiones nuevas; si dices que sí, una vez al día lee el manifiesto firmado del canal de actualizaciones y, cuando hay una versión más nueva y no hay ninguna bóveda abierta, ofrece instalarla. *Instalar* bloquea la bóveda, descarga el instalador de las publicaciones del proyecto en GitHub, comprueba la firma, el tamaño y el SHA-256, lo ejecuta y cierra la app. Ajustes gana un interruptor y un botón *Buscar ahora*. No se envía nada salvo la versión de la app, y GitHub ve la dirección IP ([PRIVACY](PRIVACY.md)). Solo funciona con publicaciones hechas con la clave de actualizaciones, así que la primera que se podrá ofrecer a una instalación 1.12.0 es la siguiente publicación.
+
 ## [1.11.10] - 2026-10-27
 
 Las apps no cambian.

@@ -13,8 +13,11 @@ import io.github.catlinux.keynexa.desktop.DesktopSettingsStore
 import io.github.catlinux.keynexa.desktop.DesktopStores
 import io.github.catlinux.keynexa.desktop.FileStoragePort
 import io.github.catlinux.keynexa.desktop.HelloSigner
+import io.github.catlinux.keynexa.desktop.HttpsUpdateFetcher
 import io.github.catlinux.keynexa.desktop.QuickUnlock
 import io.github.catlinux.keynexa.desktop.SystemEvents
+import io.github.catlinux.keynexa.desktop.UpdateService
+import io.github.catlinux.keynexa.desktop.UpdateStateStore
 import io.github.catlinux.keynexa.kdbx.KotpassKdbxEngine
 import io.github.catlinux.keynexa.session.KnownVaults
 import io.github.catlinux.keynexa.session.SessionSyncLocal
@@ -26,6 +29,8 @@ import io.github.catlinux.keynexa.sync.SafeSaver
 import io.github.catlinux.keynexa.sync.SaveRecovery
 import io.github.catlinux.keynexa.sync.SyncLocal
 import io.github.catlinux.keynexa.sync.VaultReader
+import io.github.catlinux.keynexa.update.ManifestVerifier
+import io.github.catlinux.keynexa.update.UpdateKeys
 import io.github.catlinux.keynexa.vault.VaultLocation
 import io.github.catlinux.keynexa.windows.DpapiSecretBox
 import io.github.catlinux.keynexa.windows.WindowsCaptureGuard
@@ -76,6 +81,16 @@ class DesktopContainer {
     /** The quick-unlock policy: it holds the vault components, encrypted, only in memory. */
     val quickUnlock =
         QuickUnlock(signer = HelloSigner { hello.sign(it, windowHandle) }, clock = System::currentTimeMillis)
+
+    /** Looks for newer signed releases and downloads them when the user agrees (ADR-0015). */
+    val updates =
+        UpdateService(
+            currentVersion = AppVersion.current,
+            fetcher = HttpsUpdateFetcher(userAgentVersion = AppVersion.current.toString()),
+            verifier = ManifestVerifier(UpdateKeys.PRODUCTION),
+            state = UpdateStateStore(dirs.data.resolve("update-state.properties")),
+            downloads = dirs.data.resolve("updates"),
+        )
 
     /** The cloud queue: it copies a vault to the configured account after a save and on demand. */
     val cloud: DesktopCloudBackup

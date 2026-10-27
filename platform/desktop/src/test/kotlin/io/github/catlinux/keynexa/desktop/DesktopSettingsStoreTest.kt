@@ -21,6 +21,24 @@ class DesktopSettingsStoreTest {
     }
 
     @Test
+    fun anOldFileWithoutTheUpdateAnswerReadsAsNotAskedYet() {
+        val file = folder.root.toPath().resolve("old-settings.properties")
+        java.nio.file.Files
+            .writeString(file, "theme=Dark\n")
+
+        assertEquals(UpdateChoice.Ask, DesktopSettingsStore(file).load().updateChecks)
+    }
+
+    @Test
+    fun anUnknownUpdateAnswerReadsAsNotAskedYet() {
+        val file = folder.root.toPath().resolve("odd-settings.properties")
+        java.nio.file.Files
+            .writeString(file, "updateChecks=Maybe\n")
+
+        assertEquals(UpdateChoice.Ask, DesktopSettingsStore(file).load().updateChecks)
+    }
+
+    @Test
     fun everyValueSurvivesTheRoundTrip() {
         val store = store()
         val settings =
@@ -32,6 +50,7 @@ class DesktopSettingsStoreTest {
                 clipboardClearSeconds = 120,
                 useKeypad = true,
                 theme = Theme.Dark,
+                updateChecks = UpdateChoice.On,
             )
 
         store.save(settings)

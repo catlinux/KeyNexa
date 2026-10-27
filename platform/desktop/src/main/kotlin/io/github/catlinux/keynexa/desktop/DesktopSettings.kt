@@ -3,6 +3,9 @@ package io.github.catlinux.keynexa.desktop
 /** The theme a desktop client shows. */
 enum class Theme { System, Light, Dark }
 
+/** Whether the app may ask GitHub for new versions: not answered yet, no, or yes (ADR-0015). */
+enum class UpdateChoice { Ask, Off, On }
+
 /**
  * What a desktop client remembers between runs: when it locks by itself, what locks the vault for it, how long a
  * copied secret stays on the clipboard and how the interface looks. Nothing secret is ever stored here.
@@ -25,6 +28,8 @@ data class DesktopSettings(
     val quickUnlock: Boolean = false,
     /** Hours a quick unlock stays valid after it was armed; unlocking again does not extend it. */
     val quickUnlockHours: Int = DEFAULT_QUICK_UNLOCK_HOURS,
+    /** Look for new versions once a day; asked once, off until the user says yes. */
+    val updateChecks: UpdateChoice = UpdateChoice.Ask,
 ) {
     companion object {
         /** The idle minutes a client offers, 0 meaning never. */
