@@ -6,6 +6,15 @@ Todos los cambios notables de este proyecto se documentan en este archivo. El fo
 
 ## [Sin publicar]
 
+## [1.11.7] - 2026-10-27
+
+La app de Android no cambia.
+
+### Corregido
+
+- Instalador de Windows: una actualización desde cualquier versión publicada antes de la 1.11.6 (1.8.7, 1.11.0, 1.11.1) también encuentra la carpeta donde está instalado KeyNexa, así que ya no propone la carpeta predeterminada esa primera vez. Esas versiones dejaban su carpeta solo en una clave del registro con el nombre de su versión, que el instalador ahora también lee; la carpeta que guarda el propio instalador sigue mandando.
+- Instalador de Windows: la carpeta encontrada se propone en el diálogo del instalador en vez de imponerse, así que se respeta si eliges otra allí; una instalación silenciosa la sigue tomando tal cual.
+
 ## [1.11.6] - 2026-10-27
 
 Las apps no cambian.

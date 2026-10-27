@@ -6,6 +6,15 @@ All notable changes to this project are documented in this file. The format is b
 
 ## [Unreleased]
 
+## [1.11.7] - 2026-10-27
+
+The Android app does not change.
+
+### Fixed
+
+- Windows installer: an update from any version published before 1.11.6 (1.8.7, 1.11.0, 1.11.1) also finds the folder where KeyNexa is installed, so it no longer proposes the default folder once. Those versions left their folder only in a registry key named after their version, which the installer now reads as well; the folder it stores itself still wins.
+- Windows installer: the folder found is proposed in the installer's dialog instead of being forced, so choosing another folder there is respected; a silent install still takes it as it is.
+
 ## [1.11.6] - 2026-10-27
 
 The apps do not change.
