@@ -6,6 +6,14 @@ Todos los cambios notables de este proyecto se documentan en este archivo. El fo
 
 ## [Sin publicar]
 
+## [1.11.4] - 2026-10-27
+
+Las apps no cambian.
+
+### Añadido
+
+- Docs: la [revisión de seguridad](SECURITY_REVIEW.md) incorpora una revisión del cliente de escritorio (todo lo posterior a la 0.33.11): dos hallazgos, corregidos en la 1.11.2 y la 1.11.3, cinco riesgos aceptados y puntos abiertos (A8 a A12), y lo comprobado sin hallazgos. El ADR-0014 dice ahora que un volcado del proceso aún puede contener restos de una contraseña maestra escrita con el teclado del sistema, y la lista de pendientes incorpora un campo de contraseña maestra borrable en el escritorio.
+
 ## [1.11.3] - 2026-10-27
 
 ### Seguridad

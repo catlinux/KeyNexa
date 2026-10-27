@@ -52,7 +52,7 @@ Opción 3, a elección del usuario y con el secreto solo en memoria.
 
 ## Consecuencias
 
-- Con KeyNexa bloqueado y la sesión abierta, entrar requiere el PIN, la cara o la huella del usuario de Windows, o la contraseña maestra. Un volcado del proceso bloqueado solo contiene texto cifrado, un reto y un IV.
+- Con KeyNexa bloqueado y la sesión abierta, entrar requiere el PIN, la cara o la huella del usuario de Windows, o la contraseña maestra. Lo que el desbloqueo rápido guarda en memoria es solo texto cifrado, un reto y un IV. Un volcado del proceso aún puede contener restos de la contraseña maestra escrita con el teclado del sistema, que la JVM no puede borrar (riesgo aceptado A8 de la [revisión de seguridad](../SECURITY_REVIEW.md)).
 - Quien sepa el PIN de Windows puede abrir la bóveda hasta que pase el límite de tiempo. El ajuste lo dice en una línea. La opción está desactivada por defecto y su límite nunca pasa de 24 h.
 - Un programa malicioso que se ejecute como el usuario también puede pedir una firma. Windows mostrará la ventana de Hello, y un usuario que meta el PIN por error le da el secreto. Esto entra en T22 y T23 (una sesión comprometida queda fuera del alcance).
 - Para un desbloqueo rápido no hace falta el archivo de clave, porque su clave procesada forma parte de los componentes.

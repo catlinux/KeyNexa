@@ -2,7 +2,7 @@
 
 [English](SECURITY_REVIEW.md) | [Español](es/SECURITY_REVIEW.md)
 
-Final review before 1.0 (step B3 of the roadmap and the code part of step Z). Done on 2026-10-18 on version 0.33.3; the fixes it led to are in 0.33.4 to 0.33.11.
+Two reviews are kept here. The first is the final review before the Android 1.0 (step B3 of the roadmap and the code part of step Z), done on 2026-10-18 on version 0.33.3; the fixes it led to are in 0.33.4 to 0.33.11. The second, [review of the desktop client](#desktop-review-2026-10-27), covers what came after it.
 
 ## Scope and method
 
@@ -54,6 +54,46 @@ Done on 2026-10-18 after the connection came back (version 0.33.11):
 
 Postponed by the owner, not blocking 1.0: biometric unlock on a phone without StrongBox and on API 26–29, and Argon2 on a modest phone.
 
+## Desktop review (2026-10-27)
+
+Done on version 1.11.2; the fixes are in 1.11.2 and 1.11.3.
+
+- **Scope:** everything added since 0.33.11, about 15,300 lines of production Kotlin: `platform/windows` (DPAPI, clipboard, capture guard, session and power events, Windows Hello over WinRT), `platform/desktop` (file storage, settings, clipboard timer, cloud stores, the quick-unlock policy), the stores of `platform/jvm`, the cloud synchronisation in `core/sync`, `core/session` and `platform/cloud`, the unlock, clipboard and quick-unlock wiring of `apps/desktop`, the user name suggestions, and the `windows` job of the release workflow.
+- **How:** the same method as above. Screens that never touch a secret were only skimmed, not read line by line.
+- **Who:** the same AI model (Claude Opus) for the owner; again **not an independent review**.
+
+### Findings fixed
+
+| # | Severity | Area | Finding | Fixed in |
+| --- | --- | --- | --- | --- |
+| R10 | Medium | Windows Hello | While waiting for the PIN, the code that brings the Hello prompt to the front ran every 150 ms for up to five minutes, with a synthetic Alt press each time. A user who switched to another window was pulled back, and typing meant for that window could reach the PIN box, where wrong attempts count towards the Hello lockout. Now it stops once the prompt is in front, or after five seconds. | 1.11.2 |
+| R11 | Low to medium | Sync | A copy downloaded from the cloud was decrypted without the key-derivation cost limit that R4 gave conflict copies, so whoever could write to the bucket could keep the thread that also saves busy for a long time. Both paths now share one limit, with a test that fails without it. | 1.11.3 |
+
+### Accepted risks and open points
+
+| # | Severity | Point | Decision |
+| --- | --- | --- | --- |
+| A8 | Low to medium | On the desktop the system keyboard is the default, and with it the master password lives in Compose `String`s, one per keystroke, that cannot be wiped and stay in memory until the collector reuses it. The same goes for the password of the conflict-copy dialog. A dump of the process, a crash dump, the page file or the hibernation file can hold them. ADR-0014 claimed that a dump of the locked process held only ciphertext; that holds for what the quick unlock keeps, not for these leftovers, and the ADR now says so. | Accepted for now (JVM strings cannot be wiped reliably, and on Android the keypad is the default). Follow-up in the [to-do list](../TODO.md): a wipeable master-password field on the desktop. |
+| A9 | Info | The per-user install folder is writable by the user, so code running as that user could replace the program files. | Same as T23: a compromised session is out of scope. |
+| A10 | Low | The MSI and the ZIP are not signed, and their SHA-256 comes from the same release, so it proves the download, not who built it. | Open: decision D9 and the automatic-updates ADR. |
+| A11 | Info | The `windows` release job installs WiX from Chocolatey, without a fixed version, when the runner lacks it. | Accepted: that job holds no secrets and the files are built from the tagged source; pin it if the runner ever stops shipping WiX. |
+| A12 | Info | While the Hello prompt is raised, KeyNexa allows any process to take the foreground (`ASFW_ANY`) and sends a synthetic Alt press. | Accepted: it only lasts until the prompt is in front (at most five seconds) and changes focus, nothing else. |
+
+### Checked without findings
+
+- **Data at rest:** only encrypted KDBX bytes reach the vault file, the private copies and the cloud; writes go to a temporary file in the same folder, forced to disk and moved into place; the data folder is `%LOCALAPPDATA%\KeyNexa`, readable only by the user. The save journal holds fingerprints and references, never content.
+- **Cloud credentials:** sealed with DPAPI for the current user, with KeyNexa's own entropy and a version byte; a damaged blob opens as nothing.
+- **Clipboard:** the marks that keep a secret out of the clipboard history and the cloud clipboard are put before the text; the clear only empties the clipboard while it still holds KeyNexa's copy; lock and exit clear it at once; the copied array is wiped.
+- **Locking:** Win+L and suspend reach the app through a hidden window on its own thread; a failing callback cannot stop the watch.
+- **Network:** HTTPS only (plain HTTP only in tests), redirects never followed, the XML parser of the S3 answers refuses DTDs and external entities, and synchronisation errors are stored as closed kinds, never as messages.
+- **Quick unlock:** HKDF-SHA256 over the JCA's HMAC, checked against RFC 5869; AES-256-GCM with the vault location and arming time as associated data; signature, key and plaintext wiped on every path; nothing logged; a Hello error, a failed decryption, another vault, the time limit or changed credentials disarm it.
+- **Logging:** the only output is the uncaught-exception handler, which prints the exception class and its stack, never its message.
+- **Release:** actions pinned by commit, the `windows` job holds no secrets, and the MSI is installed and removed on the runner before it is published.
+
+### Still to check by hand
+
+Locking on Win+L and on suspend, the quick unlock on a machine without Windows Hello (the option must stay hidden), and an MSI installed over an earlier one.
+
 ## Verdict
 
-No high-severity finding is open. Before 1.0: push the first tag to prove the new release workflow, and get the independent review the roadmap asks for.
+No high-severity finding is open in either review. The Android 1.0 shipped after the first one. For the desktop to leave pre-release: the hand checks above, decision D9, A8's follow-up, and the independent review the roadmap asks for (another model or a person), which neither review is.

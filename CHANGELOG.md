@@ -6,6 +6,14 @@ All notable changes to this project are documented in this file. The format is b
 
 ## [Unreleased]
 
+## [1.11.4] - 2026-10-27
+
+The apps do not change.
+
+### Added
+
+- Docs: the [security review](docs/SECURITY_REVIEW.md) gains a review of the desktop client (everything since 0.33.11): two findings, fixed in 1.11.2 and 1.11.3, five accepted risks and open points (A8 to A12), and what was checked without findings. ADR-0014 now says that a dump of the process can still hold leftovers of a master password typed with the system keyboard, and the to-do list gains a wipeable master-password field for the desktop.
+
 ## [1.11.3] - 2026-10-27
 
 ### Security

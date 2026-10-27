@@ -52,7 +52,7 @@ Option 3, opt-in, with the secret only in memory.
 
 ## Consequences
 
-- With KeyNexa locked and the session open, getting in needs the PIN, face or fingerprint of the Windows user, or the master password. A dump of the locked process holds only ciphertext, a challenge and an IV.
+- With KeyNexa locked and the session open, getting in needs the PIN, face or fingerprint of the Windows user, or the master password. What the quick unlock keeps in memory is only ciphertext, a challenge and an IV. A dump of the process can still hold leftovers of the master password typed with the system keyboard, which the JVM cannot wipe (accepted risk A8 of the [security review](../SECURITY_REVIEW.md)).
 - Anyone who knows the Windows PIN can open the vault until the time limit passes. The setting says so in a line. The option is off by default, and its limit is never longer than 24 h.
 - Malware running as the user can ask for a signature too. Windows will show the Hello prompt, and a user who enters the PIN by mistake gives it the secret. This falls under T22 and T23 (a compromised session is out of scope).
 - A key file is not needed for a quick unlock, because its processed key is part of the components.
