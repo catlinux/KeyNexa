@@ -6,6 +6,14 @@ All notable changes to this project are documented in this file. The format is b
 
 ## [Unreleased]
 
+## [1.11.10] - 2026-10-28
+
+The apps do not change.
+
+### Added
+
+- Internal: the desktop update service of [ADR-0015](docs/decisions/0015-automatic-updates.md): it fetches the signed manifest from the update channel and checks the signature before anything else, offers only newer versions, refuses a validly signed manifest older than one already seen (rollback), downloads the installer from GitHub's own hosts with every redirect checked, and checks its size and SHA-256 against the manifest. The app also reads its own version from a resource generated out of `VERSION`. Nothing uses it yet.
+
 ## [1.11.9] - 2026-10-27
 
 The apps do not change.

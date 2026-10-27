@@ -6,6 +6,14 @@ Todos los cambios notables de este proyecto se documentan en este archivo. El fo
 
 ## [Sin publicar]
 
+## [1.11.10] - 2026-10-28
+
+Las apps no cambian.
+
+### Añadido
+
+- Interno: el servicio de actualizaciones del escritorio del [ADR-0015](decisions/0015-automatic-updates.md): obtiene el manifiesto firmado del canal de actualizaciones y comprueba la firma antes que nada, ofrece solo versiones más nuevas, rechaza un manifiesto bien firmado pero más antiguo que uno ya visto (vuelta atrás), descarga el instalador de los servidores propios de GitHub comprobando cada redirección, y comprueba su tamaño y su SHA-256 con el manifiesto. La app también lee su propia versión de un recurso generado a partir de `VERSION`. Aún no lo usa nada.
+
 ## [1.11.9] - 2026-10-27
 
 Las apps no cambian.

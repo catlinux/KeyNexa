@@ -17,6 +17,7 @@ dependencies {
     implementation(project(":core:session"))
     implementation(project(":core:sync"))
     implementation(project(":core:kdbx"))
+    implementation(project(":core:update"))
     implementation(project(":platform:windows"))
 
     implementation(compose.desktop.windows_x64)
@@ -43,6 +44,33 @@ tasks.withType<org.jlleitschuh.gradle.ktlint.tasks.BaseKtLintCheckTask>().config
 
 // The product version lives in the VERSION file at the repository root; the installer takes it from there.
 val productVersion = rootProject.file("VERSION").readText().trim()
+
+// The app reads its own version from a resource, so the update check never depends on the installer. VERSION stays
+// the single source of truth, and the resource is generated on every build that needs it.
+val generatedVersion = layout.buildDirectory.dir("generated/version")
+
+val writeAppVersion by tasks.registering {
+    description = "Writes the VERSION file into the resources of the app, which reads it at run time."
+    val source = rootProject.file("VERSION")
+    inputs.file(source)
+    val output = generatedVersion.map { it.file("keynexa-version.txt") }
+    outputs.file(output)
+    doLast {
+        val target = output.get().asFile
+        target.parentFile.mkdirs()
+        target.writeText(source.readText().trim())
+    }
+}
+
+sourceSets {
+    main {
+        resources.srcDir(generatedVersion)
+    }
+}
+
+tasks.named("processResources") {
+    dependsOn(writeAppVersion)
+}
 
 // Fixed, so a newer version upgrades the installed one instead of installing next to it.
 val msiUpgradeUuid = "8d6f1a52-3c0e-4f5e-9b7a-6a1c2d4e8f10"
