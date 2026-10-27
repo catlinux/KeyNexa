@@ -21,6 +21,7 @@ import io.github.catlinux.keynexa.sync.SyncFile
 import io.github.catlinux.keynexa.sync.SyncIds
 import io.github.catlinux.keynexa.sync.VaultMerger
 import io.github.catlinux.keynexa.sync.VaultReader
+import io.github.catlinux.keynexa.sync.affordableKdf
 import io.github.catlinux.keynexa.vault.Credentials
 import io.github.catlinux.keynexa.vault.CustomDataValue
 import io.github.catlinux.keynexa.vault.FileMetadata
@@ -481,6 +482,8 @@ class VaultSession(
         if (!open.isIdle) return Absorbed.Postponed
         val remote =
             try {
+                // Whoever can write to the account can set this unencrypted header (the same rule as conflict copies).
+                if (!affordableKdf(engine.inspect(bytes).kdf, open.current.format.kdf)) return Absorbed.Unreadable
                 engine.decode(bytes, secrets)
             } catch (_: VaultException.WrongCredentials) {
                 return Absorbed.OtherPassword

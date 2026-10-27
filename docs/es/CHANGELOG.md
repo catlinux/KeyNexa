@@ -6,6 +6,12 @@ Todos los cambios notables de este proyecto se documentan en este archivo. El fo
 
 ## [Sin publicar]
 
+## [1.11.3] - 2026-10-27
+
+### Seguridad
+
+- Sincronización por la nube (escritorio y Android `cloud`): una copia bajada de la cuenta ya no se descifra cuando su cabecera, que va sin cifrar, pide una derivación de clave mucho más costosa que la de la bóveda abierta (más de 16 veces). Si no, quien pudiera escribir en el bucket podría tener ocupado mucho tiempo el hilo que también guarda la bóveda. Las copias de conflicto ya tenían este límite (hallazgo R4 de la revisión); ahora lo comparten.
+
 ## [1.11.2] - 2026-10-27
 
 La app de Android no cambia.

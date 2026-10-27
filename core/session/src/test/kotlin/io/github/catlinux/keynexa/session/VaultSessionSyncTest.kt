@@ -268,6 +268,23 @@ class VaultSessionSyncTest {
     }
 
     @Test
+    fun aRemoteCopyAskingForAFarCostlierKeyDerivationIsNotOpened() {
+        val session = openSession()
+        val base = openVault(session)
+        // The header is unencrypted, so whoever can write to the account can raise it; 17 times the open vault's
+        // Argon2 work is over the limit, and the copy is refused before any key derivation runs.
+        val costly = Kdf.Argon2(Argon2Variant.Argon2id, 1024L * 1024L, 17L, 1, 19)
+        val remote = VaultEditor().addEntry(base, base.root.id, "Remote")
+        val bytes = encode(remote.copy(format = remote.format.copy(kdf = costly)))
+        val writesBefore = writes
+
+        val result = session.absorbRemote(bytes, Expect.SameRoot)
+
+        assertEquals(Absorbed.Unreadable, result)
+        assertEquals(writesBefore, writes)
+    }
+
+    @Test
     fun bytesThatAreNotAVaultAreUnreadable() {
         val session = openSession()
         val writesBefore = writes

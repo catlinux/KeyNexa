@@ -2,7 +2,6 @@ package io.github.catlinux.keynexa.sync
 
 import io.github.catlinux.keynexa.vault.Credentials
 import io.github.catlinux.keynexa.vault.KdbxEngine
-import io.github.catlinux.keynexa.vault.Kdf
 import io.github.catlinux.keynexa.vault.SiblingFile
 import io.github.catlinux.keynexa.vault.StoragePort
 import io.github.catlinux.keynexa.vault.Vault
@@ -176,9 +175,7 @@ class ConflictMerger(
         val fingerprint = Fingerprint.of(bytes)
         if (ledger.isMerged(location, fingerprint)) return Absorb.Skipped
         return try {
-            // The header is unencrypted: a hostile or broken copy could ask for hours of key derivation on the one
-            // thread that also saves. A copy of this vault costs about what the vault costs, so far more is refused.
-            if (!affordable(engine.inspect(bytes).kdf, current.format.kdf)) {
+            if (!affordableKdf(engine.inspect(bytes).kdf, current.format.kdf)) {
                 return Absorb.Problem(file, CopyProblem.Damaged)
             }
             when (val result = merger.merge(current, engine.decode(bytes, credentials))) {
@@ -197,25 +194,6 @@ class ConflictMerger(
     private fun copiesOf(location: VaultLocation): List<SiblingFile> =
         conflictCopiesOf(storage.name(location), storage.listSiblings(location))
 }
-
-/** How many times the open vault's key derivation cost a conflict copy may ask for; above it, it is not opened. */
-private const val MAX_COPY_COST_FACTOR = 16.0
-
-/**
- * Whether a copy's key derivation is within reach of the open vault's: Argon2 work grows with memory times
- * iterations, AES-KDF work with rounds. Different kinds are left to the engine's absolute limits.
- */
-private fun affordable(
-    copy: Kdf,
-    open: Kdf,
-): Boolean =
-    when {
-        copy is Kdf.Argon2 && open is Kdf.Argon2 ->
-            copy.memoryBytes.toDouble() * copy.iterations <=
-                open.memoryBytes.toDouble() * open.iterations * MAX_COPY_COST_FACTOR
-        copy is Kdf.AesKdf && open is Kdf.AesKdf -> copy.rounds <= open.rounds * MAX_COPY_COST_FACTOR
-        else -> true
-    }
 
 /** What one copy did during a scan. */
 private sealed interface Absorb {

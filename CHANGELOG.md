@@ -6,6 +6,12 @@ All notable changes to this project are documented in this file. The format is b
 
 ## [Unreleased]
 
+## [1.11.3] - 2026-10-27
+
+### Security
+
+- Synchronisation through the cloud (desktop and Android `cloud`): a copy downloaded from the account is no longer decrypted when its unencrypted header asks for a key derivation far costlier than the open vault's (more than 16 times). Whoever can write to the bucket could otherwise keep the thread that also saves the vault busy for a long time. Conflict copies already had this limit (review finding R4); both now share it.
+
 ## [1.11.2] - 2026-10-27
 
 The Android app does not change.
