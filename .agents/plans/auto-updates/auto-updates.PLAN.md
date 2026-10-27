@@ -1,0 +1,23 @@
+# Actualizaciones automáticas (2026-10-27)
+
+Implementa el [ADR-0015](../../../docs/decisions/0015-automatic-updates.md); manda el ADR. **No empezar el paso 1 hasta que el titular confirme los tres puntos de «Pendiente del titular» del ADR** y el ADR pase a «Aceptada». Cada paso: archivos, criterio de terminado, ejecutor, versión. El ejecutor marca `[x]` con fecha y versión y, ante un imprevisto de diseño, **para y lo anota aquí**.
+
+Reglas fijas (AGENTS.md): docs bilingües en el mismo commit (`bash scripts/check-docs-i18n.sh`), `VERSION` + CHANGELOG en/es en cada paso, validar con `.\gradlew.bat check`, sin push ni tag sin permiso. AgentRelay: JSON de la tarea en `%TEMP%`, árbol limpio, revisar SIEMPRE el diff. Nada de registrar URL con datos del usuario, ni contenido de bóvedas.
+
+## Pasos
+
+- [ ] **0. Clave de actualizaciones (titular, a mano).** El titular genera un par Ed25519 en un equipo suyo (por ejemplo `openssl genpkey -algorithm ed25519`), guarda la privada como secreto del repositorio `UPDATE_SIGNING_KEY` (PEM) y entrega la **pública** (PEM o X.509 en Base64) al orquestador. Nunca pasa por el chat la privada. Sin versión.
+
+- [ ] **1. Núcleo puro de actualizaciones** · `core/update/` (módulo nuevo, Kotlin/JVM puro, en `settings.gradle.kts`) con `ReleaseInfo` (versión, preversión, notas, recursos), `UpdateManifest` (JSON: versión, archivos con nombre, tamaño y SHA-256), `ManifestVerifier` (Ed25519 de la JCA con la clave pública dada; rechaza firma mala), `UpdatePolicy` (elige la publicación más nueva que la actual con SemVer, nunca una anterior ni igual; incluye preversiones según ajuste; como mucho una consulta al día) y `FileCheck` (tamaño y SHA-256 en streaming). Pruebas: firma buena y mala, manifiesto alterado, versión más antigua o igual rechazada, preversiones, archivo cortado, hash erróneo, JSON hostil (campos ausentes, tamaños negativos, nombres con rutas `..\`).
+  **Terminado cuando** `.\gradlew.bat :core:update:check` pasa. Ejecutor: **AgentRelay, esfuerzo alto** (revisión del orquestador obligatoria). Versión: **parche** (interno); la función visible llega en el paso 3.
+
+- [ ] **2. Flujo de publicación** · `.github/workflows/release.yml`: en el trabajo `publish`, tras reunir los archivos, escribe `keynexa-update.json` con la versión y nombre, tamaño y SHA-256 de cada archivo publicado, lo firma con `UPDATE_SIGNING_KEY` (`openssl pkeyutl -sign -rawin`, la clave a un archivo temporal del runner que se borra al final, como el keystore) y publica `keynexa-update.json` y `.sig`. Comprobar la firma en el propio trabajo con la clave pública antes de publicar.
+  **Terminado cuando** un tag de prueba (con permiso del titular) publica los dos archivos y la firma verifica con la pública. Ejecutor: **la propia sesión con Sonnet, esfuerzo alto** (secretos y CI). Parche.
+
+- [ ] **3. Escritorio** · `platform/desktop` (descarga con `HttpTransport`-like: solo HTTPS, sin redirecciones salvo a `objects.githubusercontent.com`/`github.com` del propio recurso, tamaño máximo), `apps/desktop` (ajuste «Buscar actualizaciones», pregunta única, aviso con notas, «Instalar» → bloquear, comprobar hash de nuevo, `msiexec /i` y cerrar), `strings.xml` en/es, `docs/PRIVACY.md` + traducción. La clave pública va en el código. Archivos en `%LOCALAPPDATA%\KeyNexa\updates`, borrados tras instalar o al fallar.
+  **Terminado cuando** pasan las pruebas y la prueba a mano del titular: de una versión instalada a una más nueva publicada como preversión, en una carpeta personalizada. Ejecutor: **la propia sesión con Sonnet, esfuerzo medio**, trozos acotados a AgentRelay. Versión **1.12.0** (menor).
+
+- [ ] **4. Android `cloud`** · `apps/android/src/cloud` (consulta y descarga a la caché privada, comparación de certificados con `PackageManager`, instalador del sistema con `PackageInstaller` o `ACTION_VIEW` con `FileProvider`), permiso `REQUEST_INSTALL_PACKAGES` solo en `cloud`, comprobación de `release.yml` de que `offline` sigue sin INTERNET ni ese permiso, textos en/es, *Acerca de* de `offline` con cómo actualizar.
+  **Terminado cuando** pasan las pruebas y la prueba a mano en el móvil (app aparte `.debug` no sirve: hace falta la firma de publicación, así que con preversiones reales y permiso del titular). Ejecutor: **la propia sesión con Sonnet, esfuerzo medio**. Versión **1.13.0** (menor).
+
+- [ ] **5. Cierre** · ADR-0015 → «Aceptada», `THREAT_MODEL` T29 → Hecho con versión, README en/es (función), TODO (quitar la tarea), `SECURITY_REVIEW` (revisión del código de descarga e instalación, con Opus). Ejecutor: **Opus para la revisión**, el resto Haiku o AgentRelay esfuerzo bajo.

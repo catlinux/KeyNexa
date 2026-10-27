@@ -6,6 +6,18 @@ All notable changes to this project are documented in this file. The format is b
 
 ## [Unreleased]
 
+## [1.11.6] - 2026-10-27
+
+The apps do not change.
+
+### Added
+
+- Docs: [ADR-0015](docs/decisions/0015-automatic-updates.md) (proposed) designs automatic updates: opt-in; only newer versions offered; on Windows, a manifest signed with a KeyNexa Ed25519 update key built into the app, then the SHA-256 it lists, before the installer starts; on Android, the platform's signature check plus a comparison of signing certificates before the system installer; nothing in the `offline` build. Threat T29 is added to the threat model. Three points wait for the owner.
+
+### Fixed
+
+- Docs: the decision index listed ADR-0014 as proposed; it was accepted in 1.10.0.
+
 ## [1.11.5] - 2026-10-27
 
 The Android app does not change.
