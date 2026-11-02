@@ -58,11 +58,13 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import io.github.catlinux.keynexa.app.R
+import io.github.catlinux.keynexa.ui.fields.ChoiceField
 import io.github.catlinux.keynexa.ui.fields.UserNameField
 import io.github.catlinux.keynexa.vault.Attachment
 import io.github.catlinux.keynexa.vault.BinaryId
 import io.github.catlinux.keynexa.vault.Entry
 import io.github.catlinux.keynexa.vault.FieldValue
+import io.github.catlinux.keynexa.vault.GroupChoice
 import io.github.catlinux.keynexa.vault.MAX_ATTACHMENT_BYTES
 import io.github.catlinux.keynexa.vault.Options
 import io.github.catlinux.keynexa.vault.PasswordGenerator
@@ -72,6 +74,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.ByteArrayOutputStream
 import java.io.IOException
+import java.util.UUID
 import kotlin.math.roundToInt
 
 /** Spacing and touch targets of the design grid (docs/DESIGN.md). */
@@ -310,11 +313,15 @@ fun EntryEditScreen(
         fields: Map<String, FieldValue>,
         attachments: List<Attachment>,
         newBinaries: Map<BinaryId, ByteArray>,
+        groupId: UUID,
     ) -> Unit,
     onCancel: () -> Unit,
+    groups: List<GroupChoice>,
+    initialGroup: UUID,
     modifier: Modifier = Modifier,
     userNameSuggestions: List<String> = emptyList(),
 ) {
+    var groupId by remember { mutableStateOf(initialGroup) }
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
     val form = remember(initial) { EntryForm(initial) }
@@ -329,7 +336,10 @@ fun EntryEditScreen(
     var confirmingCancel by remember { mutableStateOf(false) }
     var attachmentsChanged by remember { mutableStateOf(false) }
     val formUnchanged =
-        form.unchanged && !attachmentsChanged && attachments.toList() == initialAttachments
+        form.unchanged &&
+            !attachmentsChanged &&
+            groupId == initialGroup &&
+            attachments.toList() == initialAttachments
     val requestCancel: () -> Unit = {
         if (formUnchanged) {
             onCancel()
@@ -409,6 +419,13 @@ fun EntryEditScreen(
                             onGenerate = { generating = true },
                         )
                     }
+                    ChoiceField(
+                        selected = groupId,
+                        options = groups.map { it.id to it.label },
+                        onSelect = { groupId = it },
+                        label = { Text(text = stringResource(R.string.edit_group_label)) },
+                        modifier = Modifier.fillMaxWidth(),
+                    )
                     EditCard(titleRes = R.string.edit_custom_title) {
                         CustomSection(form = form)
                     }
@@ -426,7 +443,7 @@ fun EntryEditScreen(
             }
             EditActions(
                 saveEnabled = !form.blocked,
-                onSave = { onSave(form.toFields(), attachments.toList(), newBinaries.toMap()) },
+                onSave = { onSave(form.toFields(), attachments.toList(), newBinaries.toMap(), groupId) },
                 onCancel = requestCancel,
             )
         }

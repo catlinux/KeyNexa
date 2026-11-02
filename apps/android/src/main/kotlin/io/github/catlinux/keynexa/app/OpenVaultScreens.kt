@@ -33,6 +33,8 @@ import io.github.catlinux.keynexa.vault.UserNameSuggestions
 import io.github.catlinux.keynexa.vault.Vault
 import io.github.catlinux.keynexa.vault.VaultEditor
 import io.github.catlinux.keynexa.vault.VaultSearch
+import io.github.catlinux.keynexa.vault.groupChoices
+import io.github.catlinux.keynexa.vault.groupOfEntry
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.IOException
@@ -177,22 +179,34 @@ private fun EntryEdit(
         if (existing == null && screen.entryId != null) navigator.back()
     }
     if (existing == null && screen.entryId != null) return
+    val initialGroup =
+        remember(screen) {
+            screen.entryId?.let { groupOfEntry(vault, it) } ?: screen.groupId?.takeIf { id ->
+                groupChoices(vault).any { it.id == id }
+            } ?: vault.root.id
+        }
     EntryEditScreen(
         initial = existing?.fields,
         isNew = screen.entryId == null,
         initialAttachments = existing?.attachments.orEmpty(),
         userNameSuggestions = remember(screen) { UserNameSuggestions.of(vault) },
-        onSave = { fields, attachments, newBinaries ->
+        groups = remember(vault) { groupChoices(vault) },
+        initialGroup = initialGroup,
+        onSave = { fields, attachments, newBinaries, groupId ->
             val saved =
                 if (screen.entryId != null) {
                     container.session.apply { v ->
-                        editor.storeBinaries(
-                            editor.editEntry(v, screen.entryId) { it.copy(fields = fields, attachments = attachments) },
-                            newBinaries.values,
-                        )
+                        val edited =
+                            editor.storeBinaries(
+                                editor.editEntry(v, screen.entryId) {
+                                    it.copy(fields = fields, attachments = attachments)
+                                },
+                                newBinaries.values,
+                            )
+                        if (groupId != initialGroup) editor.move(edited, screen.entryId, groupId) else edited
                     }
                 } else {
-                    addEntry(container, screen.groupId ?: vault.root.id, fields, attachments, newBinaries)
+                    addEntry(container, groupId, fields, attachments, newBinaries)
                 }
             if (saved) navigator.back()
         },

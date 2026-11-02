@@ -58,6 +58,7 @@ import io.github.catlinux.keynexa.desktop.app.generated.resources.edit_discard_c
 import io.github.catlinux.keynexa.desktop.app.generated.resources.edit_discard_message
 import io.github.catlinux.keynexa.desktop.app.generated.resources.edit_discard_title
 import io.github.catlinux.keynexa.desktop.app.generated.resources.edit_generate
+import io.github.catlinux.keynexa.desktop.app.generated.resources.edit_group_label
 import io.github.catlinux.keynexa.desktop.app.generated.resources.edit_name_repeated
 import io.github.catlinux.keynexa.desktop.app.generated.resources.edit_name_standard
 import io.github.catlinux.keynexa.desktop.app.generated.resources.edit_notes_label
@@ -79,6 +80,7 @@ import io.github.catlinux.keynexa.desktop.app.generated.resources.entry_detail_p
 import io.github.catlinux.keynexa.desktop.app.generated.resources.entry_detail_save_attachment
 import io.github.catlinux.keynexa.desktop.app.generated.resources.entry_detail_show
 import io.github.catlinux.keynexa.session.mapEntry
+import io.github.catlinux.keynexa.ui.fields.ChoiceField
 import io.github.catlinux.keynexa.ui.fields.UserNameField
 import io.github.catlinux.keynexa.vault.Attachment
 import io.github.catlinux.keynexa.vault.BinaryId
@@ -89,6 +91,8 @@ import io.github.catlinux.keynexa.vault.UserNameSuggestions
 import io.github.catlinux.keynexa.vault.Vault
 import io.github.catlinux.keynexa.vault.VaultEditor
 import io.github.catlinux.keynexa.vault.binaryIdOf
+import io.github.catlinux.keynexa.vault.groupChoices
+import io.github.catlinux.keynexa.vault.groupOfEntry
 import org.jetbrains.compose.resources.stringResource
 import java.awt.FileDialog
 import java.awt.Frame
@@ -137,7 +141,15 @@ internal fun EntryEditPanel(
             form.clear()
         }
     }
-    val unchanged = form.unchanged && attachments.toList() == entry?.attachments.orEmpty() && newBinaries.isEmpty()
+    val groups = remember(vault) { groupChoices(vault) }
+    val originalGroup = remember(entry?.id, isNew) { entry?.let { groupOfEntry(vault, it.id) } }
+    var chosenGroup by remember(entry?.id, isNew) {
+        val selected = view.selectedGroup?.takeIf { id -> groups.any { it.id == id } }
+        mutableStateOf(originalGroup ?: selected ?: vault.root.id)
+    }
+    val groupChanged = entry != null && originalGroup != null && chosenGroup != originalGroup
+    val unchanged =
+        form.unchanged && attachments.toList() == entry?.attachments.orEmpty() && newBinaries.isEmpty() && !groupChanged
     val leave: () -> Unit = {
         if (unchanged) view.closeDetailMode() else confirmingCancel = true
     }
@@ -145,17 +157,21 @@ internal fun EntryEditPanel(
         val fields = form.toFields()
         val attachmentList = attachments.toList()
         val binaries = newBinaries.values.toList()
-        val groupId = view.selectedGroup ?: vault.root.id
+        val groupId = chosenGroup
         val saved =
             if (entry == null) {
                 view.save { current -> addNewEntry(current, groupId, fields, attachmentList, binaries) }
             } else {
                 view.save { current ->
                     val editor = VaultEditor()
-                    editor.storeBinaries(
-                        editor.editEntry(current, entry.id) { it.copy(fields = fields, attachments = attachmentList) },
-                        binaries,
-                    )
+                    val edited =
+                        editor.storeBinaries(
+                            editor.editEntry(current, entry.id) {
+                                it.copy(fields = fields, attachments = attachmentList)
+                            },
+                            binaries,
+                        )
+                    if (groupChanged) editor.move(edited, entry.id, groupId) else edited
                 }
             }
         if (saved) view.closeDetailMode()
@@ -178,6 +194,13 @@ internal fun EntryEditPanel(
             form = form,
             userNameSuggestions = remember(vault) { UserNameSuggestions.of(vault) },
             onGenerate = { generating = true },
+        )
+        ChoiceField(
+            selected = chosenGroup,
+            options = groups.map { it.id to it.label },
+            onSelect = { chosenGroup = it },
+            label = { Text(text = stringResource(Res.string.edit_group_label)) },
+            modifier = Modifier.fillMaxWidth(),
         )
         CustomFieldsSection(form = form)
         AttachmentsSection(

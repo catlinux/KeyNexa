@@ -6,6 +6,12 @@ All notable changes to this project are documented in this file. The format is b
 
 ## [Unreleased]
 
+## [1.15.0] - 2026-11-02
+
+### Added
+
+- Both apps: the entry editor has a *Group* field, so an entry can be moved to another group while it is edited (the same move as *Move to…*, in the same save). A new entry also lets you pick its group. The recycle bin is not offered.
+
 ## [1.14.0] - 2026-10-27
 
 The desktop app does not change.

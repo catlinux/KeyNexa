@@ -6,6 +6,12 @@ Todos los cambios notables de este proyecto se documentan en este archivo. El fo
 
 ## [Sin publicar]
 
+## [1.15.0] - 2026-11-02
+
+### Añadido
+
+- Ambas apps: el editor de entradas tiene un campo *Grupo*, así que una entrada se puede pasar a otro grupo mientras se edita (el mismo movimiento que *Mover a…*, dentro del mismo guardado). Una entrada nueva también deja elegir su grupo. No se ofrece la papelera.
+
 ## [1.14.0] - 2026-10-27
 
 La app de escritorio no cambia.
